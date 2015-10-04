@@ -709,6 +709,8 @@ void PyDUChainTest::testRanges_data()
     QTest::addColumn<QStringList>("column_ranges");
 
     QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << "5,8,attr" );
+    QTest::newRow("attr_binary") << "base.attr + base.attr" << 4 << ( QStringList() << "5,8,attr" << "17,20,attr" );
+    QTest::newRow("attr_same") << "aaa.aaa.aaa + aaa.aaa.aaa" << 6 << ( QStringList() << "4,6,aaa" << "8,10,aaa" << "18,20,aaa" << "22,24,aaa" );
     QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,8,attr" << "10,16,subattr" );
     QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,8,attr" << "12,18,subattr" );
     QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,8,attr" << "23,29,subattr" );
@@ -717,6 +719,8 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_complicated") << "base.attr(arg1.arg2(arg4.arg5, [func(a.b)]).arg3(arg6.arg7)).subattr" << 5 << ( QStringList() << "5,8,attr" << "15,18,arg2" <<
                                                             "25,28,arg5" << "39,39,b" << "44,47,arg3" << "54,57,arg7" << "61,67,subattr");
     QTest::newRow("attr_two_in_call") << "func(inst.aaa, inst.bbbb)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,bbbb" );
+    QTest::newRow("attr_two_in_call_same") << "func(inst.aaa, inst.aaaa)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,aaaa" );
+    QTest::newRow("attr_two_in_call_same2") << "func(inst.aaa, inst.aaa)" << 2 << ( QStringList() << "10,12,aaa" << "20,22,aaa" );
     QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << "4,7,join" );
     QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
     QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );

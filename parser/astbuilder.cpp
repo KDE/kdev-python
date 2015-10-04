@@ -62,24 +62,30 @@ public:
     };
 };
 
-class AttributeFindVisitor : public AstDefaultVisitor {
+class NextAstFindVisitor : public AstDefaultVisitor {
 public:
-    Ast* findStart(Python::Ast* node) {
-        visitNode(node);
-        return m_start;
+    KTextEditor::Cursor findNext(Python::Ast* node) {
+        m_root = node;
+        auto parent = node;
+        while ( parent && parent->parent && parent->parent->isExpression() ) {
+            parent = parent->parent;
+        }
+        visitNode(parent);
+        return m_next;
     };
     virtual void visitNode(Python::Ast* node) override {
         if ( ! node ) {
             return;
         }
         AstDefaultVisitor::visitNode(node);
-        if ( ! m_start && node->astType == Ast::AttributeAstType ) {
-            m_start = static_cast<AttributeAst*>(node)->value;
+        if ( node->start() > m_root->start() && ! node->isChildOf(m_root) ) {
+            m_next = (m_next < node->start() && m_next.isValid()) ? m_next : node->start();
         }
     }
 
 private:
-    Ast* m_start = nullptr;
+    KTextEditor::Cursor m_next{-1, -1};
+    Ast* m_root;
 };
 
 // This class is used to fix some of the remaining issues
@@ -105,181 +111,38 @@ public:
         AstDefaultVisitor::visitClassDefinition(node);
     };
 
-    int findAttributeDepth(ExpressionAst* node) {
-        Ast* p = node;
-        auto level = 0;
-        while ( p->parent && p->parent->isExpression() ) {
-            p = p->parent;
-            qDebug() << "check:" << p->astType << Ast::AttributeAstType;
-            if ( p->astType == Ast::AttributeAstType ) {
-                level++;
-            }
-        }
-        return level;
-    };
-
     virtual void visitAttribute(AttributeAst* node) override {
-        /**
-         * Work around the weird way to count columns in Python's AST module.
-         * This takes an expression and finds the dots (attribute access tokens),
-         * then associates the right ranges obtained by their positions with the
-         * corresponding AST nodes (through recursive calls of this function).
-         */
+        // Work around the weird way to count columns in Python's AST module.
 
-        // an attribute access was already found in a previous call, associate it with this node?
-        if ( ! dots.isEmpty() && node->start() == attributeStart ) {
-            node->startLine = dots.last().line();
-            node->startCol = dots.last().column();
-            node->endLine = node->startLine;
-            node->endCol = node->startCol + node->attribute->value.length() - 1;
-            node->attribute->copyRange(node);
-            qDebug() << "updated:" << node->range() << node->attribute->value;
-            dots.pop_back();
-            visitNode(node->value);
-            return;
-        }
+        NextAstFindVisitor v;
+        auto next_start = v.findNext(node);
 
-        const QVector<QChar> opening = {'(', '[', '{', '"', '\''};
-        const QVector<QChar> closing = {')', ']', '}', '"', '\''};
-        const QVector<QString> ending = {
-            QStringLiteral(","), QStringLiteral("+"),
-            QStringLiteral("*"), QStringLiteral("/"),
-            QStringLiteral("-"), QStringLiteral("and"),
-            QStringLiteral("or"), QStringLiteral("not"),
-            QStringLiteral("xor"), QStringLiteral("^"),
-            QStringLiteral("~"), QStringLiteral("="),
-            QStringLiteral("|"), QStringLiteral("&")
-        };
-        QStack<QChar> blocks;
-
-        // find where the statement starts
-        AttributeFindVisitor f;
-        auto start = f.findStart(node);
-        if ( ! start ) {
-            qDebug() << "huh? start not found";
-            return;
-        }
-        auto lineno = start->startLine;
-        auto line = lines.at(lineno);
-        int offset = qMax(0, start->startCol);
-        bool atDot = false;
-        bool atContinuationCharacter = false;
-        QChar previous = ' ';
-        QChar c = ' ';
-
-        auto last = line.left(offset).trimmed();
-        auto lastChar = last.isEmpty() ? QChar() : last.at(last.size()-1);
-
-        Ast* surrounding = node;
-        bool surrounding_present = false;
-        while ( surrounding->parent ) {
-            surrounding = surrounding->parent;
-            if ( surrounding->appearsBefore(node) ) {
-                surrounding_present = true;
-                break;
-            }
-        }
-        if ( surrounding_present ) {
-            qDebug() << "surrounding:" << surrounding->range();
-            auto depth = findAttributeDepth(node);
-            qDebug() << "attr depth:" << depth;
-            bool is_expr = surrounding->isExpression();
-//             qDebug() << "sourrounding is expr:" << is_expr;
-            if ( is_expr ) {
-                bool is_call = static_cast<ExpressionAst*>(surrounding)->astType == Ast::CallAstType;
-//                 qDebug() << "parent is call:" << is_call;
-                // TODO multiple parentheses, urgh
-                if ( lastChar == '(' && ! is_call && depth == 0 ) {
-                    // the start is not inside the block, so we skip the first closing parenthesis
-                    blocks.push(')');
+        QString line = lines.at(node->startLine);
+        if ( next_start > node->start() ) {
+            // sub-expression
+            auto lineno = next_start.line();
+            auto colno = next_start.column();
+            do {
+                line = lines.at(lineno);
+                if ( colno != -1 ) {
+                    line = line.left(colno);
                 }
-            }
-            else if ( lastChar == '(' ) {
-                blocks.push(')');
-            }
+                colno = -1;
+                lineno -= 1;
+            } while ( ! line.contains(node->attribute->value) && lineno >= 0 );
         }
 
-        auto inString = [&blocks]() {
-            return ! blocks.isEmpty() && (blocks.top() == '"' || blocks.top() == '\'');
-        };
+        node->startCol = line.lastIndexOf(node->attribute->value);
+        node->endCol = node->startCol + node->attribute->value.length() - 1;
+        node->attribute->copyRange(node);
 
-        // while the expression lasts, step through it char by char to find attribute access tokens
-        while ( offset < line.size() ) {
-            if ( ! c.isSpace() ) {
-                previous = c;
-            }
-            c = line.at(offset);
-            qDebug() << c << blocks;
-//             qDebug() << c << atDot << dots << inRightBlock << blocks.size() << node->startCol << offset;
-            // continue to next line if applicable
-            // TODO escaping
-            if ( c == '\\' ) {
-                atContinuationCharacter = true;
-            }
-            else if ( ! c.isSpace() ) {
-                atContinuationCharacter = false;
-            }
-
-            // does this token appear after the node's start position? if not, ignore it
-            bool later = (lineno > node->startLine) || (lineno == node->startLine && offset >= node->startCol);
-            if ( atDot && ! c.isSpace() && later ) {
-                dots.append({lineno, offset});
-                atDot = false;
-            }
-            // handle parentheses and strings
-            if ( ! blocks.isEmpty() && blocks.top() == c ) {
-                blocks.pop();
-            }
-            else if ( ! inString() && opening.contains(c) ) {
-                blocks.push(closing.at(opening.indexOf(c)));
-            }
-            else if ( blocks.isEmpty() && closing.contains(c) ) {
-                break;
-            }
-            if ( blocks.isEmpty() && ending.contains(c) ) {
-                break;
-            }
-            // if this is a dot and we're in the right block, save it
-            // saving is deferred until the next non-space character to obtain the correct
-            // start offset
-            if ( c == '.' && blocks.isEmpty() ) {
-                atDot = true;
-            }
-            offset++;
-            // if
-            //  * we're in a block (parentheses, etc)
-            //  * we're not yet at the end of the statement
-            //  * there's a continuation character
-            // and the rest of the line is only spaces, continue to the next non-empty line
-            if ( line.mid(offset).trimmed().isEmpty() && (atContinuationCharacter || ! blocks.isEmpty() || lineno < start->endLine) ) {
-                do {
-                    lineno++;
-                    if ( lines.size() <= lineno ) {
-                        qDebug() << "huh? fell off the end of the document";
-                        qDebug() << "started at" << lines.at(start->startLine);
-                        // probably not even possible to reach here
-                        return;
-                    }
-                    line = lines.at(lineno);
-                } while ( line.isEmpty() );
-                offset = 0;
-                atContinuationCharacter = false;
-            }
-        }
-        attributeStart = node->start();
-        if ( ! dots.isEmpty() ) {
-            visitNode(node);
-        }
-        else {
-            // this is a bug, but don't crash
-            qWarning() << "failed to fix ranges near" << line;
-        }
-        visitNode(node->attribute);
+        AstDefaultVisitor::visitAttribute(node);
     };
+
     // alias for imports (import foo as bar, baz as bang)
     // no strings, brackets, or whatever are allowed here, so the "parser"
     // can be very straightforward.
-    virtual void visitImport(ImportAst* node) {
+    virtual void visitImport(ImportAst* node) override {
         AstDefaultVisitor::visitImport(node);
         int aliasIndex = 0;
         foreach ( AliasAst* alias, node->names ) {
@@ -287,8 +150,9 @@ public:
             aliasIndex += 1;
         }
     };
+
     // alias for exceptions (except FooBarException as somethingterriblehappened: ...)
-    virtual void visitExceptionHandler(ExceptionHandlerAst* node) {
+    virtual void visitExceptionHandler(ExceptionHandlerAst* node) override {
         AstDefaultVisitor::visitExceptionHandler(node);
         if ( ! node->name ) {
             return;
@@ -299,6 +163,7 @@ public:
         node->name->startCol = end - back;
         node->name->endCol = end;
     }
+
 private:
     const QStringList lines;
     QVector<KTextEditor::Cursor> dots;

@@ -211,6 +211,17 @@ public:
         return {endLine, endCol};
     }
 
+    bool isChildOf(Ast* other) const {
+        const Ast* parent = this;
+        while ( parent ) {
+            if ( parent == other ) {
+                return true;
+            }
+            parent = parent->parent;
+        }
+        return false;
+    }
+
     int startCol;
     int startLine;
     int endCol;

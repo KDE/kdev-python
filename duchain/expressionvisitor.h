@@ -112,7 +112,12 @@ public:
 
     template<typename T>
     static TypePtr<T> typeObjectForIntegralType(const QString& typeDescriptor) {
-        auto decls = Helper::getDocumentationFileContext()->findDeclarations(QualifiedIdentifier(typeDescriptor));
+        auto context = Helper::getDocumentationFileContext();
+        if ( ! context ) {
+            AbstractType::Ptr null;
+            return null.cast<T>();
+        }
+        auto decls = context->findDeclarations(QualifiedIdentifier(typeDescriptor));
         auto decl = decls.isEmpty() ? nullptr : dynamic_cast<Declaration*>(decls.first());
         auto type = decl ? decl->abstractType() : AbstractType::Ptr();
         return type.cast<T>();

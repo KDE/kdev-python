@@ -65,7 +65,6 @@ add_subdirectory(duchain)
 add_subdirectory(codecompletion)
 add_subdirectory(debugger)
 add_subdirectory(docfilekcm)
-add_subdirectory(checks)
 
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
@@ -75,10 +74,6 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonparsejob.cpp
     pythonhighlighting.cpp
     pythondebug.cpp
-
-    checks/basiccheck.cpp
-    checks/controlflowgraphbuilder.cpp
-    checks/dataaccessvisitor.cpp
 
     # config pages:
     docfilekcm/docfilewizard.cpp

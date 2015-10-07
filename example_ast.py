@@ -36,7 +36,7 @@ class cls():
         some_var = my_func
     
     def another(self):
-        print self
+        print(self)
 
 new_threads = cls()
 
@@ -53,8 +53,8 @@ import os
 
 def ASDF(arg, arg2):
     arg = arg2
-    print arg2
-print ASDF()
+    print(arg2)
+print(ASDF())
 
 a = a and a
 a = a or b
@@ -94,8 +94,6 @@ import PyQt4.QtCore
 import bisect
 bisect.bisect_right()
 
-print sys
-
 def returns_int(param):
     return 5
 
@@ -116,7 +114,6 @@ def simple_func(foo):
 	pass
 
 copied = simple_func
-print copied
 
 def function(foo):
 	""" docstring
@@ -127,15 +124,16 @@ def function(foo):
 	"""
 	return foo
 
+async def fonc(x, y, z):
+    a = await z
+
 try:
     pass
 except Exception as e:
-    print e
+    print(e)
 
 def func(foo, bar, baz, bang, foobang, foobar, foobazbar, foobazbarbang):
     return foobang
-    print foo
-    print foobazbarbang
     
     import asynchat
     obj = asynchat.async_chat()
@@ -144,8 +142,6 @@ def func(foo, bar, baz, bang, foobang, foobar, foobazbar, foobazbarbang):
     _winreg.CreateKey()
     import binhex
     binhex.hexbin()
-    
-    print foo, bar, baz, bang
     
     if foobazbar < 5:
         pass
@@ -169,6 +165,7 @@ a != a
 a < a
 a <= a
 a > a
+a < a < a
 a >= a
 a is a
 a is not a
@@ -179,6 +176,7 @@ a = a + 1
 a = a - 1
 a = a * 1
 a = a / 1
+a = a // 1
 a = a % 1
 a = a ^ 1
 a = a & 1
@@ -186,6 +184,7 @@ a = a | 1
 a = a ** 1
 a = a >> 1
 a = a << 1
+a = a @ 1
 
 a = not a
 a = +a
@@ -198,11 +197,9 @@ extended = a[1:2, 2:3]
 i += 3
 i += j
 
-print 3 if 5 < 7 else 4
+3 if 5 < 7 else 4
 
 from random import random
-
-print random
 
 random(foo=3)
 
@@ -214,7 +211,7 @@ def genfunc():
     yield foo
 
 for target1, target2 in some_dict.iteritems():
-    print target1, target2
+    print(target1, target2)
 
 pi = 3.1415
 
@@ -253,11 +250,11 @@ random.random(3, 5)
 somelist = [1, 2, 3, 4, 5]
 somedict = { 'key1' : 'value1', key2: value2 }
 
-print somelist[...]
-print somelist[1:]
-print somelist[:20]
-print somelist[1:20]
-print somelist[1:20:2]
+somelist[...]
+somelist[1:]
+somelist[:20]
+somelist[1:20]
+somelist[1:20:2]
 
 class bar(parent):
     pass

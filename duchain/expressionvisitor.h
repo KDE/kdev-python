@@ -40,6 +40,7 @@
 
 #include "duchain/declarations/classdeclaration.h"
 #include "duchain/declarations/functiondeclaration.h"
+#include "duchain/helpers.h"
 
 using namespace KDevelop;
 class Identifier;
@@ -110,9 +111,8 @@ public:
     }
 
     template<typename T>
-    static TypePtr<T> typeObjectForIntegralType(const QString& typeDescriptor, const DUContext* ctx) {
-        // TODO: use Helper::documentationFileContext here instead of ctx?
-        auto decls = ctx->topContext()->findDeclarations(QualifiedIdentifier(typeDescriptor));
+    static TypePtr<T> typeObjectForIntegralType(const QString& typeDescriptor) {
+        auto decls = Helper::getDocumentationFileContext()->findDeclarations(QualifiedIdentifier(typeDescriptor));
         auto decl = decls.isEmpty() ? nullptr : dynamic_cast<Declaration*>(decls.first());
         auto type = decl ? decl->abstractType() : AbstractType::Ptr();
         return type.cast<T>();

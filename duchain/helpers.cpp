@@ -34,6 +34,7 @@
 #include <language/duchain/duchain.h>
 #include <language/duchain/classdeclaration.h>
 #include <language/duchain/aliasdeclaration.h>
+#include <language/duchain/types/typeutils.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
 #include <interfaces/icore.h>
@@ -51,7 +52,7 @@
 #include "types/unsuretype.h"
 #include "types/indexedcontainer.h"
 #include "kdevpythonversion.h"
-#include <language/duchain/types/typeutils.h>
+#include "expressionvisitor.h"
 
 using namespace KDevelop;
 

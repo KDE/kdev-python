@@ -882,7 +882,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     else {
         // Otherwise, create a new container type, and set it as the function's return type.
         DUChainWriteLocker lock;
-        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list", currentContext());
+        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
         if ( container ) {
             openType<ListType>(container);
             container->addContentType<Python::UnsureType>(encountered);
@@ -1887,8 +1887,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             useIndex = type->arguments().size();
         }
         DUChainReadLocker lock;
-        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType
-                                                            <IndexedContainer>("tuple", currentContext());
+        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple");
         lock.unlock();
         if ( tupleType ) {
             visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
@@ -1899,10 +1898,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
     if ( node->kwarg ) {
         DUChainReadLocker lock;
-        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType
-                                                        <AbstractType>("str", currentContext());
-        auto dictType = ExpressionVisitor::typeObjectForIntegralType
-                                                        <MapType>("dict", currentContext());
+        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("str");
+        auto dictType = ExpressionVisitor::typeObjectForIntegralType<MapType>("dict");
         lock.unlock();
         if ( dictType && stringType ) {
             dictType->addKeyType<Python::UnsureType>(stringType);

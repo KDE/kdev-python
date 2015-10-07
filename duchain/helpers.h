@@ -24,13 +24,13 @@
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
 #include "ast.h"
-#include "expressionvisitor.h"
 
 #include <interfaces/iproject.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
+#include <language/duchain/types/integraltype.h>
 #include <language/duchain/functiondeclaration.h>
 #include <duchain/declarations/decorator.h>
 

@@ -205,8 +205,8 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
     }
 
     auto listOfTuples = [&](AbstractType::Ptr key, AbstractType::Ptr value) {
-        auto newType = typeObjectForIntegralType<ListType>("list", context());
-        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple", context());
+        auto newType = typeObjectForIntegralType<ListType>("list");
+        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple");
         if ( ! newType || ! newContents ) {
             return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         }
@@ -251,7 +251,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
-            auto newType = typeObjectForIntegralType<ListType>("list", context());
+            auto newType = typeObjectForIntegralType<ListType>("list");
             if ( ! newType ) {
                 return false;
             }
@@ -279,7 +279,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         enumeratedTypeVisitor.visitNode(node->arguments.first());
 
         DUChainWriteLocker lock;
-        auto intType = typeObjectForIntegralType<AbstractType>("int", context());
+        auto intType = typeObjectForIntegralType<AbstractType>("int");
         auto enumerated = enumeratedTypeVisitor.lastType();
         auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated));
         encounter(result, DeclarationPointer(useDeclaration));
@@ -426,7 +426,7 @@ void ExpressionVisitor::visitList(ListAst* node)
 {
     AstDefaultVisitor::visitList(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list", context());
+    auto type = typeObjectForIntegralType<ListType>("list");
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -446,7 +446,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 {
     AstDefaultVisitor::visitDictionaryComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict", context());
+    auto type = typeObjectForIntegralType<MapType>("dict");
     if ( type ) {
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
         lock.unlock();
@@ -473,7 +473,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitSetComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set", context());
+    auto type = typeObjectForIntegralType<ListType>("set");
     if ( type ) {
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
         lock.unlock();
@@ -491,7 +491,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     AstDefaultVisitor::visitListComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list", context());
+    auto type = typeObjectForIntegralType<ListType>("list");
     if ( type && ! m_forceGlobalSearching ) { // TODO fixme
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
         lock.unlock();
@@ -510,7 +510,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
-    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple", context());
+    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple");
     if ( type ) {
         lock.unlock();
         foreach ( ExpressionAst* expr, node->elements ) {
@@ -547,7 +547,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set", context());
+    auto type = typeObjectForIntegralType<ListType>("set");
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -562,7 +562,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict", context());
+    auto type = typeObjectForIntegralType<MapType>("dict");
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
@@ -584,10 +584,10 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
     AbstractType::Ptr type;
     DUChainReadLocker lock;
     if ( number->isInt ) {
-        type = typeObjectForIntegralType<AbstractType>("int", context());
+        type = typeObjectForIntegralType<AbstractType>("int");
     }
     else {
-        type = typeObjectForIntegralType<AbstractType>("float", context());
+        type = typeObjectForIntegralType<AbstractType>("float");
     }
     encounter(type);
 }
@@ -595,13 +595,13 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str", context());
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
 void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<StructureType>("bytes", context());
+    auto type = typeObjectForIntegralType<StructureType>("bytes");
     encounter(AbstractType::Ptr::staticCast(type));
 }
 

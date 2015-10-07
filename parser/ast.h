@@ -652,6 +652,8 @@ public:
 class KDEVPYTHONPARSER_EXPORT StarredAst : public ExpressionAst {
 public:
     StarredAst(Ast* parent);
+    ExpressionAst* value;
+    ExpressionAst::Context context;
 };
 
 class KDEVPYTHONPARSER_EXPORT ListAst : public ExpressionAst {

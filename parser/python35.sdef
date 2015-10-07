@@ -54,7 +54,7 @@ RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
 RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;;
 RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;
-RULE_FOR _expr;KIND Starred_kind;ACTIONS create|StarredAst;;
+RULE_FOR _expr;KIND Starred_kind;ACTIONS create|StarredAst set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;

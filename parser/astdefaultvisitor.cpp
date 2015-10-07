@@ -46,15 +46,17 @@ void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
-void AstDefaultVisitor::visitStarred(StarredAst* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
+
+void AstDefaultVisitor::visitStarred(StarredAst* node) {
+    visitNode(node->value);
+}
 
 void AstDefaultVisitor::visitArg(ArgAst* node) {
     visitNode(node->annotation);
     visitNode(node->argumentName);
     visitIdentifier(node->argumentName);
 }
-
-void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitAlias(AliasAst* node) {
     visitIdentifier(node->name);

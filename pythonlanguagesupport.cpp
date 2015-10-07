@@ -53,6 +53,7 @@
 #include "codegen/refactoring.h"
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
+#include "checks/basiccheck.h"
 #include "pep8kcm/kcm_pep8.h"
 #include "docfilekcm/kcm_docfiles.h"
 
@@ -213,7 +214,8 @@ ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy()
 
 QList<ILanguageCheck*> LanguageSupport::providedChecks()
 {
-    return {};
+    qDebug() << "checks requested";
+    return {new BasicCheck()};
 }
 
 int LanguageSupport::configPages() const

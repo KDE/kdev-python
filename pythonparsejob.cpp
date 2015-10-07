@@ -26,6 +26,8 @@
 #include "pythonlanguagesupport.h"
 #include "declarationbuilder.h"
 #include "usebuilder.h"
+#include "checks/controlflowgraphbuilder.h"
+#include "checks/dataaccessvisitor.h"
 #include "kshell.h"
 #include "duchain/helpers.h"
 #include "pep8kcm/kcm_pep8.h"
@@ -271,12 +273,24 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
 
 ControlFlowGraph* ParseJob::controlFlowGraph()
 {
-    return nullptr;
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto graph = new ControlFlowGraph();
+    ControlFlowGraphBuilder builder(m_duContext, graph, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return graph;
 }
 
 DataAccessRepository* ParseJob::dataAccessInformation()
 {
-    return nullptr;
+    if ( ! m_currentSession ) {
+        return nullptr;
+    }
+    auto repo = new DataAccessRepository();
+    DataAccessVisitor builder(m_duContext, repo, m_currentSession);
+    builder.visitNode(m_ast.data());
+    return repo;
 }
 
 void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)

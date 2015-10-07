@@ -620,8 +620,6 @@ public:
     ExpressionAst* function;
     QList<ExpressionAst*> arguments;
     QList<KeywordAst*> keywords;
-    ExpressionAst* keywordArguments;
-    ExpressionAst* starArguments;
 };
 
 class KDEVPYTHONPARSER_EXPORT AttributeAst : public ExpressionAst {

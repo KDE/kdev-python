@@ -79,7 +79,7 @@ BreakAst::BreakAst(Ast* parent): StatementAst(parent, Ast::BreakAstType)
     
 }
 
-CallAst::CallAst(Ast* parent): ExpressionAst(parent, Ast::CallAstType), function(0), keywordArguments(0), starArguments(0)
+CallAst::CallAst(Ast* parent): ExpressionAst(parent, Ast::CallAstType), function(0)
 {
     
 }

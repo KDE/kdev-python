@@ -375,8 +375,6 @@ void AstDefaultVisitor::visitAssignment(AssignmentAst* node)
 void AstDefaultVisitor::visitCall(CallAst* node)
 {
     visitNode(node->function);
-    visitNode(node->keywordArguments);
-    visitNode(node->starArguments);
     foreach (ExpressionAst* argument, node->arguments) {
         visitNode(argument);
     }

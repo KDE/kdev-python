@@ -146,8 +146,6 @@ void ExpressionVisitor::visitCall(CallAst* node)
     foreach ( ExpressionAst* c, node->arguments ) {
         AstDefaultVisitor::visitNode(c);
     }
-    AstDefaultVisitor::visitNode(node->keywordArguments);
-    AstDefaultVisitor::visitNode(node->starArguments);
     
     ExpressionVisitor v(this);
     v.visitNode(node->function);

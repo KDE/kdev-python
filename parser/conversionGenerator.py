@@ -9,7 +9,7 @@
 
 import sys
 
-contents = open('python34.sdef').read().replace("\n", "").split(';;')
+contents = open('python35.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
@@ -19,7 +19,7 @@ func_structure = '''
         switch ( node->kind ) {
 %{SWITCH_LINES}
         default:
-            kWarning() << "Unsupported statement AST type: " << node->kind;
+            qWarning() << "Unsupported statement AST type: " << node->kind;
             Q_ASSERT(false);
         }
 %{APPENDIX}

@@ -206,7 +206,7 @@ void DebugSession::dataAvailable()
     }
 }
 
-void DebugSession::setNotifyNext(QWeakPointer<QObject> object, const char* method)
+void DebugSession::setNotifyNext(QPointer<QObject> object, const char* method)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "set notify next:" << object << method;
     m_nextNotifyObject = object;
@@ -215,10 +215,10 @@ void DebugSession::setNotifyNext(QWeakPointer<QObject> object, const char* metho
 
 void DebugSession::notifyNext()
 {
-    QSharedPointer<QObject> lock = m_nextNotifyObject.toStrongRef();
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "notify next:" << m_nextNotifyObject << m_nextNotifyObject.data() << this;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "notify next:" << m_nextNotifyObject << this;
     if ( m_nextNotifyMethod && m_nextNotifyObject ) {
-        QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod, Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
+        QMetaObject::invokeMethod(m_nextNotifyObject.data(), m_nextNotifyMethod,
+                                  Qt::DirectConnection, Q_ARG(QByteArray, m_buffer));
     }
     else {
         qCDebug(KDEV_PYTHON_DEBUGGER) << "notify called, but nothing to notify!";

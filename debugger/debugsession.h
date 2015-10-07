@@ -22,6 +22,7 @@
 
 #include <KProcess>
 #include <QMutexLocker>
+#include <QPointer>
 
 #include <QDebug>
 #include "debuggerdebug.h"
@@ -222,7 +223,7 @@ private:
     const QUrl& m_workingDirectory;
 private:
     /// objects to notify next
-    QWeakPointer<QObject> m_nextNotifyObject;
+    QPointer<QObject> m_nextNotifyObject;
     const char* m_nextNotifyMethod;
     /// whether the process is busy processing an internal command
     bool m_processBusy;
@@ -230,7 +231,7 @@ private:
     /**
      * @brief Set the object to notify when the next command is done processing
      **/
-    void setNotifyNext(QWeakPointer<QObject> object, const char* method);
+    void setNotifyNext(QPointer<QObject> object, const char* method);
     
     /**
      * @brief Invoke the method given by setNotifyNext, and clear it
@@ -278,7 +279,7 @@ public:
     void setOutput(QByteArray output) {
         m_output = output;
     };
-    QWeakPointer<QObject> notifyObject() {
+    QPointer<QObject> notifyObject() {
         return m_notifyObject;
     };
     const char* notifyMethod() {
@@ -297,7 +298,7 @@ public:
 
 protected:
     Type m_type;
-    QWeakPointer<QObject> m_notifyObject;
+    QPointer<QObject> m_notifyObject;
     const char* m_notifyMethod;
     QByteArray m_output;
 };

@@ -90,8 +90,10 @@ void DebugSession::start()
     connect(this, SIGNAL(commandAdded()), SLOT(checkCommandQueue()));
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
+    auto dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                      "kdevpythonsupport/debugger/", QStandardPaths::LocateDirectory);
     InternalPdbCommand* path = new InternalPdbCommand(0, 0,
-        "import sys; sys.path.append('"+QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger/")+"')\n");
+        "import sys; sys.path.append('"+dir+"')\n");
     InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
     addCommand(path);
     addCommand(cmd);

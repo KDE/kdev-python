@@ -50,6 +50,10 @@ KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionCon
 
 void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, KDevelop::DUContextPointer context) const
 {
+    // TODO
+    if ( ! contextRange.start().isValid() ) {
+        contextRange.setStart({0, 0});
+    }
     if ( CodeHelpers::endsInside(view->document()->text(contextRange)) == CodeHelpers::String ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "we're dealing with string completion. extend the range";
         contextRange = context->rangeInCurrentRevision();

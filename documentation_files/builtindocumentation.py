@@ -41,6 +41,9 @@ class object():
     def __add__(self, other): pass
     def __sub__(self, other): pass
     def __mul__(self, other): pass
+    def __matmul__(self, other): pass
+    def __rmatmul__(self, other): pass
+    def __imatmul__(self, other): pass
     def __floordiv__(self, other): pass
     def __mod__(self, other): pass
     def __divmod__(self, other): pass

@@ -145,6 +145,7 @@ public:
         OperatorAdd = 1,
         OperatorSub,
         OperatorMult,
+        OperatorMatMult,
         OperatorDiv,
         OperatorMod,
         OperatorPow,
@@ -473,6 +474,7 @@ public:
             case Python::Ast::OperatorLeftShift: return QLatin1String("__lshift__");
             case Python::Ast::OperatorMod: return QLatin1String("__mod__");
             case Python::Ast::OperatorMult: return QLatin1String("__mul__");
+            case Python::Ast::OperatorMatMult: return QLatin1String("__matmul__");
             case Python::Ast::OperatorPow: return QLatin1String("__pow__");
             case Python::Ast::OperatorRightShift: return QLatin1String("__rshift__");
             case Python::Ast::OperatorSub: return QLatin1String("__sub__");

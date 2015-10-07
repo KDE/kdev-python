@@ -216,7 +216,7 @@ class str():
     def capitalize(self,): return ""
     def center(self,width, fillchar = None): return ""
     def count(self,substring, start = 0, end = 0): return 0
-    def decode(self,encoding = None, errors = None): return ""
+    def encode(self, encoding): return bytes()
     def endswith(self,suffix, start = 0, end = 0): return True
     def expandtabs(self,tabsize = 0): return ""
     def find(self,substring, start = 0, end = 0): return 0
@@ -379,6 +379,47 @@ class tuple():
     def __mul__(self, other):
         return tuple()
 
+class bytes:
+    def __init__(self, data):
+        pass
+    def capitalize(self): return bytes()
+    def center(self): return bytes()
+    def count(self): return int()
+    def decode(self, encoding): return str()
+    def endswith(self, data): return True
+    def expandtabs(self): return bytes()
+    def find(self): return int()
+    def fromhex(self, hexdata): return bytes()
+    def index(self): return int()
+    def isalnum(self): return True
+    def isalpha(self): return True
+    def isdigit(self): return True
+    def islower(self): return True
+    def isspace(self): return True
+    def istitle(self): return True
+    def isupper(self): return True
+    def join(self, other): return bytes()
+    def ljust(self, space): return bytes();
+    def lower(self): return bytes()
+    def lstrip(self): return bytes()
+    def maketrans(self, frm, to): return bytes()
+    def partition(self, separator): return (bytes(), bytes(), bytes())
+    def replace(self, find, replace): return bytes()
+    def rfind(self, data): return int()
+    def rindex(self, data): return int()
+    def rjust(self, justify): return bytes()
+    def rpartition(self, separator): return (bytes(), bytes(), bytes())
+    def rsplit(self, separator): return [bytes()]
+    def rstrip(self): return bytes()
+    def split(self, separator): return [bytes()]
+    def splitlines(self): return [bytes()]
+    def startswith(self): return False
+    def strip(self): return bytes()
+    def swapcase(self): return bytes()
+    def title(self): return bytes()
+    def translate(self, table, deletechars=None): return bytes()
+    def upper(self): return bytes()
+    def zfill(self, width): return bytes()
 
 class set():
     """! TypeContainer !"""
@@ -421,7 +462,7 @@ def bool(x = False):
     return True
 def bytearray(source = None, encoding = None, errors = None):
     """Return a new array of bytes. The bytearray type is a mutable sequence of integers in the range 0 <= x < 256."""
-    return []
+    return bytes()
 def callable(object):
     """Return True if the object argument appears callable, False if not. If this returns true, it is still possible that a call fails, but if it is false, calling object will never succeed. Note that classes are callable (calling a class returns a new instance); class instances are callable if they have a __call__() method."""
     return True

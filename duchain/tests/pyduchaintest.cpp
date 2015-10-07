@@ -800,6 +800,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("bool") << "checkme = True" << "bool";
     QTest::newRow("float") << "checkme = 3.7" << "float";
     QTest::newRow("int") << "checkme = 3" << "int";
+    QTest::newRow("str") << "checkme = \"foo\"" << "str";
+    QTest::newRow("bytes") << "checkme = b\"foo\"" << "bytes";
 
     QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
 

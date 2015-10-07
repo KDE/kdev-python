@@ -599,6 +599,12 @@ void ExpressionVisitor::visitString(Python::StringAst* )
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
+void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
+    DUChainReadLocker lock;
+    auto type = typeObjectForIntegralType<StructureType>("bytes", context());
+    encounter(AbstractType::Ptr::staticCast(type));
+}
+
 RangeInRevision nodeRange(Python::Ast* node)
 {
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);

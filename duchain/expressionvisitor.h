@@ -62,6 +62,7 @@ public:
     virtual void visitCompare(CompareAst* node);
 
     virtual void visitString(StringAst* node);
+    virtual void visitBytes(BytesAst* node);
     virtual void visitNumber(NumberAst* node);
     virtual void visitName(NameAst* node);
     virtual void visitList(ListAst* node);

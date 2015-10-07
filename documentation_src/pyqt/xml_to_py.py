@@ -73,6 +73,11 @@ def parseFunction(functionNode):
                         defaultValue = node.attributes['default'].value
                     except KeyError:
                         defaultValue = NoDefaultValue
+                    try:
+                        defaultValue = defaultValue.replace("QString", "str")
+                        defaultValue = defaultValue.replace("QChar", "bytes")
+                    except AttributeError:
+                        pass
                     params.append((argType, argName, defaultValue))
             else:
                 print 'Unhandled sub-node type in function %s: %s' % (funcFullName, node.nodeName)
@@ -112,8 +117,18 @@ def parseFunction(functionNode):
         return text # do not print `return None` statement
     if retType.startswith('list-of-'):
         retType = '[' + retType[8:] + '()]'
+    elif retType.find("-or-") != -1:
+        a, b = retType.split("-or-")
+        retType = "{0}() if True else {1}()".format(a, b)
+    elif retType.startswith("dict-of-"):
+        q = retType[8:].split('-')
+        key, value = q[0], q[1]
+        retType = '{' + key + "():" + value + "()}"
     else:
         retType += '()'
+    retType = retType.replace("QString", "str")
+    retType = retType.replace("QChar", "bytes")
+    retType = retType.replace("const", "")
 
     return text + '    return %s' % retType
 
@@ -146,7 +161,7 @@ def parseClass(classNode):
 
 
 def convertXmlToPy(inFilePath):
-    print '\nConverting .xml PyQt4 module (%s) to .py' % inFilePath
+    print '\nConverting .xml PyQt5 module (%s) to .py' % inFilePath
 
     print 'Parsing xml...'
     dom = minidom.parse(inFilePath)
@@ -162,6 +177,8 @@ def convertXmlToPy(inFilePath):
     with open(outFilePath, 'w') as file:
         file.write('class pyqtSignal():\n def connect(self, targetSignal): pass\n def emit(self, *args): pass\n')
         file.write('from QtCore import *\n\n')
+        file.write('from QtWidgets import *\n\n')
+        file.write('import datetime\n\n')
         for node in module.childNodes:
             if node.nodeType != node.ELEMENT_NODE:
                 continue # skip non element nodes

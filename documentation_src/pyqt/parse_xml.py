@@ -22,7 +22,7 @@ def parseEnum(enumNode, enumName, className = ''):
                     enumMember = '__kdevpythondocumentation_builtin_None'
                 enumMembers.append(enumMember)
             else:
-                print 'Unknown node in Enum %s.%s: %s' % (className, enumName, node.nodeName)
+                print('Unknown node in Enum %s.%s: %s' % (className, enumName, node.nodeName))
     text = ''
     for enumMember in enumMembers:
         text += '%s = int() # %s.%s enum\n' % (enumMember, className, enumName)
@@ -46,21 +46,28 @@ def parseFunction(functionNode, funcName, className = ''):
                     if argName not in namesUsed:
                         params.append((argType, argName))
                     else:
-                        print "adjusting arg name:", argName
+                        print("adjusting arg name:", argName)
                         argName = argName + '_'
                         params.append((argType, argName))
                     namesUsed.append(argName)
             else:
-                print 'Unknown node in function %s.%s: %s' % (className, funcName, node.nodeName)
+                print('Unknown node in function %s.%s: %s' % (className, funcName, node.nodeName))
 
     descr = 'abstract ' if 'abstract' in functionNode.attributes.keys() else ''
     descr += '%s %s.%s(%s)' % (retType, className, funcName,
                 ', '.join('%s %s' % p for p in params))
 
+    print("ret type:", retType)
     if retType == 'None':
         pass # leave it like this
     elif retType.startswith('list-of-'):
         retType = '[' + retType[8:] + '()]'
+    elif retType.contains("-or-"):
+        a, b = retType.split("-or-")
+        retType = "{0}() if True else {1}()".format(a, b)
+    elif retType.startsWith("dict-of-"):
+        key, value = retType[8:].split('-')
+        retType = '{' + key + "():" + value + "()}"
     else:
         retType += '()'
 
@@ -90,7 +97,7 @@ def parseClass(classNode):
             elif node.nodeName == 'Enum':
                 text += indentCode(parseEnum(node, name, className), 1) + '\n\n'
             else:
-                print 'Unknown node in class %s: %s' % (className, node.nodeName)
+                print('Unknown node in class %s: %s' % (className, node.nodeName))
     return text
 
 
@@ -101,7 +108,7 @@ for filename in files:
     module = dom.firstChild
     assert module.nodeName == 'Module'
     moduleName = module.attributes['name'].value
-    print 'Module name:', moduleName
+    print('Module name:', moduleName)
 
     stats = {}
 
@@ -118,6 +125,6 @@ for filename in files:
             elif nodeName == 'Member':
                 file.write('%s = None # %s member\n\n' % (node.attributes['name'].value, node.attributes['typename'].value))
             else:
-                print 'Unknown node:', nodeName
+                print('Unknown node:', nodeName)
 
-    print 'Stats:', stats
+    print('Stats:', stats)

@@ -95,7 +95,7 @@ CodeAst *ParseJob::ast() const
 }
 
 
-void ParseJob::run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread)
+void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*thread*/)
 {
     if ( abortRequested() || ICore::self()->shuttingDown() ) {
         return abortJob();

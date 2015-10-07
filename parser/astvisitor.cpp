@@ -99,7 +99,9 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::WithItemAstType:                              this->visitWithItem(static_cast<WithItemAst*>(node)); break;
         case Ast::IdentifierAstType:                            break;
         case Ast::StatementAstType:                             break;
-        case Ast::LastAstType:                                  break; // avoid warning
+        case Ast::LastAstType:                                  Q_ASSERT(false); break;
+        case Ast::LastStatementType:                            Q_ASSERT(false); break;
+        case Ast::LastExpressionType:                           Q_ASSERT(false); break;
     }
 }
 

@@ -125,8 +125,6 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems(
         shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                     "#!/usr/bin/env python\n", i18ndescr, f));
         shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                    "#!/usr/bin/env python2.7\n", i18ndescr, f));
-        shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                                     "#!/usr/bin/env python3\n", i18ndescr, f));
     }
     else if ( m_position.line <= 1 && m_text.endsWith('#') ) {

@@ -105,6 +105,8 @@ private:
 // For the aliases, fortunately only imports and excepthandlers are affected;
 // the "with" statement, which has more complicated syntax, provides
 // the necessary information already.
+//  3) attribute rangees
+// Not so easy, but when starting from the end of the expression it works okay
 class RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents)
@@ -121,6 +123,7 @@ public:
     virtual void visitAttribute(AttributeAst* node) override {
         // Work around the weird way to count columns in Python's AST module.
 
+        // Find where the next expression (of any kind) behind this one starts
         NextAstFindVisitor v;
         auto next_start = v.findNext(node);
         if ( ! next_start.isValid() ) {
@@ -128,6 +131,7 @@ public:
             next_start = {lines.size() - 1, lines.last().size() - 1};
         }
 
+        // take only the portion of the line up to that next expression
         QString line = lines.at(node->startLine);
         auto lineno = next_start.line();
         auto colno = next_start.column();
@@ -135,7 +139,6 @@ public:
             colno = -1;
             lineno = node->startLine;
         }
-        // sub-expression
         do {
             line = lines.at(lineno);
             if ( colno != -1 ) {
@@ -143,10 +146,14 @@ public:
             }
             colno = -1;
             lineno -= 1;
+            // eventually go to previous line for multi-line expressions
         } while ( ! line.contains(node->attribute->value) && lineno >= 0 );
 
         node->startLine = lineno + 1;
         node->endLine = node->startLine;
+        // now, just take the last occurence of the value.
+        // it is guaranteed that this is the right one, otherwise
+        // that portion of the line would have been cut off above.
         node->startCol = line.lastIndexOf(node->attribute->value);
         node->endCol = node->startCol + node->attribute->value.length() - 1;
         node->attribute->copyRange(node);

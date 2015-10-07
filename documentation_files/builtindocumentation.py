@@ -293,6 +293,10 @@ class StandardError(BaseException):
     pass
 class Exception(BaseException):
     pass
+class StopIteration(BaseException):
+    pass
+class StopAsyncIteration(BaseException):
+    pass
 class BufferError(BaseException):
     pass
 class LookupError(BaseException):

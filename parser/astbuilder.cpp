@@ -110,7 +110,7 @@ public:
     RangeFixVisitor(const QString& contents)
         : lines(contents.split('\n')) { };
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) override {
-        cutDefinitionPreamble(node->name, "def");
+        cutDefinitionPreamble(node->name, node->async ? "asyncdef" : "def");
         AstDefaultVisitor::visitFunctionDefinition(node);
     };
     virtual void visitClassDefinition(ClassDefinitionAst* node) override {
@@ -203,7 +203,7 @@ private:
 
         // cut away decorators
         while ( currentLine < lines.size() ) {
-            if ( lines.at(currentLine).trimmed().startsWith(defKeyword) ) {
+            if ( lines.at(currentLine).trimmed().remove(' ').remove('\t').startsWith(defKeyword) ) {
                 // it's not a decorator, so stop skipping lines.
                 break;
             }
@@ -216,6 +216,10 @@ private:
 
         // cut away the "def" / "class"
         int currentColumn = -1;
+        if ( currentLine > lines.size() ) {
+            // whops?
+            return;
+        }
         const QString& lineData = lines.at(currentLine);
         bool keywordFound = false;
         while ( currentColumn < lineData.size() - 1 ) {
@@ -229,7 +233,7 @@ private:
                 // non space, then this is indeed the start of the identifier we're looking for.
                 break;
             }
-            if ( lineData.midRef(currentColumn, defKeyword.size()) == defKeyword ) {
+            else {
                keywordFound = true;
                currentColumn += defKeyword.size();
             }

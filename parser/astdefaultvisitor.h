@@ -44,6 +44,7 @@ public:
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node);
     virtual void visitClassDefinition(ClassDefinitionAst* node);
     virtual void visitReturn(ReturnAst* node);
+    virtual void visitAwait(AwaitAst* node);
     virtual void visitDelete(DeleteAst* node);
     virtual void visitAssignment(AssignmentAst* node);
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node);

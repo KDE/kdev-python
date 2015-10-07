@@ -110,7 +110,8 @@ static QMutex keywordPopulationLock;
 // class     except    if        or        while    
 // continue  exec      import    pass      yield    
 // def       finally   in        print     with
-    
+// async     await
+
 ExpressionParser::ExpressionParser(QString code)
     : m_code(code)
     , m_cursorPositionInString(m_code.length())
@@ -120,7 +121,7 @@ ExpressionParser::ExpressionParser(QString code)
         noCompletionKeywords << "break" << "class" << "continue" << "pass" << "try"
                              << "else" << "as" << "finally" << "global" << "lambda";
         miscKeywords << "and" << "assert" << "del" << "elif" << "exec" << "if" << "is" << "not" 
-                     << "or" << "print" << "return" << "while" << "yield" << "with";
+                     << "or" << "print" << "return" << "while" << "yield" << "with" << "await";
         supportedKeywords << keyword("import", ExpressionParser::ImportFound);
         supportedKeywords << keyword("from", ExpressionParser::FromFound);
         supportedKeywords << keyword("raise", ExpressionParser::RaiseFound);

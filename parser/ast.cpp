@@ -173,7 +173,7 @@ ForAst::ForAst(Ast* parent): StatementAst(parent, Ast::ForAstType), target(0), i
     
 }
 
-FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(0), arguments(0)
+FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(0), arguments(0), async(false)
 {
     
 }
@@ -231,6 +231,11 @@ ListAst::ListAst(Ast* parent): ExpressionAst(parent, Ast::ListAstType)
 NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifier(0)
 {
     
+}
+
+AwaitAst::AwaitAst(Ast* parent): ExpressionAst(parent, Ast::AwaitAstType), value(0)
+{
+
 }
 
 NameConstantAst::NameConstantAst(Ast* parent): ExpressionAst(parent, Ast::NameConstantAstType), value(Invalid)

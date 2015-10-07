@@ -42,6 +42,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::FunctionDefinitionAstType:                    this->visitFunctionDefinition(static_cast<FunctionDefinitionAst*>(node)); break;
         case Ast::ClassDefinitionAstType:                       this->visitClassDefinition(static_cast<ClassDefinitionAst*>(node)); break;
         case Ast::ReturnAstType:                                this->visitReturn(static_cast<ReturnAst*>(node)); break;
+        case Ast::AwaitAstType:                                 this->visitAwait(static_cast<AwaitAst*>(node)); break;
         case Ast::DeleteAstType:                                this->visitDelete(static_cast<DeleteAst*>(node)); break;
         case Ast::AssignmentAstType:                            this->visitAssignment(static_cast<AssignmentAst*>(node)); break;
         case Ast::AugmentedAssignmentAstType:                   this->visitAugmentedAssignment(static_cast<AugmentedAssignmentAst*>(node)); break;

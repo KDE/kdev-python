@@ -95,6 +95,7 @@ public:
         AugmentedAssignmentAstType,
         LastStatementType,
         ExpressionAstType, // everything below is an expression
+        AwaitAstType,
         NameAstType,
         NameConstantAstType,
         CallAstType,
@@ -285,6 +286,7 @@ public:
     QList<ExpressionAst*> decorators;
     QList<Ast*> body;
     ExpressionAst* returns;
+    bool async;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
@@ -442,6 +444,12 @@ public:
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
     CallAst* belongsToCall;
+};
+
+class KDEVPYTHONPARSER_EXPORT AwaitAst : public ExpressionAst {
+public:
+    AwaitAst(Ast* parent);
+    ExpressionAst* value;
 };
 
 class KDEVPYTHONPARSER_EXPORT YieldFromAst : public ExpressionAst {

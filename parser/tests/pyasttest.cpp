@@ -129,6 +129,9 @@ void PyAstTest::testStatements_data()
     QTest::addColumn<QString>("code");
     QTest::newRow("assign_int") << "a = 3";
     QTest::newRow("funcdef") << "def myfun(): pass";
+    QTest::newRow("asyncfuncdef") << "async def myfun(): pass";
+    QTest::newRow("asyncfuncdef2") << "async    def myfun(): pass";
+    QTest::newRow("asyncfuncdef_await") << "async def myfun(): await 3";
     QTest::newRow("funcdef_args") << "def myfun(arg1, arg2): pass";
     QTest::newRow("funcdef_vararg") << "def myfun(arg1, *arg): pass";
     QTest::newRow("funcdef_kwarg") << "def myfun(**arg): pass";

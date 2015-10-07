@@ -46,71 +46,39 @@ private:
 
 
 
-    Ast* visitNode(_slice* node) {
-        if ( ! node ) return 0;
+    Ast* visitNode(_withitem* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
-        switch ( node->kind ) {
-        case Slice_kind: {
-                SliceAst* v = new  SliceAst(parent());
-                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
-                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
-                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
-                result = v;
-                break;
-            }
-        case ExtSlice_kind: {
-                ExtendedSliceAst* v = new  ExtendedSliceAst(parent());
-                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
-                result = v;
-                break;
-            }
-        case Index_kind: {
-                IndexAst* v = new  IndexAst(parent());
-                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
-                result = v;
-                break;
-            }
-        default:
-            qWarning() << "Unsupported statement AST type: " << node->kind;
-            Q_ASSERT(false);
-        }
-
-        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-        if ( result->hasUsefulRangeInformation ) {
-            Ast* parent = result->parent;
-            while ( parent ) {
-                if ( parent->endLine < result->endLine ) {
-                    parent->endLine = result->endLine;
-                    parent->endCol = result->endCol;
-                }
-                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                    parent->startLine = result->startLine;
-                    parent->startCol = result->startCol;
-                }
-                parent = parent->parent;
-            }
-        }
-    
-        if ( result && result->astType == Ast::NameAstType ) {
-            NameAst* r = static_cast<NameAst*>(result);
-            r->startCol = r->identifier->startCol;
-            r->endCol = r->identifier->endCol;
-            r->startLine = r->identifier->startLine;
-            r->endLine = r->identifier->endLine;
-        }
-        return result;
+        if ( ! node ) return 0;
+                WithItemAst* v = new  WithItemAst(parent());
+            nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->context_expr)); nodeStack.pop();
+            nodeStack.push(v); v->optionalVars = static_cast<NameAst*>(visitNode(node->optional_vars)); nodeStack.pop();
+        return v;
     }
 
 
-    Ast* visitNode(_arguments* node) {
+    Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return 0;
-                ArgumentsAst* v = new  ArgumentsAst(parent());
-            nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
-            nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
-            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
-            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+                AliasAst* v = new  AliasAst(parent());
+            v->name = node->name ? new Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
+            v->asName = node->asname ? new Python::Identifier(PyUnicodeObjectToQString(node->asname)) : 0;
+        return v;
+    }
+
+
+    Ast* visitNode(_arg* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ArgAst* v = new  ArgAst(parent());
+            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+                if ( v->argumentName ) {
+                    v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
+                    v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
+                    v->argumentName->endCol = node->col_offset + v->argumentName->value.length() - 1;  v->endCol = v->argumentName->endCol;
+                    v->argumentName->endLine = tline(node->lineno - 1);  v->endLine = v->argumentName->endLine;
+                    ranges_copied = true;
+                }
+            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
         return v;
     }
 
@@ -125,21 +93,17 @@ private:
     }
 
 
-    Ast* visitNode(_withitem* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                WithItemAst* v = new  WithItemAst(parent());
-            nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->context_expr)); nodeStack.pop();
-            nodeStack.push(v); v->optionalVars = static_cast<NameAst*>(visitNode(node->optional_vars)); nodeStack.pop();
-        return v;
-    }
-
-
     Ast* visitNode(_expr* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
+        case Await_kind: {
+                AwaitAst* v = new  AwaitAst(parent());
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Await.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
         case BoolOp_kind: {
                 BooleanOperationAst* v = new  BooleanOperationAst(parent());
                 v->type = (ExpressionAst::BooleanOperationTypes) node->v.BoolOp.op;
@@ -242,6 +206,7 @@ private:
                 nodeStack.push(v); v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func)); nodeStack.pop();
                 nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->v.Call.args); nodeStack.pop();
                 nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
+ v->function->belongsToCall = v;
                 result = v;
                 break;
             }
@@ -380,6 +345,17 @@ private:
     }
 
 
+    Ast* visitNode(_comprehension* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ComprehensionAst* v = new  ComprehensionAst(parent());
+            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
+            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
+            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
+        return v;
+    }
+
+
     Ast* visitNode(_stmt* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
@@ -405,6 +381,24 @@ private:
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.FunctionDef.body); nodeStack.pop();
                 nodeStack.push(v); v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.FunctionDef.decorator_list); nodeStack.pop();
                 nodeStack.push(v); v->returns = static_cast<ExpressionAst*>(visitNode(node->v.FunctionDef.returns)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case AsyncFunctionDef_kind: {
+                FunctionDefinitionAst* v = new  FunctionDefinitionAst(parent());
+                v->name = node->v.AsyncFunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.AsyncFunctionDef.name)) : 0;
+                if ( v->name ) {
+                    v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
+                    v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
+                    v->name->endCol = node->col_offset + v->name->value.length() - 1;  v->endCol = v->name->endCol;
+                    v->name->endLine = tline(node->lineno - 1);  v->endLine = v->name->endLine;
+                    ranges_copied = true;
+                }
+                nodeStack.push(v); v->arguments = static_cast<ArgumentsAst*>(visitNode(node->v.AsyncFunctionDef.args)); nodeStack.pop();
+                nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.AsyncFunctionDef.body); nodeStack.pop();
+                nodeStack.push(v); v->decorators = visitNodeList<_expr, ExpressionAst>(node->v.AsyncFunctionDef.decorator_list); nodeStack.pop();
+                nodeStack.push(v); v->returns = static_cast<ExpressionAst*>(visitNode(node->v.AsyncFunctionDef.returns)); nodeStack.pop();
+ v->async = true;
                 result = v;
                 break;
             }
@@ -603,6 +597,75 @@ private:
     }
 
 
+    Ast* visitNode(_arguments* node) {
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        if ( ! node ) return 0;
+                ArgumentsAst* v = new  ArgumentsAst(parent());
+            nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
+            nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
+            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+        return v;
+    }
+
+
+    Ast* visitNode(_slice* node) {
+        if ( ! node ) return 0;
+        bool ranges_copied = false; Q_UNUSED(ranges_copied);
+        Ast* result = 0;
+        switch ( node->kind ) {
+        case Slice_kind: {
+                SliceAst* v = new  SliceAst(parent());
+                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
+                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
+                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case ExtSlice_kind: {
+                ExtendedSliceAst* v = new  ExtendedSliceAst(parent());
+                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case Index_kind: {
+                IndexAst* v = new  IndexAst(parent());
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        default:
+            qWarning() << "Unsupported statement AST type: " << node->kind;
+            Q_ASSERT(false);
+        }
+
+        // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+        if ( result->hasUsefulRangeInformation ) {
+            Ast* parent = result->parent;
+            while ( parent ) {
+                if ( parent->endLine < result->endLine ) {
+                    parent->endLine = result->endLine;
+                    parent->endCol = result->endCol;
+                }
+                if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+                    parent->startLine = result->startLine;
+                    parent->startCol = result->startCol;
+                }
+                parent = parent->parent;
+            }
+        }
+    
+        if ( result && result->astType == Ast::NameAstType ) {
+            NameAst* r = static_cast<NameAst*>(result);
+            r->startCol = r->identifier->startCol;
+            r->endCol = r->identifier->endCol;
+            r->startLine = r->identifier->startLine;
+            r->endLine = r->identifier->endLine;
+        }
+        return result;
+    }
+
+
     Ast* visitNode(_excepthandler* node) {
         if ( ! node ) return 0;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
@@ -652,44 +715,6 @@ private:
             r->endLine = r->identifier->endLine;
         }
         return result;
-    }
-
-
-    Ast* visitNode(_alias* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                AliasAst* v = new  AliasAst(parent());
-            v->name = node->name ? new Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
-            v->asName = node->asname ? new Python::Identifier(PyUnicodeObjectToQString(node->asname)) : 0;
-        return v;
-    }
-
-
-    Ast* visitNode(_comprehension* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                ComprehensionAst* v = new  ComprehensionAst(parent());
-            nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
-            nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
-            nodeStack.push(v); v->conditions = visitNodeList<_expr, ExpressionAst>(node->ifs); nodeStack.pop();
-        return v;
-    }
-
-
-    Ast* visitNode(_arg* node) {
-        bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
-                ArgAst* v = new  ArgAst(parent());
-            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
-                if ( v->argumentName ) {
-                    v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
-                    v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
-                    v->argumentName->endCol = node->col_offset + v->argumentName->value.length() - 1;  v->endCol = v->argumentName->endCol;
-                    v->argumentName->endLine = tline(node->lineno - 1);  v->endLine = v->argumentName->endLine;
-                    ranges_copied = true;
-                }
-            nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->annotation)); nodeStack.pop();
-        return v;
     }
 
 };

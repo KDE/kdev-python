@@ -183,6 +183,10 @@ void AstDefaultVisitor::visitReturn(ReturnAst* node)
     visitNode(node->value);
 }
 
+void AstDefaultVisitor::visitAwait(AwaitAst* node) {
+    visitNode(node->value);
+}
+
 void AstDefaultVisitor::visitSet(SetAst* node)
 {
     foreach (ExpressionAst* expression, node->elements) {

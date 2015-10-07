@@ -49,6 +49,7 @@ public:
     virtual void visitFunctionDefinition(FunctionDefinitionAst* node) { Q_UNUSED(node); };
     virtual void visitClassDefinition(ClassDefinitionAst* node) { Q_UNUSED(node); };
     virtual void visitReturn(ReturnAst* node) { Q_UNUSED(node); };
+    virtual void visitAwait(AwaitAst* node) { Q_UNUSED(node); };
     virtual void visitDelete(DeleteAst* node) { Q_UNUSED(node); };
     virtual void visitAssignment(AssignmentAst* node) { Q_UNUSED(node); };
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node) { Q_UNUSED(node); };

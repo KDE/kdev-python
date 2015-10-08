@@ -83,11 +83,8 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     QFrame* separator2 = new QFrame();
     separator2->setFrameShape(QFrame::HLine);
     QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
-    openFileManagerButton->setIcon(QIcon::fromTheme("system-file-manager"));
     QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
-    openTextEditorButton->setIcon(QIcon::fromTheme("kate"));
     QPushButton* searchPathsButton = new QPushButton(i18n("Search paths..."));
-    searchPathsButton->setIcon(QIcon::fromTheme("folder"));
     buttonsLayout->addWidget(separator);
     buttonsLayout->addWidget(openFileManagerButton);
     buttonsLayout->addWidget(openTextEditorButton);

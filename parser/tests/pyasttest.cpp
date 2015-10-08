@@ -221,6 +221,10 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("None") << "None";
     QTest::newRow("False") << "False";
     QTest::newRow("True") << "True";
+    QTest::newRow("dstar_unpack") << "ext_map = {\n"
+        "       **{ext: self.obj_extension for ext in self.src_extensions},\n"
+        "       **{ext: self.res_extension for ext in self._rc_extensions + self._mc_extensions},\n"
+    "}";
 }
 
 void PyAstTest::testCorrectedFuncRanges()

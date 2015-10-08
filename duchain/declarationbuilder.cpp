@@ -1008,7 +1008,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     int currentParamIndex = hasSelfArgument;
     int currentArgumentIndex = 0;
     int indexInVararg = -1;
-    int paramsAvailable = qMin(functiontype->arguments().length() + hasSelfArgument, parameters.size());
+    int paramsAvailable = qMin(functiontype->arguments().length(), parameters.size());
     int argsAvailable = node->arguments.size();
     bool atVararg = false;
 

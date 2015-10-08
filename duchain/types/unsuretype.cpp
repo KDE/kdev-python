@@ -16,22 +16,25 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 **/
 
-#include <language/duchain/types/typeregister.h>
-
 #include "unsuretype.h"
 #include "helpers.h"
-#include <language/duchain/duchain.h>
-#include <language/duchain/duchainlock.h>
-#include <KLocalizedString>
-#include <language/duchain/parsingenvironment.h>
-#include <language/duchain/types/typesystem.h>
-#include <language/duchain/types/typealiastype.h>
-#include <language/duchain/types/unsuretype.h>
+#include "indexedcontainer.h"
+
 #include <QDebug>
 #include "../duchaindebug.h"
 
+#include <language/duchain/types/typeregister.h>
+#include <language/duchain/types/typesystem.h>
+#include <language/duchain/types/typealiastype.h>
+#include <language/duchain/types/containertypes.h>
+#include <language/duchain/types/unsuretype.h>
+#include <language/duchain/parsingenvironment.h>
+#include <language/duchain/duchainlock.h>
+
+#include <KLocalizedString>
+
 namespace Python {
-    
+
 REGISTER_TYPE(UnsureType);
 
 UnsureType::UnsureType() : KDevelop::UnsureType(createData<UnsureType>())
@@ -68,27 +71,72 @@ const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
 QString UnsureType::toString() const
 {
     QString typeList;
-    int count = 0;
-    QList<IndexedType> encountered;
+    QVector<AbstractType::Ptr> types;
+    auto is_new_type = [&types](const IndexedType newType) {
+        foreach ( const auto& type, types ) {
+            if ( type->indexed() == newType ) {
+                return false;
+            }
+        }
+        return true;
+    };
+
     foreach ( AbstractType::Ptr type, typesRecursive() ) {
         if ( ! type ) {
             qCWarning(KDEV_PYTHON_DUCHAIN) << "Invalid type: " << type.data();
             continue;
         }
-        
-        IndexedType indexed = Helper::resolveAliasType(type)->indexed();
-        if ( encountered.contains(indexed) )
-            continue;
-        encountered << indexed;
-        
+
+        const auto new_type = Helper::resolveAliasType(type);
+        if ( is_new_type(new_type->indexed()) ) {
+            types.append(new_type);
+        }
+    }
+
+    auto count_and_remove = [&types](std::function<bool(AbstractType::Ptr)> match) -> bool {
+        auto count = std::count_if(types.begin(), types.end(), match);
+        if ( count < 3 ) {
+            // nothing worth collapsing
+            return false;
+        }
+        auto end = std::remove_if(types.begin(), types.end(), match);
+        types.erase(end, types.end());
+        return true;
+    };
+
+    QStringList collapsedTypes;
+    if ( types.size() > 2 ) {
+        // try to collapse the list, if possible
+        using T = const AbstractType::Ptr&;
+        auto have_callable = count_and_remove([](T t) { return t->whichType() == AbstractType::TypeFunction; });
+        if ( have_callable ) {
+            // TODO collapse arguments / return type
+            collapsedTypes.append(i18nc("some object that can be called, in programming", "<callable>"));
+        }
+        auto have_iterable = count_and_remove([](T t) { return t.cast<IndexedContainer>() || t.cast<ListType>(); });
+        if ( have_iterable ) {
+            // TODO collapse element count / types
+            collapsedTypes.append(i18nc("a set with some elements", "<iterable>"));
+        }
+    }
+
+    int count = 0;
+    foreach ( const auto& type, types ) {
         if ( count )
             typeList += ", ";
         count += 1;
-        
+
         typeList += type->toString();
     }
-    
-    if ( count == 0 )
+    foreach ( const auto& collapsed, collapsedTypes ) {
+        if ( count )
+            typeList += ", ";
+        count += 1;
+
+        typeList += collapsed;
+    }
+
+    if ( count == 0 || count > 7 )
         return i18nc("refers to a type (in program code) which is not known", "mixed");
     if ( count == 1 )
         return typeList;

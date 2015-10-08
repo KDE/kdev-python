@@ -89,6 +89,7 @@ private:
 private:
     /// The file which is being modified by this object
     QFile m_file;
+    QString m_filePath;
     /// The last known-valid contents of the document
     QStringList m_oldContents;
     /// The current contents of the document to be written to disk later

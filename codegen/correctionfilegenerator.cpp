@@ -174,6 +174,7 @@ void TypeCorrection::accepted()
 
 CorrectionFileGenerator::CorrectionFileGenerator(const QString &filePath)
     : m_file(filePath)
+    , m_filePath(filePath)
 {
     Q_ASSERT(! filePath.isEmpty());
     qCDebug(KDEV_PYTHON_CODEGEN) << "Correction file path: " << filePath;
@@ -475,6 +476,7 @@ bool CorrectionFileGenerator::checkForValidSyntax()
 {
     ParseSession parseSession;
     parseSession.setContents(m_code.join("\n"));
+    parseSession.setCurrentDocument(IndexedString(m_filePath));
 
     QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
 

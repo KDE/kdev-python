@@ -392,7 +392,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
             continue;
         }
         auto path = QDir(basePath.path()).relativeFilePath(document.path());
-        absolutePath = Helper::localCorrectionFileDir + path;
+        absolutePath = QUrl::fromLocalFile(Helper::localCorrectionFileDir + path);
         break;
     }
     return absolutePath;

@@ -441,6 +441,7 @@ int CorrectionFileGenerator::findStructureFor(const QString &klass, const QStrin
 
     ParseSession parseSession;
     parseSession.setContents(m_code.join("\n"));
+    parseSession.setCurrentDocument(IndexedString(m_filePath));
 
     QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
 

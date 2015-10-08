@@ -357,10 +357,47 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     return ReferencedTopDUContext(0); // c++...
 }
 
+// stolen from KUrl. duh.
+static QString _relativePath(const QString &base_dir, const QString &path)
+{
+   QString _base_dir(QDir::cleanPath(base_dir));
+   QString _path(QDir::cleanPath(path.isEmpty() || QDir::isRelativePath(path) ? _base_dir+QLatin1Char('/')+path : path));
+
+   if (_base_dir.isEmpty())
+      return _path;
+
+   if (_base_dir[_base_dir.length()-1] != QLatin1Char('/'))
+      _base_dir.append(QLatin1Char('/') );
+
+   const QStringList list1 = _base_dir.split(QLatin1Char('/'), QString::SkipEmptyParts);
+   const QStringList list2 = _path.split(QLatin1Char('/'), QString::SkipEmptyParts);
+
+   // Find where they meet
+   int level = 0;
+   int maxLevel = qMin(list1.count(), list2.count());
+   while((level < maxLevel) && (list1[level] == list2[level])) level++;
+
+   QString result;
+   // Need to go down out of the first path to the common branch.
+   for(int i = level; i < list1.count(); i++)
+      result.append(QLatin1String("../"));
+
+   // Now up up from the common branch to the second path.
+   for(int i = level; i < list2.count(); i++)
+      result.append(list2[i]).append(QLatin1Char('/'));
+
+   if ((level < list2.count()) && (path[path.length()-1] != QLatin1Char('/')))
+      result.truncate(result.length()-1);
+
+   return result;
+}
+
 QUrl Helper::getCorrectionFile(const QUrl& document)
 {
     if ( Helper::correctionFileDirs.isEmpty() ) {
-        Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files/", QStandardPaths::LocateDirectory);
+        Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
+                                                               "kdevpythonsupport/correction_files/",
+                                                               QStandardPaths::LocateDirectory);
     }
 
     foreach (QString correctionFileDir, correctionFileDirs) {
@@ -368,12 +405,14 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
             if ( ! basePath.isParentOf(document) ) {
                 continue;
             }
-            QString path = basePath.resolved(document).path();
-            auto absolutePath = QUrl::fromLocalFile(correctionFileDir + path);
+            auto base = basePath.path();
+            auto doc = document.path();
+            auto relative = _relativePath(base, doc);
+            auto fullPath = correctionFileDir + "/" + relative;
             // TODO QUrl: cleanPath?
 
-            if ( QFile::exists(absolutePath.path()) ) {
-                return absolutePath;
+            if ( QFile::exists(fullPath) ) {
+                return QUrl::fromLocalFile(fullPath);
             }
         }
     }

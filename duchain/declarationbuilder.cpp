@@ -1062,7 +1062,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         else {
             if ( ! argumentType ) continue;
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
-                                                            addType.cast<AbstractType>());
+                                                           addType.cast<AbstractType>());
             // TODO this does not correctly update the types in quickopen! Investigate why.
             functiontype->removeArgument(currentArgumentIndex + hasSelfArgument);
             functiontype->addArgument(newType, currentArgumentIndex + hasSelfArgument);

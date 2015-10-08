@@ -349,7 +349,6 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     }
     else {
         DUChainReadLocker lock;
-        qDebug() << "URL:" << Helper::getDocumentationFile();
         auto file = IndexedString(Helper::getDocumentationFile());
         ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(file));
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());

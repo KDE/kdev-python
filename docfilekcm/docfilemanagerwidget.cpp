@@ -28,6 +28,7 @@
 
 #include <QBoxLayout>
 #include <QFileSystemModel>
+#include <QDialogButtonBox>
 #include <QTreeView>
 #include <QPushButton>
 #include <QSplitter>
@@ -145,19 +146,22 @@ void DocfileManagerWidget::copyEditorContents()
     KDevelop::IDocumentController* documentController = KDevelop::ICore::self()->documentController();
     if ( documentController->activeDocument() ) {
         if ( KTextEditor::Document* doc = documentController->activeDocument()->textDocument() ) {
-            auto dialog = new KDialog(this);
-            dialog->setButtons(KDialog::Ok | KDialog::Cancel);
-            QWidget* contents = new QWidget;
-            contents->setLayout(new QVBoxLayout);
-            contents->layout()->addWidget(new QLabel(i18n("Enter a relative target path to copy %1 to:", doc->url().path())));
+            auto dialog = new QDialog(this);
+            auto buttonbox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
+            connect(buttonbox->button(QDialogButtonBox::Ok), &QPushButton::clicked,
+                    dialog, &QDialog::accept);
+            connect(buttonbox->button(QDialogButtonBox::Cancel), &QPushButton::clicked,
+                    dialog, &QDialog::reject);
+            dialog->setLayout(new QVBoxLayout);
+            dialog->layout()->addWidget(new QLabel(i18n("Enter a relative target path to copy %1 to:", doc->url().path())));
             QLineEdit* lineEdit = new QLineEdit;
             lineEdit->setText(doc->documentName());
-            contents->layout()->addWidget(lineEdit);
-            contents->layout()->addWidget(new QLabel(i18n("This path must match what you use in Python to import "
+            dialog->layout()->addWidget(lineEdit);
+            dialog->layout()->addWidget(new QLabel(i18n("This path must match what you use in Python to import "
                                                           "this module. For example, enter \"numpy/fft.py\" for numpy.fft")));
-            contents->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
-            dialog->setMainWidget(contents);
-            if ( dialog->exec() == KDialog::Accepted ) {
+            dialog->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
+            dialog->layout()->addWidget(buttonbox);
+            if ( dialog->exec() == QDialog::Accepted ) {
                 auto target = QUrl::fromLocalFile(docfilePath() + "/" + lineEdit->text());
                 // TODO QUrl: cleanPath?
                 QDir d(target.url());

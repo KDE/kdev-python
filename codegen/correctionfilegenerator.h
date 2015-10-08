@@ -23,7 +23,6 @@
 
 #include <QCache>
 #include <QStringList>
-#include <KDialog>
 
 #include <interfaces/context.h>
 #include <interfaces/contextmenuextension.h>
@@ -100,7 +99,7 @@ private:
     static const int DEFAULT_INDENT_LEVEL = 4;
 };
 
-class CorrectionAssistant : public KDialog
+class CorrectionAssistant : public QDialog
 {
     Q_OBJECT
 public:

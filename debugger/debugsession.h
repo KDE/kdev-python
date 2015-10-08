@@ -315,8 +315,8 @@ public:
     };
     void run(DebugSession* session) {
         Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
-        qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command.toAscii() << m_notifyMethod;
-        session->write(m_command.toAscii());
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command<< m_notifyMethod;
+        session->write(m_command.toUtf8());
     }
 private:
     QString m_command;

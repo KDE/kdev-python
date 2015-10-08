@@ -20,7 +20,6 @@
 #include <kpluginfactory.h>
 #include <KAboutData>
 #include <KLocalizedString>
-#include <K4AboutData>
 
 #include "pdbdebuggerplugin.h"
 #include "pdblauncher.h"

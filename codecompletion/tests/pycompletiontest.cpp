@@ -78,7 +78,7 @@ void makefile(QString filename, QString contents) {
     QFile fileptr;
     fileptr.setFileName(basepath + filename);
     fileptr.open(QIODevice::WriteOnly);
-    fileptr.write(contents.toAscii());
+    fileptr.write(contents.toUtf8());
     fileptr.close();
     auto url = QUrl::fromLocalFile(QDir::cleanPath(basepath + filename));
     qCDebug(KDEV_PYTHON_CODECOMPLETION) <<  "updating duchain for " << url.url() << basepath;
@@ -119,8 +119,8 @@ void PyCompletionTest::initShell()
 
 void PyCompletionTest::testIdentifierMatching()
 {
-    QCOMPARE(camelCaseToUnderscore("FooBarBaz").toAscii().data(), "foo_bar_baz");
-    QCOMPARE(camelCaseToUnderscore("fooBarbaz").toAscii().data(),  "foo_barbaz");
+    QCOMPARE(camelCaseToUnderscore("FooBarBaz").toUtf8().data(), "foo_bar_baz");
+    QCOMPARE(camelCaseToUnderscore("fooBarbaz").toUtf8().data(),  "foo_barbaz");
 
     QCOMPARE(identifierMatchQuality("foobar", "foobar"),  3);
     QCOMPARE(identifierMatchQuality("foobar", "bar"),  2);
@@ -201,7 +201,7 @@ const CompletionParameters PyCompletionTest::prepareCompletion(const QString& in
     QString filename = nextFilename();
     QFile fileptr(filename);
     fileptr.open(QIODevice::WriteOnly);
-    fileptr.write(initCode.toAscii().replace("%INVOKE", ""));
+    fileptr.write(initCode.toUtf8().replace("%INVOKE", ""));
     fileptr.close();
 
     DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::ForceUpdate);

@@ -78,7 +78,7 @@ PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
     qCDebug(KDEV_PYTHON_DUCHAIN) << "tempdirname" << tempdirname;
 
     QByteArray pythonpath = qgetenv("PYTHONPATH");
-    pythonpath.prepend(":").prepend(assetsDir.absolutePath().toAscii());
+    pythonpath.prepend(":").prepend(assetsDir.absolutePath().toUtf8());
     qputenv("PYTHONPATH", pythonpath);
 
     initShell();
@@ -771,7 +771,7 @@ void PyDUChainTest::testTypes()
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
     
-    ReferencedTopDUContext ctx = parse(code.toAscii());
+    ReferencedTopDUContext ctx = parse(code.toUtf8());
     QVERIFY(ctx);
     QVERIFY(m_ast);
     
@@ -950,7 +950,7 @@ void PyDUChainTest::testImportDeclarations() {
     QFETCH(QStringList, expectedDecls);
     QFETCH(bool, shouldBeAliased);
     
-    ReferencedTopDUContext ctx = parse(code.toAscii());
+    ReferencedTopDUContext ctx = parse(code.toUtf8());
     QVERIFY(ctx);
     QVERIFY(m_ast);
     

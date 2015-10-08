@@ -6,82 +6,89 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>180</height>
+    <width>484</width>
+    <height>167</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Specify correct type</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <item row="1" column="0">
-    <widget class="QLabel" name="givenKindLabel">
-     <property name="text">
-      <string>Kind:</string>
-     </property>
-    </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="givenKindLabel">
+       <property name="text">
+        <string>Kind:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="kindLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="givenIdentifierLabel">
+       <property name="text">
+        <string>Identifier:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="identifierLabel">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="typeLabel">
+       <property name="text">
+        <string>Correct type:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="typeText">
+       <property name="placeholderText">
+        <string>Code which evaluates to the type, e.g. int()</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="importsLabel">
+       <property name="text">
+        <string>Required modules:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="importsText">
+       <property name="placeholderText">
+        <string>A comma separated list of modules required for the type</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="givenIdentifierLabel">
-     <property name="text">
-      <string>Identifier:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="typeLabel">
-     <property name="text">
-      <string>Correct type:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="KLineEdit" name="typeText">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="clickMessage" stdset="0">
-      <string>Code which evaluates to the type, e.g. int()</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="kindLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QLabel" name="identifierLabel">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="KLineEdit" name="importsText">
-     <property name="clickMessage" stdset="0">
-      <string>A comma separated list of modules required for the type</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="importsLabel">
-     <property name="text">
-      <string>Required modules:</string>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

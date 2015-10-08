@@ -11,5 +11,4 @@ ecm_add_test(${pycompletiontest_SRCS}
         ${kdevpythonparser_LIBRARIES}
         Qt5::Test
         KDev::Tests
-        KF5::KDELibs4Support
 )

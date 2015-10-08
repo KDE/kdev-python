@@ -15,6 +15,7 @@ set(REQUIRED QT_VERSION 5.2.0)
 
 cmake_minimum_required(VERSION 2.8.12)
 
+include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
 include(ECMAddTests)
@@ -31,7 +32,7 @@ find_package(PythonInterp 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
-find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver KDELibs4Support TextEditor KCMUtils)
+find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop REQUIRED)
 
@@ -90,11 +91,9 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
-    KF5::Archive
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::NewStuff
-    KF5::KDELibs4Support
     kdevpythoncompletion
     kdevpythonparser
     kdevpythonduchain

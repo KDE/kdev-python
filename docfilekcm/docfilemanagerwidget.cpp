@@ -27,6 +27,8 @@
 #include <interfaces/icore.h>
 
 #include <QBoxLayout>
+#include <QMimeType>
+#include <QMimeDatabase>
 #include <QFileSystemModel>
 #include <QDialogButtonBox>
 #include <QTreeView>
@@ -43,11 +45,8 @@
 
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KMimeType>
 #include <KRun>
-#include <KStandardDirs>
 #include <KTextEditor/Document>
-#include <KDialog>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     : QWidget(parent)
@@ -138,7 +137,8 @@ void DocfileManagerWidget::showSearchPaths()
 void DocfileManagerWidget::openDocfilePath()
 {
     auto docfileDirectory = QUrl::fromLocalFile(docfilePath());
-    KRun::runUrl(docfileDirectory, KMimeType::findByUrl(docfileDirectory)->name(), this);
+    QMimeDatabase db;
+    KRun::runUrl(docfileDirectory, db.mimeTypeForUrl(docfileDirectory).name(), this);
 }
 
 void DocfileManagerWidget::copyEditorContents()
@@ -201,7 +201,7 @@ const QList<QUrl> DocfileManagerWidget::selectedItems() const
     QList<QUrl> urls;
     const QFileSystemModel* fsmodel = qobject_cast<QFileSystemModel*>(filesTreeView->model());
     foreach ( const QModelIndex& index, items ) {
-        urls << QUrl(fsmodel->filePath(index));
+        urls << QUrl::fromLocalFile(fsmodel->filePath(index));
     }
     return urls;
 }

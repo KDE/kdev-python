@@ -34,7 +34,6 @@
 #include "../duchaindebug.h"
 
 
-#include <KAction>
 #include <KLocalizedString>
 
 using namespace KDevelop;

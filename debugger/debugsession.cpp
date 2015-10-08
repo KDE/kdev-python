@@ -318,7 +318,7 @@ void DebugSession::jumpToCursor()
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
-            addSimpleUserCommand(QString("jump " + QString::number(cursor.line() + 1)).toAscii());
+            addSimpleUserCommand(QString("jump " + QString::number(cursor.line() + 1)).toUtf8());
         }
     }
 }
@@ -401,7 +401,7 @@ void DebugSession::runImmediately(const QString& cmd)
         m_nextNotifyObject.clear(); // TODO is this correct?
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting debugger";
         kill(m_debuggerProcess->pid(), SIGINT);
-        write(cmd.toAscii());
+        write(cmd.toUtf8());
         write("continue\n");
         updateLocation();
     }
@@ -428,7 +428,7 @@ void DebugSession::createVariable(Python::Variable* variable, QObject* callback,
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "asked to create variable";
     InternalPdbCommand* cmd = new InternalPdbCommand(variable, "dataFetched",
-                                                     ("print(" + variable->expression() + ")\n").toAscii());
+                                                     ("print(" + variable->expression() + ")\n").toUtf8());
     variable->m_notifyCreated = callback;
     variable->m_notifyCreatedMethod = callbackMethod;
     addCommand(cmd);

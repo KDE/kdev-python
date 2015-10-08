@@ -22,8 +22,6 @@
 
 #include <QMutexLocker>
 
-#include <KComponentData>
-
 #include <KPluginFactory>
 #include <KPluginLoader>
 

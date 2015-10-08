@@ -36,7 +36,6 @@
 #include <QStandardPaths>
 
 #include <KLocalizedString>
-#include <KDialog>
 #include <KMessageBox>
 #include <KProcess>
 #include <interfaces/icore.h>

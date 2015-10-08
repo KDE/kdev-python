@@ -24,10 +24,9 @@ include_directories(kdevpythonparser ${PYTHON_INCLUDE_DIRS})
 add_library( kdevpythonparser SHARED ${parser_STAT_SRCS} )
 
 generate_export_header(kdevpythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPORT
-                                         EXPORT_FILE_NAME parserexport.h)
+                                        EXPORT_FILE_NAME parserexport.h)
 
 target_link_libraries(kdevpythonparser LINK_PRIVATE
-    KF5::KDELibs4Support
     KDev::Language
     KDev::Util
     Qt5::Core

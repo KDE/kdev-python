@@ -110,11 +110,12 @@ void TypeCorrection::executeSpecifyTypeAction()
 
     CorrectionAssistant *dialog = new CorrectionAssistant(decl, hintType);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setCaption("Specify type for " + decl.data()->identifier().toString());
-    dialog->setButtons(KDialog::Ok | KDialog::Cancel);
+    dialog->setWindowTitle("Specify type for " + decl.data()->identifier().toString());
     connect(dialog, SIGNAL(accepted()), this, SLOT(accepted()));
 
-    m_ui->setupUi(dialog->mainWidget());
+    m_ui->setupUi(dialog);
+    connect(m_ui->buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+    connect(m_ui->buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
     if ( hintType == CorrectionFileGenerator::FunctionReturnHint ) {
         m_ui->kindLabel->setText(i18n("Function return type"));
     }
@@ -482,11 +483,10 @@ bool CorrectionFileGenerator::checkForValidSyntax()
 
 CorrectionAssistant::CorrectionAssistant(IndexedDeclaration declaration, CorrectionFileGenerator::HintType hintType,
                                          QWidget *parent)
-    : KDialog(parent),
+    : QDialog(parent),
       m_declaration(declaration),
       m_hintType(hintType)
 {
-
 }
 
 IndexedDeclaration CorrectionAssistant::declaration() const

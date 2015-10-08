@@ -31,7 +31,6 @@ add_dependencies(kdevpythoncompletion
 )
 
 target_link_libraries(kdevpythoncompletion LINK_PRIVATE
-    KF5::KDELibs4Support
     KDev::Language
     KDev::Interfaces
     KDev::Project

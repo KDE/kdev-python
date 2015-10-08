@@ -44,10 +44,7 @@
 #include <KLocalizedString>
 #include <KMimeType>
 #include <KRun>
-#include <KNS3/DownloadDialog>
 #include <KStandardDirs>
-#include <knewstuff3/uploaddialog.h>
-#include <KTar>
 #include <KTextEditor/Document>
 #include <KDialog>
 
@@ -70,23 +67,14 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
 
     // construct the buttons for up/download
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
-    QPushButton* ghnsButton = new QPushButton(i18n("Download new"));
-    ghnsButton->setIcon(QIcon::fromTheme("get-hot-new-stuff"));
     QPushButton* generateButton = new QPushButton(i18n("Generate..."));
     generateButton->setIcon(QIcon::fromTheme("tools-wizard"));
-    QPushButton* uploadButton = new QPushButton(i18n("Share selected"));
-    uploadButton->setIcon(QIcon::fromTheme("applications-internet")); // TODO better icon semantically
     QPushButton* importButton = new QPushButton(i18n("Import from editor"));
     importButton->setToolTip(i18n("Copy the contents of the active editor window "
                                   "to a new file in the documentation directory"));
-    importButton->setIcon(QIcon::fromTheme("edit-copy"));
-    buttonsLayout->addWidget(ghnsButton);
-    buttonsLayout->addWidget(uploadButton);
     buttonsLayout->addWidget(generateButton);
     buttonsLayout->addWidget(importButton);
-    QObject::connect(ghnsButton, SIGNAL(clicked(bool)), this, SLOT(showGHNSDialog()));
     QObject::connect(generateButton, SIGNAL(clicked(bool)), this, SLOT(runWizard()));
-    QObject::connect(uploadButton, SIGNAL(clicked(bool)), this, SLOT(uploadSelected()));
     QObject::connect(importButton, SIGNAL(clicked(bool)), this, SLOT(copyEditorContents()));
 
     // construct the buttons for the remaining actions
@@ -221,53 +209,4 @@ void DocfileManagerWidget::runWizard()
 {
     DocfileWizard wizard(docfilePath(), this);
     wizard.exec();
-}
-
-void DocfileManagerWidget::showGHNSDialog()
-{
-    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
-    KNS3::DownloadDialog dialog(knsrc, this);
-    dialog.exec();
-}
-
-QTemporaryFile* DocfileManagerWidget::makeArchive(const QList< QUrl >& urls) const
-{
-    // we need this path to remove it from the path the file should have in the tar archive
-    QString base = docfilePath();
-    QTemporaryFile* tempfile = new QTemporaryFile("kdevpython_upload_XXXXXX.tar.gz");
-    tempfile->open();
-    KTar t(tempfile);
-    t.open(QIODevice::WriteOnly);
-    foreach ( const QUrl& url, urls ) {
-        QFileInfo info(url.path());
-        const QString pathInArchive = "./" + url.path().remove(0, base.length());
-        if ( info.isDir() ) {
-            t.addLocalDirectory(url.path(), pathInArchive);
-        }
-        else {
-            t.addLocalFile(url.path(), pathInArchive);
-        }
-    }
-    t.close();
-    return tempfile;
-}
-
-void DocfileManagerWidget::uploadSelected()
-{
-    QString knsrc = QStandardPaths::locate(QStandardPaths::GenericConfigLocation, "kdev_python_docfiles.knsrc");
-    KNS3::UploadDialog dialog(knsrc, this);
-    QList<QUrl> selected = selectedItems();
-    // always make a tar archive out of the selected files, even if it's only one
-    // this makes it easy to put the file(s) into the correct subdirectory when installing
-    QTemporaryFile* uploadFile = makeArchive(selected);
-    QString uploadFilename = uploadFile->fileName();
-    if ( ! selected.isEmpty() ) {
-        qDebug() << "setting upload file name:" << uploadFilename;
-        dialog.setUploadFile(uploadFilename);
-    }
-    dialog.exec();
-    if ( uploadFile ) {
-        // frees memory and deletes the file, too
-        delete uploadFile;
-    }
 }

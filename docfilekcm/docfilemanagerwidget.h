@@ -39,13 +39,9 @@ public:
 public slots:
     void openDocfilePath();
     void openSelectedInTextEditor();
-    void showGHNSDialog();
-    void uploadSelected();
     void runWizard();
     void copyEditorContents();
     void showSearchPaths();
-
-    QTemporaryFile* makeArchive(const QList< QUrl >& urls) const;
 
 private:
     QTreeView* filesTreeView;

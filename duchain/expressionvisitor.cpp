@@ -424,7 +424,6 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 
 void ExpressionVisitor::visitList(ListAst* node)
 {
-    AstDefaultVisitor::visitList(node);
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<ListType>("list");
     lock.unlock();
@@ -444,7 +443,6 @@ void ExpressionVisitor::visitList(ListAst* node)
 
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
-    AstDefaultVisitor::visitDictionaryComprehension(node);
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<MapType>("dict");
     if ( type ) {

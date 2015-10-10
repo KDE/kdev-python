@@ -101,10 +101,12 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     
     qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
 
-    Helper::projectSearchPaths.clear();
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+    {
         QMutexLocker l(&Helper::projectPathLock);
-        Helper::projectSearchPaths.append(QUrl::fromLocalFile(project->path().path()));
+        Helper::projectSearchPaths.clear();
+        foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+            Helper::projectSearchPaths.append(QUrl::fromLocalFile(project->path().path()));
+        }
     }
     
     // lock the URL so no other parse job can run on this document

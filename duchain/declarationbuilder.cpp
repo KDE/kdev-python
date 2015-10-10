@@ -1376,7 +1376,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     // and creation / updating of variables can start.
     int i = 0;
     foreach ( ExpressionAst* target, targets ) {
-        SourceType element = std::move(selectSource(targets, sources, i, node->value));
+        SourceType element(selectSource(targets, sources, i, node->value));
 
         // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
         if ( target->astType == Ast::NameAstType ) {

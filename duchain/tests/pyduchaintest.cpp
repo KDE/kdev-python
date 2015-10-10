@@ -884,7 +884,13 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("hints_type") << "def myfun(arg): return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
     QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
-    
+
+    QTest::newRow("call_class") << "class Foo:\n"
+                                    "    def __call__(self):\n"
+                                    "         return 0\n"
+                                    "f = Foo()\n"
+                                    "checkme = f()\n" << "int";
+
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
 
     QTest::newRow("getitem") << "class c:\n def __getitem__(self, slice): return 3.14\na = c()\ncheckme = a[2]" << "float";

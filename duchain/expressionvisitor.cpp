@@ -154,6 +154,20 @@ void ExpressionVisitor::visitCall(CallAst* node)
     if ( ! v.m_isAlias && v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
         unidentifiedFunctionType = v.lastType().cast<FunctionType>();
     }
+    else if ( ! v.m_isAlias && v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
+        // use __call__
+        DUChainReadLocker lock;
+        auto c = v.lastType().cast<StructureType>()->internalContext(topContext());
+        if ( c ) {
+            auto decls = c->findDeclarations(QualifiedIdentifier("__call__"));
+            if ( ! decls.isEmpty() ) {
+                auto decl = dynamic_cast<FunctionDeclaration*>(decls.first());
+                if ( decl ) {
+                    unidentifiedFunctionType = decl->abstractType().cast<FunctionType>();
+                }
+            }
+        }
+    }
     else {
         actualDeclaration = v.lastDeclaration().data();
     }

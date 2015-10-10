@@ -409,7 +409,7 @@ class FunctionDumper:
 
     def dump(self):
         try:
-            arguments = inspect.getargspec(self.function)
+            arguments = inspect.getfullargspec(self.function)
             arglist = list()
             for index, argument in enumerate(arguments.args):
                 if len(arguments.args) - index - 1 > len(arguments.defaults):

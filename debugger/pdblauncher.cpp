@@ -88,20 +88,22 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
                             i18n("Unsupported interpreter"));
             return nullptr;
         }
-        
-        DebugJob* job = new DebugJob();
-        
+
+        QUrl scriptUrl;
         if ( iface->runCurrentFile(cfg) ) {
             auto document = KDevelop::ICore::self()->documentController()->activeDocument();
             if ( ! document ) {
                 qDebug(KDEV_PYTHON_DEBUGGER) << "no current document";
                 return nullptr;
             }
-            job->m_scriptUrl = document->url();
+            scriptUrl = document->url();
         }
         else {
-            job->m_scriptUrl = iface->script(cfg, err);
+            scriptUrl = iface->script(cfg, err);
         }
+
+        DebugJob* job = new DebugJob();
+        job->m_scriptUrl = scriptUrl;
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         job->m_workingDirectory = iface->workingDirectory(cfg);

@@ -39,7 +39,10 @@ using namespace KDevelop;
 
 namespace Python {
 
-UseBuilder::UseBuilder (PythonEditorIntegrator* editor) : UseBuilderBase(), m_errorReportingEnabled(true)
+UseBuilder::UseBuilder(PythonEditorIntegrator* editor, QVector<IndexedString> ignoreVariables)
+    : UseBuilderBase()
+    , m_errorReportingEnabled(true)
+    , m_ignoreVariables(ignoreVariables)
 {
     setEditor(editor);
 }
@@ -75,15 +78,17 @@ void UseBuilder::visitName(NameAst* node)
     if ( declaration && declaration->range() == useRange ) return;
     
     if ( ! declaration && ! keywords.contains(node->identifier->value) && m_errorReportingEnabled ) {
-        KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
-        p->setSource(KDevelop::IProblem::SemanticAnalysis);
-        p->setSeverity(KDevelop::IProblem::Hint);
-        p->setDescription(i18n("Undefined variable: %1", node->identifier->value));
-        {
-            DUChainWriteLocker wlock(DUChain::lock());
-            ProblemPointer ptr(p);
-            topContext()->addProblem(ptr);
+        if ( ! m_ignoreVariables.contains(IndexedString(node->identifier->value)) ) {
+            KDevelop::Problem *p = new KDevelop::Problem();
+            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?
+            p->setSource(KDevelop::IProblem::SemanticAnalysis);
+            p->setSeverity(KDevelop::IProblem::Hint);
+            p->setDescription(i18n("Undefined variable: %1", node->identifier->value));
+            {
+                DUChainWriteLocker wlock(DUChain::lock());
+                ProblemPointer ptr(p);
+                topContext()->addProblem(ptr);
+            }
         }
     }
     

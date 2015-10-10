@@ -35,7 +35,8 @@ typedef KDevelop::AbstractUseBuilder<Ast, Identifier, ContextBuilder> UseBuilder
 class KDEVPYTHONDUCHAIN_EXPORT UseBuilder: public UseBuilderBase
 {
 public:
-    UseBuilder(PythonEditorIntegrator *editor);
+    /// vector of names to ignore since they were unknown imports
+    UseBuilder(PythonEditorIntegrator *editor, QVector<IndexedString> ignoreVariables);
     ParseSession* parseSession() const;
 
 protected:
@@ -56,6 +57,8 @@ private:
         m_errorReportingEnabled = true;
     };
     DUContext* contextAtOrCurrent(const CursorInRevision& pos);
+
+    QVector<IndexedString> m_ignoreVariables;
 };
 
 }

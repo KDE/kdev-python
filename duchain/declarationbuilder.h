@@ -74,6 +74,13 @@ public:
      */
     QString buildModuleNameFromNode(ImportFromAst* node, AliasAst* alias, const QString& intermediate) const;
 
+    /**
+     * @brief Get a list of all module names which were not found while parsing.
+     */
+    QVector<IndexedString> missingModules() const {
+        return m_missingModules;
+    }
+
 protected:
     /// AST visitor functions
     virtual void visitClassDefinition(ClassDefinitionAst* node);
@@ -286,6 +293,8 @@ private:
     QScopedPointer<CorrectionHelper> m_correctionHelper;
     int m_ownPriority = 0;
     StructureType::Ptr m_currentClassType;
+    // missing modules, for not reporting them as unknown variables
+    QVector<IndexedString> m_missingModules;
 };
 
 }

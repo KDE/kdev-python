@@ -806,6 +806,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         p->setSource(KDevelop::IProblem::SemanticAnalysis);
         p->setSeverity(KDevelop::IProblem::Warning);
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
+        m_missingModules.append(IndexedString(moduleName));
         problemEncountered = p;
         return 0;
     }

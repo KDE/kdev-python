@@ -173,7 +173,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
         setDuChain(m_duContext);
         
         // gather uses of variables and functions on the document
-        UseBuilder usebuilder(editor.data());
+        UseBuilder usebuilder(editor.data(), builder.missingModules());
         usebuilder.setCurrentlyParsedDocument(document());
         usebuilder.buildUses(m_ast.data());
         

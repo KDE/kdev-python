@@ -18,6 +18,7 @@
 
 
 #include "pdblauncher.h"
+#include <interfaces/idocumentcontroller.h>
 #include "debugjob.h"
 
 #include <util/executecompositejob.h>
@@ -90,7 +91,13 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         
         DebugJob* job = new DebugJob();
         
-        job->m_scriptUrl = iface->script(cfg, err);
+        if ( iface->runCurrentFile(cfg) ) {
+            auto document = KDevelop::ICore::self()->documentController()->activeDocument();
+            job->m_scriptUrl = document->url();
+        }
+        else {
+            job->m_scriptUrl = iface->script(cfg, err);
+        }
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         job->m_workingDirectory = iface->workingDirectory(cfg);

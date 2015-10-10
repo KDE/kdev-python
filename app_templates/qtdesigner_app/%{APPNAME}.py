@@ -1,8 +1,8 @@
 import sys
-from PyQt4 import QtGui
+from PyQt5 import QtWidgets
 import mainwindow
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = mainwindow.Ui_MainWindow()
@@ -12,7 +12,7 @@ class MainWindow(QtGui.QMainWindow):
     def advanceSlider(self):
         self.ui.progressBar.setValue(self.ui.progressBar.value() + 1)
 
-app = QtGui.QApplication(sys.argv)
+app = QtWidgets.QApplication(sys.argv)
 
 my_mainWindow = MainWindow()
 my_mainWindow.show()

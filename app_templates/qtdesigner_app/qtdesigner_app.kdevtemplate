@@ -2,5 +2,5 @@
 [General]
 Name=Simple Qt GUI application using Designer
 Category=Python
-Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic4.
+Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
 ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAME}.py

@@ -890,6 +890,13 @@ void PyDUChainTest::testTypes_data()
                                     "         return 0\n"
                                     "f = Foo()\n"
                                     "checkme = f()\n" << "int";
+    QTest::newRow("classmethod") << "class Foo:\n"
+                                    "    @classmethod\n"
+                                    "    def foo(cls):\n"
+                                    "         k = cls()\n"
+                                    "         return k\n"
+                                    "f = Foo.foo()\n"
+                                    "checkme = f\n" << "Foo";
 
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
 

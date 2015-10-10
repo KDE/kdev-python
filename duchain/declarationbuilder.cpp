@@ -1547,6 +1547,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     lock.lock();
     const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
     const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
+    dec->setStatic(isStatic);
     
     // If this is a member function, set the type of the first argument (the "self") to be
     // an instance of the class.
@@ -1632,9 +1633,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                 topContext()->addProblem(ptr);
             }
         }
-    }
-    else {
-        dec->setStatic(true);
     }
 
     if ( AbstractType::Ptr hint = m_correctionHelper->returnTypeHint() ) {
@@ -1805,6 +1803,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     }
     FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
     workingOnDeclaration->clearDefaultParameters();
+    const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(workingOnDeclaration, "classmethod");
     if ( ! hasCurrentType() || ! currentType<FunctionType>() ) {
         return;
     }
@@ -1827,7 +1826,20 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         qCDebug(KDEV_PYTHON_DUCHAIN) << "visiting argument:" << arg->argumentName->value;
 
         // Create a variable declaration for the parameter, to be used in the function body.
-        Declaration* paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
+        Declaration* paramDeclaration = nullptr;
+        if ( currentIndex == 1 && isClassMethod ) {
+            DUChainWriteLocker lock;
+            AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
+                                                                                   arg, AliasDeclarationType);
+            if ( m_currentClassType ) {
+                qDebug() << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
+                decl->setAliasedDeclaration(m_currentClassType->declaration(currentContext()->topContext()));
+            }
+            paramDeclaration = decl;
+        }
+        else {
+            paramDeclaration = visitVariableDeclaration<Declaration>(arg->argumentName);
+        }
         if ( ! paramDeclaration ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "could not create parameter declaration!";
             continue;

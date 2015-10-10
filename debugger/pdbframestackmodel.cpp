@@ -71,7 +71,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
                 if ( ! location.capturedTexts().at(1).isEmpty() ) {
                     m_debuggerAtFrame = framesCount;
                 }
-                currentFrame->file = location.capturedTexts().at(2);
+                currentFrame->file = QUrl::fromLocalFile(location.capturedTexts().at(2));
                 currentFrame->line = location.capturedTexts().at(3).toInt() - 1;
                 currentFrame->name = location.capturedTexts().at(4);
             }

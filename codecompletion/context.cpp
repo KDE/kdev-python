@@ -956,7 +956,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
             identifiersUsed++;
         }
         QStringList remainingIdentifiers = subdirs.mid(identifiersUsed, -1);
-        foundPaths.append(IncludeSearchTarget(d.absolutePath(), remainingIdentifiers));
+        foundPaths.append(IncludeSearchTarget(QUrl::fromLocalFile(d.absolutePath()), remainingIdentifiers));
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Found path:" << d.absolutePath() << remainingIdentifiers << subdirs;
     }
     return findIncludeItems(foundPaths);

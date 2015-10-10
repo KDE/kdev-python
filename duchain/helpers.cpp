@@ -463,7 +463,7 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         
         if ( ! pythonpath.isEmpty() ) {
             foreach ( const QString& path, paths ) {
-                cachedSearchPaths.append(path);
+                cachedSearchPaths.append(QUrl::fromLocalFile(path));
             }
         }
         else {
@@ -473,7 +473,7 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
             QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
             foreach ( const QString& path, paths ) {
-                cachedSearchPaths.append(path);
+                cachedSearchPaths.append(QUrl::fromLocalFile(path));
             }
         }
         qCDebug(KDEV_PYTHON_DUCHAIN) << " *** Done. Got search paths: " << cachedSearchPaths;

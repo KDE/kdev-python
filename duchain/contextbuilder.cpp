@@ -336,7 +336,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
             curPathDir.cdUp();
             nameComponents.removeFirst();
         }
-        searchPaths << curPathDir.path();
+        searchPaths << QUrl::fromLocalFile(curPathDir.path());
     }
     else {
         // If this is not a relative import, use the project directory,

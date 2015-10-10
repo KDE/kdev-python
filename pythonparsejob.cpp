@@ -103,6 +103,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
 
     Helper::projectSearchPaths.clear();
     foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+        QMutexLocker l(&Helper::projectPathLock);
         Helper::projectSearchPaths.append(QUrl::fromLocalFile(project->path().path()));
     }
     

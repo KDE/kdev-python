@@ -67,6 +67,7 @@ DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<T
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
 QMutex Helper::cacheMutex;
+QMutex Helper::projectPathLock;
 
 void Helper::scheduleDependency(const IndexedString& dependency, int betterThanPriority)
 {
@@ -443,7 +444,11 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     QList<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     // and also add custom include paths that are defined in the projects
-    searchPaths << Helper::projectSearchPaths;
+
+    {
+        QMutexLocker lock(&Helper::projectPathLock);
+        searchPaths << Helper::projectSearchPaths;
+    }
     
     foreach ( const QString& path, getDataDirs() ) {
         searchPaths.append(QUrl::fromLocalFile(path));

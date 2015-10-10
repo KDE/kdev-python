@@ -86,13 +86,17 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
             KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
                             i18n("Sorry, debugging is only supported for Python 3.x applications."),
                             i18n("Unsupported interpreter"));
-            return 0;
+            return nullptr;
         }
         
         DebugJob* job = new DebugJob();
         
         if ( iface->runCurrentFile(cfg) ) {
             auto document = KDevelop::ICore::self()->documentController()->activeDocument();
+            if ( ! document ) {
+                qDebug(KDEV_PYTHON_DEBUGGER) << "no current document";
+                return nullptr;
+            }
             job->m_scriptUrl = document->url();
         }
         else {
@@ -106,7 +110,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );
     }
     qCDebug(KDEV_PYTHON_DEBUGGER) << "unknown launch mode";
-    return 0;
+    return nullptr;
 }
 
 QStringList PdbLauncher::supportedModes() const

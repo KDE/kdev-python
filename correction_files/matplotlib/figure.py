@@ -5,3 +5,6 @@ class class_Figure:
         l_canvas = matplotlib.backend_bases.FigureCanvasBase()
     def function_add_subplot(self):
         returns = matplotlib.axes.Axes()
+class class_AxesStack:
+    def function_get(self):
+        returns = matplotlib.axes.Axes()

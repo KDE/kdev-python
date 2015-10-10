@@ -91,9 +91,12 @@ void ParseJob::run()
     
     kDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
 
-    Helper::projectSearchPaths.clear();
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
-        Helper::projectSearchPaths.append(KUrl(project->folder().url()));
+    {
+        QMutexLocker l(&Helper::projectPathLock);
+        Helper::projectSearchPaths.clear();
+        foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+            Helper::projectSearchPaths.append(KUrl(project->folder().url()));
+        }
     }
     
     // lock the URL so no other parse job can run on this document

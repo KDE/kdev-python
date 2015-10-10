@@ -68,6 +68,8 @@ public:
     static KUrl getLocalCorrectionFile(KUrl document);
 
     static QList<KUrl> cachedSearchPaths;
+
+    static QMutex projectPathLock;
     static QList<KUrl> projectSearchPaths;
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);

@@ -281,7 +281,10 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     QStringList lines = operatingOn.split('\n');
     Python::TrivialLazyLineFetcher f(lines);
     int lastLine = lines.length()-1;
-    QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1), true);
+    KTextEditor::Cursor startCursor;
+    QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1),
+                                                      startCursor, true);
+    Q_UNUSED(startCursor);
     if ( expr.isEmpty() ) {
         *status = NothingFound;
     }

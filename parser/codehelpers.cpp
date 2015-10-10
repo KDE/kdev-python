@@ -173,8 +173,10 @@ QString CodeHelpers::killStrings(QString stringWithStrings)
     return stripped;
 }
 
-QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor, bool forceScanExpression)
+QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor,
+                                           KTextEditor::Cursor& startCursor, bool forceScanExpression)
 {
+    startCursor = cursor;
     QString line = lineFetcher.fetchLine(cursor.line());
     int index = cursor.column();
     QChar c = line[index];
@@ -267,6 +269,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     else {
         qDebug() << line << start << end << end-start << line.length();
         linePart = line.mid(start, end-start + 1);
+        startCursor.setColumn(start);
     }
 
     QString expression(linePart + text);

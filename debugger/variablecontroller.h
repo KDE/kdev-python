@@ -38,7 +38,8 @@ public:
     /**
      * @brief This just calls the Variable constructor and returns a new, empty \a Variable object.
      **/
-    virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display = "");
+    virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent,
+                                               const QString& expression, const QString& display = "") override;
     
     /**
      * @brief Mini-parser which gives the expression under the cursor.
@@ -50,18 +51,18 @@ public:
      * @param cursor the cursor position
      * @return The expression to print. Should be an (at least syntactically) valid python expression
      **/
-    virtual QString expressionUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor);
-    
+    virtual KTextEditor::Range expressionRangeUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor) override;
+
     /**
      * @brief Update locals and/or watches, as indicated by autoUpdate().
      **/
-    virtual void update();
+    virtual void update() override;
 protected:
     /**
      * @brief Overriden to handle frame change events (when the user clicks the frame list).
      * This then enqueues many "up" or "down" commands to react to the frame change.
      **/
-    virtual void handleEvent(IDebugSession::event_t event);
+    virtual void handleEvent(IDebugSession::event_t event) override;
 private:
     QList<Variable*> m_watchVariables;
 private slots:

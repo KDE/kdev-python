@@ -99,7 +99,7 @@ class KDEVPYTHONPARSER_EXPORT CodeHelpers
          * @return QString the expression which was found, as string.
          **/
         static QString expressionUnderCursor(LazyLineFetcher& lineFetcher, KTextEditor::Cursor cursor,
-                                             bool forceScanExpression = false);
+                                             KTextEditor::Cursor& start, bool forceScanExpression = false);
         
         /**
          * @brief Replaces all quoted strings with "S" in the given expression.

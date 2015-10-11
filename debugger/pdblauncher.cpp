@@ -93,7 +93,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         if ( iface->runCurrentFile(cfg) ) {
             auto document = KDevelop::ICore::self()->documentController()->activeDocument();
             if ( ! document ) {
-                qDebug(KDEV_PYTHON_DEBUGGER) << "no current document";
+                qCDebug(KDEV_PYTHON_DEBUGGER) << "no current document";
                 return nullptr;
             }
             scriptUrl = document->url();

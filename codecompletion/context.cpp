@@ -948,7 +948,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
         foreach ( const QString& subdir, subdirs ) {
-            qDebug() << "changing into subdir" << subdir;
+            qCDebug(KDEV_PYTHON_CODECOMPLETION) << "changing into subdir" << subdir;
             if ( ! d.cd(subdir) ) {
                 break;
             }

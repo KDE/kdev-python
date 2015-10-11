@@ -498,8 +498,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
         PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
-        qDebug() << "Eventual errors while extracting tuple: ";
-        PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
        
         if ( ! errorDetails_tuple ) {
             qCWarning(KDEV_PYTHON_PARSER) << "Error retrieving error message, not displaying, and not doing anything";

@@ -60,6 +60,7 @@ class PyDUChainTest : public QObject
         void testTypes_data();
         void testImportDeclarations();
         void testImportDeclarations_data();
+        void testImportFiles();
         void testCrashes();
         void testCrashes_data();
         void testFlickering();

@@ -634,7 +634,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
             currentName.append(nameComponents.at(j));
         }
         lastDeclaration = findDeclarationInContext(currentName, topContext());
-        if ( lastDeclaration && lastDeclaration->range() < range ) {
+        if ( lastDeclaration && (!range.isValid() || lastDeclaration->range() < range) ) {
             depth = i;
             break;
         }
@@ -713,21 +713,25 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 d->setRange(displayRange);
             }
             d->setAutoDeclaration(true);
-            currentContext()->createUse(d->ownIndex(), displayRange);
+            currentContext()->createUse(d->ownIndex(), d->range());
             qCDebug(KDEV_PYTHON_DUCHAIN) << "really encountered:" << d << "; scheduled:" << m_scheduledForDeletion;
             qCDebug(KDEV_PYTHON_DUCHAIN) << d->toString();
             scheduleForDeletion(d, false);
             qCDebug(KDEV_PYTHON_DUCHAIN) << "scheduled:" << m_scheduledForDeletion;
         }
         if ( done ) break;
-        
+
         qCDebug(KDEV_PYTHON_DUCHAIN) << "creating context for " << component;
+
         // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
         StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
         openType(moduleType);
-        
-        openedContexts.append(openContext(declarationIdentifier, KDevelop::DUContext::Other));
-        
+        auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
+        // this is needed so the context does not get re-opened if
+        // more contexts are opened for other files with the same range
+        moduleContext->setLocalScopeIdentifier(QualifiedIdentifier(component));
+        openedContexts.append(moduleContext);
+
         foreach ( Declaration* local, currentContext()->localDeclarations() ) {
             // keep all the declarations until the builder finished
             // kdevelop would otherwise delete them as soon as the context is closed
@@ -736,7 +740,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                 scheduleForDeletion(local, true);
             }
         }
-        
+
         openedDeclarations.append(d);
         openedTypes.append(moduleType);
         if ( i == remainingNameComponents.length() - 1 ) {
@@ -754,7 +758,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         qCDebug(KDEV_PYTHON_DUCHAIN) << "closing context";
         closeType();
         closeContext();
-        Declaration* d = openedDeclarations.at(i);
+        auto d = openedDeclarations.at(i);
         // because no context will be opened for an alias declaration, this will not happen if there's one
         if ( d ) {
             openedTypes[i]->setDeclaration(d);
@@ -823,6 +827,37 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         // import the whole module
         resultingDeclaration = createDeclarationTree(declarationName.split("."),
                                                      declarationIdentifier, moduleContext, 0, range);
+        auto initFile = QStringLiteral("/__init__.py");
+        auto path = moduleInfo.first.path();
+        if ( path.endsWith(initFile) ) {
+            // if the __init__ file is imported, import all the other files in that directory as well
+            QDir dir(path.left(path.size() - initFile.size()));
+            dir.setNameFilters({"*.py"});
+            dir.setFilter(QDir::Files);
+            auto files = dir.entryList();
+            foreach ( const auto& file, files ) {
+                if ( file == QStringLiteral("__init__.py") ) {
+                    continue;
+                }
+                const auto filePath = declarationName.split(".") << file.left(file.lastIndexOf(".py"));
+                const auto fileUrl = QUrl::fromLocalFile(dir.path() + "/" + file);
+                ReferencedTopDUContext fileContext;
+                {
+                    DUChainReadLocker lock;
+                    fileContext = DUChain::self()->chainForDocument(IndexedString(fileUrl));
+                }
+                if ( fileContext ) {
+                    Identifier id = *declarationIdentifier;
+                    id.value.append(".").append(filePath.last());
+                    createDeclarationTree(filePath,
+                                          &id, fileContext, 0);
+                }
+                else {
+                    m_unresolvedImports.append(IndexedString(fileUrl));
+                    Helper::scheduleDependency(IndexedString(fileUrl), m_ownPriority);
+                }
+            }
+        }
     }
     else {
         // import a specific declaration from the given file

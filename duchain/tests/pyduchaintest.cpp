@@ -234,6 +234,21 @@ void PyDUChainTest::testRelativeImport_data() {
     QTest::newRow("..sub.init") << "from testRelativeImport.m.sm1.go import i6" << "i6" << "int";
 }
 
+void PyDUChainTest::testImportFiles() {
+    QString code = "import testImportFiles\nk = testImportFiles.fromInit()\np = testImportFiles.other.fromOther()";
+    ReferencedTopDUContext ctx = parse(code.toUtf8());
+    DUChainReadLocker lock;
+    QVERIFY(ctx);
+
+    auto k = ctx->findDeclarations(QualifiedIdentifier("k"));
+    auto p = ctx->findDeclarations(QualifiedIdentifier("p"));
+    QCOMPARE(k.size(), 1);
+    QCOMPARE(p.size(), 1);
+    QVERIFY(k.first()->abstractType());
+    QCOMPARE(k.first()->abstractType()->toString(), QString("fromInit"));
+    QCOMPARE(p.first()->abstractType()->toString(), QString("fromOther"));
+}
+
 void PyDUChainTest::testCrashes() {
     QFETCH(QString, code);
     ReferencedTopDUContext ctx = parse(code);

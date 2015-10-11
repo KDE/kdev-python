@@ -1833,7 +1833,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
                                                                                    arg, AliasDeclarationType);
             if ( m_currentClassType ) {
-                qDebug() << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
+                qCDebug(KDEV_PYTHON_DUCHAIN) << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
                 decl->setAliasedDeclaration(m_currentClassType->declaration(currentContext()->topContext()));
             }
             paramDeclaration = decl;

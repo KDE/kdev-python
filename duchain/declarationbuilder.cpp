@@ -726,10 +726,11 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         // otherwise, create a new "level" entry (a pseudo type + context + declaration which contains all imported items)
         StructureType::Ptr moduleType = StructureType::Ptr(new StructureType());
         openType(moduleType);
-        auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other);
-        // this is needed so the context does not get re-opened if
+
+        // the identifier is needed so the context does not get re-opened if
         // more contexts are opened for other files with the same range
-        moduleContext->setLocalScopeIdentifier(QualifiedIdentifier(component));
+        Python::Identifier contextIdentifier(component);
+        auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other, &contextIdentifier);
         openedContexts.append(moduleContext);
 
         foreach ( Declaration* local, currentContext()->localDeclarations() ) {

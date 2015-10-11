@@ -1204,7 +1204,7 @@ QList<DeclarationBuilder::SourceType> DeclarationBuilder::sourcesOfAssignment(Ex
     }
     else {
         // This handles the a, b, c = [1, 2, 3] case. Since the assignment can also be like
-        // d = [1, 2, 3]; a, b, c = d we can't don't generally know the amount of elements
+        // d = [1, 2, 3]; a, b, c = d we can't generally know the amount of elements
         // in the right operand; so all elements are treated to have the same type.
         if ( fillWhenLengthMissing > 0 ) {
             ExpressionVisitor v(currentContext());

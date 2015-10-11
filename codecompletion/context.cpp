@@ -805,7 +805,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
 {
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "TARGET:" << item.directory.path() << item.remainingIdentifiers;
     QDir currentDirectory(item.directory.path());
-    QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs);
+    QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
     bool atBottom = item.remainingIdentifiers.isEmpty();
     QList<CompletionTreeItemPointer> items;
     
@@ -857,10 +857,6 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     if ( atBottom ) {
         // append all python files in the directory
         foreach ( QFileInfo file, contents ) {
-            // TODO windows
-            if ( file.fileName().startsWith('.') ) {
-                continue;
-            }
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
                 if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {

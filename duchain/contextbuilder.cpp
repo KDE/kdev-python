@@ -306,7 +306,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
             m_unresolvedImports.append(doc);
             KDevelop::ICore::self()->languageController()->backgroundParser()
                                    ->addDocument(doc, KDevelop::TopDUContext::ForceUpdate,
-                                                 BackgroundParser::BestPriority, 0, ParseJob::FullSequentialProcessing);
+                                                 BackgroundParser::BestPriority*2, 0, ParseJob::FullSequentialProcessing);
             // This must NOT be called from parse threads! It's only meant to be used from the foreground thread, and will
             // cause thread starvation if called from here.
             // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();

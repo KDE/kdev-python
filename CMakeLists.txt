@@ -1,7 +1,7 @@
 PROJECT(kdevpython)
 
 # write the plugin version to a file
-set(KDEVPYTHON_VERSION_MAJOR 1)
+set(KDEVPYTHON_VERSION_MAJOR 4)
 set(KDEVPYTHON_VERSION_MINOR 90)
 set(KDEVPYTHON_VERSION_PATCH 90)
 

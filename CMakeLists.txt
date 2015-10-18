@@ -31,7 +31,7 @@ include(KDECompilerSettings)
 find_package(PythonInterp 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test WebKitWidgets)
+find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop REQUIRED)

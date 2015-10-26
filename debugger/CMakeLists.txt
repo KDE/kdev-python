@@ -23,6 +23,8 @@ set(kdevpdb_PART_SRCS
 
 kdevplatform_add_plugin(kdevpdb JSON kdevpdb.json SOURCES ${kdevpdb_PART_SRCS})
 
+generate_export_header(kdevpdb EXPORT_MACRO_NAME KDEVPYTHONDEBUG_EXPORT)
+
 target_link_libraries(kdevpdb
     kdevpythonparser
     KDev::Interfaces

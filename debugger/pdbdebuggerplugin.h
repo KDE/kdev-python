@@ -21,7 +21,7 @@
 #define PDBDEBUGGERPLUGIN_H
 
 #include <interfaces/iplugin.h>
-#include "pythondebugexport.h"
+#include "kdevpdb_export.h"
 #include <QVariantList>
 
 namespace Python {

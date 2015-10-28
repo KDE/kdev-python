@@ -8,9 +8,21 @@
         ], 
         "Category": "Language Support", 
         "Description": "Python Language Support", 
+        "Description[de]": "Sprachunterstützung für Python", 
+        "Description[fr]": "Prise en charge du langage Python", 
+        "Description[sk]": "Podpora jazyka Python", 
+        "Description[sv]": "Stöd för språket Python", 
+        "Description[uk]": "Підтримка мови програмування Python", 
+        "Description[x-test]": "xxPython Language Supportxx", 
         "Icon": "text-x-python", 
         "Id": "kdevpythonsupport", 
         "Name": "Python Support", 
+        "Name[de]": "Unterstützung für Python", 
+        "Name[fr]": "Prise en charge de Python", 
+        "Name[sk]": "Podpora Pythonu", 
+        "Name[sv]": "Python-stöd", 
+        "Name[uk]": "Підтримка Python", 
+        "Name[x-test]": "xxPython Supportxx", 
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

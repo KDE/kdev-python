@@ -8,10 +8,22 @@
         ], 
         "Category": "Debugging", 
         "Description": "This plugin provides a frontend for PDB", 
+        "Description[de]": "Dieses Modul stellt eine Oberfläche für PDB zur Verfügung.", 
+        "Description[fr]": "Ce module externe fournit une interface pour PDB", 
+        "Description[sk]": "Tento plugin poskytuje rozhranie pre PDB", 
+        "Description[sv]": "Insticksprogrammet tillhandahåller ett gränssnitt för PDB", 
+        "Description[uk]": "Цей додаток є графічною оболонкою до PDB", 
+        "Description[x-test]": "xxThis plugin provides a frontend for PDBxx", 
         "Icon": "text-x-python", 
         "Id": "kdevpdb", 
         "License": "GPL", 
         "Name": "kdevpdb", 
+        "Name[de]": "kdevpdb", 
+        "Name[fr]": "kdevpdb", 
+        "Name[sk]": "kdevpdb", 
+        "Name[sv]": "kdevpdb", 
+        "Name[uk]": "kdevpdb", 
+        "Name[x-test]": "xxkdevpdbxx", 
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

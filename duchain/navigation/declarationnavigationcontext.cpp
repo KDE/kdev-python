@@ -19,7 +19,6 @@
 
 #include "declarationnavigationcontext.h"
 
-#include <klocale.h>
 #include <klocalizedstring.h>
 
 #include <language/duchain/functiondefinition.h>

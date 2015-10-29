@@ -437,6 +437,7 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
     visitNodeList(node->decorators);
+    visitNode(node->returns);
     visitFunctionArguments(node);
     visitFunctionBody(node);
 }

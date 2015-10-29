@@ -59,7 +59,6 @@
 #include <QProcess>
 #include <QTemporaryFile>
 #include <QDebug>
-#include <klocale.h>
 #include <KConfigGroup>
 
 #include <custom-definesandincludes/idefinesandincludesmanager.h>

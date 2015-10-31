@@ -224,7 +224,8 @@ bool endsWithSeperatedKeyword(const QString& str, const QString& shouldEndWith) 
 QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     const auto remaining = getRemainingCode();
-    QString operatingOn = remaining.trimmed().replace('\t', ' ');
+    auto trimmed = remaining.trimmed();
+    auto operatingOn = trimmed.replace('\t', ' ');
     bool lineIsEmpty = false;
     for ( auto it = remaining.constEnd()-1; it != remaining.constEnd(); it-- ) {
         if ( ! it->isSpace() ) {
@@ -285,7 +286,6 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     KTextEditor::Cursor startCursor;
     QString expr = CodeHelpers::expressionUnderCursor(f, KTextEditor::Cursor(lastLine, f.fetchLine(lastLine).length() - 1),
                                                       startCursor, true);
-    Q_UNUSED(startCursor);
     if ( expr.isEmpty() ) {
         *status = NothingFound;
     }

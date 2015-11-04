@@ -78,8 +78,9 @@ void Variable::moreChildrenFetched(QByteArray rawData)
     data.removeLast();
     int i = 0;
     int initialLength = data.length();
-    QRegExp formatExtract("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)");
+    QRegExp formatExtract("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$");
     formatExtract.setPatternSyntax(QRegExp::RegExp2);
+    formatExtract.setMinimal(true);
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
         // sort magic functions at the end of the list, they're not too interesting usually
@@ -88,7 +89,8 @@ void Variable::moreChildrenFetched(QByteArray rawData)
             i++;
             continue;
         }
-        QString childName = expression() + '_' + QString::number(i);
+
+        QString childName;
         QString realValue;
         QString prettyName;
         unsigned long int pythonId = 0;

@@ -5,7 +5,14 @@
 
 from kdevpdb import kdevOutputFormatter
 
+import sys
+
 __kdevpython_builtin_locals = locals
+
+try:
+    from numpy import ndarray
+except:
+    class ndarray: pass
 
 # TODO: weakref those, but python can't in general :(
 objectTable = {}
@@ -35,12 +42,15 @@ def format_ptr_children(ptr):
 def format_object_children(expr):
     if type(expr) == set:
         expr = list(expr)
-    
+
     output = []
-    if type(expr) == list:
+    if type(expr) == list or type(expr) == ndarray:
         for i in range(len(expr)):
-            output.append('ptr:<%s> [%s] => %s' % (id(expr[i]), i, str(expr[i]).replace('\n', r'\n')))
-            objectTable[id(expr[i])] = expr[i]
+            identifier = id(expr[i])
+            obj = expr[i]
+            output.append('ptr:<%s> [%s] => %s' % (identifier, i, str(obj).replace('\n', r'\n')))
+            objectTable[identifier] = obj
+            sys.stderr.write(str(objectTable) + "\n")
     elif type(expr) == dict:
         for k, v in expr.items():
             output.append('ptr:<%s> [%s] => %s' % (id(v), str(k).replace('\n', r'\n'), str(v).replace('\n', r'\n')))

@@ -427,8 +427,8 @@ void DebugSession::removeBreakpoint(Breakpoint* bp)
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "asked to create variable";
-    InternalPdbCommand* cmd = new InternalPdbCommand(variable, "dataFetched",
-                                                     ("print(" + variable->expression() + ")\n").toUtf8());
+    auto text = ("print(__kdevpython_debugger_utils.obj_to_string(" + variable->expression() + "))\n").toUtf8();
+    auto cmd = new InternalPdbCommand(variable, "dataFetched", text);
     variable->m_notifyCreated = callback;
     variable->m_notifyCreatedMethod = callbackMethod;
     addCommand(cmd);

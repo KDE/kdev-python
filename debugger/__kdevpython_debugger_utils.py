@@ -20,15 +20,21 @@ objectTable = {}
 def cleanup():
     objectTable.clear()
 
+def obj_to_string(value):
+    if type(value) == ndarray:
+        value = "numpy.array, shape={0}".format(value.shape)
+    value = str(value).replace('\n', r'\n')
+    if len(value) > 120:
+        value = value[:120] + "..."
+    return value
+
 def format_locals(locals_):
     '''Print local variables in a machine-readable format'''
     cleanup()
     for key, value in locals_.items():
         if key == '__kdevpython_debugger_utils':
             continue
-        value = str(value).replace('\n', r'\n')
-        if len(value) > 120:
-            value = value[:120] + "..."
+        value = obj_to_string(value)
         print("%s => %s" % (key, value))
 
 def format_ptr_children(ptr):
@@ -48,17 +54,16 @@ def format_object_children(expr):
         for i in range(len(expr)):
             identifier = id(expr[i])
             obj = expr[i]
-            output.append('ptr:<%s> [%s] => %s' % (identifier, i, str(obj).replace('\n', r'\n')))
+            output.append('ptr:<%s> [%s] => %s' % (identifier, i, obj_to_string(obj)))
             objectTable[identifier] = obj
-            sys.stderr.write(str(objectTable) + "\n")
     elif type(expr) == dict:
         for k, v in expr.items():
-            output.append('ptr:<%s> [%s] => %s' % (id(v), str(k).replace('\n', r'\n'), str(v).replace('\n', r'\n')))
+            output.append('ptr:<%s> [%s] => %s' % (id(v), obj_to_string(k), obj_to_string(v)))
             objectTable[id(v)] = v
     else:
         for i in dir(expr):
             obj = getattr(expr, i)
-            output.append('ptr:<%s> .%s => %s' % (id(obj), i, str(obj).replace('\n', r'\n')))
+            output.append('ptr:<%s> .%s => %s' % (id(obj), i, obj_to_string(obj)))
             objectTable[id(obj)] = obj
     print('\n'.join(output))
 

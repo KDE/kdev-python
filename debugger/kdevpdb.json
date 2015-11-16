@@ -23,6 +23,7 @@
         "Description[sv]": "Insticksprogrammet tillhandahåller ett gränssnitt för PDB", 
         "Description[uk]": "Цей додаток є графічною оболонкою до PDB", 
         "Description[x-test]": "xxThis plugin provides a frontend for PDBxx", 
+        "Description[zh_CN]": "插件提供了 PDB 前端", 
         "Icon": "text-x-python", 
         "Id": "kdevpdb", 
         "License": "GPL", 
@@ -42,6 +43,7 @@
         "Name[sv]": "kdevpdb", 
         "Name[uk]": "kdevpdb", 
         "Name[x-test]": "xxkdevpdbxx", 
+        "Name[zh_CN]": "kdevpdb", 
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

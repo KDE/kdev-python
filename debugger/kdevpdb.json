@@ -32,6 +32,7 @@
         "Id": "kdevpdb", 
         "License": "GPL", 
         "Name": "kdevpdb", 
+        "Name[ast]": "kdevpdb", 
         "Name[ca@valencia]": "kdevpdb", 
         "Name[ca]": "kdevpdb", 
         "Name[cs]": "kdevpdb", 

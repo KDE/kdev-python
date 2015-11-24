@@ -38,6 +38,7 @@
 #include "parser/codehelpers.h"
 
 #include <QDebug>
+#include <QStack>
 #include "codegendebug.h"
 
 using namespace KDevelop;

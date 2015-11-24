@@ -27,6 +27,8 @@
 #include <language/duchain/ducontext.h>
 #include <language/duchain/topducontext.h>
 
+#include <QStack>
+
 using namespace KDevelop;
 
 namespace Python {

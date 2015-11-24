@@ -26,6 +26,8 @@
 
 #include <language/duchain/builders/abstractusebuilder.h>
 
+#include <QStack>
+
 namespace Python {
 
 class ParseSession;

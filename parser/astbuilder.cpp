@@ -23,6 +23,7 @@
 #include "ast.h"
 
 #include <QStringList>
+#include <QStack>
 #include <QMutexLocker>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>

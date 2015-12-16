@@ -45,15 +45,11 @@ endif ( NOT WIN32 )
 
 # then, build the plugin
 include_directories(
-    ${KDEVPLATFORM_INCLUDE_DIR}
-    
-#    ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
     ${CMAKE_CURRENT_BINARY_DIR}/parser
-    ${KDEVELOP_INCLUDE_DIR}
 )
 
 include_directories(
@@ -91,6 +87,7 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
+    KDev::DefinesAndIncludesManager
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::NewStuff

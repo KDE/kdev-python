@@ -34,8 +34,7 @@ configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpyth
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
-find_package(KDevelop REQUIRED)
-
+find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
 enable_testing()
 

@@ -51,10 +51,6 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
 )
 
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}/parser
-)
-
 add_subdirectory(app_templates)
 add_subdirectory(parser)
 add_subdirectory(duchain)

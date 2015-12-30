@@ -3,7 +3,8 @@
         "Authors": [
             {
                 "Email": "svenbrauch@googlemail.com", 
-                "Name": "Sven Brauch"
+                "Name": "Sven Brauch", 
+                "Name[x-test]": "xxSven Brauchxx"
             }
         ], 
         "Category": "Language Support", 

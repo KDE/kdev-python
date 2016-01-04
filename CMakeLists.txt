@@ -91,6 +91,7 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
+    KDev::DefinesAndIncludesManager
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::NewStuff

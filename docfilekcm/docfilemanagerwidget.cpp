@@ -189,9 +189,9 @@ QString DocfileManagerWidget::docfilePath()
 {
     // finds a local directory which is contained in the dirs searched by the parser, code
     // and creates it if it doesn't exist
-    QDir dir(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
-    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpython/documentation_files/");
     QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
+    QDir dir(path);
+    dir.mkpath(path);
     return path;
 }
 

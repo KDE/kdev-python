@@ -175,5 +175,7 @@ else(APPLE)
     endif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif(APPLE)
 
+message(STATUS "Found Python version ${PYTHON_VERSION}\n    Libraries: ${PYTHON_LIBRARIES}\n    Includes: ${PYTHON_INCLUDE_DIRS}\n    Modules: ${PYTHON_SITE_MODULES}")
+
 find_package_handle_standard_args(Python DEFAULT_MSG
     PYTHON_LIBRARIES PYTHON_INCLUDE_DIRS PYTHON_SITE_MODULES)

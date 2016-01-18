@@ -30,12 +30,14 @@ include(KDECompilerSettings)
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
 find_package(Python 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
+if ( (NOT PYTHON_LIBRARIES) OR ${PYTHON_VERSION_MINOR} GREATER 5 )
+    message(FATAL_ERROR "Python >= 3.5.0 but < 3.6 with --enable-shared is required to build kdev-python")
+endif()
 
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
-find_package(KDevelop REQUIRED)
-
+find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
 enable_testing()
 
@@ -45,18 +47,10 @@ endif ( NOT WIN32 )
 
 # then, build the plugin
 include_directories(
-    ${KDEVPLATFORM_INCLUDE_DIR}
-    
-#    ${KDE4_INCLUDE_DIR}/threadweaver
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/duchain
     ${CMAKE_CURRENT_SOURCE_DIR}/parser
-    ${CMAKE_CURRENT_BINARY_DIR}/parser
-    ${KDEVELOP_INCLUDE_DIR}
-)
-
-include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/parser
 )
 

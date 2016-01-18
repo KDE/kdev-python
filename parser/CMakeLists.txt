@@ -14,11 +14,6 @@ set(parser_STAT_SRCS
     parserdebug.cpp
 )
 
-find_package(PythonLibs 3.5.0 REQUIRED)
-if ( (NOT PYTHONLIBS_FOUND) OR ${PYTHON_VERSION_MINOR} GREATER 5 )
-    message(FATAL_ERROR "Python >= 3.5.0 with --enable-shared is required to build kdev-python")
-endif()
-
 include_directories(kdevpythonparser ${PYTHON_INCLUDE_DIRS})
 
 add_library( kdevpythonparser SHARED ${parser_STAT_SRCS} )

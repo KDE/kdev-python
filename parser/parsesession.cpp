@@ -80,7 +80,7 @@ QPair<CodeAst::Ptr, bool> ParseSession::parse()
     
     if( matched.second )
     {
-        qCDebug(KDEV_PYTHON_PARSER) << "Sucessfully parsed";
+        qCDebug(KDEV_PYTHON_PARSER) << "Successfully parsed";
     }else
     {
         matched.first.clear();

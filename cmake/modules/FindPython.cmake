@@ -87,7 +87,7 @@ find_library(PYTHON_LIBRARIES
     PATHS
         "${PYTHON_PREFIX}/lib"
         [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/libs
-    PATH_SUFFIXES "" "python${PYTHON_VERSION}/config" "x86_64-linux-gnu" "i386-linux-gnu"
+    PATH_SUFFIXES "" "python${PYTHON_VERSION}/config" "${CMAKE_LIBRARY_ARCHITECTURE}"
     DOC "Python libraries" NO_DEFAULT_PATH)
 
 find_path(PYTHON_INCLUDE_DIRS "Python.h"

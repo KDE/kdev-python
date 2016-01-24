@@ -269,6 +269,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     }
     
     setDuChain(m_duContext);
+    DUChain::self()->emitUpdateReady(document(), duChain());
 }
 
 ControlFlowGraph* ParseJob::controlFlowGraph()

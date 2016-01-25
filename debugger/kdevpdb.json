@@ -32,7 +32,6 @@
         "Id": "kdevpdb", 
         "License": "GPL", 
         "Name": "kdevpdb", 
-        "Name[cs]": "kdevpdb", 
         "Name[x-test]": "xxkdevpdbxx", 
         "ServiceTypes": [
             "KDevelop/Plugin"

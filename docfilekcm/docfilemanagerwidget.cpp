@@ -74,8 +74,8 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
                                   "to a new file in the documentation directory"));
     buttonsLayout->addWidget(generateButton);
     buttonsLayout->addWidget(importButton);
-    QObject::connect(generateButton, SIGNAL(clicked(bool)), this, SLOT(runWizard()));
-    QObject::connect(importButton, SIGNAL(clicked(bool)), this, SLOT(copyEditorContents()));
+    QObject::connect(generateButton, &QAbstractButton::clicked, this, &DocfileManagerWidget::runWizard);
+    QObject::connect(importButton, &QAbstractButton::clicked, this, &DocfileManagerWidget::copyEditorContents);
 
     // construct the buttons for the remaining actions
     QFrame* separator = new QFrame();
@@ -90,9 +90,9 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     buttonsLayout->addWidget(openTextEditorButton);
     buttonsLayout->addWidget(separator2);
     buttonsLayout->addWidget(searchPathsButton);
-    QObject::connect(openFileManagerButton, SIGNAL(clicked(bool)), this, SLOT(openDocfilePath()));
-    QObject::connect(openTextEditorButton, SIGNAL(clicked(bool)), this, SLOT(openSelectedInTextEditor()));
-    QObject::connect(searchPathsButton, SIGNAL(clicked(bool)), this, SLOT(showSearchPaths()));
+    QObject::connect(openFileManagerButton, &QAbstractButton::clicked, this, &DocfileManagerWidget::openDocfilePath);
+    QObject::connect(openTextEditorButton, &QAbstractButton::clicked, this, &DocfileManagerWidget::openSelectedInTextEditor);
+    QObject::connect(searchPathsButton, &QAbstractButton::clicked, this, &DocfileManagerWidget::showSearchPaths);
 
     buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
@@ -129,7 +129,7 @@ void DocfileManagerWidget::showSearchPaths()
     closeWidget->layout()->addWidget(closeButton);
     message->layout()->addWidget(closeWidget);
 
-    QObject::connect(closeButton, SIGNAL(clicked(bool)), message, SLOT(close()));
+    QObject::connect(closeButton, &QAbstractButton::clicked, message, &QWidget::close);
     message->resize(600, 200);
     message->exec();
 }

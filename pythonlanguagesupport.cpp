@@ -95,8 +95,8 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     auto assistantsManager = core()->languageController()->staticAssistantsManager();
     assistantsManager->registerAssistant(StaticAssistant::Ptr(new RenameAssistant(this)));
 
-    QObject::connect(ICore::self()->documentController(), SIGNAL(documentOpened(KDevelop::IDocument*)),
-                     this, SLOT(documentOpened(KDevelop::IDocument*)));
+    QObject::connect(ICore::self()->documentController(), &IDocumentController::documentOpened,
+                     this, &LanguageSupport::documentOpened);
 }
 
 void LanguageSupport::documentOpened(IDocument* doc)

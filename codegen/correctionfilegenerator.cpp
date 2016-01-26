@@ -71,7 +71,7 @@ void TypeCorrection::doContextMenu(ContextMenuExtension &extension, Context *con
             QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), 0);
             action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
             action->setIcon(QIcon::fromTheme("code-class"));
-            connect(action, SIGNAL(triggered(bool)), this, SLOT(executeSpecifyTypeAction()));
+            connect(action, &QAction::triggered, this, &TypeCorrection::executeSpecifyTypeAction);
 
             extension.addAction(ContextMenuExtension::ExtensionGroup, action);
         }
@@ -112,7 +112,7 @@ void TypeCorrection::executeSpecifyTypeAction()
     CorrectionAssistant *dialog = new CorrectionAssistant(decl, hintType);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
     dialog->setWindowTitle("Specify type for " + decl.data()->identifier().toString());
-    connect(dialog, SIGNAL(accepted()), this, SLOT(accepted()));
+    connect(dialog, &QDialog::accepted, this, &TypeCorrection::accepted);
 
     m_ui->setupUi(dialog);
     connect(m_ui->buttonBox, &QDialogButtonBox::accepted, dialog, &QDialog::accept);

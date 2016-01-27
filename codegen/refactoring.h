@@ -35,6 +35,8 @@ namespace Python {
 
 class RefactoringCollector : public KDevelop::BasicRefactoringCollector
 {
+    Q_OBJECT
+
 public:
     RefactoringCollector(const KDevelop::IndexedDeclaration &decl);
 
@@ -44,6 +46,8 @@ protected:
 
 class Refactoring : public KDevelop::BasicRefactoring
 {
+    Q_OBJECT
+
 public:
     explicit Refactoring(QObject *parent = 0);
 

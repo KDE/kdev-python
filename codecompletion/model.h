@@ -28,6 +28,7 @@ namespace Python {
 
 class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::CodeCompletionModel
 {
+    Q_OBJECT
 
 public:
     PythonCodeCompletionModel(QObject* parent);

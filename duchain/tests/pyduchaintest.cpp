@@ -1405,3 +1405,10 @@ void PyDUChainTest::testVariableCreation_data()
                                                                                 << QStringList{"int", "int", "float"};
 }
 
+void PyDUChainTest::testCleanupMultiplePasses()
+{
+    for ( int j = 0; j < 20; j++ ) {
+        ReferencedTopDUContext top = parse("from testCleanupMultiplePasses import foo\ndef fonc(): return 3+2j\nfoo.foo.func = fonc");
+    }
+}
+

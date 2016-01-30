@@ -103,14 +103,21 @@ protected:
     virtual void visitIf(IfAst* node);
 
 protected:
+    enum VisitVariableFlags {
+        NoVisitVariableFlags = 0x0,
+        AbortIfReopenMismatch = 0x1
+    };
     /// Visitor helper functions
     template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
-    template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous = 0,
-                                                     AbstractType::Ptr type = AbstractType::Ptr(0));
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous = 0,
-                                                     AbstractType::Ptr type = AbstractType::Ptr(0));
+    template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
+                                                     AbstractType::Ptr type = AbstractType::Ptr(),
+                                                     VisitVariableFlags flags=NoVisitVariableFlags);
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous=nullptr,
+                                                     AbstractType::Ptr type = AbstractType::Ptr(),
+                                                     VisitVariableFlags flags=NoVisitVariableFlags);
     template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range,
-                                                     AbstractType::Ptr type = AbstractType::Ptr(0));
+                                                     AbstractType::Ptr type = AbstractType::Ptr(),
+                                                     VisitVariableFlags flags=NoVisitVariableFlags);
 
 protected:
     /**

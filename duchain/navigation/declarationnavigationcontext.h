@@ -31,6 +31,8 @@ namespace Python
 
 class DeclarationNavigationContext : public KDevelop::AbstractDeclarationNavigationContext
 {
+    Q_OBJECT
+
 public:
     DeclarationNavigationContext(KDevelop::DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, KDevelop::AbstractNavigationContext* previousContext = 0);
 

@@ -546,8 +546,6 @@ void PyDUChainTest::testCannotOverwriteBuiltins()
     Declaration* d = ds.first();
     QVERIFY(d);
     QVERIFY(d->abstractType());
-    QEXPECT_FAIL("can_have_custom", "not implemented", Continue);
-    QEXPECT_FAIL("can_have_custom3", "not implemented", Continue);
     QCOMPARE(d->abstractType()->toString(), expectedType);
 }
 
@@ -1403,5 +1401,12 @@ void PyDUChainTest::testVariableCreation_data()
                                                                        << QStringList{"int", "float"};
     QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, 2, 3.5)]: pass" << QStringList{"a", "b", "c"}
                                                                                 << QStringList{"int", "int", "float"};
+}
+
+void PyDUChainTest::testCleanupMultiplePasses()
+{
+    for ( int j = 0; j < 20; j++ ) {
+        ReferencedTopDUContext top = parse("from testCleanupMultiplePasses import foo\ndef fonc(): return 3+2j\nfoo.foo.func = fonc");
+    }
 }
 

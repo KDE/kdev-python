@@ -28,6 +28,7 @@ namespace Python {
 
 class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::CodeCompletionWorker
 {
+    Q_OBJECT
 
 public:
     PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, const QUrl& document);

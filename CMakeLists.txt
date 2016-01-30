@@ -30,7 +30,7 @@ include(KDECompilerSettings)
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
 find_package(Python 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
-if ( (NOT PYTHON_LIBRARIES) OR ${PYTHON_VERSION_MINOR} GREATER 5 )
+if ( (NOT PYTHON_LIBRARIES) OR "${PYTHON_VERSION_MINOR}" GREATER 5 )
     message(FATAL_ERROR "Python >= 3.5.0 but < 3.6 with --enable-shared is required to build kdev-python")
 endif()
 

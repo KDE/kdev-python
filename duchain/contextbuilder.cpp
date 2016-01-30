@@ -353,20 +353,21 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
                 // For "from ... import *", if "..." is a directory, use the "__init__.py" file
-                component = "__init__";
+                component = QStringLiteral("__init__");
             }
             else {
                 // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
             QString testFilename = tmp.path() + "/" + component;
-            tmp.cd(component);
+
+            bool can_continue = tmp.cd(component);
             QFileInfo sourcedir(testFilename);
 
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
             static QStringList valid_extensions{".py", ".pyx"};
-            for(auto extension: valid_extensions) {
+            foreach ( const auto& extension, valid_extensions ) {
                 QFile sourcefile(testFilename + extension);
                 if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
                     // If the search cannot continue further down into a hierarchy of directories,
@@ -383,6 +384,11 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                         return qMakePair(path, leftNameComponents);
                     }
                 }
+            }
+            if ( ! can_continue ) {
+                // if not returned yet and the cd into the next component failed,
+                // abort and try the next search path.
+                break;
             }
         }
     }

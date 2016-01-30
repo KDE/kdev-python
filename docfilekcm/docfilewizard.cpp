@@ -108,10 +108,10 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     buttonsLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Expanding));
 
     // connections
-    QObject::connect(closeButton, SIGNAL(clicked(bool)), this, SLOT(close()));
-    QObject::connect(saveButton, SIGNAL(clicked(bool)), this, SLOT(saveAndClose()));
-    QObject::connect(moduleField, SIGNAL(textChanged(QString)), this, SLOT(updateOutputFilename(QString)));
-    QObject::connect(runButton, SIGNAL(clicked(bool)), this, SLOT(run()));
+    QObject::connect(closeButton, &QAbstractButton::clicked, this, &QWidget::close);
+    QObject::connect(saveButton, &QAbstractButton::clicked, this, &DocfileWizard::saveAndClose);
+    QObject::connect(moduleField, &QLineEdit::textChanged, this, &DocfileWizard::updateOutputFilename);
+    QObject::connect(runButton, &QAbstractButton::clicked, this, &DocfileWizard::run);
 
     // putting it all together
     layout()->addWidget(interpreter);
@@ -175,8 +175,8 @@ bool DocfileWizard::run()
     QString interpreter = interpreterField->text();
     QString module = moduleField->text();
     worker = new QProcess(this);
-    QObject::connect(worker, SIGNAL(readyReadStandardError()), this, SLOT(processScriptOutput()));
-    QObject::connect(worker, SIGNAL(readyReadStandardOutput()), this, SLOT(processScriptOutput()));
+    QObject::connect(worker, &QProcess::readyReadStandardError, this, &DocfileWizard::processScriptOutput);
+    QObject::connect(worker, &QProcess::readyReadStandardOutput, this, &DocfileWizard::processScriptOutput);
     QObject::connect(worker, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
 
     // can never have too many slashes

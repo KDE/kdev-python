@@ -126,9 +126,15 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
     for ( auto type: structureTypes ) {
         QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
         for ( DUContext* c: searchContexts ) {
-            QList< Declaration* > found = c->findDeclarations(KDevelop::Identifier(attribute),
-                                                              CursorInRevision::invalid(),
-                                                              current->topContext(), DUContext::DontSearchInParent);
+            auto found = c->findDeclarations(KDevelop::Identifier(attribute),
+                                             CursorInRevision::invalid(),
+                                             current->topContext(), DUContext::DontSearchInParent);
+            std::sort(found.begin(), found.end(), [c](Declaration* d1, Declaration* d2) {
+                if ( d1->topContext() == c->topContext() && d2->topContext() != c->topContext() ) {
+                    return false;
+                }
+                return true;
+            });
             if ( ! found.isEmpty() ) {
                 return found.first();
             }

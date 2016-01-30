@@ -53,9 +53,9 @@ void DebugJob::start()
     startOutput();
     
     qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting standardOutputReceived";
-    connect(m_session, SIGNAL(realDataReceived(QStringList)), this, SLOT(standardOutputReceived(QStringList)));
-    connect(m_session, SIGNAL(stderrReceived(QStringList)), this, SLOT(standardErrorReceived(QStringList)));
-    connect(m_session, SIGNAL(finished()), this, SLOT(sessionFinished()));
+    connect(m_session, &DebugSession::realDataReceived, this, &DebugJob::standardOutputReceived);
+    connect(m_session, &DebugSession::stderrReceived, this, &DebugJob::standardErrorReceived);
+    connect(m_session, &KDevelop::IDebugSession::finished, this, &DebugJob::sessionFinished);
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start();
     qCDebug(KDEV_PYTHON_DEBUGGER) << "starting program:" << program;

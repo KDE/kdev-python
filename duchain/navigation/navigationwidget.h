@@ -29,6 +29,8 @@ namespace Python {
 
 class KDEVPYTHONDUCHAIN_EXPORT NavigationWidget : public KDevelop::AbstractNavigationWidget
 {
+    Q_OBJECT
+
 public:
     NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext,
                      const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());

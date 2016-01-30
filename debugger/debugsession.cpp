@@ -84,10 +84,10 @@ void DebugSession::start()
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
     m_debuggerProcess->setWorkingDirectory(m_workingDirectory.path());
-    connect(m_debuggerProcess, SIGNAL(readyReadStandardOutput()), this, SLOT(dataAvailable()));
+    connect(m_debuggerProcess, &QProcess::readyReadStandardOutput, this, &DebugSession::dataAvailable);
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
-    connect(this, SIGNAL(debuggerReady()), SLOT(checkCommandQueue()));
-    connect(this, SIGNAL(commandAdded()), SLOT(checkCommandQueue()));
+    connect(this, &DebugSession::debuggerReady, this, &DebugSession::checkCommandQueue);
+    connect(this, &DebugSession::commandAdded, this, &DebugSession::checkCommandQueue);
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     auto dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,

@@ -140,7 +140,8 @@ template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifi
     return static_cast<T*>(dec);
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous, AbstractType::Ptr type)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, Declaration* previous,
+                                                                     AbstractType::Ptr type, VisitVariableFlags flags)
 {
     if ( node->astType == Ast::NameAstType ) {
         NameAst* currentVariableDefinition = static_cast<NameAst*>(node);
@@ -154,10 +155,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
             return 0;
         }
         Identifier* id = currentVariableDefinition->identifier;
-        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type);
+        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type, flags);
     }
     else if ( node->astType == Ast::IdentifierAstType ) {
-        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), 0, previous, type);
+        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), nullptr, previous, type, flags);
     }
     else {
         qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
@@ -166,12 +167,12 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
 }
 
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range,
-                                                                     AbstractType::Ptr type)
+                                                                     AbstractType::Ptr type, VisitVariableFlags flags)
 {
     Ast pseudo;
     pseudo.startLine = range.start.line; pseudo.startCol = range.start.column;
     pseudo.endLine = range.end.line; pseudo.endCol = range.end.column;
-    T* result = visitVariableDeclaration<T>(node, &pseudo, 0, type);
+    T* result = visitVariableDeclaration<T>(node, &pseudo, nullptr, type, flags);
     return result;
 }
 
@@ -249,7 +250,8 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
 }
 
 typedef QPair<Declaration*, int> p;
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous, AbstractType::Ptr type)
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous,
+                                                                     AbstractType::Ptr type, VisitVariableFlags flags)
 {
     DUChainWriteLocker lock;
     Ast* rangeNode = originalAst ? originalAst : node;
@@ -278,6 +280,9 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     Declaration* dec = 0;
     existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, kindForType(type), range, &dec);
     bool declarationOpened = (bool) dec;
+    if ( flags & AbortIfReopenMismatch && previous && ! declarationOpened ) {
+        return nullptr;
+    }
     
     // tells whether the declaration found for updating is in the same top context
     bool inSameTopContext = true;
@@ -1332,25 +1337,12 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
 
 void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const DeclarationBuilder::SourceType& element)
 {
-    // check whether the current attribute is undeclared, but the previos ones known
-    // like in X.Y.Z = 3 where X and Y are defined, but Z isn't; then declare Z.
-    ExpressionVisitor checkForUnknownAttribute(currentContext());
-    checkForUnknownAttribute.visitNode(attrib);
-    Declaration* haveDeclaration = 0;
-    {
-        DUChainReadLocker lock;
-        haveDeclaration = checkForUnknownAttribute.lastDeclaration().data();
-    }
-
-    // declare the attribute.
-    // however, if there's an earlier declaration which does not match the current position
-    // (so it's really a different declaration) we skip this.
+    // visit the base expression before the dot
     ExpressionVisitor checkPreviousAttributes(currentContext());
-    // go "down one level", so only visit "X.Y"
     checkPreviousAttributes.visitNode(attrib->value);
+    DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
 
     DUContextPointer internal(0);
-    DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
 
     if ( ! parentObjectDeclaration ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration for attribute base, aborting creation of attribute";
@@ -1374,30 +1366,48 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
         return;
     }
 
-    DUContext* previousContext = currentContext();
-    bool isAlreadyOpen = contextAlreayOpen(internal);
-    if ( isAlreadyOpen ) {
-        activateAlreadyOpenedContext(internal);
-        visitVariableDeclaration<ClassMemberDeclaration>(
-            attrib->attribute, attrib, haveDeclaration, element.type
-        );
-        closeAlreadyOpenedContext(internal);
+    Declaration* attributeDeclaration = nullptr;
+    {
+        DUChainReadLocker lock;
+        attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration.data(),
+                                                       attrib->attribute->value, currentContext());
+    }
+
+    if ( ! attributeDeclaration || ! wasEncountered(attributeDeclaration) ) {
+        // inject a new attribute into the class type
+        DUContext* previousContext = currentContext();
+        bool isAlreadyOpen = contextAlreayOpen(internal);
+        if ( isAlreadyOpen ) {
+            activateAlreadyOpenedContext(internal);
+            visitVariableDeclaration<ClassMemberDeclaration>(
+                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+            );
+            closeAlreadyOpenedContext(internal);
+        }
+        else {
+            injectContext(internal.data());
+
+            Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
+                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+            );
+            if ( dec ) {
+                dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
+                dec->setAutoDeclaration(true);
+                DUChainWriteLocker lock;
+                previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+            }
+            else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
+
+            closeInjectedContext();
+        }
     }
     else {
-        injectContext(internal.data());
-
-        Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
-            attrib->attribute, attrib, haveDeclaration, element.type
-        );
-        if ( dec ) {
-            dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
-            dec->setAutoDeclaration(true);
-            DUChainWriteLocker lock;
-            previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
+        DUChainWriteLocker lock;
+        // the declaration is already there, just update the type
+        if ( ! attributeDeclaration->type<FunctionType>() ) {
+            auto newType = Helper::mergeTypes(attributeDeclaration->abstractType(), element.type);
+            attributeDeclaration->setAbstractType(newType);
         }
-        else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
-
-        closeInjectedContext();
     }
 }
 

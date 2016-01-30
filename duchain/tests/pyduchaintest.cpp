@@ -546,8 +546,6 @@ void PyDUChainTest::testCannotOverwriteBuiltins()
     Declaration* d = ds.first();
     QVERIFY(d);
     QVERIFY(d->abstractType());
-    QEXPECT_FAIL("can_have_custom", "not implemented", Continue);
-    QEXPECT_FAIL("can_have_custom3", "not implemented", Continue);
     QCOMPARE(d->abstractType()->toString(), expectedType);
 }
 

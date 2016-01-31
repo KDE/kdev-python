@@ -1901,7 +1901,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 argumentType = Helper::mergeTypes(paramDeclaration->abstractType(), v.lastType());
             }
         }
-        else if ( currentIndex > firstDefaultParameterOffset ) {
+        else if ( currentIndex > firstDefaultParameterOffset && currentIndex <= node->arguments.size() ) {
             // Handle arguments with default values, like def foo(bar = 3): pass
             // Find type of given default value, and assign it to the declaration
             ExpressionVisitor v(currentContext());

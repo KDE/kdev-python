@@ -818,6 +818,7 @@ void PyDUChainTest::testTypes_data()
 
     QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
+    QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";
 
     QTest::newRow("list_access_right_open_slice") << "some_list = []; checkme = some_list[2:]" << "list";
     QTest::newRow("list_access_left_open_slice") << "some_list = []; checkme = some_list[:2]" << "list";

@@ -714,6 +714,7 @@ class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
 public:
     ArgumentsAst(Ast* parent);
     QList<ArgAst*> arguments;
+    QList<ArgAst*> kwonlyargs;
     QList<ExpressionAst*> defaultValues;
     ArgAst* vararg;
     ArgAst* kwarg;

@@ -1861,7 +1861,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
     int currentIndex = 0;
     qCDebug(KDEV_PYTHON_DUCHAIN) << "arguments:" << node->arguments.size();
-    foreach ( ArgAst* arg, node->arguments ) {
+    foreach ( ArgAst* arg, node->arguments + node->kwonlyargs ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
         currentIndex += 1;

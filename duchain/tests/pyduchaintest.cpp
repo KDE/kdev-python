@@ -1412,3 +1412,7 @@ void PyDUChainTest::testCleanupMultiplePasses()
     }
 }
 
+void PyDUChainTest::testManyDeclarations()
+{
+    ReferencedTopDUContext top = parse("from testManyDeclarations import test\nk=test.Foo()");
+}

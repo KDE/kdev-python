@@ -18,9 +18,11 @@ RULE_FOR _stmt;KIND Delete_kind;ACTIONS create|DeleteAst set|targets=>Expression
 RULE_FOR _stmt;KIND Assign_kind;ACTIONS create|AssignmentAst set|targets=>ExpressionAst,targets set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND AugAssign_kind;ACTIONS create|AugmentedAssignmentAst set|target->ExpressionAst,target set|op*>OperatorTypes,op set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND For_kind;ACTIONS create|ForAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|body=>Ast,body set|orelse=>Ast,orelse;;
+RULE_FOR _stmt;KIND AsyncFor_kind;ACTIONS create|ForAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND While_kind;ACTIONS create|WhileAst set|condition->ExpressionAst,test set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND If_kind;ACTIONS create|IfAst set|condition->ExpressionAst,test set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND With_kind;ACTIONS create|WithAst set|body=>Ast,body set|items=>WithItemAst,items;;
+RULE_FOR _stmt;KIND AsyncWith_kind;ACTIONS create|WithAst set|body=>Ast,body set|items=>WithItemAst,items;;
 
 COMMENT;FIXME: the struct Raise has changed, so the following line is likely wrong;;
 RULE_FOR _stmt;KIND Raise_kind;ACTIONS create|RaiseAst set|type->ExpressionAst,exc;;

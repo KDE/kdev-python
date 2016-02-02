@@ -1297,6 +1297,10 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
     else {
         DUChainWriteLocker lock;
         Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
+        if ( dec && m_lastComment && ! m_lastComment->usedAsComment ) {
+            dec->setComment(m_lastComment->value);
+            m_lastComment->usedAsComment = true;
+        }
         /** DEBUG **/
         if ( element.type && dec ) {
             Q_ASSERT(dec->abstractType());
@@ -1459,6 +1463,8 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
+
+    dec->setComment(getDocstring(node->body));
     
     // check whether this is a type container (list, dict, ...) or just a "normal" class
     if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
@@ -1532,8 +1538,6 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     closeContext();
     closeType();
     closeDeclaration();
-    
-    dec->setComment(getDocstring(node->body));
 }
 
 template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::ExpressionAst* > decorators, T* addTo) {
@@ -1715,6 +1719,7 @@ QString DeclarationBuilder::getDocstring(QList< Python::Ast* > body) const
     {
         // If the first statement in a function/class body is a string, then that is the docstring.
         StringAst* docstring = static_cast<StringAst*>(static_cast<ExpressionAst*>(body.first())->value);
+        docstring->usedAsComment = true;
         return docstring->value.trimmed();
     }
     return QString();
@@ -1967,6 +1972,20 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             type->addArgument(dictType.cast<AbstractType>());
             workingOnDeclaration->setKwarg(type->arguments().size() - 1);
         }
+    }
+}
+
+void DeclarationBuilder::visitString(StringAst* node) {
+    if ( node->parent && node->parent->astType == Ast::ExpressionAstType ) {
+        m_lastComment = node;
+    }
+    DeclarationBuilderBase::visitString(node);
+}
+
+void DeclarationBuilder::visitNode(Ast* node) {
+    DeclarationBuilderBase::visitNode(node);
+    if ( node && node->astType >= Ast::StatementAstType && node->astType <= Ast::LastStatementType) {
+        m_lastComment = nullptr;
     }
 }
 

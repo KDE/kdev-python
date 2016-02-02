@@ -83,24 +83,26 @@ public:
 
 protected:
     /// AST visitor functions
-    virtual void visitClassDefinition(ClassDefinitionAst* node);
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node);
-    virtual void visitAssignment(AssignmentAst* node);
-    virtual void visitFor(ForAst* node);
-    virtual void visitImport(ImportAst* node);
-    virtual void visitImportFrom(ImportFromAst* node);
-    virtual void visitArguments(ArgumentsAst* node);
-    virtual void visitExceptionHandler(ExceptionHandlerAst* node);
-    virtual void visitReturn(ReturnAst* node);
-    virtual void visitCode(CodeAst* node);
-    virtual void visitCall(CallAst* node);
-    virtual void visitYield(YieldAst* node);
-    virtual void visitWithItem(WithItemAst* node);
-    virtual void visitLambda(LambdaAst* node);
-    virtual void visitComprehension(ComprehensionAst* node);
-    virtual void visitGlobal(GlobalAst* node);
-    virtual void visitAssertion(AssertionAst* node);
-    virtual void visitIf(IfAst* node);
+    void visitClassDefinition(ClassDefinitionAst* node) override;
+    void visitFunctionDefinition(FunctionDefinitionAst* node) override;
+    void visitAssignment(AssignmentAst* node) override;
+    void visitFor(ForAst* node) override;
+    void visitImport(ImportAst* node) override;
+    void visitImportFrom(ImportFromAst* node) override;
+    void visitArguments(ArgumentsAst* node) override;
+    void visitExceptionHandler(ExceptionHandlerAst* node) override;
+    void visitReturn(ReturnAst* node) override;
+    void visitCode(CodeAst* node) override;
+    void visitCall(CallAst* node) override;
+    void visitYield(YieldAst* node) override;
+    void visitWithItem(WithItemAst* node) override;
+    void visitLambda(LambdaAst* node) override;
+    void visitComprehension(ComprehensionAst* node) override;
+    void visitGlobal(GlobalAst* node) override;
+    void visitAssertion(AssertionAst* node) override;
+    void visitIf(IfAst* node) override;
+    void visitString(StringAst* node) override;
+    void visitNode(Ast* node) override;
 
 protected:
     enum VisitVariableFlags {
@@ -302,6 +304,8 @@ private:
     StructureType::Ptr m_currentClassType;
     // missing modules, for not reporting them as unknown variables
     QVector<IndexedString> m_missingModules;
+
+    StringAst* m_lastComment = nullptr;
 };
 
 }

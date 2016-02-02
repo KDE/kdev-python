@@ -130,7 +130,11 @@ Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attri
                                              CursorInRevision::invalid(),
                                              current->topContext(), DUContext::DontSearchInParent);
             std::reverse(found.begin(), found.end());
-            if ( ! found.isEmpty() ) {
+            // never consider decls from the builtins
+            if ( ! found.isEmpty() && (
+                   found.first()->topContext() != Helper::getDocumentationFileContext() ||
+                   c->topContext() == Helper::getDocumentationFileContext() ) )
+            {
                 return found.first();
             }
         }

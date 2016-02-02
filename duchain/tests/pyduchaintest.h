@@ -97,6 +97,8 @@ class PyDUChainTest : public QObject
         void testHintedTypes();
         void testHintedTypes_data();
         void testCleanupMultiplePasses();
+        void testComments();
+        void testComments_data();
         void testManyDeclarations();
 
 

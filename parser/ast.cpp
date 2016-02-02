@@ -288,7 +288,7 @@ StatementAst::StatementAst(Ast* parent, AstType type): Ast(parent, type)
     
 }
 
-StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value("")
+StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value(""), usedAsComment(false)
 {
     
 }

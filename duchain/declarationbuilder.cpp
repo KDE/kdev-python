@@ -1354,6 +1354,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
     // while this is like A = foo(); A.bar = 3
     else {
+        DUChainReadLocker lock;
         StructureType::Ptr structure(parentObjectDeclaration->abstractType().cast<StructureType>());
         if ( ! structure || ! structure->declaration(topContext()) ) {
             return;

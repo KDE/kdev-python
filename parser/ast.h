@@ -591,6 +591,7 @@ class KDEVPYTHONPARSER_EXPORT StringAst : public ExpressionAst {
 public:
     StringAst(Ast* parent);
     QString value;
+    bool usedAsComment;
 };
 
 class KDEVPYTHONPARSER_EXPORT BytesAst : public ExpressionAst {

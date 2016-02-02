@@ -1416,3 +1416,33 @@ void PyDUChainTest::testManyDeclarations()
 {
     ReferencedTopDUContext top = parse("from testManyDeclarations import test\nk=test.Foo()");
 }
+
+void PyDUChainTest::testComments()
+{
+    QFETCH(QString, code);
+
+    auto top = parse(code);
+    QVERIFY(top);
+    DUChainReadLocker lock;
+
+    auto decls = top->findDeclarations(QualifiedIdentifier("a"));
+    QCOMPARE(decls.size(), 1);
+    auto a = decls.first();
+    QCOMPARE(a->comment(), QByteArray("comment"));
+
+    decls = top->findDeclarations(QualifiedIdentifier("b"));
+    if ( decls.isEmpty() ) {
+        decls = top->childContexts().last()->findDeclarations(QualifiedIdentifier("b"));
+    }
+    auto b = decls.first();
+    QCOMPARE(b->comment(), QByteArray());
+}
+
+void PyDUChainTest::testComments_data()
+{
+    QTest::addColumn<QString>("code");
+
+    QTest::newRow("variable") << "b=5\n\"\"\"comment\"\"\"\na=5\nb=5";
+    QTest::newRow("function") << "def a():\n    \"\"\"comment\"\"\"\n    b=5";
+    QTest::newRow("class") << "class a:\n    \"\"\"comment\"\"\"\n    b=5";
+}

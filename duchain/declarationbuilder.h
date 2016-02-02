@@ -101,6 +101,8 @@ protected:
     void visitGlobal(GlobalAst* node) override;
     void visitAssertion(AssertionAst* node) override;
     void visitIf(IfAst* node) override;
+    void visitString(StringAst* node) override;
+    void visitNode(Ast* node) override;
 
 protected:
     enum VisitVariableFlags {
@@ -302,6 +304,8 @@ private:
     StructureType::Ptr m_currentClassType;
     // missing modules, for not reporting them as unknown variables
     QVector<IndexedString> m_missingModules;
+
+    StringAst* m_lastComment = nullptr;
 };
 
 }

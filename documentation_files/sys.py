@@ -21,14 +21,14 @@ command line, see the :mod:`fileinput` module.
 
 
 """
-argv = None
+argv = [str()]
 """
 An indicator of the native byte order.  This will have the value ``'big'`` on
 big-endian (most-significant byte first) platforms, and ``'little'`` on
 little-endian (least-significant byte first) platforms.
 
 """
-byteorder = None
+byteorder = str()
 """
 A triple (repo, branch, version) representing the Subversion information of the
 Python interpreter. *repo* is the name of the repository, ``'CPython'``.
@@ -40,7 +40,7 @@ exported (or svnversion was not available), it is the revision of
 ``Include/patchlevel.h`` if the branch is a tag. Otherwise, it is ``None``.
 
 """
-subversion = None
+subversion = (str(), str(), str())
 """
 A tuple of strings giving the names of all modules that are compiled into this
 Python interpreter.  (This information is not available in any other way ---
@@ -48,19 +48,19 @@ Python interpreter.  (This information is not available in any other way ---
 
 
 """
-builtin_module_names = None
+builtin_module_names = (str())
 """
 A string containing the copyright pertaining to the Python interpreter.
 
 
 """
-copyright = None
+copyright = str()
 """
 Integer specifying the handle of the Python DLL. Availability: Windows.
 
 
 """
-dllhandle = None
+dllhandle = int()
 """__excepthook__
 
 These objects contain the original values of ``displayhook`` and ``excepthook``
@@ -71,10 +71,8 @@ objects.
 
 """
 __displayhook__ = None
-"""exc_value
-exc_traceback
-
-"""
+exc_value = None
+exc_traceback = None
 exc_type = None
 """
 A string giving the site-specific directory prefix where the platform-dependent
@@ -88,14 +86,14 @@ be set at build time with the ``--exec-prefix`` argument to the
 
 
 """
-exec_prefix = None
+exec_prefix = str()
 """
 A string giving the name of the executable binary for the Python interpreter, on
 systems where this makes sense.
 
 
 """
-executable = None
+executable = str()
 """
 This value is not actually defined by the module, but can be set by the user (or
 by a program) to specify a clean-up action at program exit.  When set, it should
@@ -104,7 +102,7 @@ exits.  Only one function may be installed in this way; to allow multiple
 functions which will be called at termination, use the :mod:`atexit` module.
 
 """
-exitfunc = None
+exitfunc = lambda: None
 """
 The struct sequence *flags* exposes the status of command line flags. The
 attributes are read only.
@@ -205,7 +203,7 @@ in Python 2.7 and later.  Otherwise, ``float_repr_style`` has value
 versions of Python prior to 2.7.
 
 """
-float_repr_style = None
+float_repr_style = str()
 """
 The version number encoded as a single integer.  This is guaranteed to increase
 with each version, including proper support for non-production releases.  For
@@ -248,7 +246,7 @@ The ``hexversion`` is a 32-bit number with the following layout:
 Thus ``2.1.0a3`` is hexversion ``0x020100a3``.
 
 """
-hexversion = None
+hexversion = str()
 """
 A struct sequence that holds information about Python's
 internal representation of integers.  The attributes are read only.
@@ -266,9 +264,7 @@ internal representation of integers.  The attributes are read only.
 
 """
 long_info = None
-"""last_value
-last_traceback
-
+"""
 These three variables are not always defined; they are set when an exception is
 not handled and the interpreter prints an error message and a stack traceback.
 Their intended use is to allow an interactive user to import a debugger module
@@ -284,6 +280,8 @@ etc.)
 
 
 """
+last_traceback = None
+last_value = None
 last_type = None
 """
 The largest positive integer supported by Python's regular integer type.  This
@@ -291,14 +289,14 @@ is at least 2\*\*31-1.  The largest negative integer is ``-maxint-1`` --- the
 asymmetry results from the use of 2's complement binary arithmetic.
 
 """
-maxint = None
+maxint = int()
 """
 The largest positive integer supported by the platform's Py_ssize_t type,
 and thus the maximum size lists, strings, dicts, and many other containers
 can have.
 
 """
-maxsize = None
+maxsize = int()
 """
 An integer giving the largest supported code point for a Unicode character.  The
 value of this depends on the configuration option that specifies whether Unicode
@@ -306,7 +304,7 @@ characters are stored as UCS-2 or UCS-4.
 
 
 """
-maxunicode = None
+maxunicode = int()
 """
 A list of :term:`finder` objects that have their :meth:`find_module`
 methods called to see if one of the objects can find the module to be
@@ -323,13 +321,9 @@ See :pep:`302` for the original specification.
 
 
 """
-meta_path = None
-"""
-"""
+meta_path = [None]
 modules = None
-"""
-"""
-path = None
+path = [str()]
 """
 A list of callables that take a path argument to try to create a
 :term:`finder` for the path. If a finder can be created, it is to be
@@ -339,7 +333,7 @@ Originally specified in :pep:`302`.
 
 
 """
-path_hooks = None
+path_hooks = [lambda: None]
 """
 A dictionary acting as a cache for :term:`finder` objects. The keys are
 paths that have been passed to :data:`sys.path_hooks` and the values are
@@ -376,7 +370,7 @@ AtheOS           ``'atheos'``
 
 
 """
-platform = None
+platform = str()
 """
 A string giving the site-specific directory prefix where the platform
 independent Python files are installed; by default, this is the string
@@ -389,10 +383,8 @@ stored in ``prefix + '/include/pythonversion'``, where *version* is equal to
 
 
 """
-prefix = None
-"""ps2
-
-"""
+prefix = str()
+ps2 = None
 ps1 = None
 """
 Bool containing the status of the Python 3.0 warning flag. It's ``True``
@@ -401,7 +393,7 @@ read-only; setting it to a different value doesn't have an effect on
 Python 3.0 warnings.)
 
 """
-py3kwarning = None
+py3kwarning = False
 """
 If this is true, Python won't try to write ``.pyc`` or ``.pyo`` files on the
 import of source modules.  This value is initially set to ``True`` or ``False``
@@ -410,7 +402,7 @@ environment variable, but you can set it yourself to control bytecode file
 generation.
 
 """
-dont_write_bytecode = None
+dont_write_bytecode = False
 """
 File objects corresponding to the interpreter's standard input, output and error
 streams.  ``stdin`` is used for all interpreter input except for scripts but
@@ -426,7 +418,7 @@ the :mod:`os` module.)
 
 
 """
-stdin = None
+stdin = open("stdin", "rw")
 """
 File objects corresponding to the interpreter's standard input, output and error
 streams.  ``stdin`` is used for all interpreter input except for scripts but
@@ -442,7 +434,7 @@ the :mod:`os` module.)
 
 
 """
-stdout = None
+stdout = open("stdout", "rw")
 """
 File objects corresponding to the interpreter's standard input, output and error
 streams.  ``stdin`` is used for all interpreter input except for scripts but
@@ -458,10 +450,8 @@ the :mod:`os` module.)
 
 
 """
-stderr = None
-"""__stdout__
-__stderr__
-
+stderr = open("stderr", "rw")
+"""
 These objects contain the original values of ``stdin``, ``stderr`` and
 ``stdout`` at the start of the program.  They are used during finalization,
 and could be useful to print to the actual standard stream no matter if the
@@ -474,7 +464,9 @@ replacing it, and restore the saved object.
 
 
 """
-__stdin__ = None
+__stdout__ = stdout
+__stderr__ = stderr
+__stdin__ = stdin
 """
 When this variable is set to an integer value, it determines the maximum number
 of levels of traceback information printed when an unhandled exception occurs.
@@ -483,7 +475,7 @@ is suppressed and only the exception type and value are printed.
 
 
 """
-tracebacklimit = None
+tracebacklimit = 1000
 """
 A string containing the version number of the Python interpreter plus additional
 information on the build number and compiler used.  This string is displayed
@@ -493,13 +485,13 @@ out of it, rather, use :data:`version_info` and the functions provided by the
 
 
 """
-version = None
+version = str()
 """
 The C API version for this interpreter.  Programmers may find this useful when
 debugging version conflicts between Python and extension modules.
 
 """
-api_version = None
+api_version = str()
 """
 A tuple containing the five components of the version number: *major*, *minor*,
 *micro*, *releaselevel*, and *serial*.  All values except *releaselevel* are
@@ -510,7 +502,7 @@ so ``sys.version_info[0]`` is equivalent to ``sys.version_info.major``
 and so on.
 
 """
-version_info = None
+version_info = (3, 5, 0, 0, 0)
 """
 This is an implementation detail of the warnings framework; do not modify this
 value.  Refer to the :mod:`warnings` module for more information on the warnings
@@ -527,7 +519,7 @@ module for informational purposes; modifying this value has no effect on the
 registry keys used by Python. Availability: Windows.
 
 """
-winver = None
+winver = str()
 def call_tracing(func,args):
 	"""
 	Call ``func(*args)``, while tracing is enabled.  The tracing state is saved,
@@ -565,7 +557,7 @@ def _current_frames():
 	This function should be used for internal and specialized purposes only.
 	
 	"""
-	pass
+	dict()
 	
 def displayhook(value):
 	"""
@@ -607,7 +599,7 @@ def exc_info():
 	about the most recently handled exception is accessible.
 	
 	"""
-	pass
+	return tuple()
 	
 def exc_clear():
 	"""
@@ -626,7 +618,7 @@ def exc_clear():
 	"""
 	pass
 	
-def exit(arg):
+def exit(arg: int):
 	"""
 	Exit from Python.  This is implemented by raising the :exc:`SystemExit`
 	exception, so cleanup actions specified by finally clauses of :keyword:`try`
@@ -659,7 +651,7 @@ def getcheckinterval():
 	Return the interpreter's "check interval"; see :func:`setcheckinterval`.
 	
 	"""
-	pass
+	return int()
 	
 def getdefaultencoding():
 	"""
@@ -667,7 +659,7 @@ def getdefaultencoding():
 	implementation.
 	
 	"""
-	pass
+	return str()
 	
 def getdlopenflags():
 	"""
@@ -676,7 +668,7 @@ def getdlopenflags():
 	Availability: Unix.
 	
 	"""
-	pass
+	return str()
 	
 def getfilesystemencoding():
 	"""
@@ -699,7 +691,7 @@ def getfilesystemencoding():
 	* On Windows 9x, the encoding is ``'mbcs'``.
 	
 	"""
-	pass
+	return "utf-8"
 	
 def getrefcount(object):
 	"""
@@ -709,7 +701,7 @@ def getrefcount(object):
 	
 	
 	"""
-	pass
+	return 0
 	
 def getrecursionlimit():
 	"""
@@ -720,7 +712,7 @@ def getrecursionlimit():
 	
 	
 	"""
-	pass
+	return 1000
 	
 def getsizeof(object,default):
 	"""
@@ -737,9 +729,9 @@ def getsizeof(object,default):
 	collector.
 	
 	"""
-	pass
+	return 0
 	
-def _getframe(depth):
+def _getframe(depth: int):
 	"""
 	Return a frame object from the call stack.  If optional integer *depth* is
 	given, return the frame object that many calls below the top of the stack.  If
@@ -750,13 +742,9 @@ def _getframe(depth):
 	pass
 	
 def getprofile():
-	"""
-	"""
 	pass
 	
 def gettrace():
-	"""
-	"""
 	pass
 	
 def getwindowsversion():
@@ -807,9 +795,9 @@ def getwindowsversion():
 	Availability: Windows.
 	
 	"""
-	pass
+	return (0, 0)
 	
-def setcheckinterval(interval):
+def setcheckinterval(interval: int):
 	"""
 	Set the interpreter's "check interval".  This integer value determines how often
 	the interpreter checks for periodic things such as thread switches and signal
@@ -852,8 +840,6 @@ def setdlopenflags(n):
 	pass
 	
 def setprofile(profilefunc):
-	"""
-	"""
 	pass
 	
 def setrecursionlimit(limit):

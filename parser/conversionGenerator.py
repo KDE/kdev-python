@@ -259,7 +259,7 @@ private:
 
 ''')
 
-for index, lines in results.items():
+for index, lines in sorted(results.items()):
     current_switch_lines = "\n".join(lines)
     appendix = ''
     if index == '_expr' or index == '_stmt':

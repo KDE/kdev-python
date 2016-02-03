@@ -26,8 +26,10 @@
 
 namespace Python {
 
-Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display):
-    KDevelop::Variable(model, parent, expression, display), m_pythonPtr(0)
+Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display)
+    : KDevelop::Variable(model, parent, expression, display)
+    , m_notifyCreated(nullptr)
+    , m_pythonPtr(0)
 {
 
 }
@@ -43,7 +45,10 @@ void Variable::dataFetched(QByteArray rawData)
     setValue(value);
     setHasMore(true);
     qCDebug(KDEV_PYTHON_DEBUGGER) << "value set to" << value << ", calling update method";
-    QMetaObject::invokeMethod(m_notifyCreated, m_notifyCreatedMethod, Qt::QueuedConnection, Q_ARG(bool, true));
+    if ( m_notifyCreated ) {
+        QMetaObject::invokeMethod(m_notifyCreated, m_notifyCreatedMethod, Qt::QueuedConnection, Q_ARG(bool, true));
+        m_notifyCreated = nullptr;
+    }
 }
 
 void Variable::attachMaybe(QObject* callback, const char* callbackMethod)
@@ -74,6 +79,8 @@ void Variable::setId(unsigned long int id)
 
 void Variable::moreChildrenFetched(QByteArray rawData)
 {
+    deleteChildren();
+
     QList<QByteArray> data = rawData.split('\n');
     data.removeLast();
     int i = 0;

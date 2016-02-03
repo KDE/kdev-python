@@ -156,6 +156,8 @@ void DebugSession::dataAvailable()
                                                     << "  " + i18n("You can now inspect the status of the program after it exited.")
                                                     << "  " + i18n("The debugger will silently stop when the next command is triggered.")
                                                     << "*****");
+                InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
+                addCommand(cmd);
             }
         }
         else if ( m_inDebuggerData == 0 ) {

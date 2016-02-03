@@ -794,6 +794,7 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
+    QEXPECT_FAIL("tuple_unsure", "not implemented, rework DeclarationBuilder::sourcesOfAssignment", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -899,6 +900,8 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("hints_type") << "def myfun(arg): return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
     QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
+
+    QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure(int, str)";
 
     QTest::newRow("call_class") << "class Foo:\n"
                                     "    def __call__(self):\n"

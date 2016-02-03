@@ -1204,6 +1204,7 @@ QList<DeclarationBuilder::SourceType> DeclarationBuilder::sourcesOfAssignment(Ex
     QList<SourceType> sources;
     QList<ExpressionAst*> values;
 
+    // TODO rework this function. It doesn't make much sense like this and could work much better.
     if ( items && items->astType == Ast::TupleAstType ) {
         values = static_cast<TupleAst*>(items)->elements;
     }

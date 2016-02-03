@@ -344,7 +344,7 @@ void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUConte
                 p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
                                                                         lineno - 1, colno + 4)));
                 p->setSource(KDevelop::IProblem::Preprocessor);
-                p->setSeverity(KDevelop::IProblem::Warning);
+                p->setSeverity(error.startsWith('W') ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
                 p->setDescription(i18n("PEP8 checker error: %1", error));
                 ProblemPointer ptr(p);
                 topContext->addProblem(ptr);

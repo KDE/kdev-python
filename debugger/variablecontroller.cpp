@@ -43,7 +43,10 @@ namespace Python {
 
 VariableController::VariableController(IDebugSession* parent) : IVariableController(parent)
 {
-
+    m_updateTimer.setSingleShot(true);
+    m_updateTimer.setInterval(100);
+    QObject::connect(&m_updateTimer, &QTimer::timeout,
+                     this, &VariableController::_update);
 }
 
 void VariableController::addWatch(KDevelop::Variable* variable)
@@ -108,7 +111,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
     QList<QByteArray> data = rawData.split('\n');
     data.removeAll({});
     qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
-    
+
     int i = 0;
     QStringList vars;
     QMap<QString, QString> values;
@@ -122,18 +125,38 @@ void VariableController::localsUpdateReady(QByteArray rawData)
         else qCWarning(KDEV_PYTHON_DEBUGGER) << "mismatch:" << d;
         i++;
     }
+
     QList<KDevelop::Variable*> variableObjects = KDevelop::ICore::self()->debugController()->variableCollection()
                                                  ->locals()->updateLocals(vars);
     for ( int i = 0; i < variableObjects.length(); i++ ) {
         KDevelop::Variable* v = variableObjects[i];
+
+        auto model = v->model();
+        auto parent = model->indexForItem(v, 0);
+        auto childCount = v->model()->rowCount(parent);
+        qDebug() << "updating:" << v->expression() << "active children:" << childCount;
+        for ( int j = 0; j < childCount; j++ ) {
+            auto index = model->index(j, 0, parent);
+            auto child = static_cast<KDevelop::TreeItem*>(index.internalPointer());
+            if ( auto childVariable = qobject_cast<Variable*>(child) ) {
+                qDebug() << "   got child var:" << childVariable->expression();
+                v->fetchMoreChildren();
+                break;
+            }
+        }
+
         v->setValue(values[v->expression()]);
         v->setHasMoreInitial(true);
     }
 }
 
-void VariableController::update()
+void VariableController::update() {
+    m_updateTimer.start();
+}
+
+void VariableController::_update()
 {
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "update requested";
+    qDebug() << " ************************* update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
     if (autoUpdate() & UpdateWatches) {
         variableCollection()->watches()->reinstall();

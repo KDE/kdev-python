@@ -63,13 +63,18 @@ protected:
      * This then enqueues many "up" or "down" commands to react to the frame change.
      **/
     virtual void handleEvent(IDebugSession::event_t event) override;
+
 private:
+    QTimer m_updateTimer;
     QList<Variable*> m_watchVariables;
+
 private slots:
     /**
      * @brief Parse the debugger output, and perform an update of the local variables.
      **/
     void localsUpdateReady(QByteArray rawData);
+
+    void _update();
 };
 
 }

@@ -106,6 +106,7 @@ void VariableController::localsUpdateReady(QByteArray rawData)
 {
     QRegExp formatExtract("([a-zA-Z0-9_]+) \\=\\> (.*)");
     QList<QByteArray> data = rawData.split('\n');
+    data.removeAll({});
     qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
     
     int i = 0;

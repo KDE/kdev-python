@@ -38,6 +38,7 @@ endif (NOT PYTHON_EXEC)
 if (NOT PYTHON_EXEC)
     find_program(PYTHON_EXEC "python${Python_FIND_VERSION}"
         PATHS
+        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.5\\InstallPath]
         [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.4\\InstallPath]
         [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.3\\InstallPath]
         [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.2\\InstallPath]

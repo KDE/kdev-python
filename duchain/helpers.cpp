@@ -462,13 +462,13 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     if ( cachedSearchPaths.isEmpty() ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;
-        getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
+        getpath << "-c" << "import sys; sys.stdout.write('\n'.join(sys.path))";
         
         QProcess python;
         python.start(QLatin1String(PYTHON_EXECUTABLE), getpath);
         python.waitForFinished(1000);
         QByteArray pythonpath = python.readAllStandardOutput();
-        QList<QByteArray> paths = pythonpath.split(':');
+        QList<QByteArray> paths = pythonpath.split('\n');
         paths.removeAll("");
         
         if ( ! pythonpath.isEmpty() ) {

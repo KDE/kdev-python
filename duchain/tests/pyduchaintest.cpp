@@ -70,12 +70,7 @@ PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
         qFatal("Failed find data directory for test files. Aborting");
     }
 
-    char tempdirname[] = "/tmp/kdev-python-test.XXXXXX";
-    if (!mkdtemp(tempdirname)) {
-        qFatal("Failed to create temp directory, Aboring");
-    }
-    testDir = QDir(QString(tempdirname));
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "tempdirname" << tempdirname;
+    testDir = QDir(testDirOwner.path());
 
     QByteArray pythonpath = qgetenv("PYTHONPATH");
     pythonpath.prepend(":").prepend(assetsDir.absolutePath().toUtf8());

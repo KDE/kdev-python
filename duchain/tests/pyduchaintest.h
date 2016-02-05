@@ -26,6 +26,7 @@
 #define PYDUCHAINTEST_H
 
 #include <QObject>
+#include <QTemporaryDir>
 #include "ast.h"
 #include <serialization/indexedstring.h>
 #include <language/duchain/topducontext.h>
@@ -104,6 +105,7 @@ class PyDUChainTest : public QObject
 
     private:
         QList<KDevelop::TestFile*> createdFiles;
+        QTemporaryDir testDirOwner;
         QDir testDir;
         QDir assetsDir;
         QString lastTest;

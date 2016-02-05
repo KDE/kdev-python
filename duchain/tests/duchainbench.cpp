@@ -46,12 +46,7 @@ using namespace Python;
 
 DUChainBench::DUChainBench(QObject* parent): QObject(parent)
 {
-    char tempdirname[] = "/tmp/kdev-python-test.XXXXXX";
-    if (!mkdtemp(tempdirname)) {
-        qFatal("Failed to create temp directory, Aboring");
-    }
-    testDir = QDir(QString(tempdirname));
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "tempdirname" << tempdirname;
+    testDir = QDir(testDirOwner.path());
 
     initShell();
 }

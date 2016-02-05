@@ -336,7 +336,7 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 
 QStringList Helper::getDataDirs() {
     if ( Helper::dataDirs.isEmpty() ) {
-        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files",QStandardPaths::LocateDirectory);
+        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
     }
     return Helper::dataDirs;
 }

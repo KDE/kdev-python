@@ -69,9 +69,9 @@ QString DocumentationGeneratorAction::description() const
 void DocumentationGeneratorAction::execute()
 {
     // yes, it's duplicate from the doc file widget, but it's too painful to share it
-    QDir dir(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
-    dir.mkpath(QStandardPaths::GenericDataLocation + "kdevpythonsupport/documentation_files/");
     QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
+    QDir dir(path);
+    dir.mkpath(path);
     DocfileWizard wizard(path);
     wizard.setModuleName(module);
     wizard.exec();

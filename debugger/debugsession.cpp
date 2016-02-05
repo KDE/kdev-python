@@ -37,6 +37,13 @@
 #include <QStandardPaths>
 #include "debuggerdebug.h"
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#define INTERRUPT_DEBUGGER GenerateConsoleCtrlEvent(CTRL_C_EVENT, m_debuggerProcess->processId())
+#else
+#define INTERRUPT_DEBUGGER kill(m_debuggerProcess->pid(), SIGINT)
+#endif
+
 using namespace KDevelop;
 
 static QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
@@ -347,7 +354,7 @@ void DebugSession::run()
 
 void DebugSession::interruptDebugger()
 {
-    kill(m_debuggerProcess->pid(), SIGINT);
+    INTERRUPT_DEBUGGER;
     updateLocation();
     setState(PausedState);
 }
@@ -402,7 +409,7 @@ void DebugSession::runImmediately(const QString& cmd)
         m_nextNotifyMethod = 0;
         m_nextNotifyObject.clear(); // TODO is this correct?
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting debugger";
-        kill(m_debuggerProcess->pid(), SIGINT);
+        INTERRUPT_DEBUGGER;
         write(cmd.toUtf8());
         write("continue\n");
         updateLocation();

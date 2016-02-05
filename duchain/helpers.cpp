@@ -432,7 +432,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     }
 
     auto absolutePath = QUrl();
-    foreach ( const auto& basePath, Helper::getSearchPaths({}) ) {
+    foreach ( const auto& basePath, Helper::getSearchPaths(QUrl()) ) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }

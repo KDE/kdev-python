@@ -30,24 +30,23 @@
 
 include(FindPackageHandleStandardArgs)
 
+# TODO
+set(LOOKING_FOR_VERSION "3.5")
+
 # allow specifying which Python installation to use
 if (NOT PYTHON_EXEC)
     set(PYTHON_EXEC $ENV{PYTHON_EXEC})
 endif (NOT PYTHON_EXEC)
 
 if (NOT PYTHON_EXEC)
-    find_program(PYTHON_EXEC "python${Python_FIND_VERSION}"
+    find_program(PYTHON_EXEC "python.exe"
         PATHS
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.5\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.4\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.3\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.2\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.1\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\3.0\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.7\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.6\\InstallPath]
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\2.5\\InstallPath]
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}\\InstallPath]
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}-32\\InstallPath]
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}\\InstallPath]
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}-32\\InstallPath]
         DOC "Location of python executable to use")
+    message("RESULT: ${PYTHON_EXEC}")
 endif(NOT PYTHON_EXEC)
 
 # if Python is still not found, return
@@ -80,6 +79,7 @@ execute_process(COMMAND "${PYTHON_EXEC}" "-c"
 list(GET PYTHON_VERSION_INFO 0 PYTHON_VERSION_MAJOR)
 list(GET PYTHON_VERSION_INFO 1 PYTHON_VERSION_MINOR)
 list(GET PYTHON_VERSION_INFO 2 PYTHON_VERSION_MICRO)
+
 set(PYTHON_VERSION "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
 set(PYTHON_VERSION_NO_DOTS "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
 
@@ -87,14 +87,20 @@ find_library(PYTHON_LIBRARIES
     NAMES "python${PYTHON_VERSION_NO_DOTS}" "python${PYTHON_VERSION}" "python${PYTHON_VERSION}m"
     PATHS
         "${PYTHON_PREFIX}/lib"
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/libs
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/libs
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${PYTHON_VERSION}-32\\InstallPath]/libs
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/libs
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${PYTHON_VERSION}-32\\InstallPath]/libs
     PATH_SUFFIXES "" "python${PYTHON_VERSION}/config" "${CMAKE_LIBRARY_ARCHITECTURE}"
     DOC "Python libraries" NO_DEFAULT_PATH)
 
 find_path(PYTHON_INCLUDE_DIRS "Python.h"
     PATHS
         "${PYTHON_PREFIX}/include"
-        [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/include
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/include
+        [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${PYTHON_VERSION}-32\\InstallPath]/include
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${PYTHON_VERSION}\\InstallPath]/include
+        [HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\${PYTHON_VERSION}-32\\InstallPath]/include
     PATH_SUFFIXES python${PYTHON_VERSION} python${PYTHON_VERSION}m
     DOC "Python include directories" NO_DEFAULT_PATH)
 

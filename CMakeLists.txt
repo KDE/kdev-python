@@ -23,8 +23,9 @@ include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
-include(KDECMakeSettings)
 include(KDECompilerSettings)
+
+include(KDECMakeSettings)
 
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2

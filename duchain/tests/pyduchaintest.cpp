@@ -72,9 +72,7 @@ PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
 
     testDir = QDir(testDirOwner.path());
 
-    QByteArray pythonpath = qgetenv("PYTHONPATH");
-    pythonpath.prepend(":").prepend(assetsDir.absolutePath().toUtf8());
-    qputenv("PYTHONPATH", pythonpath);
+    qputenv("PYTHONPATH", assetsDir.absolutePath().toUtf8());
 
     initShell();
 }

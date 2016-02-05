@@ -348,7 +348,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     QDir tmp;
     QStringList leftNameComponents;
     foreach ( QUrl currentPath, searchPaths ) {
-        tmp.setPath(currentPath.path());
+        tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {
             if ( component == "*" ) {
@@ -363,13 +363,14 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
             bool can_continue = tmp.cd(component);
             QFileInfo sourcedir(testFilename);
+            const bool dir_exists = sourcedir.exists() && sourcedir.isDir();
 
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
             static QStringList valid_extensions{".py", ".pyx"};
             foreach ( const auto& extension, valid_extensions ) {
                 QFile sourcefile(testFilename + extension);
-                if ( ! sourcedir.exists() || ! sourcedir.isDir() || leftNameComponents.isEmpty() ) {
+                if ( ! dir_exists || leftNameComponents.isEmpty() ) {
                     // If the search cannot continue further down into a hierarchy of directories,
                     // the file matching the next name component will be returned,
                     // toegether with a list of names which must be resolved inside that file.
@@ -378,7 +379,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                         // TODO QUrl: cleanPath?
                         return qMakePair(sourceUrl, leftNameComponents);
                     }
-                    else if ( sourcedir.exists() && sourcedir.isDir() ) {
+                    else if ( dir_exists ) {
                         auto path = QUrl::fromLocalFile(testFilename + "/__init__.py");
                         // TODO QUrl: cleanPath?
                         return qMakePair(path, leftNameComponents);

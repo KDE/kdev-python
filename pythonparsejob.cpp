@@ -74,10 +74,13 @@ ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
         , m_duContext(0)
 {
     IDefinesAndIncludesManager* iface = IDefinesAndIncludesManager::manager();
-    foreach  (IProject* project, ICore::self()->projectController()->projects() ) {
+    auto project = ICore::self()->projectController()->findProjectForUrl(url.toUrl());
+    if ( project ) {
         foreach (Path path, iface->includes(project->projectItem(), IDefinesAndIncludesManager::UserDefined)) {
             m_cachedCustomIncludes.append(path.toUrl());
         }
+        QMutexLocker lock(&Helper::cacheMutex);
+        Helper::cachedCustomIncludes[project] = m_cachedCustomIncludes;
     }
 }
 
@@ -111,11 +114,6 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     // lock the URL so no other parse job can run on this document
     QReadLocker parselock(languageSupport()->parseLock());
     UrlParseLock urlLock(document());
-
-    {
-        QMutexLocker lock(&Helper::cacheMutex);
-        Helper::cachedCustomIncludes = m_cachedCustomIncludes;
-    }
 
     readContents();
     

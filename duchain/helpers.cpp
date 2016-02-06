@@ -37,6 +37,7 @@
 #include <language/duchain/types/typeutils.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
@@ -58,7 +59,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-QList<QUrl> Helper::cachedCustomIncludes;
+QMap<IProject*, QList<QUrl>> Helper::cachedCustomIncludes;
 QList<QUrl> Helper::cachedSearchPaths;
 QList<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
@@ -451,8 +452,10 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     // and also add custom include paths that are defined in the projects
 
     {
+        auto project = ICore::self()->projectController()->findProjectForUrl(workingOnDocument);
         QMutexLocker lock(&Helper::projectPathLock);
         searchPaths << Helper::projectSearchPaths;
+        searchPaths << Helper::cachedCustomIncludes.value(project);
     }
     
     foreach ( const QString& path, getDataDirs() ) {

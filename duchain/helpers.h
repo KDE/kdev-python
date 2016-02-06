@@ -65,7 +65,7 @@ public:
     static QUrl getLocalCorrectionFile(const QUrl& document);
 
     static QMutex cacheMutex;
-    static QList<QUrl> cachedCustomIncludes;
+    static QMap<IProject*, QList<QUrl>> cachedCustomIncludes;
     static QList<QUrl> cachedSearchPaths;
 
     static QMutex projectPathLock;

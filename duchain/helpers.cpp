@@ -21,6 +21,7 @@
 
 #include <QList>
 #include <QProcess>
+#include <QSettings>
 #include <QStandardPaths>
 
 #include <QDebug>
@@ -443,7 +444,46 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     }
     return absolutePath;
 }
-    
+
+QString getPythonExecutablePath() {
+    auto result = QStandardPaths::findExecutable("python");
+    if ( ! result.isEmpty() ) {
+        return result;
+    }
+
+#ifdef Q_OS_WIN
+    QStringList extraPaths;
+    // Check for default CPython installation path, because the
+    // installer does not add the path to $PATH.
+    QStringList keys = {
+        "HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath",
+        "HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath",
+        "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath",
+        "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath"
+    };
+    auto version = QString(PYTHON_VERSION_MAJOR) + "." + PYTHON_VERSION_MINOR;
+    foreach ( QString key, keys ) {
+        key.replace("PYTHON_VERSION", version);
+        QSettings base(key.left(key.indexOf("Python")), QSettings::NativeFormat);
+        if ( ! base.childGroups().contains("Python") ) {
+            continue;
+        }
+        QSettings keySettings(key, QSettings::NativeFormat);
+        auto path = keySettings.value("Default").toString();
+        if ( ! path.isEmpty() ) {
+            extraPaths << path;
+            break;
+        }
+    }
+    result = QStandardPaths::findExecutable("python", extraPaths);
+    if ( ! result.isEmpty() ) {
+        return result;
+    }
+#endif
+    // fallback
+    return PYTHON_EXECUTABLE;
+}
+
 QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 {
     QMutexLocker lock(&Helper::cacheMutex);
@@ -468,7 +508,7 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         getpath << "-c" << "import sys; sys.stdout.write('$|$'.join(sys.path))";
         
         QProcess python;
-        python.start(QLatin1String(PYTHON_EXECUTABLE), getpath);
+        python.start(getPythonExecutablePath(), getpath);
         python.waitForFinished(1000);
         QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
         auto paths = pythonpath.split("$|$");

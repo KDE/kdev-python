@@ -39,7 +39,7 @@ if (NOT PYTHON_EXEC)
 endif (NOT PYTHON_EXEC)
 
 if (NOT PYTHON_EXEC)
-    find_program(PYTHON_EXEC "python.exe"
+    find_program(PYTHON_EXEC "python"
         PATHS
         [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}\\InstallPath]
         [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}-32\\InstallPath]

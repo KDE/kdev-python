@@ -25,6 +25,7 @@
 #define PY_DUCHAINBENCH_H
 
 #include <QObject>
+#include <QTemporaryDir>
 #include "ast.h"
 #include <serialization/indexedstring.h>
 #include <language/duchain/topducontext.h>
@@ -56,6 +57,7 @@ private slots:
 private:
     QList<KDevelop::TestFile*> createdFiles;
     QDir testDir;
+    QTemporaryDir testDirOwner;
 };
 
 #endif // DUCHAINBENCH_H

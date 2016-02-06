@@ -37,6 +37,7 @@
 #include <language/duchain/types/typeutils.h>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/iproject.h>
+#include <interfaces/iprojectcontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
@@ -58,7 +59,7 @@ using namespace KDevelop;
 
 namespace Python {
 
-QList<QUrl> Helper::cachedCustomIncludes;
+QMap<IProject*, QList<QUrl>> Helper::cachedCustomIncludes;
 QList<QUrl> Helper::cachedSearchPaths;
 QList<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
@@ -336,7 +337,7 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 
 QStringList Helper::getDataDirs() {
     if ( Helper::dataDirs.isEmpty() ) {
-        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files",QStandardPaths::LocateDirectory);
+        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
     }
     return Helper::dataDirs;
 }
@@ -432,7 +433,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     }
 
     auto absolutePath = QUrl();
-    foreach ( const auto& basePath, Helper::getSearchPaths({}) ) {
+    foreach ( const auto& basePath, Helper::getSearchPaths(QUrl()) ) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }
@@ -451,8 +452,10 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     // and also add custom include paths that are defined in the projects
 
     {
+        auto project = ICore::self()->projectController()->findProjectForUrl(workingOnDocument);
         QMutexLocker lock(&Helper::projectPathLock);
         searchPaths << Helper::projectSearchPaths;
+        searchPaths << Helper::cachedCustomIncludes.value(project);
     }
     
     foreach ( const QString& path, getDataDirs() ) {
@@ -462,13 +465,13 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
     if ( cachedSearchPaths.isEmpty() ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
         QStringList getpath;
-        getpath << "-c" << "import sys; sys.stdout.write(':'.join(sys.path))";
+        getpath << "-c" << "import sys; sys.stdout.write('$|$'.join(sys.path))";
         
         QProcess python;
         python.start(QLatin1String(PYTHON_EXECUTABLE), getpath);
         python.waitForFinished(1000);
-        QByteArray pythonpath = python.readAllStandardOutput();
-        QList<QByteArray> paths = pythonpath.split(':');
+        QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
+        auto paths = pythonpath.split("$|$");
         paths.removeAll("");
         
         if ( ! pythonpath.isEmpty() ) {

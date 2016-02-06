@@ -135,20 +135,20 @@ LanguageSupport* LanguageSupport::self()
 
 SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
 {
-    SourceFormatterStyle autopep8("pep8ify");
-    autopep8.setCaption("pep8ify");
-    autopep8.setDescription(i18n("Format source with the pep8ify formatter."));
+    SourceFormatterStyle autopep8("autopep8");
+    autopep8.setCaption("autopep8");
+    autopep8.setDescription(i18n("Format source with the autopep8 formatter."));
     autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
                                "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
     using P = SourceFormatterStyle::MimeHighlightPair;
     autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"} });
-    QString pep8ifyPath = QStandardPaths::findExecutable("pep8ify");
-    if (pep8ifyPath.isEmpty()) {
+    QString autopep8path = QStandardPaths::findExecutable("autopep8");
+    if (autopep8path.isEmpty()) {
         // TODO: proper error handling/user notification
-        qWarning() << "Could not find the pep8ify executable";
-        pep8ifyPath = "/usr/bin/pep8ify";
+        qWarning() << "Could not find the autopep8 executable";
+        autopep8path = "/usr/bin/autopep8";
     }
-    autopep8.setContent(pep8ifyPath + " -w $TMPFILE");
+    autopep8.setContent(autopep8path + " -i $TMPFILE");
 
     return SourceFormatterItemList{SourceFormatterStyleItem{"customscript", autopep8}};
 }

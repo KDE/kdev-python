@@ -23,8 +23,9 @@ include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
-include(KDECMakeSettings)
 include(KDECompilerSettings)
+
+include(KDECMakeSettings)
 
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
@@ -85,7 +86,6 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
-    KDev::DefinesAndIncludesManager
     KF5::ThreadWeaver
     KF5::TextEditor
     KF5::NewStuff
@@ -93,6 +93,9 @@ target_link_libraries(kdevpythonlanguagesupport
     kdevpythonparser
     kdevpythonduchain
 )
+
+get_target_property(DEFINESANDINCLUDES_INCLUDE_DIRS KDev::DefinesAndIncludesManager INTERFACE_INCLUDE_DIRECTORIES)
+include_directories(${DEFINESANDINCLUDES_INCLUDE_DIRS})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)

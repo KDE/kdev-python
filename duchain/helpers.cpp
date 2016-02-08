@@ -446,7 +446,16 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
 }
 
 QString getPythonExecutablePath() {
-    auto result = QStandardPaths::findExecutable("python");
+    // Find python 3 (https://www.python.org/dev/peps/pep-0394/)
+    auto result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR "." PYTHON_VERSION_MINOR);
+    if ( ! result.isEmpty() ) {
+        return result;
+    }
+    result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR);
+    if ( ! result.isEmpty() ) {
+        return result;
+    }
+    result = QStandardPaths::findExecutable("python");
     if ( ! result.isEmpty() ) {
         return result;
     }

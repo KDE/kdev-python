@@ -326,7 +326,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         AbstractType::Ptr newType;
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
-            AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType(), topContext());
+            AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
             qCDebug(KDEV_PYTHON_DUCHAIN) << hints->toString();
             if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.

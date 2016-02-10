@@ -54,30 +54,30 @@ class LanguageSupport
 
 public:
     LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
-    virtual ~LanguageSupport();
+    ~LanguageSupport() override;
     /*Name Of the Language*/
-    QString name() const;
+    QString name() const override;
     /*Parsejob used by background parser to parse given Url*/
-    KDevelop::ParseJob *createParseJob( const KDevelop::IndexedString &url );
+    KDevelop::ParseJob *createParseJob( const KDevelop::IndexedString &url ) override;
     /*the code highlighter*/
-    KDevelop::ICodeHighlighting* codeHighlighting() const;
-    virtual KDevelop::BasicRefactoring* refactoring() const override;
+    KDevelop::ICodeHighlighting* codeHighlighting() const override;
+    KDevelop::BasicRefactoring* refactoring() const override;
     
-    KDevelop::ContextMenuExtension contextMenuExtension(KDevelop::Context* context);
+    KDevelop::ContextMenuExtension contextMenuExtension(KDevelop::Context* context) override;
     
     static LanguageSupport* self();
     
-    virtual WhitespaceSensitivity whitespaceSensititivy() const;
+    WhitespaceSensitivity whitespaceSensititivy() const override;
     
-    virtual KDevelop::SourceFormatterItemList sourceFormatterItems() const;
+    KDevelop::SourceFormatterItemList sourceFormatterItems() const override;
 
     /// Tells whether this plugin is enabled for the given file.
     static bool enabledForFile(const QUrl& url);
 
-    virtual QList<KDevelop::ILanguageCheck*> providedChecks();
+    QList<KDevelop::ILanguageCheck*> providedChecks() override;
 
-    virtual int configPages() const override;
-    virtual KDevelop::ConfigPage* configPage(int number, QWidget* parent) override;
+    int configPages() const override;
+    KDevelop::ConfigPage* configPage(int number, QWidget* parent) override;
 
 public slots:
     void documentOpened(KDevelop::IDocument*);

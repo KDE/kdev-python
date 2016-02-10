@@ -34,11 +34,11 @@ class PEP8KCModule : public KDevelop::ConfigPage
 Q_OBJECT
 public:
     PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent = nullptr);
-    ~PEP8KCModule();
+    ~PEP8KCModule() override;
 
-    virtual QString name() const override;
-    virtual QString fullName() const override;
-    virtual QIcon icon() const override;
+    QString name() const override;
+    QString fullName() const override;
+    QIcon icon() const override;
 
 
     // TODO: use KConfigXT instead (this will additionally allow removing apply/reset/defaults)
@@ -46,9 +46,9 @@ public:
     static bool isPep8Enabled(const KConfigGroup& group);
     static QString pep8Arguments(const KConfigGroup& group);
 
-    virtual void apply() override;
-    virtual void reset() override;
-    virtual void defaults() override;
+    void apply() override;
+    void reset() override;
+    void defaults() override;
 private:
     KConfigGroup configGroup;
     QLineEdit* pep8url;

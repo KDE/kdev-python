@@ -41,7 +41,7 @@ public:
     RefactoringCollector(const KDevelop::IndexedDeclaration &decl);
 
 protected:
-    virtual void processUses(KDevelop::ReferencedTopDUContext topContext) override;
+    void processUses(KDevelop::ReferencedTopDUContext topContext) override;
 };
 
 class Refactoring : public KDevelop::BasicRefactoring
@@ -52,7 +52,7 @@ public:
     explicit Refactoring(QObject *parent = 0);
 
 protected:
-    virtual bool acceptForContextMenu(const KDevelop::Declaration *decl) override;
+    bool acceptForContextMenu(const KDevelop::Declaration *decl) override;
 };
 
 }

@@ -54,7 +54,7 @@ public:
         }
     }
 
-    virtual void visitIdentifier(Identifier* node) {
+    void visitIdentifier(Identifier* node) override {
         if (node) {
             fixIdentifier(node);
         }

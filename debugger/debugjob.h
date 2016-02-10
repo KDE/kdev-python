@@ -31,15 +31,15 @@ class DebugJob : public KDevelop::OutputJob
 Q_OBJECT
 public:
     DebugJob();
-    virtual ~DebugJob();
+    ~DebugJob() override;
     
     /**
      * @brief Create a debug session and start it.
      *
      * @return void
      **/
-    virtual void start();
-    virtual bool doKill();
+    void start() override;
+    bool doKill() override;
     
     QUrl m_scriptUrl;
     QString m_interpreter;

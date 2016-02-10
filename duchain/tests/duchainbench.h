@@ -44,7 +44,7 @@ class DUChainBench : public QObject
 public:
     explicit DUChainBench(QObject* parent = 0);
     void initShell();
-    virtual ~DUChainBench();
+    ~DUChainBench() override;
 
     KDevelop::ReferencedTopDUContext parse(const QString& code);
 

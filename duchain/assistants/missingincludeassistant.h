@@ -36,7 +36,7 @@ namespace Python {
 class MissingIncludeProblem : public KDevelop::Problem {
 public:
     MissingIncludeProblem(const QString& moduleName, KDevelop::IndexedString currentDocument);
-    virtual QExplicitlySharedDataPointer<KDevelop::IAssistant> solutionAssistant() const override;
+    QExplicitlySharedDataPointer<KDevelop::IAssistant> solutionAssistant() const override;
 
 private:
     QString m_moduleName;
@@ -48,10 +48,10 @@ class DocumentationGeneratorAction : public KDevelop::IAssistantAction
 Q_OBJECT
 public:
     DocumentationGeneratorAction(const QString& module, const KDevelop::IndexedString& document);
-    virtual QString description() const;
+    QString description() const override;
 
 public slots:
-    virtual void execute();
+    void execute() override;
 
 private:
     const QString module;
@@ -63,7 +63,7 @@ class MissingIncludeAssistant : public KDevelop::IAssistant
 Q_OBJECT
 public:
     MissingIncludeAssistant(const QString& module, const KDevelop::IndexedString& document);
-    virtual void createActions();
+    void createActions() override;
 private:
     const QString module;
     const KDevelop::IndexedString document;

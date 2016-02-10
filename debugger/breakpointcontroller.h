@@ -51,7 +51,7 @@ protected:
      * @param breakpoint The breakpoint to update.
      * @return void
      **/
-    virtual void sendMaybe(KDevelop::Breakpoint* breakpoint);
+    void sendMaybe(KDevelop::Breakpoint* breakpoint) override;
     DebugSession* session();
 };
 

@@ -616,7 +616,7 @@ public:
     bool found;
     KTextEditor::Range searchingForRange;
     QString searchingForIdentifier;
-    virtual void visitAttribute(AttributeAst* node) {
+    void visitAttribute(AttributeAst* node) override {
         auto r = KTextEditor::Range(0, node->startCol, 0, node->endCol);
         qDebug() << "Found attr: " << r << node->attribute->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->attribute->value == searchingForIdentifier ) {
@@ -625,7 +625,7 @@ public:
         }
         AstDefaultVisitor::visitAttribute(node);
     }
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) {
+    void visitFunctionDefinition(FunctionDefinitionAst* node) override {
         auto r = KTextEditor::Range(0, node->name->startCol, 0, node->name->endCol);
         qDebug() << "Found func: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         qDebug() << node->arguments->vararg << node->arguments->kwarg;
@@ -651,7 +651,7 @@ public:
         }
         AstDefaultVisitor::visitFunctionDefinition(node);
     }
-    virtual void visitClassDefinition(ClassDefinitionAst* node) {
+    void visitClassDefinition(ClassDefinitionAst* node) override {
         auto r = KTextEditor::Range(0, node->name->startCol, 0, node->name->endCol);
         qDebug() << "Found cls: " << r << node->name->value << ", looking for: " << searchingForRange << searchingForIdentifier;
         if ( r == searchingForRange && node->name->value == searchingForIdentifier ) {
@@ -660,7 +660,7 @@ public:
         }
         AstDefaultVisitor::visitClassDefinition(node);
     }
-    virtual void visitImport(ImportAst* node) {
+    void visitImport(ImportAst* node) override {
         foreach ( const AliasAst* name, node->names ) {
             if ( name->name ) {
                 qDebug() << "found import" << name->name->value << name->name->range();
@@ -754,7 +754,7 @@ public:
     QString searchingForType;
     TopDUContextPointer ctx;
     bool found;
-    virtual void visitName(NameAst* node) {
+    void visitName(NameAst* node) override {
         if ( node->identifier->value != "checkme" ) return;
         QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier(node->identifier->value));
         if ( ! decls.length() ) {

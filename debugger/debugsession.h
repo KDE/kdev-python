@@ -43,10 +43,10 @@ class DebugSession : public KDevelop::IDebugSession
     Q_OBJECT
 public:
     DebugSession(QStringList program, const QUrl& workingDirectory);
-    virtual ~DebugSession();
+    ~DebugSession() override;
 
-    virtual IBreakpointController* breakpointController() const;
-    virtual IFrameStackModel* frameStackModel() const;
+    IBreakpointController* breakpointController() const override;
+    IFrameStackModel* frameStackModel() const override;
 
     /**
      * @brief Start the debugger.
@@ -106,33 +106,33 @@ public:
     /**
      * @brief Access this session's variable controller
      **/
-    virtual IVariableController* variableController() const;
+    IVariableController* variableController() const override;
     
     /// Those functions just execute the basic debugger commands. They're used when the user
     /// clicks the appropriate button.
-    virtual void stepOut();
-    virtual void stepOverInstruction();
-    virtual void stepInto();
-    virtual void stepIntoInstruction();
-    virtual void stepOver();
-    virtual void jumpToCursor();
-    virtual void runToCursor();
-    virtual void run();
-    virtual void restartDebugger();
+    void stepOut() override;
+    void stepOverInstruction() override;
+    void stepInto() override;
+    void stepIntoInstruction() override;
+    void stepOver() override;
+    void jumpToCursor() override;
+    void runToCursor() override;
+    void run() override;
+    void restartDebugger() override;
     
-    virtual bool restartAvaliable() const;
+    bool restartAvaliable() const override;
     
     /**
      * @brief Interrupt the running program with SIGINT and set the state to PausedState
      **/
-    virtual void interruptDebugger();
+    void interruptDebugger() override;
     
     /**
      * @brief Kill the debugger and program being debugged.
      * This tries to send a "quit" command, and if the debugger doesn't react to that quickly,
      * it'll just kill it.
      **/
-    virtual void stopDebugger();
+    void stopDebugger() override;
     
     /**
      * @brief Gives the debugger state.
@@ -141,7 +141,7 @@ public:
      * 
      * @return :IDebugSession::DebuggerState the current state the debugger is in
      **/
-    virtual IDebugSession::DebuggerState state() const;
+    IDebugSession::DebuggerState state() const override;
     
     /**
      * @brief Change the debugger state, and trigger various events depending on the previous and new state.
@@ -313,7 +313,7 @@ public:
     , m_command(command) {
         m_type = InvalidType;
     };
-    void run(DebugSession* session) {
+    void run(DebugSession* session) override {
         Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
         qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command<< m_notifyMethod;
         session->write(m_command.toUtf8());

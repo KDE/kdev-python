@@ -50,17 +50,17 @@ public:
         PEP8Checking = (KDevelop::TopDUContext::LastFeature << 2)
     };
     ParseJob(const IndexedString& url, ILanguageSupport* languageSupport );
-    virtual ~ParseJob();
+    ~ParseJob() override;
 
     virtual CodeAst* ast() const;
     bool wasReadFromDisk() const;
     static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
 
-    virtual ControlFlowGraph* controlFlowGraph();
-    virtual DataAccessRepository* dataAccessInformation();
+    ControlFlowGraph* controlFlowGraph() override;
+    DataAccessRepository* dataAccessInformation() override;
 
 protected:
-    virtual void run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread) override;
+    void run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread) override;
 
 private:
     QList<QUrl> m_cachedCustomIncludes;

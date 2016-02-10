@@ -35,8 +35,8 @@ class Highlighting;
 class CodeHighlightingInstance : public KDevelop::CodeHighlightingInstance {
 public:
     CodeHighlightingInstance(const Highlighting* highlighting);
-    virtual void highlightUse(KDevelop::DUContext* context, int index, const QColor& color);
-    virtual bool useRainbowColor(KDevelop::Declaration* dec) const;
+    void highlightUse(KDevelop::DUContext* context, int index, const QColor& color) override;
+    bool useRainbowColor(KDevelop::Declaration* dec) const override;
 private:
     void checkHasBlocks(KDevelop::TopDUContext* top) const;
     mutable bool checked_blocks;
@@ -49,7 +49,7 @@ class Highlighting : public KDevelop::CodeHighlighting
 Q_OBJECT
 public:
     Highlighting( QObject* parent );
-    virtual CodeHighlightingInstance* createInstance() const;
+    CodeHighlightingInstance* createInstance() const override;
 };
 }
 #endif

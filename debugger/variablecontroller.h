@@ -32,13 +32,13 @@ class VariableController : public KDevelop::IVariableController
 Q_OBJECT
 public:
     VariableController(IDebugSession* parent);
-    virtual void addWatch(KDevelop::Variable* variable);
-    virtual void addWatchpoint(KDevelop::Variable* variable);
+    void addWatch(KDevelop::Variable* variable) override;
+    void addWatchpoint(KDevelop::Variable* variable) override;
     
     /**
      * @brief This just calls the Variable constructor and returns a new, empty \a Variable object.
      **/
-    virtual KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent,
+    KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent,
                                                const QString& expression, const QString& display = "") override;
     
     /**
@@ -51,18 +51,18 @@ public:
      * @param cursor the cursor position
      * @return The expression to print. Should be an (at least syntactically) valid python expression
      **/
-    virtual KTextEditor::Range expressionRangeUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor) override;
+    KTextEditor::Range expressionRangeUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor) override;
 
     /**
      * @brief Update locals and/or watches, as indicated by autoUpdate().
      **/
-    virtual void update() override;
+    void update() override;
 protected:
     /**
      * @brief Overriden to handle frame change events (when the user clicks the frame list).
      * This then enqueues many "up" or "down" commands to react to the frame change.
      **/
-    virtual void handleEvent(IDebugSession::event_t event) override;
+    void handleEvent(IDebugSession::event_t event) override;
 
 private:
     QTimer m_updateTimer;

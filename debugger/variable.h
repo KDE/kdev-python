@@ -36,7 +36,7 @@ public:
      * @param callback Object to notify. Skipped if 0. Defaults to 0.
      * @param callbackMethod Method to call. Skipped if 0. Defaults to 0.
      **/
-    virtual void attachMaybe(QObject* callback = 0, const char* callbackMethod = 0);
+    void attachMaybe(QObject* callback = 0, const char* callbackMethod = 0) override;
     
     /**
      * @brief Fetches children (list items, object attributes...) for this variable.
@@ -44,7 +44,7 @@ public:
      * if there's 20.000 of them
      * This is invoked if the user clicks the "expand" icon in any variable tree view
      **/
-    virtual void fetchMoreChildren();
+    void fetchMoreChildren() override;
     
     QObject* m_notifyCreated;
     const char* m_notifyCreatedMethod;

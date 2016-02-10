@@ -45,7 +45,7 @@ class PyDUChainTest : public QObject
     public:
         explicit PyDUChainTest(QObject* parent = 0);
         void initShell();
-        virtual ~PyDUChainTest();
+        ~PyDUChainTest() override;
 
         KDevelop::ReferencedTopDUContext parse(const QString& code);
         

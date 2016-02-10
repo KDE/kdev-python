@@ -39,8 +39,8 @@ public:
     QString m_fullyQualifiedModuleIdentifier;
     
 protected:
-    virtual void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType);
-    virtual void eventuallyMakeTypeLinks(AbstractType::Ptr type);
+    void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType) override;
+    void eventuallyMakeTypeLinks(AbstractType::Ptr type) override;
     QString getLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType);
 };
 

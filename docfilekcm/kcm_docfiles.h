@@ -29,15 +29,15 @@ class DocfilesKCModule : public KDevelop::ConfigPage
 Q_OBJECT
 public:
     DocfilesKCModule(KDevelop::IPlugin* plugin, QWidget* parent);
-    virtual ~DocfilesKCModule();
+    ~DocfilesKCModule() override;
 
-    virtual QString name() const override;
-    virtual QString fullName() const override;
-    virtual QIcon icon() const override;
+    QString name() const override;
+    QString fullName() const override;
+    QIcon icon() const override;
 
-    virtual void apply() override;
-    virtual void reset() override;
-    virtual void defaults() override;
+    void apply() override;
+    void reset() override;
+    void defaults() override;
 
 private:
     DocfileManagerWidget* managerWidget;

@@ -50,7 +50,7 @@ namespace Python
 // Update the "end" cursors of all nodes in the given tree.
 class RangeUpdateVisitor : public AstDefaultVisitor {
 public:
-    virtual void visitNode(Ast* node) {
+    void visitNode(Ast* node) override {
         AstDefaultVisitor::visitNode(node);
         if ( node && node->parent && node->parent->astType != Ast::AttributeAstType ) {
             if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
@@ -81,7 +81,7 @@ public:
 
         return m_next;
     };
-    virtual void visitNode(Python::Ast* node) override {
+    void visitNode(Python::Ast* node) override {
         if ( ! node ) {
             return;
         }
@@ -112,16 +112,16 @@ class RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents)
         : lines(contents.split('\n')) { };
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node) override {
+    void visitFunctionDefinition(FunctionDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, node->async ? "asyncdef" : "def");
         AstDefaultVisitor::visitFunctionDefinition(node);
     };
-    virtual void visitClassDefinition(ClassDefinitionAst* node) override {
+    void visitClassDefinition(ClassDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, "class");
         AstDefaultVisitor::visitClassDefinition(node);
     };
 
-    virtual void visitAttribute(AttributeAst* node) override {
+    void visitAttribute(AttributeAst* node) override {
         // Work around the weird way to count columns in Python's AST module.
 
         // Find where the next expression (of any kind) behind this one starts
@@ -165,7 +165,7 @@ public:
     // alias for imports (import foo as bar, baz as bang)
     // no strings, brackets, or whatever are allowed here, so the "parser"
     // can be very straightforward.
-    virtual void visitImport(ImportAst* node) override {
+    void visitImport(ImportAst* node) override {
         AstDefaultVisitor::visitImport(node);
         int aliasIndex = 0;
         foreach ( AliasAst* alias, node->names ) {
@@ -175,7 +175,7 @@ public:
     };
 
     // alias for exceptions (except FooBarException as somethingterriblehappened: ...)
-    virtual void visitExceptionHandler(ExceptionHandlerAst* node) override {
+    void visitExceptionHandler(ExceptionHandlerAst* node) override {
         AstDefaultVisitor::visitExceptionHandler(node);
         if ( ! node->name ) {
             return;

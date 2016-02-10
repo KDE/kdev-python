@@ -396,7 +396,7 @@ public:
         }
     }
 
-    virtual void visitFunctionDefinition(FunctionDefinitionAst* node)
+    void visitFunctionDefinition(FunctionDefinitionAst* node) override
     {
         m_declaration.push(node->name->value);
 
@@ -409,7 +409,7 @@ public:
         m_declaration.pop();
     }
 
-    virtual void visitClassDefinition(ClassDefinitionAst* node)
+    void visitClassDefinition(ClassDefinitionAst* node) override
     {
         m_declaration.push(node->name->value);
 

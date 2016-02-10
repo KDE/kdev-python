@@ -76,16 +76,16 @@ CodeAst::Ptr PyAstTest::getAst(QString code)
 class VerifyVisitor : public AstDefaultVisitor {
 public:
     VerifyVisitor() : AstDefaultVisitor(), m_nodecount(0) { };
-    virtual void visitNode(Ast* node) {
+    void visitNode(Ast* node) override {
         m_nodecount += 1;
         QVERIFY(! node || node->astType < Ast::LastAstType);
         AstDefaultVisitor::visitNode(node);
     };
-    virtual void visitName(NameAst* node) {
+    void visitName(NameAst* node) override {
         QVERIFY(! node->identifier->value.isNull());
         AstDefaultVisitor::visitName(node);
     };
-    virtual void visitCode(CodeAst* node) {
+    void visitCode(CodeAst* node) override {
         AstDefaultVisitor::visitCode(node);
         qDebug() << "done, nodes visited:" << m_nodecount;
     };

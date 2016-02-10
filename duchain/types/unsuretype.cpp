@@ -162,6 +162,7 @@ void UnsureType::addType(IndexedType indexed) {
     }
 
     auto list = d_func_dynamic()->m_typesList();
+    DUChainReadLocker lock;
     for ( int j = 0; j < list.size(); j++ ) {
         const auto& old = list.at(j).abstractType();
         if ( auto hinted = old.cast<HintedType>() ) {

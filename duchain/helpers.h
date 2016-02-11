@@ -71,7 +71,7 @@ public:
     static QMutex projectPathLock;
     static QList<QUrl> projectSearchPaths;
 
-    static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type, TopDUContext* current);
+    static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type);
 
     static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current);
 

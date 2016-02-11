@@ -149,79 +149,12 @@ AbstractType::Ptr Helper::resolveAliasType(const AbstractType::Ptr eventualAlias
     return TypeUtils::resolveAliasType(eventualAlias);
 }
 
-AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type, TopDUContext* current)
+AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
 {
-    UnsureType::Ptr result(new UnsureType());
-    unsigned short maxHints = 7;
-    if ( HintedType::Ptr hinted = type.cast<HintedType>() ) {
-        if ( hinted->isValid(current) && isUsefulType(hinted.cast<AbstractType>()) ) {
-            result->addType(type->indexed());
-        }
-    }
-    else if ( UnsureType::Ptr unsure = type.cast<UnsureType>() ) {
-        int len = unsure->typesSize();
-        for ( int i = 0; i < len && i < maxHints; i++ ) {
-            if ( HintedType::Ptr hinted = unsure->types()[i].abstractType().cast<HintedType>() ) {
-                if ( hinted->isValid(current) ) {
-                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Adding type hint (multi): " << hinted->toString();
-                    result->addType(hinted->indexed());
-                }
-                else {
-                    qCDebug(KDEV_PYTHON_DUCHAIN) << "Discarding type hint (multi): " << hinted->toString();
-                    maxHints += 1;
-                }
-            }
-            else {
-                maxHints += 1;
-            }
-        }
-    }
-    else if ( IndexedContainer::Ptr indexed = type.cast<IndexedContainer>() ) {
-        // TODO this is bad because it is slow. Make it faster!
-        // TODO this would really be an important thing, as it will be called quite often.
-        // TODO "how" is simple, just avoid cloning stuff if nothing needs to be changed (i.e. no hints exist).
-        IndexedContainer::Ptr edit = IndexedContainer::Ptr(static_cast<IndexedContainer*>(indexed->clone()));
-        for ( int i = 0; i < indexed->typesCount(); i++ ) {
-            if ( HintedType::Ptr p = indexed->typeAt(i).abstractType().cast<HintedType>() ) {
-                if ( ! p->isValid(current) ) {
-                    edit->replaceType(i, AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
-                }
-            }
-        }
-        return edit.cast<AbstractType>();
-    }
-    else if ( auto variable = type.cast<ListType>() ) {
-        auto edit = ListType::Ptr(static_cast<ListType*>(variable->clone()));
-        UnsureType::Ptr newContentType(new UnsureType());
-        AbstractType::Ptr oldContentType = edit->contentType().abstractType();
-        bool isHint = false;
-        if ( oldContentType ) {
-            if ( UnsureType::Ptr oldUnsure = oldContentType.cast<UnsureType>() ) {
-                for ( unsigned int i = 0; i < oldUnsure->typesSize(); i++ ) {
-                    if ( HintedType::Ptr hinted = oldUnsure->types()[i].abstractType().cast<HintedType>() ) {
-                        isHint = true;
-                        if ( ! hinted->isValid(current) ) {
-                            continue;
-                        }
-                    }
-                    newContentType->addType(oldUnsure->types()[i]);
-                }
-            }
-            else if ( HintedType::Ptr hinted = oldContentType.cast<HintedType>() ) {
-                isHint = true;
-                if ( hinted->isValid(current) ) {
-                    newContentType->addType(hinted->indexed());
-                }
-            }
-            if ( ! isHint ) {
-                return result.cast<AbstractType>();
-            }
-            edit->replaceContentType(newContentType.cast<AbstractType>());
-//             edit->replaceKeyType(variable->keyType().abstractType()); // TODO re-enable?
-        }
-        return edit.cast<AbstractType>();
-    }
-    return result.cast<AbstractType>();
+    return Helper::foldTypes(Helper::filterType<AbstractType>(type, [](AbstractType::Ptr t) -> bool {
+        auto hint = t.cast<HintedType>();
+        return !hint || hint->isValid();
+    }));
 }
 
 Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)

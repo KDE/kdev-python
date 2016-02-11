@@ -154,6 +154,26 @@ AbstractType::WhichType UnsureType::whichType() const
     return AbstractType::TypeUnsure;
 }
 
+void UnsureType::addType(IndexedType indexed) {
+    KDevelop::UnsureType::addType(indexed);
+    auto type = indexed.abstractType();
+    if ( ! type.cast<HintedType>() ) {
+        return;
+    }
+
+    auto list = d_func_dynamic()->m_typesList();
+    DUChainReadLocker lock;
+    for ( int j = 0; j < list.size(); j++ ) {
+        const auto& old = list.at(j).abstractType();
+        if ( auto hinted = old.cast<HintedType>() ) {
+            if ( ! hinted->isValid() ) {
+                list.remove(j);
+                j--;
+            }
+        }
+    }
+}
+
 bool UnsureType::equals(const AbstractType* rhs) const
 {
     if ( this == rhs ) {

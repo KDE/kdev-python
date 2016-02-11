@@ -21,6 +21,7 @@
 #include "pythonlanguagesupport.h"
 
 #include <QMutexLocker>
+#include <QReadWriteLock>
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -114,6 +115,10 @@ void LanguageSupport::documentOpened(IDocument* doc)
 
 LanguageSupport::~LanguageSupport()
 {
+    parseLock()->lockForWrite();
+    // By locking the parse-mutexes, we make sure that parse jobs get a chance to finish in a good state
+    parseLock()->unlock();
+
     delete m_highlighting;
     m_highlighting = 0;
 }

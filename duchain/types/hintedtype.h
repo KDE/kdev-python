@@ -67,39 +67,37 @@ class KDEVPYTHONDUCHAIN_EXPORT HintedType : public KDevelop::TypeAliasType
 {
 public:
     typedef TypePtr<HintedType> Ptr;
-    
+
     HintedType();
     HintedType(const HintedType& rhs);
     HintedType(TypeAliasTypeData& data);
-    
+
     /**
      * @brief Sets the creating topDUContext for this type hint.
      * Also uses that contexts current modification revision as creation time.
      *
      * @param context the topDUContext to use
-     * @return void
      **/
     void setCreatedBy(TopDUContext* context, const ModificationRevision& revision);
     virtual AbstractType* clone() const;
     virtual uint hash() const;
+
     /**
      * @brief Checks whether this hint is still valid, and returns false if it is not
      * @warning The DUChain must be at least read-locked for this
-     * 
+     *
      * @return bool true if valid, false otherwise
      **/
-    bool isValid(TopDUContext* current);
-    
+    bool isValid();
+
     virtual bool equals(const AbstractType* rhs) const;
-    
     enum {
-// #warning check identity value (62)
         Identity = 62
     };
-    
+
     typedef HintedTypeData Data;
     typedef KDevelop::TypeAliasType BaseType;
-    
+
 protected:
     TYPE_DECLARE_DATA(HintedType);
 };

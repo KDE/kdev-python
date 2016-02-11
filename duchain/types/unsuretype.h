@@ -17,10 +17,11 @@
 **/
 
 
-#ifndef UNSURETYPE_H
-#define UNSURETYPE_H
+#ifndef PYTHON_UNSURETYPE_H
+#define PYTHON_UNSURETYPE_H
 
 #include "pythonduchainexport.h"
+#include "hintedtype.h"
 
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/types/typesystemdata.h>
@@ -40,28 +41,31 @@ class KDEVPYTHONDUCHAIN_EXPORT UnsureType : public KDevelop::UnsureType
 {
 public:
     typedef KDevelop::TypePtr<UnsureType> Ptr;
-    
+
     UnsureType();
     UnsureType(const UnsureType& rhs);
     UnsureType(KDevelop::UnsureTypeData& data);
-    
-    virtual WhichType whichType() const;
-    
-    virtual AbstractType* clone() const;
-    virtual uint hash() const;
-    virtual QString toString() const;
+
+    WhichType whichType() const override;
+
+    AbstractType* clone() const override;
+    uint hash() const override;
+    QString toString() const override;
+
+    void addType(IndexedType type);
+
     const QList<AbstractType::Ptr> typesRecursive() const;
-    
-    virtual bool equals(const AbstractType* rhs) const;
-    
+
+    bool equals(const AbstractType* rhs) const override;
+
     enum {
 // #warning check identity value (63)
         Identity = 63
     };
-    
+
     typedef KDevelop::UnsureTypeData Data;
     typedef KDevelop::UnsureType BaseType;
-    
+
 protected:
     TYPE_DECLARE_DATA(KDevelop::UnsureType);
 };

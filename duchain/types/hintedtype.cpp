@@ -53,13 +53,12 @@ HintedType::HintedType(TypeAliasTypeData& data): TypeAliasType(data)
 
 }
 
-bool HintedType::isValid(TopDUContext* /*current*/)
+bool HintedType::isValid()
 {
     TopDUContext* creator = d_func()->m_createdByContext.data();
     if ( ! creator ) {
         return false;
     }
-//    KDEBUG_BLOCK
     ModificationRevision rev(creator->parsingEnvironmentFile()->modificationRevision());
     qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
     qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
@@ -67,11 +66,6 @@ bool HintedType::isValid(TopDUContext* /*current*/)
         qCDebug(KDEV_PYTHON_DUCHAIN) << "modification revision mismatch, invalidating";
         return false;
     }
-    /// This should not be needed any more since 193f52027fb7
-//     if ( creator == current && d_func()->m_modificationRevision == rev && rev.revision != 0 ) {
-//         qCDebug(KDEV_PYTHON_DUCHAIN) << "modification revision exact match, but same context, invalidating";
-//         return false;
-//     }
     return true;
 }
 

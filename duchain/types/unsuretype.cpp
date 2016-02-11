@@ -202,6 +202,39 @@ void UnsureType::addType(IndexedType indexed) {
     if ( !alreadyExists ) {
         list.append(indexed);
     }
+// #define CHECK_DUPLICATES
+#ifdef CHECK_DUPLICATES
+    if (list.size() > 1) {
+        QString types;
+        bool foundDuplicates = false;
+        QStringList checkDuplicates;
+        FOREACH_FUNCTION(const IndexedType& type2, d_func()->m_types) {
+            auto t = type2.abstractType();
+            auto str = t->toString();
+            types += "\n    " + QString::number(type2.index());
+            auto hinted = t.cast<HintedType>();
+            while (hinted) {
+                auto target = hinted->type();
+                types += " (aka " + QString::number(target->indexed().index()) + ": " + target->toString()
+                        +  " and context " + QString::number(hinted->createdBy().index()) + ")";
+                hinted = target.cast<HintedType>();
+            }
+            types += " - " + t->toString() + " of type "  + typeid(*t).name();
+            if (!foundDuplicates) {
+                if (checkDuplicates.contains(str)) {
+                    foundDuplicates = true;
+                } else {
+                    checkDuplicates.append(str);
+                }
+            }
+        }
+        if (foundDuplicates) {
+            qWarning().nospace().noquote() << "found potential duplicates when adding " << typeid(*type).name()
+                << " " << type->toString()
+                << "(index = " << indexed.index() << ") ->" << types;
+        }
+    }
+#endif
 }
 
 bool UnsureType::equals(const AbstractType* rhs) const

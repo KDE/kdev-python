@@ -77,6 +77,12 @@ void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision&
              << "; " << d_func()->m_modificationRevision.revision;
 }
 
+IndexedTopDUContext HintedType::createdBy() const
+{
+    return d_func()->m_createdByContext;
+}
+
+
 KDevelop::AbstractType* HintedType::clone() const
 {
     HintedType* n = new HintedType(*this);

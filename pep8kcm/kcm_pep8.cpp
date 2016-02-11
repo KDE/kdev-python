@@ -111,7 +111,7 @@ QIcon PEP8KCModule::icon() const
 
 QString PEP8KCModule::name() const
 {
-    return i18n("Python style checking");
+    return i18n("Python Style Checking");
 }
 
 PEP8KCModule::~PEP8KCModule()

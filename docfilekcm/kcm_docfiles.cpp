@@ -62,7 +62,7 @@ QIcon DocfilesKCModule::icon() const
 
 QString DocfilesKCModule::name() const
 {
-    return i18n("Python documentation");
+    return i18n("Python Documentation");
 }
 
 

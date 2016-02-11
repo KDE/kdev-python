@@ -45,8 +45,8 @@ public:
     /**
      * @brief Entry function, called by KDevPlatform.
      */
-    virtual ReferencedTopDUContext build(const IndexedString& url, Ast* node,
-                                         ReferencedTopDUContext updateContext = ReferencedTopDUContext());
+    ReferencedTopDUContext build(const IndexedString& url, Ast* node,
+                                 ReferencedTopDUContext updateContext = ReferencedTopDUContext()) override;
 
     /**
      * @brief Set whether the current running pass is the first or the second one.
@@ -294,7 +294,7 @@ private:
         decl->setAlwaysForceDirect(true);
         return decl;
     };
-    virtual void closeDeclaration();
+    void closeDeclaration() override;
 
 private:
     /// HACK: List of items to delete after parsing finishes, to work around the built-in cleanup logic

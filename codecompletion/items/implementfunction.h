@@ -29,8 +29,8 @@ class ImplementFunctionCompletionItem : public CompletionTreeItem
 {
 public:
     ImplementFunctionCompletionItem(const QString& name, const QStringList& arguments, const QString& previousIndent);
-    virtual void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
-    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
+    void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
+    QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const override;
 
 private:
     QStringList m_arguments;

@@ -29,6 +29,8 @@
 #include <language/duchain/problem.h>
 #include <language/duchain/duchain.h>
 
+#include <memory>
+
 #include "python_header.h"
 #include "astdefaultvisitor.h"
 #include "cythonsyntaxremover.h"
@@ -365,19 +367,26 @@ private:
 QMutex AstBuilder::pyInitLock;
 
 QString PyUnicodeObjectToQString(PyObject* obj) {
-#ifdef Q_OS_WIN32
-    // If you want to make this work on windows, take care to check Py_UNICODE_WIDE (see below)
-    // not sure if this always works
-    // not sure either why the "linux" version below wouldn't work on windows
-    return QString::fromWCharArray((wchar_t*)PyUnicode_AS_DATA(PyObject_Str(obj)));
-#else
-    uint* data = (uint*) PyUnicode_AS_DATA(PyObject_Str(obj));
-#ifdef Py_UNICODE_WIDE
-    return QString::fromUcs4(data);
-#else
-    return QString::fromUcs2(data);
-#endif // Py_UNICODE_WIDE
-#endif // windows
+    auto pyObjectCleanup = [](PyObject* o) { if (o) Py_DECREF(o); };
+    const auto strOwner = std::unique_ptr<PyObject, decltype(pyObjectCleanup)>(PyObject_Str(obj), pyObjectCleanup);
+    const auto str = strOwner.get();
+    if (PyUnicode_READY(str) < 0) {
+        qWarning("PyUnicode_READY(%p) returned false!", (void*)str);
+        return QString();
+    }
+    const auto length = PyUnicode_GET_LENGTH(str);
+    switch(PyUnicode_KIND(str)) {
+        case PyUnicode_1BYTE_KIND:
+            return QString::fromLatin1((const char*)PyUnicode_1BYTE_DATA(str), length);
+        case PyUnicode_2BYTE_KIND:
+            return QString::fromUtf16(PyUnicode_2BYTE_DATA(str), length);
+        case PyUnicode_4BYTE_KIND:
+            return QString::fromUcs4(PyUnicode_4BYTE_DATA(str), length);
+        case PyUnicode_WCHAR_KIND:
+            qWarning("PyUnicode_KIND(%p) returned PyUnicode_WCHAR_KIND, this should not happen!", (void*)str);
+            return QString::fromWCharArray(PyUnicode_AS_UNICODE(str), length);
+    }
+    Q_UNREACHABLE();
 }
 
 QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)

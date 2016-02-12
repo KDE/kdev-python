@@ -52,7 +52,7 @@ public:
     uint hash() const override;
     QString toString() const override;
 
-    void addType(IndexedType type);
+    void addType(IndexedType type) override;
 
     const QList<AbstractType::Ptr> typesRecursive() const;
 

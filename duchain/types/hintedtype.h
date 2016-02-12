@@ -79,6 +79,8 @@ public:
      * @param context the topDUContext to use
      **/
     void setCreatedBy(TopDUContext* context, const ModificationRevision& revision);
+    /** @return the creating TopDUContext for this type hint. */
+    IndexedTopDUContext createdBy() const;
     virtual AbstractType* clone() const;
     virtual uint hash() const;
 

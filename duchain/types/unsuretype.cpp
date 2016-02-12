@@ -20,7 +20,6 @@
 #include "helpers.h"
 #include "indexedcontainer.h"
 
-#include <QDebug>
 #include "../duchaindebug.h"
 
 #include <language/duchain/types/typeregister.h>
@@ -155,23 +154,87 @@ AbstractType::WhichType UnsureType::whichType() const
 }
 
 void UnsureType::addType(IndexedType indexed) {
-    KDevelop::UnsureType::addType(indexed);
     auto type = indexed.abstractType();
-    if ( ! type.cast<HintedType>() ) {
+    auto hinted = type.cast<HintedType>(); // XXX: do we need a read locker here?
+    if ( ! hinted ) {
+        // if we aren't adding a HintedType the default implementation works
+        KDevelop::UnsureType::addType(indexed);
         return;
     }
-
-    auto list = d_func_dynamic()->m_typesList();
+    auto& list = d_func_dynamic()->m_typesList();
     DUChainReadLocker lock;
+    if (!hinted->isValid()) { // needs a read lock (as does most of the rest of the function)
+        // can happen if the user saves the currently open document again before parsing has finished
+        return;
+    }
+    // If there is already a HintedType in the list referring to the underlying type
+    // we only add it if the context it was created in is the same.
+    // Additionally, we also remove all HintedType instances that are no longer valid
+    // to make sure the list doesn't grow infinitely large
+    const auto newHintedTargetIndex = hinted->type()->indexed().index();
+    bool alreadyExists = false;
     for ( int j = 0; j < list.size(); j++ ) {
-        const auto& old = list.at(j).abstractType();
-        if ( auto hinted = old.cast<HintedType>() ) {
-            if ( ! hinted->isValid() ) {
+        const IndexedType oldIndexed = list.at(j);
+        if (oldIndexed == indexed) {
+            alreadyExists = true;
+        }
+        const auto& old = oldIndexed.abstractType();
+        if ( auto oldHinted = old.cast<HintedType>() ) {
+            if ( !alreadyExists ) {
+                // only do these checks if we haven't already determined that it is a duplicate
+                auto oldHintedTargetIndex = oldHinted->type()->indexed().index();
+                if ( oldHintedTargetIndex == newHintedTargetIndex ) {
+                    if ( hinted->createdBy() == oldHinted->createdBy()) {
+                        alreadyExists = true;
+                    }
+                }
+            }
+            if ( ! oldHinted->isValid() ) {
+                // std::remove_if + erase() would be faster than remove() but this list won't have many entries
+                // and the memcpy() cost is probably massively offset by the IndexedType -> AbstractType
+                // lookup that we would have to duplicated if we had a separate check for duplicates loop
                 list.remove(j);
                 j--;
+                continue;
             }
         }
     }
+    if ( !alreadyExists ) {
+        list.append(indexed);
+    }
+// #define CHECK_DUPLICATES
+#ifdef CHECK_DUPLICATES
+    if (list.size() > 1) {
+        QString types;
+        bool foundDuplicates = false;
+        QStringList checkDuplicates;
+        FOREACH_FUNCTION(const IndexedType& type2, d_func()->m_types) {
+            auto t = type2.abstractType();
+            auto str = t->toString();
+            types += "\n    " + QString::number(type2.index());
+            auto hinted = t.cast<HintedType>();
+            while (hinted) {
+                auto target = hinted->type();
+                types += " (aka " + QString::number(target->indexed().index()) + ": " + target->toString()
+                        +  " and context " + QString::number(hinted->createdBy().index()) + ")";
+                hinted = target.cast<HintedType>();
+            }
+            types += " - " + t->toString() + " of type "  + typeid(*t).name();
+            if (!foundDuplicates) {
+                if (checkDuplicates.contains(str)) {
+                    foundDuplicates = true;
+                } else {
+                    checkDuplicates.append(str);
+                }
+            }
+        }
+        if (foundDuplicates) {
+            qWarning().nospace().noquote() << "found potential duplicates when adding " << typeid(*type).name()
+                << " " << type->toString()
+                << "(index = " << indexed.index() << ") ->" << types;
+        }
+    }
+#endif
 }
 
 bool UnsureType::equals(const AbstractType* rhs) const

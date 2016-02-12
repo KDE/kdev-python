@@ -33,15 +33,14 @@ class FunctionDeclarationCompletionItem : public Python::PythonDeclarationComple
 public:
     FunctionDeclarationCompletionItem(DeclarationPointer decl, KDevelop::CodeCompletionContext::Ptr context);
     virtual ~FunctionDeclarationCompletionItem();
-    virtual int argumentHintDepth() const;
+    int argumentHintDepth() const override;
     virtual int atArgument() const;
     void setAtArgument(int d);
     void setDepth(int d);
     void setDoNotCall(bool doNotCall);
-    
-    virtual QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const;
-    
-    virtual void executed(KTextEditor::View* view, const KTextEditor::Range& word) override;
+
+    QVariant data(const QModelIndex& index, int role, const CodeCompletionModel* model) const override;
+    void executed(KTextEditor::View* view, const KTextEditor::Range& word) override;
 private:
     int m_atArgument;
     int m_depth;

@@ -171,7 +171,7 @@ void UnsureType::addType(IndexedType indexed) {
     // we only add it if the context it was created in is the same.
     // Additionally, we also remove all HintedType instances that are no longer valid
     // to make sure the list doesn't grow infinitely large
-    const auto newHintedTargetIndex = hinted->type()->indexed().index();
+    const auto newHintedTarget = hinted->type()->indexed();
     bool alreadyExists = false;
     for ( int j = 0; j < list.size(); j++ ) {
         const IndexedType oldIndexed = list.at(j);
@@ -182,8 +182,8 @@ void UnsureType::addType(IndexedType indexed) {
         if ( auto oldHinted = old.cast<HintedType>() ) {
             if ( !alreadyExists ) {
                 // only do these checks if we haven't already determined that it is a duplicate
-                auto oldHintedTargetIndex = oldHinted->type()->indexed().index();
-                if ( oldHintedTargetIndex == newHintedTargetIndex ) {
+                auto oldHintedTarget = oldHinted->type()->indexed();
+                if ( oldHintedTarget == newHintedTarget ) {
                     if ( hinted->createdBy() == oldHinted->createdBy()) {
                         alreadyExists = true;
                     }

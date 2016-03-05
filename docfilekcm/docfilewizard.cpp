@@ -204,7 +204,12 @@ void DocfileWizard::saveAndClose()
                                                           outputFile.fileName())) == KMessageBox::Yes;
     }
     if ( mayWrite ) {
-        auto basePath = QUrl::fromLocalFile(outputFile.fileName()).url(QUrl::RemoveFilename);
+        auto url = QUrl::fromLocalFile(outputFile.fileName());
+        Q_ASSERT(url.isLocalFile());
+        auto basePath = url.url(QUrl::RemoveFilename | QUrl::PreferLocalFile);
+
+        // should have been done previously
+        Q_ASSERT(QDir(basePath).exists());
         if ( ! QDir(basePath).exists() ) {
             QDir(basePath).mkpath(basePath);
         }
@@ -217,10 +222,7 @@ void DocfileWizard::saveAndClose()
                                          "additional return statements to functions to control the return\n"
                                          "type to be used for that function by the analyzer.\n"
                                          "Make sure to keep a copy of your changes so you don't accidentally\n"
-                                         "overwrite them by re-generating the file.\n"
-                                         "If you do significant improvements, consider sharing the file\n"
-                                         "with others through the Settings -> Configure KDevelop -> Python Documentation data\n"
-                                         "module!") + "\"\"\"\n\n";
+                                         "overwrite them by re-generating the file.\n") + "\"\"\"\n\n";
         outputFile.write(header.toUtf8() + resultField->toPlainText().toUtf8());
         outputFile.close();
         savedAs = outputFile.fileName();

@@ -350,10 +350,8 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
             auto doc = document.path();
             auto relative = _relativePath(base, doc);
             auto fullPath = correctionFileDir + "/" + relative;
-            // TODO QUrl: cleanPath?
-
             if ( QFile::exists(fullPath) ) {
-                return QUrl::fromLocalFile(fullPath);
+                return QUrl::fromLocalFile(fullPath).adjusted(QUrl::NormalizePathSegments);
             }
         }
     }

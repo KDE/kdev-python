@@ -504,6 +504,12 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         
         PyErr_Fetch(&exception, &value, &backtrace);
         qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
+
+        if ( ! value ) {
+            qCWarning(KDEV_PYTHON_PARSER) << "Internal parser error: exception value is null, aborting";
+            return CodeAst::Ptr();
+        }
+
         PyObject_Print(value, stderr, Py_PRINT_RAW);
         
         PyObject* errorMessage_str = PyTuple_GetItem(value, 0);

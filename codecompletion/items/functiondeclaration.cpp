@@ -155,7 +155,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::Document* document
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl.first ) {
+    if ( fdecl.first && fdecl.first->type<FunctionType>() ) {
         bool needsArguments = false;
         int argumentCount = fdecl.first->type<FunctionType>()->arguments().length();
         if ( fdecl.first->context()->type() == KDevelop::DUContext::Class ) {

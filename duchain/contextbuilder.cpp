@@ -252,7 +252,7 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
     RangeInRevision range = comprehensionRange(node);
     Q_ASSERT(range.isValid());
     if ( range.isValid() ) {
-        DUChainWriteLocker lock(DUChain::lock());
+        DUChainWriteLocker lock;
         openContext(node, range, KDevelop::DUContext::Other);
         Q_ASSERT(currentContext());
 //         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));

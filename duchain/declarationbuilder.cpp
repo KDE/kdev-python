@@ -1830,21 +1830,22 @@ void DeclarationBuilder::visitReturn(ReturnAst* node)
     
     if ( node->value ) {
         if ( ! hasCurrentType() ) {
-            DUChainWriteLocker lock(DUChain::lock());
+            DUChainWriteLocker lock;
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
             p->setSource(KDevelop::IProblem::SemanticAnalysis);
             p->setDescription(i18n("Return statement not within function declaration"));
             ProblemPointer ptr(p);
             topContext()->addProblem(ptr);
-            return;
         }
-        TypePtr<FunctionType> t = currentType<FunctionType>();
-        AbstractType::Ptr encountered = v.lastType();
-        DUChainWriteLocker lock;
-        if ( t ) {
-            // Update the containing function's return type
-            t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
+        else {
+            TypePtr<FunctionType> t = currentType<FunctionType>();
+            AbstractType::Ptr encountered = v.lastType();
+            DUChainWriteLocker lock;
+            if ( t ) {
+                // Update the containing function's return type
+                t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
+            }
         }
     }
     DeclarationBuilderBase::visitReturn(node);

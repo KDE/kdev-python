@@ -270,6 +270,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("whatever") << "for attr in updated:\n    "
                                  "    getattr.update";
     QTest::newRow("return_outside_function") << "return 3";
+    QTest::newRow("return_context_outside_function") << "return [x for x in range(3)]";
     QTest::newRow("paren_attrib_access") << "a = (xxx or yyy).zzz";
     QTest::newRow("func_call") << "a = xxx.func(yyy.zzz)";
     QTest::newRow("comprehension_attrib") << "a = [foo for foo in bar].baz";

@@ -39,7 +39,12 @@ if (NOT PYTHON_EXEC)
 endif (NOT PYTHON_EXEC)
 
 if (NOT PYTHON_EXEC)
-    find_program(PYTHON_EXEC "python${Python_FIND_VERSION}"
+    if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        set(PYTHON_EXEC_NAME "python")
+    else()
+        set(PYTHON_EXEC_NAME "python${Python_FIND_VERSION}")
+    endif()
+    find_program(PYTHON_EXEC ${PYTHON_EXEC_NAME}
         PATHS
         [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}\\InstallPath]
         [HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\${LOOKING_FOR_VERSION}-32\\InstallPath]

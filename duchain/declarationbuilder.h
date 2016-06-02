@@ -169,7 +169,7 @@ protected:
     /**
      * @brief Attempts to determine the unpacked type(s) of the right-hand side of an assignment.
      *
-     * @param items The expression on the right-hand side of the assignment
+     * @param source The source type on the right-hand side of the assignment
      * @param fillWhenLengthMissing If non-zero and the object in @p items has an indefinite length but
      *                              a definite content type, return this many copies of that type
      *
@@ -177,20 +177,7 @@ protected:
      *          a, b = "Foo", 3.5 (@p fillWhenLengthMissing ignored here because the right-hand side
      *                  has a definite amount of items) -> returns str, float
      */
-    QList<SourceType> sourcesOfAssignment(ExpressionAst* items, int fillWhenLengthMissing=-1) const;
-
-    /**
-     * @brief Given a list of targets (@see targetsOfAssignment) and sources (@see sourcesOfAssignment) and a
-     *        @p index, matches the sources with the targets and returns the type which belongs to @p index.
-     *
-     * @param targets Left-hand side of the assignment
-     * @param sources Right-hand side of the assignment
-     * @param index index of the item to return the type for
-     * @param rhs Pass the right-hand side of the assignment again so that its compound type can be used in case
-     *            it consists of more than one element and unpacking is not possible; example: a = 1, 2
-     */
-    SourceType selectSource(const QList<ExpressionAst*>& targets, const QList<SourceType>& sources,
-                            int index, ExpressionAst* rhs) const;
+    QVector<SourceType> unpackAssignmentSource(const SourceType& source, int fillWhenLengthMissing) const;
 
     /**
       * @brief Handle a variable assignment to @p name and give it the type @p element.
@@ -206,6 +193,16 @@ protected:
      * @brief Handle assignment to an attribute @p attribute with rhs type @p element.
      */
     void assignToAttribute(AttributeAst* attribute, const SourceType& element);
+
+    /**
+     * @brief Handle assignment to a target @p target with rhs type @p element.
+     */
+    void assignToTuple(TupleAst* tuple, const SourceType& element);
+
+    /**
+     * @brief Handle assignment to a target @p target with rhs type @p element.
+     */
+    void assignToUnknown(ExpressionAst* target, const SourceType& element);
 
     /**
      * @brief Find all existing declarations for the identifier @p node

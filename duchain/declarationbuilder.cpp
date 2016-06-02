@@ -1198,92 +1198,30 @@ QList<ExpressionAst*> DeclarationBuilder::targetsOfAssignment(QList<ExpressionAs
     return lhsExpressions;
 }
 
-QList<DeclarationBuilder::SourceType> DeclarationBuilder::sourcesOfAssignment(ExpressionAst* items,
-                                                                              int fillWhenLengthMissing) const
+QVector<DeclarationBuilder::SourceType>
+    DeclarationBuilder::unpackAssignmentSource(const SourceType& source,
+                                               int fillWhenLengthMissing) const
 {
-    QList<SourceType> sources;
-    QList<ExpressionAst*> values;
-
-    // TODO rework this function. It doesn't make much sense like this and could work much better.
-    if ( items && items->astType == Ast::TupleAstType ) {
-        values = static_cast<TupleAst*>(items)->elements;
-    }
-    else {
-        // This handles the a, b, c = [1, 2, 3] case. Since the assignment can also be like
-        // d = [1, 2, 3]; a, b, c = d we can't generally know the amount of elements
-        // in the right operand; so all elements are treated to have the same type.
-        if ( fillWhenLengthMissing > 0 ) {
-            ExpressionVisitor v(currentContext());
-            v.visitNode(items);
-            auto container = ListType::Ptr::dynamicCast(v.lastType());
-            if ( container ) {
-                AbstractType::Ptr content = container->contentType().abstractType();
-                for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
-                    sources << SourceType{ content, KDevelop::DeclarationPointer(), false };
-                }
-                return sources;
-            }
+    QVector<SourceType> sources;
+    if ( const IndexedContainer::Ptr container = source.type.cast<IndexedContainer>() ) {
+        // RHS is a tuple or similar, unpack that.
+        for (int i = 0; i < container->typesCount(); ++i) {
+            sources << SourceType{
+                container->typeAt(i).abstractType(),
+                DeclarationPointer(),
+                false
+            };
         }
-
-        // Otherwise, proceed normally.
-        values << items;
     }
-
-    foreach ( ExpressionAst* value, values ) {
-        ExpressionVisitor v(currentContext());
-        v.visitNode(value);
-
-        sources << SourceType{
-            v.lastType(),
-            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
-            v.isAlias()
-        };
+    else if ( auto container = ListType::Ptr::dynamicCast(source.type) ) {
+        // RHS is a list or similar, can't tell contents apart.
+        // Return content type * requested length.
+        AbstractType::Ptr content = container->contentType().abstractType();
+        for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
+            sources << SourceType{ content, DeclarationPointer(), false };
+        }
     }
     return sources;
-}
-
-DeclarationBuilder::SourceType DeclarationBuilder::selectSource(const QList<ExpressionAst*>& targets,
-                                                                const QList<DeclarationBuilder::SourceType>& sources,
-                                                                int index, ExpressionAst* rhs) const
-{
-    bool canUnpack = targets.length() == sources.length();
-    SourceType element;
-    // If the length of the right and the left side matches, exact unpacking can be done.
-    // example code: a, b, c = 3, 4, 5
-    // If the left side only contains one entry, unpacking never happens, and the left side
-    // is instead assigned a container type if applicable
-    // example code: a = 3, 4, 5
-    if ( canUnpack ) {
-        element = sources.at(index);
-    }
-    else if ( targets.length() == 1 ) {
-        ExpressionVisitor v(currentContext());
-        v.visitNode(rhs);
-        element = SourceType{
-            v.lastType(),
-            DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
-            v.isAlias()
-        };
-    }
-    else if ( ! sources.isEmpty() ) {
-        // the assignment is of the form "foo, bar, ... = ..." (tuple unpacking)
-        // this one is for the case that the tuple unpacking is not written down explicitly, for example
-        // a = (1, 2, 3); b, c, d = a
-        // the other case (b, c, d = 1, 2, 3) is handled above.
-        if ( const IndexedContainer::Ptr container = sources.first().type.cast<IndexedContainer>() ) {
-            if ( container->typesCount() == targets.length() ) {
-                element.type = container->typeAt(index).abstractType();
-                element.isAlias = false;
-            }
-        }
-    }
-    if ( ! element.type ) {
-        // use mixed if none of the previous ways of determining the type worked.
-        element.type = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-        element.declaration = nullptr;
-        element.isAlias = false;
-    }
-    return element;
 }
 
 void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder::SourceType& element)
@@ -1417,34 +1355,78 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
 }
 
+void DeclarationBuilder::assignToTuple(TupleAst* tuple, const DeclarationBuilder::SourceType& element) {
+    auto sources = unpackAssignmentSource(element, tuple->elements.length());
+    int ii = 0;
+    bool foundStarred = false;
+    foreach ( ExpressionAst* target, tuple->elements ) {
+        // Fallback, if we ran out of known types.
+        auto source = SourceType{
+            AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)),
+            DeclarationPointer(),
+            false
+        };
+
+        if ( target->astType == Ast::StarredAstType ) {
+            // PEP-3132. `a, *b, c = 1, 2, 3, 4 -> b = [2, 3]`
+            // Starred expression is assigned a list of the values not used by unstarred ones.
+            DUChainReadLocker lock;
+            auto type = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+            lock.unlock();
+            if ( !foundStarred ) { // Only allowed once, return unknown list.
+                // Count sources not used by other targets, slurp that many into list.
+                int leftovers = sources.length() - tuple->elements.length() + 1;
+                for ( ; leftovers > 0; leftovers--, ii++ ) {
+                    type->addContentType<Python::UnsureType>(sources.at(ii).type);
+                }
+            }
+            source.type = AbstractType::Ptr::staticCast(type);
+            // List is assigned to the child expression.
+            target = static_cast<StarredAst*>(target)->value;
+            foundStarred = true;
+        }
+        else if ( ii < sources.length() ) {
+            source = sources.at(ii);
+            ii++;
+        }
+        assignToUnknown(target, source);
+    }
+}
+
+void DeclarationBuilder::assignToUnknown(ExpressionAst* target, const DeclarationBuilder::SourceType& element) {
+    // Must be a nicer way to do this.
+    if ( target->astType == Ast::TupleAstType ) {
+        // Assignments of the form "a, b = 1, 2" or "a, b = c"
+        assignToTuple(static_cast<TupleAst*>(target), element);
+    }
+    else if ( target->astType == Ast::NameAstType ) {
+        // Assignments of the form "a = 3"
+        assignToName(static_cast<NameAst*>(target), element);
+    }
+    else if ( target->astType == Ast::SubscriptAstType ) {
+        // Assignments of the form "a[0] = 3"
+        assignToSubscript(static_cast<SubscriptAst*>(target), element);
+    }
+    else if ( target->astType == Ast::AttributeAstType ) {
+        // Assignments of the form "a.b = 3"
+        assignToAttribute(static_cast<AttributeAst*>(target), element);
+    }
+}
+
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     AstDefaultVisitor::visitAssignment(node);
-    // Because of tuple unpacking, it is required to gather the left- and right hand side
-    // expressions / types first, then match them together in a second step.
-    const QList<ExpressionAst*>& targets = targetsOfAssignment(node->targets);
-    const QList<SourceType>& sources = sourcesOfAssignment(node->value, targets.size() > 1 ? targets.size() : -1);
 
-    // Now all the information about left- and right hand side entries is ready,
-    // and creation / updating of variables can start.
-    int i = 0;
-    foreach ( ExpressionAst* target, targets ) {
-        SourceType element(selectSource(targets, sources, i, node->value));
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->value);
+    auto sourceType = SourceType{
+        v.lastType(),
+        DeclarationPointer(Helper::resolveAliasDeclaration(v.lastDeclaration().data())),
+        v.isAlias()
+    };
 
-        // Handling the tuple unpacking stuff is done now, and we can proceed as if there was no tuple unpacking involved.
-        if ( target->astType == Ast::NameAstType ) {
-            // Assignments of the form "a = 3"
-            assignToName(static_cast<NameAst*>(target), element);
-        }
-        else if ( target->astType == Ast::SubscriptAstType ) {
-            // Assignments of the form "a[0] = 3"
-            assignToSubscript(static_cast<SubscriptAst*>(target), element);
-        }
-        else if ( target->astType == Ast::AttributeAstType ) {
-            // Assignments of the form "a.b = 3"
-            assignToAttribute(static_cast<AttributeAst*>(target), element);
-        }
-        i += 1;
+    foreach(ExpressionAst* target, node->targets) {
+        assignToUnknown(target, sourceType);
     }
 }
 

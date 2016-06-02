@@ -861,6 +861,31 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
     QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "str";
 
+    QTest::newRow("tuple_single") << "checkme = 4," << "tuple";
+    QTest::newRow("tuple_single2") << "checkme, = 4," << "int";
+    QTest::newRow("tuple_single3") << "mytuple = 4,\ncheckme, = mytuple" << "int";
+
+    QTest::newRow("tuple_ext_unpack") << "mytuple = 3, 5.5\nfoobar, *starred, checkme = mytuple" << "float";
+    QTest::newRow("tuple_ext_unpack2") << "mytuple = 3, 5.5\nfoobar, *checkme, another = mytuple" << "list";
+    QTest::newRow("tuple_ext_unpack3") << "mytuple = 3, 5.5\nfoobar, *checkme = mytuple" << "list of float";
+    QTest::newRow("tuple_ext_unpack4") << "mytuple = 3, 5.5\n*checkme, = mytuple" << "list of unsure (int, float)";
+
+    QTest::newRow("tuple_nested") << "mytuple = 3, ('foo', 5.5)\ncheckme, foobar = mytuple" << "int";
+    QTest::newRow("tuple_nested2") << "mytuple = 3, ('foo', 5.5)\nfoobar, (checkme, other) = mytuple" << "str";
+    QTest::newRow("tuple_nested3") << "mytuple = ((7, 'foo'), 5.5), 3\n((baz, checkme), other), foo = mytuple" << "str";
+
+    // This isn't actually defined behaviour, but it works in CPython, so people use it...
+    QTest::newRow("tuple_nested_ext") << "mytuple = (2, ('foo', 'bar', 6), 7)\na, (b, *checkme, c), *d = mytuple" << "list of str";
+
+    QTest::newRow("tuple_multi_assign") << "mytuple = 2, 'foo'\ncheckme = a = mytuple" << "tuple";
+    QTest::newRow("tuple_multi_assign2") << "mytuple = 2, 'foo'\ncheckme, a = b = mytuple" << "int";
+
+    QTest::newRow("list_unpack") << "mylist = [1, 2, 3]\ncheckme, b, c = mylist" << "int";
+    QTest::newRow("list_unpack2") << "mylist = [1, 'x', 3]\ncheckme, b, c = mylist" << "unsure (int, str)";
+
+    QTest::newRow("list_ext_unpack") << "mylist = [1, 2, 3]\n*checkme, foo = mylist" << "list of int";
+    QTest::newRow("list_ext_unpack2") << "mylist = [1, 'x', 3]\n*checkme, foo = mylist" << "list of unsure (int, str)";
+
     QTest::newRow("if_expr_sure") << "checkme = 3 if 7 > 9 else 5" << "int";
 
     QTest::newRow("unary_op") << "checkme = -42" << "int";
@@ -1388,9 +1413,9 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::newRow("tuple_wrong") << "a, b = 3" << QStringList{"a", "b"} << QStringList{"mixed", "mixed"};
     QTest::newRow("tuple_unpack_inplace") << "a, b = 3, 5.5" << QStringList{"a", "b"} << QStringList{"int", "float"};
     QTest::newRow("tuple_unpack_indirect") << "c = 3, 3.5\na, b = c" << QStringList{"a", "b"} << QStringList{"int", "float"};
-    QTest::newRow("tuple_unpack_stacked_inplace") << "a, (b, c) = 1, 2, 3.5" << QStringList{"a", "b", "c"}
+    QTest::newRow("tuple_unpack_stacked_inplace") << "a, (b, c) = 1, (2, 3.5)" << QStringList{"a", "b", "c"}
                                                                              << QStringList{"int", "int", "float"};
-    QTest::newRow("tuple_unpack_stacked_indirect") << "d = 3.5, 3, 1\na, (b, c) = d"
+    QTest::newRow("tuple_unpack_stacked_indirect") << "d = 3.5, (3, 1)\na, (b, c) = d"
                                                    << QStringList{"a", "b", "c"} << QStringList{"float", "int", "int"};
     QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
     QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}

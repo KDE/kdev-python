@@ -447,7 +447,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<MapType>("dict", context());
     if ( type ) {
-        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1));
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol));
         lock.unlock();
         Q_ASSERT(comprehensionContext);
         DUContext* ctx = m_forceGlobalSearching ? context()->topContext() : comprehensionContext;
@@ -474,7 +474,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<ListType>("set", context());
     if ( type ) {
-        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol+1), true);
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol), true);
         lock.unlock();
         auto ctx = m_forceGlobalSearching ? context()->topContext() : comprehensionContext;
         ExpressionVisitor v(this, ctx);
@@ -492,7 +492,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<ListType>("list", context());
     if ( type && ! m_forceGlobalSearching ) { // TODO fixme
-        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol + 1), true);
+        DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol), true);
         lock.unlock();
         ExpressionVisitor v(this, comprehensionContext);
         Q_ASSERT(comprehensionContext);

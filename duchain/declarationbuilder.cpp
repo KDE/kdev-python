@@ -559,6 +559,8 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     // TODO add a special case to the usebuilder to display the second occurence as a declaration
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
     declarationRange.end.column -= 1;
+    declarationRange.start.column -= 1;
+    qDebug() << "creating comprehension iterator variable with range" << declarationRange;
     
     AbstractType::Ptr targetType(new IntegralType(IntegralType::TypeMixed));
     if ( node->iterator ) {

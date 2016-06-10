@@ -257,6 +257,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("unicode escape char") << "print(\"\\xe9\")";
     QTest::newRow("augassign") << "a = 3\na += 5";
     QTest::newRow("delete") << "a = 3\ndel a";
+    QTest::newRow("double_comprehension") << "q = [[x for x in a] + [x for x in a] for y in b]";
     QTest::newRow("for_else") << "for i in range(3): pass\nelse: pass";
     QTest::newRow("for_while") << "while i < 4: pass\nelse: pass";
     QTest::newRow("ellipsis") << "a[...]";

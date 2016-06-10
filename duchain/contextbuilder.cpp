@@ -27,7 +27,6 @@
 #include "pythonparsejob.h"
 #include "declarationbuilder.h"
 #include "helpers.h"
-#include "duchaindebug.h"
 
 #include <KStandardDirs>
 
@@ -255,7 +254,6 @@ void ContextBuilder::visitComprehensionCommon(Ast* node)
     if ( range.isValid() ) {
         DUChainWriteLocker lock(DUChain::lock());
         openContext(node, range, KDevelop::DUContext::Other);
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "creating comprehension context" << node << range;
         Q_ASSERT(currentContext());
 //         currentContext()->setLocalScopeIdentifier(QualifiedIdentifier("<generator>"));
         lock.unlock();

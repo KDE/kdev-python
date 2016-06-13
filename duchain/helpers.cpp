@@ -217,7 +217,7 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
         do {
             declaration = importedLocalDeclarations.last();
             importedLocalDeclarations.pop_back();
-            if ( !declaration || declaration->context()->type() == DUContext::Class ) {
+            if ( !declaration || (declaration->context()->type() == DUContext::Class && context->type() != DUContext::Function) ) {
                 declaration = 0;
             }
             if ( importedLocalDeclarations.isEmpty() ) {

@@ -812,6 +812,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("str") << "checkme = \"foo\"" << "str";
     QTest::newRow("bytes") << "checkme = b\"foo\"" << "bytes";
 
+    QTest::newRow("function_arg_scope") <<  "class Foo:\n"
+                                            "    a = 3\n"
+                                            "    def func(self, x=a):\n"
+                                            "        return x\n"
+                                            "f = Foo()\n"
+                                            "checkme = f.func()" << "int";
     QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
     QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Copyright (c) 2011 Sven Brauch <svenbrauch@googlemail.com>                *
+ * Copyright (c) 2011-2016 Sven Brauch <svenbrauch@googlemail.com>           *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -24,6 +24,7 @@
 #include <language/duchain/types/containertypes.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
+#include <language/duchain/types/typepointer.h>
 #include <language/duchain/classfunctiondeclaration.h>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/enumeratortype.h>
@@ -55,6 +56,17 @@ void PythonDeclarationCompletionItem::addMatchQuality(int add)
 void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::ItemTypeHint type)
 {
     m_typeHint = type;
+}
+
+QString PythonDeclarationCompletionItem::shortenedTypeString(KDevelop::DeclarationPointer decl, int desiredTypeLength) const {
+    if ( !decl ) {
+        return {};
+    }
+    auto type = decl->abstractType()->toString();
+    if ( type.length() > desiredTypeLength ) {
+        return type.left(desiredTypeLength) + "...";
+    }
+    return type;
 }
 
 QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const

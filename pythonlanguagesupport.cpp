@@ -168,10 +168,22 @@ BasicRefactoring* LanguageSupport::refactoring() const
     return m_refactoring;
 }
 
-ILanguageSupport::WhitespaceSensitivity LanguageSupport::whitespaceSensititivy() const
+int LanguageSupport::suggestedReparseDelayForChange(KTextEditor::Document* doc, const KTextEditor::Range& changedRange,
+                                                    const QString& changedText, bool /*removal*/) const
 {
-    return ILanguageSupport::IndentOnly;
+    if ( changedRange.start().line() != changedRange.end().line() ) {
+        // instant update
+        return 0;
+    }
+    if ( std::all_of(changedText.begin(), changedText.end(), [](const QChar& c) { return c.isSpace(); }) ) {
+        qDebug() << changedText << changedRange.end().column() << doc->lineLength(changedRange.end().line());
+        if ( changedRange.end().column()-1 == doc->lineLength(changedRange.end().line()) ) {
+            return ILanguageSupport::NoUpdateRequired;
+        }
+    }
+    return ILanguageSupport::DefaultDelay;
 }
+
 
 QList<ILanguageCheck*> LanguageSupport::providedChecks()
 {

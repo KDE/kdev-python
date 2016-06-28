@@ -28,14 +28,10 @@
 
 namespace KDevelop
 {
-
 class ParseJob;
-
 class IDocument;
-
 class ICodeHighlighting;
 }
-
 
 namespace Python
 {
@@ -66,8 +62,9 @@ public:
     KDevelop::ContextMenuExtension contextMenuExtension(KDevelop::Context* context) override;
     
     static LanguageSupport* self();
-    
-    WhitespaceSensitivity whitespaceSensititivy() const override;
+
+    int suggestedReparseDelayForChange(KTextEditor::Document* doc, const KTextEditor::Range& changedRange,
+                                       const QString & changedText, bool removal) const override;
     
     KDevelop::SourceFormatterItemList sourceFormatterItems() const override;
 

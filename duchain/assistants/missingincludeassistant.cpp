@@ -72,15 +72,22 @@ void DocumentationGeneratorAction::execute()
     QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
     QDir dir(path);
     dir.mkpath(path);
-    DocfileWizard wizard(path);
-    wizard.setModuleName(module);
-    wizard.exec();
-    if ( ! wizard.wasSavedAs().isNull() ) {
-        ICore::self()->documentController()->openDocument(QUrl::fromLocalFile(wizard.wasSavedAs()));
-        // force a recursive update of the context, so that all the imports are reparsed too
-        // (since they potentially have changed through this action)
-        ICore::self()->languageController()->backgroundParser()->addDocument(document, TopDUContext::ForceUpdateRecursive);
-    }
+    auto wizard = new DocfileWizard(path);
+    wizard->setModuleName(module);
+    wizard->setModal(true);
+    wizard->setAttribute(Qt::WA_DeleteOnClose);
+    wizard->show();
+    QObject::connect(wizard, &QDialog::accepted,
+        [wizard, this]() {
+            if ( ! wizard->wasSavedAs().isNull() ) {
+                ICore::self()->documentController()->openDocument(QUrl::fromLocalFile(wizard->wasSavedAs()));
+                // force a recursive update of the context, so that all the imports are reparsed too
+                // (since they potentially have changed through this action)
+                ICore::self()->languageController()->backgroundParser()->addDocument(document, TopDUContext::ForceUpdateRecursive);
+            }
+        }
+    );
+
     emit executed(this);
 }
 

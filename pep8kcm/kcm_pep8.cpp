@@ -62,9 +62,9 @@ void PEP8KCModule::apply()
 }
 
 static QString defaultPep8Path() {
-    QString result = QStandardPaths::findExecutable("pep8-python3");
+    QString result = QStandardPaths::findExecutable("pycodestyle3");
     if (result.isEmpty()) {
-        result = QStandardPaths::findExecutable("pep8");
+        result = QStandardPaths::findExecutable("pycodestyle");
     }
     return result;
 }

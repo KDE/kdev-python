@@ -33,9 +33,11 @@ class KDEVPYTHONDUCHAIN_EXPORT NavigationWidget : public KDevelop::AbstractNavig
 
 public:
     NavigationWidget(KDevelop::DeclarationPointer declaration, KDevelop::TopDUContextPointer topContext,
-                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
+                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString(),
+                     KDevelop::AbstractNavigationWidget::DisplayHints hints = KDevelop::AbstractNavigationWidget::NoHints);
     NavigationWidget(const KDevelop::IncludeItem& includeItem, KDevelop::TopDUContextPointer topContext,
-                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString());
+                     const QString& htmlPrefix = QString(), const QString& htmlSuffix = QString(),
+                     KDevelop::AbstractNavigationWidget::DisplayHints hints = KDevelop::AbstractNavigationWidget::NoHints);
 
     static QString shortDescription(const KDevelop::IncludeItem&) { return QString(); };
 };

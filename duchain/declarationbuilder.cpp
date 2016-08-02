@@ -560,7 +560,6 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
     declarationRange.end.column -= 1;
     declarationRange.start.column -= 1;
-    qDebug() << "creating comprehension iterator variable with range" << declarationRange;
     
     AbstractType::Ptr targetType(new IntegralType(IntegralType::TypeMixed));
     if ( node->iterator ) {

@@ -103,7 +103,7 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
         DUChainReadLocker lock;
         const auto cursor = view->cursorPosition();
         if ( allowUse ) {
-            return DUChainUtils::itemUnderCursor(doc->url(), cursor);
+            return IndexedDeclaration(DUChainUtils::itemUnderCursor(doc->url(), cursor).declaration);
         }
         else {
             return DUChainUtils::declarationInLine(cursor, DUChainUtils::standardContextForUrl(doc->url()));

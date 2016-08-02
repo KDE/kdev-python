@@ -431,7 +431,7 @@ class set():
     def issubset(self, other): return True
     def issuperset(self, other): return True
     def union(self, other, *others): return set()
-    def intersetion(self, other, *others): return set()
+    def intersection(self, other, *others): return set()
     def difference(self, other, *others): return set()
     def symmetric_difference(self, other): return set()
     def copy(self): return set()

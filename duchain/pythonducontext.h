@@ -60,7 +60,8 @@ public:
     }
     
     virtual QWidget* createNavigationWidget(KDevelop::Declaration* decl, KDevelop::TopDUContext* topContext, 
-                                            const QString& htmlPrefix, const QString& htmlSuffix) const;
+                                            const QString& htmlPrefix, const QString& htmlSuffix,
+                                            KDevelop::AbstractNavigationWidget::DisplayHints hints) const;
     
     enum {
         Identity = IdentityT

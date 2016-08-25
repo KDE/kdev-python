@@ -27,6 +27,8 @@ include(KDECompilerSettings)
 
 include(KDECMakeSettings)
 
+add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
+
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
 find_package(Python 3.5 REQUIRED)

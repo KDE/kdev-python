@@ -49,8 +49,10 @@ CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder
     qCDebug(KDEV_PYTHON_DUCHAIN) << "Found correction file for " << _url.str() << ": " << absolutePath.path();
 
     const IndexedString indexedPath(absolutePath);
-    DUChainReadLocker lock;
-    m_hintTopContext = DUChain::self()->chainForDocument(indexedPath);
+    {
+        DUChainReadLocker lock;
+        m_hintTopContext = DUChain::self()->chainForDocument(indexedPath);
+    }
     qCDebug(KDEV_PYTHON_DUCHAIN) << "got top context for" << absolutePath << m_hintTopContext;
     m_contextStack.top() = m_hintTopContext.data();
     if ( ! m_hintTopContext ) {

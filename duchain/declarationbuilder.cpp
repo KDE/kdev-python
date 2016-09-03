@@ -589,7 +589,6 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
-    DUChainWriteLocker lock;
     foreach ( AliasAst* name, node->names ) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise

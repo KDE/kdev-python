@@ -184,9 +184,9 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
+            DUChainWriteLocker lock;
             foreach ( const IndexedString& url, builder.unresolvedImports() ) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
-                DUChainReadLocker lock;
                 dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
                 if ( dependencyInQueue ) {
                     break;

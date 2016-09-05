@@ -37,6 +37,16 @@ public:
     void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);
     void addMatchQuality(int add);
 
+    bool createsExpandingWidget() const override
+    {
+        return true;
+    }
+
+    QWidget* createExpandingWidget(const CodeCompletionModel* /*model*/) const override
+    {
+        return new Python::NavigationWidget(m_declaration, {}, {}, {}, KDevelop::AbstractNavigationWidget::EmbeddableWidget);
+    }
+
 protected:
     PythonCodeCompletionContext::ItemTypeHint m_typeHint;
     int m_addMatchQuality;

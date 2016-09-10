@@ -59,7 +59,7 @@ public:
     void update() override;
 protected:
     /**
-     * @brief Overriden to handle frame change events (when the user clicks the frame list).
+     * @brief Overridden to handle frame change events (when the user clicks the frame list).
      * This then enqueues many "up" or "down" commands to react to the frame change.
      **/
     void handleEvent(IDebugSession::event_t event) override;

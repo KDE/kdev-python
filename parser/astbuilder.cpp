@@ -154,7 +154,7 @@ public:
 
         node->startLine = lineno + 1;
         node->endLine = node->startLine;
-        // now, just take the last occurence of the value.
+        // now, just take the last occurrence of the value.
         // it is guaranteed that this is the right one, otherwise
         // that portion of the line would have been cut off above.
         node->startCol = line.lastIndexOf(node->attribute->value);

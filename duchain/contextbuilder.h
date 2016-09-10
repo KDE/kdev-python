@@ -133,7 +133,7 @@ protected:
 
     /**
      * @brief Create a new context.
-     * Overriden to create instances of Python's specialized DUContext.
+     * Overridden to create instances of Python's specialized DUContext.
      */
     virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
 
@@ -169,7 +169,7 @@ protected:
      */
     void addImportedContexts();
 
-    // helpers which need to be called seperately from DeclarationBuilder
+    // helpers which need to be called separately from DeclarationBuilder
     virtual void visitFunctionArguments(FunctionDefinitionAst* node);
     virtual void visitFunctionBody(FunctionDefinitionAst* node);
     void openContextForClassDefinition(ClassDefinitionAst* node);

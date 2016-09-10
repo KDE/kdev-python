@@ -555,8 +555,8 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     // make the declaration zero chars long; it must appear at the beginning of the context,
     // because it is actually used *before* its real declaration: [foo for foo in bar]
     // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
-    // and both other occurences are uses of that declaration.
-    // TODO add a special case to the usebuilder to display the second occurence as a declaration
+    // and both other occurrences are uses of that declaration.
+    // TODO add a special case to the usebuilder to display the second occurrence as a declaration
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
     declarationRange.end.column -= 1;
     declarationRange.start.column -= 1;

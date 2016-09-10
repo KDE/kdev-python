@@ -32,7 +32,7 @@ class DataSource:
                 file.
         
                 The search will include possible compressed versions of the file and
-                return the first occurence found.
+                return the first occurrence found.
         
                 """
         return None

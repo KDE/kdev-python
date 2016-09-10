@@ -98,7 +98,7 @@ public:
     virtual QList< CompletionTreeElementPointer > ungroupedElements();
     
     /**
-     * @brief Get all possible items matching the specified dot-seperated search string.
+     * @brief Get all possible items matching the specified dot-separated search string.
      **/
     QList<CompletionTreeItemPointer> includeItemsForSubmodule(QString submodule);
     

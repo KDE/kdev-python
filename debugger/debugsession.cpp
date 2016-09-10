@@ -140,7 +140,7 @@ void DebugSession::dataAvailable()
         data = data.mid(0, data.length() - debuggerPrompt.length());
     }
     
-    // scan the data, and seperate program output from debugger output
+    // scan the data, and separate program output from debugger output
     int len = data.length();
     int delimiterSkip = debuggerOutputEnd.length();
     int i = 0;

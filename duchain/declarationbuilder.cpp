@@ -957,7 +957,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     if ( ! container || ! function ) {
         return;
     }
-    // Don't to updates to pre-defined functions.
+    // Don't do updates to pre-defined functions.
     if ( ! v.lastDeclaration() || v.lastDeclaration()->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
         return;
     }
@@ -1082,8 +1082,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         addType->setCreatedBy(topContext(), m_futureModificationRevision);
         closeType();
 
-        // Update the parameter type: change both the type of the function argument,
-        // and the type of the declaration which belongs to that argument
         DUChainWriteLocker wlock;
         if ( atVararg ) {
             indexInVararg++;

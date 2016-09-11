@@ -76,16 +76,11 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
     BackgroundParser* bgparser = KDevelop::ICore::self()->languageController()->backgroundParser();
     bool needsReschedule = true;
     if ( bgparser->isQueued(dependency) ) {
-        const ParseJob* job = bgparser->parseJobForDocument(dependency);
-        int previousPriority = BackgroundParser::WorstPriority;
-        if ( job ) {
-            previousPriority = job->parsePriority();
-        }
-        // if it's less important, reschedule it
-        if ( job && previousPriority > betterThanPriority - 1 ) {
+        const auto priority= bgparser->priorityForDocument(dependency);
+        if ( priority > betterThanPriority - 1 ) {
             bgparser->removeDocument(dependency);
         }
-        else if ( job ) {
+        else {
             needsReschedule = false;
         }
     }

@@ -39,7 +39,7 @@ typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> Decla
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
 public:
-    DeclarationBuilder(PythonEditorIntegrator* editor, int ownPriority = 0);
+    DeclarationBuilder(PythonEditorIntegrator* editor, int ownPriority);
     virtual ~DeclarationBuilder();
 
     /**

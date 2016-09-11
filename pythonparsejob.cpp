@@ -198,7 +198,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
             if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document(),
                                      static_cast<TopDUContext::Features>(TopDUContext::ForceUpdate | Rescheduled), parsePriority(),
-                                     0, ParseJob::FullSequentialProcessing);
+                                     nullptr, ParseJob::FullSequentialProcessing);
             }
         }
         

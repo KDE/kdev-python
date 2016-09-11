@@ -92,8 +92,7 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "building, but running pre-builder first";
-        DeclarationBuilder* prebuilder = new DeclarationBuilder(editor());
-        prebuilder->m_ownPriority = m_ownPriority;
+        DeclarationBuilder* prebuilder = new DeclarationBuilder(editor(), m_ownPriority);
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;

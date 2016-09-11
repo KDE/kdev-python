@@ -150,7 +150,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
     QString autopep8path = QStandardPaths::findExecutable("autopep8");
     if (autopep8path.isEmpty()) {
         // TODO: proper error handling/user notification
-        qWarning() << "Could not find the autopep8 executable";
+        qDebug() << "Could not find the autopep8 executable";
         autopep8path = "/usr/bin/autopep8";
     }
     autopep8.setContent(autopep8path + " -i $TMPFILE");

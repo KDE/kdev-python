@@ -1,10 +1,6 @@
 # KDE Config File
 [General]
 Name=New Django project
-Name[el]=Δημιουργία νέου Django project
-Name[en_GB]=New Django project
 Category=Python
 Comment=Generate filestructure to start a Django project
-Comment[el]=Δημιουργία δομής αρχείων για την εκκίνηση νέου Django project
-Comment[en_GB]=Generate filestructure to start a Django project
 ShowFilesAfterGeneration=%{PROJECTDIR}/urls.py

@@ -3,7 +3,8 @@
         "Authors": [
             {
                 "Email": "svenbrauch@googlemail.com", 
-                "Name": "Sven Brauch"
+                "Name": "Sven Brauch", 
+                "Name[x-test]": "xxSven Brauchxx"
             }
         ], 
         "Category": "Debugging", 
@@ -12,12 +13,12 @@
         "Description[ca]": "Aquest connector proveeix d'un frontal pel PDB", 
         "Description[cs]": "Tento modul poskytuje rozhraní pro PDB", 
         "Description[de]": "Dieses Modul stellt eine Oberfläche für PDB zur Verfügung.", 
-        "Description[en_GB]": "This plugin provides a frontend for PDB", 
         "Description[es]": "Este complemento proporciona una interfaz para PDB", 
         "Description[et]": "PDB kasutajaliidese plugin", 
         "Description[fi]": "Tämä liitännäinen tarjoaa PDB-käyttöliittymän", 
         "Description[fr]": "Ce module externe fournit une interface pour PDB", 
         "Description[gl]": "Este complemento fornece unha interface para PDB.", 
+        "Description[it]": "Questa estensione fornisce un'interfaccia per PDB", 
         "Description[nl]": "Deze plug-in levert een frontend voor PDB", 
         "Description[pl]": "Wtyczka ta zapewnia nakładkę graficzną dla PDB", 
         "Description[pt]": "Este 'plugin' oferece uma interface para o PDB", 
@@ -32,26 +33,7 @@
         "Id": "kdevpdb", 
         "License": "GPL", 
         "Name": "kdevpdb", 
-        "Name[ca@valencia]": "kdevpdb", 
-        "Name[ca]": "kdevpdb", 
-        "Name[cs]": "kdevpdb", 
-        "Name[de]": "kdevpdb", 
-        "Name[en_GB]": "kdevpdb", 
-        "Name[es]": "kdevpdb", 
-        "Name[et]": "kdevpdb", 
-        "Name[fi]": "kdevpdb", 
-        "Name[fr]": "kdevpdb", 
-        "Name[gl]": "kdevpdb", 
-        "Name[nl]": "kdevpdb", 
-        "Name[pl]": "kdevpdb", 
-        "Name[pt]": "kdevpdb", 
-        "Name[pt_BR]": "kdevpdb", 
-        "Name[sk]": "kdevpdb", 
-        "Name[sl]": "kdevpdb", 
-        "Name[sv]": "kdevpdb", 
-        "Name[uk]": "kdevpdb", 
         "Name[x-test]": "xxkdevpdbxx", 
-        "Name[zh_CN]": "kdevpdb", 
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

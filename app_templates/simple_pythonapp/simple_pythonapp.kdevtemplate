@@ -1,6 +1,18 @@
 # KDE Config File
 [General]
 Name=Simple Python Application
+Name[ca]=Una aplicació Python senzilla
+Name[es]=Aplicación sencilla en Python
+Name[nl]=Eenvoudige Python-toepassing
+Name[sv]=Enkelt Python-program
+Name[uk]=Проста програма мовою Python
+Name[x-test]=xxSimple Python Applicationxx
 Category=Python
 Comment=Generate filestructure to start a Python application
+Comment[ca]=Genera l'estructura de fitxers per a iniciar una aplicació Python
+Comment[es]=Generar la estructura de archivos para empezar una aplicación en Python
+Comment[nl]=Genereer een bestandsstructuur om een Python-toepassing te starten
+Comment[sv]=Skapa filstruktur för att påbörja ett Python-program
+Comment[uk]=Створити початкову файлову структуру програми мовою Python
+Comment[x-test]=xxGenerate filestructure to start a Python applicationxx
 ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAMELC}.py

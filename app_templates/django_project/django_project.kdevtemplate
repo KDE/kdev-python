@@ -1,6 +1,18 @@
 # KDE Config File
 [General]
 Name=New Django project
+Name[ca]=Projecte nou del Django
+Name[es]=Nuevo proyecto de Django
+Name[nl]=Nieuw Django-project
+Name[sv]=Nytt Django-projekt
+Name[uk]=Новий проект Django
+Name[x-test]=xxNew Django projectxx
 Category=Python
 Comment=Generate filestructure to start a Django project
+Comment[ca]=Genera l'estructura de fitxers per a iniciar un projecte Django
+Comment[es]=Generar la estructura de archivos para empezar un proyecto de Django
+Comment[nl]=Genereer een bestandsstructuur om een Django-project te starten
+Comment[sv]=Skapa filstruktur för att påbörja ett Django-program
+Comment[uk]=Створити початкову структуру файлів проекту Django
+Comment[x-test]=xxGenerate filestructure to start a Django projectxx
 ShowFilesAfterGeneration=%{PROJECTDIR}/urls.py

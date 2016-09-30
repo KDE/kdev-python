@@ -2,6 +2,7 @@
 [General]
 Name=Simple Qt GUI application using Designer
 Name[ca]=Aplicació senzilla amb IGU Qt que usa el Designer
+Name[es]=Sencilla aplicación con interfaz gráfica de usuario que usa Designer
 Name[nl]=Eenvoudige Qt-GUI-toepassing met gebruik van Designer
 Name[pt]=Aplicação gráfica simples o Qt que usa o Designer
 Name[sv]=Enkelt Qt-program med grafiskt användargränssnitt som använder Designer
@@ -10,6 +11,7 @@ Name[x-test]=xxSimple Qt GUI application using Designerxx
 Category=Python
 Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
 Comment[ca]=Un exemple d'aplicació que usa el Designer de Qt. Si editeu el «mainwindow.ui», regenereu el «mainwindow.py» invocant el «pyuic5».
+Comment[es]=Un ejemplo de aplicación que usa Qt Designer. Si edita mainwindow.ui, vuelva a generar mainwindow.py llamando a pyuic5.
 Comment[nl]=Een voorbeeld toepassing met gebruik van Qt Designer. Als u mainwindow.ui bewerkt, genereer dan opnieuw mainwindow.py door pyuic5 aan te roepen.
 Comment[pt]=Uma aplicação de exemplo que usa o Qt Designer. Se editar o 'mainwindow.ui', volte a gerar o 'mainwindow.py' ao invocar o 'pyuic5'.
 Comment[sv]=Ett exempelprogram som använder Qt-designer. Om du redigerar mainwindo.ui, skapa om mainwindow.py genom att anropa pyuic5.

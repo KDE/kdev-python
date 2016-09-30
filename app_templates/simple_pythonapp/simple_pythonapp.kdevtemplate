@@ -2,6 +2,7 @@
 [General]
 Name=Simple Python Application
 Name[ca]=Una aplicació Python senzilla
+Name[es]=Aplicación sencilla en Python
 Name[nl]=Eenvoudige Python-toepassing
 Name[pt]=Aplicação Simples de Python
 Name[sv]=Enkelt Python-program
@@ -10,6 +11,7 @@ Name[x-test]=xxSimple Python Applicationxx
 Category=Python
 Comment=Generate filestructure to start a Python application
 Comment[ca]=Genera l'estructura de fitxers per a iniciar una aplicació Python
+Comment[es]=Generar la estructura de archivos para empezar una aplicación en Python
 Comment[nl]=Genereer een bestandsstructuur om een Python-toepassing te starten
 Comment[pt]=Gerar a estrutura de ficheiros para iniciar uma aplicação em Python
 Comment[sv]=Skapa filstruktur för att påbörja ett Python-program

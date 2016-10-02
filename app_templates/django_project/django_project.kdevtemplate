@@ -2,6 +2,7 @@
 [General]
 Name=New Django project
 Name[ca]=Projecte nou del Django
+Name[en_GB]=New Django project
 Name[es]=Nuevo proyecto de Django
 Name[it]=Nuovo progetto Django
 Name[nl]=Nieuw Django-project
@@ -14,6 +15,7 @@ Name[x-test]=xxNew Django projectxx
 Category=Python
 Comment=Generate filestructure to start a Django project
 Comment[ca]=Genera l'estructura de fitxers per a iniciar un projecte Django
+Comment[en_GB]=Generate filestructure to start a Django project
 Comment[es]=Generar la estructura de archivos para empezar un proyecto de Django
 Comment[it]=Genera una struttura di file per inizializzare un progetto Django
 Comment[nl]=Genereer een bestandsstructuur om een Django-project te starten

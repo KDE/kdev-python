@@ -31,7 +31,7 @@
 include(FindPackageHandleStandardArgs)
 
 # TODO
-set(LOOKING_FOR_VERSION "3.5")
+set(LOOKING_FOR_VERSION "3.6")
 
 # allow specifying which Python installation to use
 if (NOT PYTHON_EXEC)

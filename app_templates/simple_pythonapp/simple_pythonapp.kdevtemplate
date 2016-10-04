@@ -2,6 +2,7 @@
 [General]
 Name=Simple Python Application
 Name[ca]=Una aplicació Python senzilla
+Name[ca@valencia]=Una aplicació Python senzilla
 Name[en_GB]=Simple Python Application
 Name[es]=Aplicación sencilla en Python
 Name[it]=Semplice applicazione Python
@@ -15,6 +16,7 @@ Name[x-test]=xxSimple Python Applicationxx
 Category=Python
 Comment=Generate filestructure to start a Python application
 Comment[ca]=Genera l'estructura de fitxers per a iniciar una aplicació Python
+Comment[ca@valencia]=Genera l'estructura de fitxers per a iniciar una aplicació Python
 Comment[en_GB]=Generate filestructure to start a Python application
 Comment[es]=Generar la estructura de archivos para empezar una aplicación en Python
 Comment[it]=Genera una struttura file per avviare un'applicazione in Python

@@ -48,6 +48,7 @@ public:
     virtual void visitDelete(DeleteAst* node);
     virtual void visitAssignment(AssignmentAst* node);
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node);
+    virtual void visitAnnotationAssignment(AnnotationAssignmentAst* node);
     virtual void visitFor(ForAst* node);
     virtual void visitWhile(WhileAst* node);
     virtual void visitIf(IfAst* node);
@@ -76,6 +77,8 @@ public:
     virtual void visitCompare(CompareAst* node);
     virtual void visitNumber(NumberAst* node);
     virtual void visitString(StringAst* node);
+    virtual void visitJoinedString(JoinedStringAst* node);
+    virtual void visitFormattedValue(FormattedValueAst* node);
     virtual void visitBytes(BytesAst* node);
     virtual void visitYield(YieldAst* node);
     virtual void visitYieldFrom(YieldFromAst* node);
@@ -118,6 +121,7 @@ public:
     virtual void visitDelete(DeleteAst* node) { AstDefaultVisitor::visitDelete(node); delete node; }
     virtual void visitAssignment(AssignmentAst* node) { AstDefaultVisitor::visitAssignment(node); delete node; }
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node) { AstDefaultVisitor::visitAugmentedAssignment(node); delete node; }
+    virtual void visitAnnotationAssignment(AnnotationAssignmentAst* node) { AstDefaultVisitor::visitAnnotationAssignment(node); delete node; }
     virtual void visitFor(ForAst* node) { AstDefaultVisitor::visitFor(node); delete node; }
     virtual void visitWhile(WhileAst* node) { AstDefaultVisitor::visitWhile(node); delete node; }
     virtual void visitIf(IfAst* node) { AstDefaultVisitor::visitIf(node); delete node; }
@@ -146,6 +150,8 @@ public:
     virtual void visitCompare(CompareAst* node) { AstDefaultVisitor::visitCompare(node); delete node; }
     virtual void visitNumber(NumberAst* node) { AstDefaultVisitor::visitNumber(node); delete node; }
     virtual void visitString(StringAst* node) { AstDefaultVisitor::visitString(node); delete node; }
+    virtual void visitJoinedString(JoinedStringAst* node) { AstDefaultVisitor::visitJoinedString(node); delete node; }
+    virtual void visitFormattedValue(FormattedValueAst* node) { AstDefaultVisitor::visitFormattedValue(node); delete node; }
     virtual void visitBytes(BytesAst* node) { AstDefaultVisitor::visitBytes(node); delete node; }
     virtual void visitYield(YieldAst* node) { AstDefaultVisitor::visitYield(node); delete node; }
     virtual void visitYieldFrom(YieldFromAst* node) { AstDefaultVisitor::visitYieldFrom(node); delete node; }

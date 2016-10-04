@@ -93,6 +93,7 @@ public:
         ContinueAstType,
         AssertionAstType,
         AugmentedAssignmentAstType,
+        AnnotationAssignmentAstType,
         LastStatementType,
         ExpressionAstType, // everything below is an expression
         AwaitAstType,
@@ -116,6 +117,8 @@ public:
         CompareAstType,
         NumberAstType,
         StringAstType,
+        JoinedStringAstType,
+        FormattedValueAstType,
         BytesAstType,
         SubscriptAstType,
         StarredAstType,
@@ -323,6 +326,14 @@ public:
     ExpressionAst* target;
     Ast::OperatorTypes op;
     ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT AnnotationAssignmentAst : public StatementAst {
+public:
+    AnnotationAssignmentAst(Ast* parent);
+    ExpressionAst* target;
+    ExpressionAst* value;
+    ExpressionAst* annotation;
 };
 
 class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst {
@@ -592,6 +603,20 @@ public:
     StringAst(Ast* parent);
     QString value;
     bool usedAsComment;
+};
+
+class KDEVPYTHONPARSER_EXPORT JoinedStringAst : public ExpressionAst {
+public:
+    JoinedStringAst(Ast* parent);
+    QList<ExpressionAst*> values;
+};
+
+class KDEVPYTHONPARSER_EXPORT FormattedValueAst : public ExpressionAst {
+public:
+    FormattedValueAst(Ast* parent);
+    ExpressionAst* value;
+    int conversion;
+    ExpressionAst* formatSpec;
 };
 
 class KDEVPYTHONPARSER_EXPORT BytesAst : public ExpressionAst {

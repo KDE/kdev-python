@@ -153,6 +153,8 @@ void PyAstTest::testStatements_data()
     QTest::newRow("continue") << "while True: continue";
     QTest::newRow("pass") << "pass";
     QTest::newRow("nonlocal") << "nonlocal x";
+    QTest::newRow("varannotation1") << "primes: List[int] = []";
+    QTest::newRow("varannotation2") << "captain: str  # Note: no initial value!";
 }
 
 void PyAstTest::testSlices()
@@ -221,10 +223,17 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("None") << "None";
     QTest::newRow("False") << "False";
     QTest::newRow("True") << "True";
+
+    // Release announcement links to PEPs which say these work, but they don't? ?!?!
+//     QTest::newRow("async_generator") << "result = [i async for i in aiter() if i % 2]";
+//     QTest::newRow("await_generator") << "result = [await fun() for fun in funcs]";
+
+    QTest::newRow("underscore_literals") << "0x_FF_FF_FF_FF";
     QTest::newRow("dstar_unpack") << "ext_map = {\n"
         "       **{ext: self.obj_extension for ext in self.src_extensions},\n"
         "       **{ext: self.res_extension for ext in self._rc_extensions + self._mc_extensions},\n"
     "}";
+    QTest::newRow("formatted_string_literal") << "f\"He said his name is {name}.\"";
 }
 
 void PyAstTest::testCorrectedFuncRanges()

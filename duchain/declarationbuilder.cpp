@@ -557,7 +557,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     // and both other occurences are uses of that declaration.
     // TODO add a special case to the usebuilder to display the second occurence as a declaration
     RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
-    declarationRange.end.column -= 1;
+    declarationRange.end.column -= 2;
     declarationRange.start.column -= 1;
     
     AbstractType::Ptr targetType(new IntegralType(IntegralType::TypeMixed));

@@ -48,6 +48,17 @@ void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
+void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
+    foreach (Ast* value, node->values) {
+        visitNode(value);
+    }
+}
+
+void AstDefaultVisitor::visitFormattedValue(FormattedValueAst* node) {
+    visitNode(node->value);
+    visitNode(node->formatSpec);
+}
+
 void AstDefaultVisitor::visitStarred(StarredAst* node) {
     visitNode(node->value);
 }
@@ -323,6 +334,13 @@ void AstDefaultVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
 void AstDefaultVisitor::visitAugmentedAssignment(AugmentedAssignmentAst* node)
 {
     visitNode(node->target);
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitAnnotationAssignment(AnnotationAssignmentAst* node)
+{
+    visitNode(node->target);
+    visitNode(node->annotation);
     visitNode(node->value);
 }
 

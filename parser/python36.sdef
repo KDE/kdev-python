@@ -17,6 +17,7 @@ RULE_FOR _stmt;KIND Return_kind;ACTIONS create|ReturnAst set|value->ExpressionAs
 RULE_FOR _stmt;KIND Delete_kind;ACTIONS create|DeleteAst set|targets=>ExpressionAst,targets;;
 RULE_FOR _stmt;KIND Assign_kind;ACTIONS create|AssignmentAst set|targets=>ExpressionAst,targets set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND AugAssign_kind;ACTIONS create|AugmentedAssignmentAst set|target->ExpressionAst,target set|op*>OperatorTypes,op set|value->ExpressionAst,value;;
+RULE_FOR _stmt;KIND AnnAssign_kind;ACTIONS create|AnnotationAssignmentAst set|target->ExpressionAst,target set|annotation->ExpressionAst,annotation set|value->ExpressionAst,value;;
 RULE_FOR _stmt;KIND For_kind;ACTIONS create|ForAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND AsyncFor_kind;ACTIONS create|ForAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|body=>Ast,body set|orelse=>Ast,orelse;;
 RULE_FOR _stmt;KIND While_kind;ACTIONS create|WhileAst set|condition->ExpressionAst,test set|body=>Ast,body set|orelse=>Ast,orelse;;
@@ -53,6 +54,8 @@ RULE_FOR _expr;KIND Compare_kind;ACTIONS create|CompareAst set|leftmostElement->
 RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst,func set|arguments=>ExpressionAst,args set|keywords=>KeywordAst,keywords;CODE v->function->belongsToCall = v;;
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;CODE v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);;
 RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
+RULE_FOR _expr;KIND JoinedStr_kind;ACTIONS create|JoinedStringAst set|values=>ExpressionAst,values;;
+RULE_FOR _expr;KIND FormattedValue_kind;ACTIONS create|FormattedValueAst set|value->ExpressionAst,value set|conversion:>conversion set|formatSpec->ExpressionAst,format_spec;;
 RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;;
 RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;

@@ -124,7 +124,7 @@ private:
                 break;
             }
         default:
-            qWarning() << "Unsupported statement AST type: " << node->kind;
+            qWarning() << "Unsupported _excepthandler AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -284,6 +284,20 @@ private:
                 result = v;
                 break;
             }
+        case JoinedStr_kind: {
+                JoinedStringAst* v = new  JoinedStringAst(parent());
+                nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.JoinedStr.values); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case FormattedValue_kind: {
+                FormattedValueAst* v = new  FormattedValueAst(parent());
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.FormattedValue.value)); nodeStack.pop();
+                v->conversion = node->v.FormattedValue.conversion;
+                nodeStack.push(v); v->formatSpec = static_cast<ExpressionAst*>(visitNode(node->v.FormattedValue.format_spec)); nodeStack.pop();
+                result = v;
+                break;
+            }
         case Bytes_kind: {
                 BytesAst* v = new  BytesAst(parent());
                 v->value = PyUnicodeObjectToQString(node->v.Bytes.s);
@@ -366,7 +380,7 @@ private:
                 break;
             }
         default:
-            qWarning() << "Unsupported statement AST type: " << node->kind;
+            qWarning() << "Unsupported _expr AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -445,7 +459,7 @@ private:
                 break;
             }
         default:
-            qWarning() << "Unsupported statement AST type: " << node->kind;
+            qWarning() << "Unsupported _slice AST type: " << node->kind;
             Q_ASSERT(false);
         }
 
@@ -562,6 +576,14 @@ private:
                 nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.target)); nodeStack.pop();
                 v->op = (ExpressionAst::OperatorTypes) node->v.AugAssign.op;
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.AugAssign.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
+        case AnnAssign_kind: {
+                AnnotationAssignmentAst* v = new  AnnotationAssignmentAst(parent());
+                nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AnnAssign.target)); nodeStack.pop();
+                nodeStack.push(v); v->annotation = static_cast<ExpressionAst*>(visitNode(node->v.AnnAssign.annotation)); nodeStack.pop();
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.AnnAssign.value)); nodeStack.pop();
                 result = v;
                 break;
             }
@@ -690,7 +712,7 @@ private:
                 break;
             }
         default:
-            qWarning() << "Unsupported statement AST type: " << node->kind;
+            qWarning() << "Unsupported _stmt AST type: " << node->kind;
             Q_ASSERT(false);
         }
 

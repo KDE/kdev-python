@@ -13,6 +13,7 @@ Name[sk]=Nový projekt Django
 Name[sv]=Nytt Django-projekt
 Name[uk]=Новий проект Django
 Name[x-test]=xxNew Django projectxx
+Name[zh_CN]=新建 Django 项目
 Category=Python
 Comment=Generate filestructure to start a Django project
 Comment[ca]=Genera l'estructura de fitxers per a iniciar un projecte Django

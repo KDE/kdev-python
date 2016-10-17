@@ -15,6 +15,7 @@ set(REQUIRED QT_VERSION 5.2.0)
 
 cmake_minimum_required(VERSION 2.8.12)
 
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
@@ -23,7 +24,6 @@ include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
-include(KDECompilerSettings)
 
 include(KDECMakeSettings)
 

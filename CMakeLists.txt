@@ -3,7 +3,7 @@ PROJECT(kdevpython)
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 5)
 set(KDEVPYTHON_VERSION_MINOR 0)
-set(KDEVPYTHON_VERSION_PATCH 1)
+set(KDEVPYTHON_VERSION_PATCH 2)
 
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}" )
@@ -15,6 +15,7 @@ set(REQUIRED QT_VERSION 5.2.0)
 
 cmake_minimum_required(VERSION 2.8.12)
 
+include(KDECompilerSettings NO_POLICY_SCOPE)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
 
@@ -23,7 +24,6 @@ include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
-include(KDECompilerSettings)
 
 include(KDECMakeSettings)
 

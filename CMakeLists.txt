@@ -78,9 +78,10 @@ set(kdevpythonlanguagesupport_PART_SRCS
     docfilekcm/docfilemanagerwidget.cpp
     docfilekcm/kcm_docfiles.cpp
     pep8kcm/kcm_pep8.cpp
+    projectconfig/projectconfigpage.cpp
 )
 
-ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui)
+ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui projectconfig/projectconfig.ui)
 
 kdevplatform_add_plugin(kdevpythonlanguagesupport JSON kdevpythonsupport.json SOURCES ${kdevpythonlanguagesupport_PART_SRCS})
 

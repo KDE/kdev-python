@@ -50,7 +50,7 @@ namespace Python {
 class KDEVPYTHONDUCHAIN_EXPORT Helper {
 public:
     /** get search paths for python files **/
-    static QList<QUrl> getSearchPaths(const QUrl& workingOnDocument);
+    static QVector<QUrl> getSearchPaths(const QUrl& workingOnDocument);
     static QStringList dataDirs;
     static QString documentationFile;
     static QStringList correctionFileDirs;
@@ -65,11 +65,11 @@ public:
     static QUrl getLocalCorrectionFile(const QUrl& document);
 
     static QMutex cacheMutex;
-    static QMap<IProject*, QList<QUrl>> cachedCustomIncludes;
-    static QList<QUrl> cachedSearchPaths;
+    static QMap<IProject*, QVector<QUrl>> cachedCustomIncludes;
+    static QMap<IProject*, QVector<QUrl>> cachedSearchPaths;
 
     static QMutex projectPathLock;
-    static QList<QUrl> projectSearchPaths;
+    static QVector<QUrl> projectSearchPaths;
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type);
 

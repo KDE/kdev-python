@@ -322,7 +322,7 @@ void ContextBuilder::visitCode(CodeAst* node) {
 QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const QUrl& currentDocument)
 {
     QStringList nameComponents = name.split(".");
-    QList<QUrl> searchPaths;
+    QVector<QUrl> searchPaths;
     if ( name.startsWith('.') ) {
         /* To take care for imports like "from ....xxxx.yyy import zzz"
          * we need to take current doc path and run "cd .." enough times
@@ -347,7 +347,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     // Loop over all the name components, and find matching folders or files.
     QDir tmp;
     QStringList leftNameComponents;
-    foreach ( QUrl currentPath, searchPaths ) {
+    foreach ( const QUrl& currentPath, searchPaths ) {
         tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
         foreach ( QString component, nameComponents ) {

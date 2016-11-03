@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="addon">
+    <id>org.kde.kdev-python</id>
+    <extends>org.kde.kdevelop</extends>
+    <name>kdev-python</name>
+    <summary>Python language support for KDevelop</summary>
+    <url type="homepage">kdevelop.org</url>
+    <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+    <project_license>GPL</project_license>
+    <metadata_license>CC0-1.0</metadata_license>
+</component>

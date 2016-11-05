@@ -38,7 +38,7 @@ void DebugJob::start()
 {
     QStringList program;
     QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
-    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.path() << m_args;
+    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
     m_session = new DebugSession(program, m_workingDirectory);
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
@@ -46,7 +46,7 @@ void DebugJob::start()
     OutputModel* pyOutputModel = new KDevelop::OutputModel();
     pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
-    setTitle(m_interpreter + m_scriptUrl.path());
+    setTitle(m_interpreter + m_scriptUrl.toLocalFile());
 
     setModel(new KDevelop::OutputModel(0));
 

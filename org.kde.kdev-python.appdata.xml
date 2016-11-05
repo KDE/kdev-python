@@ -1,11 +1,32 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <component type="addon">
-    <id>org.kde.kdev-python</id>
-    <extends>org.kde.kdevelop</extends>
-    <name>kdev-python</name>
-    <summary>Python language support for KDevelop</summary>
-    <url type="homepage">kdevelop.org</url>
-    <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-    <project_license>GPL</project_license>
-    <metadata_license>CC0-1.0</metadata_license>
+  <id>org.kde.kdev-python</id>
+  <extends>org.kde.kdevelop</extends>
+  <name>kdev-python</name>
+  <name xml:lang="ca">kdev-python</name>
+  <name xml:lang="nl">kdev-python</name>
+  <name xml:lang="pl">kdev-python</name>
+  <name xml:lang="sk">kdev-python</name>
+  <name xml:lang="sv">kdev-python</name>
+  <name xml:lang="uk">kdev-python</name>
+  <name xml:lang="x-test">xxkdev-pythonxx</name>
+  <summary>Python language support for KDevelop</summary>
+  <summary xml:lang="ca">Implementació del llenguatge Python al KDevelop</summary>
+  <summary xml:lang="nl">Ondersteuning voor de taal Python voor KDevelop</summary>
+  <summary xml:lang="pl">Obsługa języka Python dla KDevelop</summary>
+  <summary xml:lang="sk">Podpora jazyka Python pre KDevelop</summary>
+  <summary xml:lang="sv">Stöd för språket Python i KDevelop</summary>
+  <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
+  <summary xml:lang="x-test">xxPython language support for KDevelopxx</summary>
+  <url type="homepage">kdevelop.org</url>
+  <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="nl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="pl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="sk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="sv">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="x-test">xxSven Brauch &lt;mail@svenbrauch.de&gt;xx</developer_name>
+  <project_license>GPL</project_license>
+  <metadata_license>CC0-1.0</metadata_license>
 </component>

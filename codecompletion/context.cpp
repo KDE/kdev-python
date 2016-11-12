@@ -922,7 +922,7 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
 {
-    QList<QUrl> searchPaths = Helper::getSearchPaths(m_workingOnDocument);
+    auto searchPaths = Helper::getSearchPaths(m_workingOnDocument);
     
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {

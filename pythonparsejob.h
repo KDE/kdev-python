@@ -63,7 +63,7 @@ protected:
     void run(ThreadWeaver::JobPointer self, ThreadWeaver::Thread* thread) override;
 
 private:
-    QList<QUrl> m_cachedCustomIncludes;
+    QVector<QUrl> m_cachedCustomIncludes;
     CodeAst::Ptr m_ast;
     bool m_readFromDisk;
     KDevelop::ReferencedTopDUContext m_duContext;

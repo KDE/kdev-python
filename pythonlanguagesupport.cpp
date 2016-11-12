@@ -1,7 +1,7 @@
 /*****************************************************************************
  * Copyright (c) 2007 Andreas Pakulat <apaku@gmx.de>                         *
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
- * Copyright (c) 2012 Sven Brauch <svenbrauch@gmail.com>                     *
+ * Copyright (c) 2012-2016 Sven Brauch <svenbrauch@gmail.com>                *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -53,6 +53,7 @@
 #include "codegen/correctionfilegenerator.h"
 #include "kdevpythonversion.h"
 #include "pep8kcm/kcm_pep8.h"
+#include "projectconfig/projectconfigpage.h"
 #include "docfilekcm/kcm_docfiles.h"
 
 #include <QDebug>
@@ -201,6 +202,19 @@ KDevelop::ConfigPage* LanguageSupport::configPage(int number, QWidget* parent)
         return new PEP8KCModule(this, parent);
     } else if (number == 1) {
         return new DocfilesKCModule(this, parent);
+    }
+    return nullptr;
+}
+
+int LanguageSupport::perProjectConfigPages() const
+{
+    return 1;
+}
+
+KDevelop::ConfigPage* LanguageSupport::perProjectConfigPage(int number, const KDevelop::ProjectConfigOptions& options, QWidget* parent)
+{
+    if ( number == 0 ) {
+        return new Python::ProjectConfigPage(this, options, parent);
     }
     return nullptr;
 }

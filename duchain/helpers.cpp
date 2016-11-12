@@ -48,6 +48,7 @@
 #include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
+#include <KConfigGroup>
 
 #include "ast.h"
 #include "types/hintedtype.h"
@@ -60,9 +61,9 @@ using namespace KDevelop;
 
 namespace Python {
 
-QMap<IProject*, QList<QUrl>> Helper::cachedCustomIncludes;
-QList<QUrl> Helper::cachedSearchPaths;
-QList<QUrl> Helper::projectSearchPaths;
+QMap<IProject*, QVector<QUrl>> Helper::cachedCustomIncludes;
+QMap<IProject*, QVector<QUrl>> Helper::cachedSearchPaths;
+QVector<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
@@ -371,7 +372,20 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     return absolutePath;
 }
 
-QString getPythonExecutablePath() {
+QString getPythonExecutablePath(IProject* project)
+{
+    if ( project ) {
+        auto interpreter = project->projectConfiguration()->group("pythonsupport").readEntry("interpreter");
+        if ( !interpreter.isEmpty() ) {
+            // we have a user-configured interpreter, try using it
+            QFile f(interpreter);
+            if ( f.exists() ) {
+                return interpreter;
+            }
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "Custom python interpreter" << interpreter << "configured for project" << project->name() << "is invalid, using default";
+        }
+    }
+
     // Find python 3 (https://www.python.org/dev/peps/pep-0394/)
     auto result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR "." PYTHON_VERSION_MINOR);
     if ( ! result.isEmpty() ) {
@@ -419,15 +433,15 @@ QString getPythonExecutablePath() {
     return PYTHON_EXECUTABLE;
 }
 
-QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
+QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 {
     QMutexLocker lock(&Helper::cacheMutex);
-    QList<QUrl> searchPaths;
+    QVector<QUrl> searchPaths;
     // search in the projects, as they're packages and likely to be installed or added to PYTHONPATH later
     // and also add custom include paths that are defined in the projects
 
+    auto project = ICore::self()->projectController()->findProjectForUrl(workingOnDocument);
     {
-        auto project = ICore::self()->projectController()->findProjectForUrl(workingOnDocument);
         QMutexLocker lock(&Helper::projectPathLock);
         searchPaths << Helper::projectSearchPaths;
         searchPaths << Helper::cachedCustomIncludes.value(project);
@@ -437,13 +451,14 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         searchPaths.append(QUrl::fromLocalFile(path));
     }
 
-    if ( cachedSearchPaths.isEmpty() ) {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Gathering search paths...";
+    if ( !cachedSearchPaths.contains(project) ) {
+        QVector<QUrl> cachedForProject;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Collecting search paths...";
         QStringList getpath;
         getpath << "-c" << "import sys; sys.stdout.write('$|$'.join(sys.path))";
         
         QProcess python;
-        python.start(getPythonExecutablePath(), getpath);
+        python.start(getPythonExecutablePath(project), getpath);
         python.waitForFinished(1000);
         QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
         auto paths = pythonpath.split("$|$");
@@ -451,7 +466,7 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         
         if ( ! pythonpath.isEmpty() ) {
             foreach ( const QString& path, paths ) {
-                cachedSearchPaths.append(QUrl::fromLocalFile(path));
+                cachedForProject.append(QUrl::fromLocalFile(path));
             }
         }
         else {
@@ -461,16 +476,17 @@ QList<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
             QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
             foreach ( const QString& path, paths ) {
-                cachedSearchPaths.append(QUrl::fromLocalFile(path));
+                cachedForProject.append(QUrl::fromLocalFile(path));
             }
         }
         qCDebug(KDEV_PYTHON_DUCHAIN) << " *** Done. Got search paths: " << cachedSearchPaths;
+        cachedSearchPaths.insert(project, cachedForProject);
     }
     else {
         qCDebug(KDEV_PYTHON_DUCHAIN) << " --- Search paths from cache: " << cachedSearchPaths;
     }
     
-    searchPaths.append(cachedSearchPaths);
+    searchPaths.append(cachedSearchPaths.value(project));
     
     auto dir = workingOnDocument.adjusted(QUrl::RemoveFilename);
     if ( ! dir.isEmpty() ) {

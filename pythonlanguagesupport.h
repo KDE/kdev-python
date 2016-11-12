@@ -76,6 +76,9 @@ public:
     int configPages() const override;
     KDevelop::ConfigPage* configPage(int number, QWidget* parent) override;
 
+    int perProjectConfigPages() const override;
+    KDevelop::ConfigPage* perProjectConfigPage(int number, const KDevelop::ProjectConfigOptions& options, QWidget* parent) override;
+
 public slots:
     void documentOpened(KDevelop::IDocument*);
 

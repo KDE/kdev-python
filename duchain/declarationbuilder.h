@@ -117,9 +117,6 @@ protected:
     template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, RangeInRevision range,
-                                                     AbstractType::Ptr type = AbstractType::Ptr(),
-                                                     VisitVariableFlags flags=NoVisitVariableFlags);
 
 protected:
     /**
@@ -149,35 +146,12 @@ protected:
     /// Helper for the above
     void adjustExpressionsForTypecheck(ExpressionAst* adjust, ExpressionAst* from, bool useUnsure);
 
-    /**
-     * @brief Get a list of the left-hand-side expressions of an assignment.
-     *
-     * @param targets the AST nodes representing the left-hand side of the assignment
-     *
-     * Example: a, (b, c), _ = 3, 5, 7, 9 -> this function returns a, b, c, d
-     */
-    QList<ExpressionAst*> targetsOfAssignment(QList<ExpressionAst*> targets) const;
-
-
     /// Represents a single source type in a tuple assignment.
     struct SourceType {
         AbstractType::Ptr type;
         DeclarationPointer declaration;
         bool isAlias;
     };
-
-    /**
-     * @brief Attempts to determine the unpacked type(s) of the right-hand side of an assignment.
-     *
-     * @param source The source type on the right-hand side of the assignment
-     * @param fillWhenLengthMissing If non-zero and the object in @p items has an indefinite length but
-     *                              a definite content type, return this many copies of that type
-     *
-     * Example: a, b = [1, 2, 3] and called with @p fillWhenLengthMissing = 2 -> returns int, int
-     *          a, b = "Foo", 3.5 (@p fillWhenLengthMissing ignored here because the right-hand side
-     *                  has a definite amount of items) -> returns str, float
-     */
-    QVector<SourceType> unpackAssignmentSource(const SourceType& source, int fillWhenLengthMissing) const;
 
     /**
       * @brief Handle a variable assignment to @p name and give it the type @p element.
@@ -202,6 +176,7 @@ protected:
     /**
      * @brief Handle assignment to a target @p target with rhs type @p element.
      */
+    void assignToUnknown(ExpressionAst* target, const AbstractType::Ptr type);
     void assignToUnknown(ExpressionAst* target, const SourceType& element);
 
     /**

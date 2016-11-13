@@ -509,7 +509,11 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
             return ListType::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
         },
         [](AbstractType::Ptr t) {
-            if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
+            if (auto map = MapType::Ptr::dynamicCast(t)) {
+                // Iterating over dicts gets keys, not values
+                return map->keyType().abstractType();
+            }
+            else if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
                 return AbstractType::Ptr(variable->contentType().abstractType());
             }
             else {

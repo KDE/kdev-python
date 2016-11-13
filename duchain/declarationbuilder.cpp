@@ -1,7 +1,8 @@
 /*****************************************************************************
  * Copyright (c) 2007 Piyush verma <piyush.verma@gmail.com>                  *
  * Copyright 2007 Andreas Pakulat <apaku@gmx.de>                             *
- * Copyright 2010-2013 Sven Brauch <svenbrauch@googlemail.com>               *
+ * Copyright 2010-2016 Sven Brauch <svenbrauch@googlemail.com>               *
+ * Copyright 2016 Francis Herne <mail@flherne.uk>                            *
  *                                                                           *
  * This program is free software; you can redistribute it and/or             *
  * modify it under the terms of the GNU General Public License as            *
@@ -163,16 +164,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
         return static_cast<T*>(0);
     }
-}
-
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, RangeInRevision range,
-                                                                     AbstractType::Ptr type, VisitVariableFlags flags)
-{
-    Ast pseudo;
-    pseudo.startLine = range.start.line; pseudo.startCol = range.start.column;
-    pseudo.endLine = range.end.line; pseudo.endCol = range.end.column;
-    T* result = visitVariableDeclaration<T>(node, &pseudo, nullptr, type, flags);
-    return result;
 }
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
@@ -395,75 +386,10 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
 
 void DeclarationBuilder::visitFor(ForAst* node)
 {
-    ExpressionVisitor v(currentContext());
-    v.visitNode(node->iterator);
-    auto possibleIterators = Helper::filterType<ListType>(v.lastType(),
-        [](AbstractType::Ptr type) {
-            auto container = type.cast<ListType>();
-            return container && container->contentType();
-        }
-    );
-    if ( node->target->astType == Ast::NameAstType ) {
-        // In case the iterator variable is a Name ("for x in range(3)"), just create a declaration for it.
-        // The following code tries to figure out the type of "x" from the object that is being iterated over.
-        auto iteratorType = Helper::foldTypes<ListType::Ptr>(possibleIterators,
-            [](const ListType::Ptr& p) {
-                return p->contentType().abstractType();
-            }
-        );
-        // otherwise, no list type whatsoever was available for the iterator list, so just display "mixed".
-
-        // Create the variable declaration for the iterator variable with the type that has been determined.
-        visitVariableDeclaration<Declaration>(node->target, 0, iteratorType);
-    }
-    else if ( node->target->astType == Ast::TupleAstType ) {
-        // If the target is a tuple ("for x, y, z in ..."), multiple variables must be declared.
-        // For now, types of those variables will only be determined if the iterator is a list of tuples.
-        QList<ExpressionAst*> targetElements = targetsOfAssignment(QList<ExpressionAst*>() << node->target);
-        int targetElementsCount = targetElements.count();
-        QList<IndexedContainer::Ptr> gatherFromTuples;
-        for ( auto container : possibleIterators ) {
-            AbstractType::Ptr contentType = container->contentType().abstractType();
-            gatherFromTuples = Helper::filterType<IndexedContainer>(contentType,
-                // find all IndexedContainer entries which have the right number of entries
-                [targetElementsCount](AbstractType::Ptr type) {
-                    IndexedContainer::Ptr indexed = type.cast<IndexedContainer>();
-                    return indexed && indexed->typesCount() == targetElementsCount;
-                }
-            );
-        }
-
-        // Now, iterate over all possible tuples, and extract their types
-        int i = 0;
-        QList<AbstractType::Ptr> targetTypes;
-        foreach ( IndexedContainer::Ptr tuple, gatherFromTuples ) {
-            for ( int j = 0; j < tuple->typesCount(); j++ ) {
-                if ( i == 0 ) {
-                    targetTypes.append(tuple->typeAt(j).abstractType());
-                }
-                else {
-                    targetTypes[j] = Helper::mergeTypes(targetTypes[j], tuple->typeAt(j).abstractType());
-                }
-            }
-            i++;
-        }
-
-        short atElement = 0;
-        bool haveTypeInformation = ! targetTypes.isEmpty();
-        Q_ASSERT( ! haveTypeInformation || targetTypes.length() == targetElementsCount );
-        foreach ( ExpressionAst* tupleMember, targetElements ) {
-            if ( tupleMember->astType == Ast::NameAstType ) {
-                AbstractType::Ptr newType;
-                if ( haveTypeInformation ) {
-                    newType = targetTypes.at(atElement);
-                }
-                else {
-                    newType = AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
-                }
-                visitVariableDeclaration<Declaration>(tupleMember, 0, newType);
-            }
-            ++atElement;
-        }
+    if ( node->iterator ) {
+        ExpressionVisitor v(currentContext());
+        v.visitNode(node->iterator);
+        assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
     }
     Python::ContextBuilder::visitFor(node);
 }
@@ -548,6 +474,18 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     }
 }
 
+void spoofNodePosition(Ast* node, int column) {
+    // Ridiculous hack, see next comment.
+    node->startCol = node-> endCol = column;
+    if (node->astType == Ast::TupleAstType) {
+        //  Recursion to bodge all declarations, e.g.
+        //  [x + y * z for x, (y, z) in foo]
+        foreach(auto elem, static_cast<TupleAst*>(node)->elements) {
+            spoofNodePosition(elem, column);
+        }
+    }
+}
+
 void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitComprehension(node);
@@ -556,33 +494,11 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
     // and both other occurrences are uses of that declaration.
     // TODO add a special case to the usebuilder to display the second occurrence as a declaration
-    RangeInRevision declarationRange(currentContext()->range().start, currentContext()->range().start);
-    declarationRange.end.column -= 1;
-    declarationRange.start.column -= 1;
-    
-    AbstractType::Ptr targetType(new IntegralType(IntegralType::TypeMixed));
-    if ( node->iterator ) {
-        // try to find the type of the object being iterated over, for guessing the
-        // type of the iterator variable
-        ExpressionVisitor v(currentContext());
-        v.visitNode(node->iterator);
-        if ( auto container = ListType::Ptr::dynamicCast(v.lastType()) ) {
-            targetType = container->contentType().abstractType();
-        }
-    }
-    
-    // create variable declarations for the iterator variable(s)
-    if ( node->target->astType == Ast::NameAstType ) {
-        visitVariableDeclaration<Declaration>(static_cast<NameAst*>(node->target)->identifier, declarationRange, targetType);
-    }
-    if ( node->target->astType == Ast::TupleAstType ) {
-        foreach ( ExpressionAst* tupleElt, static_cast<TupleAst*>(node->target)->elements ) {
-            if ( tupleElt->astType == Ast::NameAstType ) {
-                NameAst* n = static_cast<NameAst*>(tupleElt);
-                visitVariableDeclaration<Declaration>(n->identifier, declarationRange);
-            }
-        }
-    }
+    spoofNodePosition(node->target, currentContext()->range().start.column - 1);
+
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->iterator);
+    assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
 }
 
 void DeclarationBuilder::visitImport(ImportAst* node)
@@ -1172,56 +1088,6 @@ void DeclarationBuilder::visitCall(CallAst* node)
     addArgumentTypeHints(node, functionVisitor.lastDeclaration());
 }
 
-QList<ExpressionAst*> DeclarationBuilder::targetsOfAssignment(QList<ExpressionAst*> targets) const
-{
-    QList<ExpressionAst*> lhsExpressions;
-    foreach ( ExpressionAst* target, targets ) {
-        if ( target->astType == Ast::TupleAstType ) {
-            TupleAst* tuple = static_cast<TupleAst*>(target);
-            foreach ( ExpressionAst* ast, tuple->elements ) {
-                // eventually recursive call, to handle e.g. a, (b, c) = 1, 2, 3 correctly
-                if ( ast->astType == Ast::TupleAstType ) {
-                    lhsExpressions << targetsOfAssignment(QList<ExpressionAst*>() << ast);
-                }
-                else {
-                    // shortcut
-                    lhsExpressions << ast;
-                }
-            }
-        }
-        else {
-            lhsExpressions << target;
-        }
-    }
-    return lhsExpressions;
-}
-
-QVector<DeclarationBuilder::SourceType>
-    DeclarationBuilder::unpackAssignmentSource(const SourceType& source,
-                                               int fillWhenLengthMissing) const
-{
-    QVector<SourceType> sources;
-    if ( const IndexedContainer::Ptr container = source.type.cast<IndexedContainer>() ) {
-        // RHS is a tuple or similar, unpack that.
-        for (int i = 0; i < container->typesCount(); ++i) {
-            sources << SourceType{
-                container->typeAt(i).abstractType(),
-                DeclarationPointer(),
-                false
-            };
-        }
-    }
-    else if ( auto container = ListType::Ptr::dynamicCast(source.type) ) {
-        // RHS is a list or similar, can't tell contents apart.
-        // Return content type * requested length.
-        AbstractType::Ptr content = container->contentType().abstractType();
-        for ( ; fillWhenLengthMissing != 0; fillWhenLengthMissing-- ) {
-            sources << SourceType{ content, DeclarationPointer(), false };
-        }
-    }
-    return sources;
-}
-
 void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder::SourceType& element)
 {
     if ( element.isAlias ) {
@@ -1353,42 +1219,78 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
 }
 
-void DeclarationBuilder::assignToTuple(TupleAst* tuple, const DeclarationBuilder::SourceType& element) {
-    auto sources = unpackAssignmentSource(element, tuple->elements.length());
-    int ii = 0;
-    bool foundStarred = false;
-    foreach ( ExpressionAst* target, tuple->elements ) {
-        // Fallback, if we ran out of known types.
-        auto source = SourceType{
-            AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)),
-            DeclarationPointer(),
-            false
-        };
-
-        if ( target->astType == Ast::StarredAstType ) {
-            // PEP-3132. `a, *b, c = 1, 2, 3, 4 -> b = [2, 3]`
-            // Starred expression is assigned a list of the values not used by unstarred ones.
-            DUChainReadLocker lock;
-            auto type = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
-            lock.unlock();
-            if ( !foundStarred ) { // Only allowed once, return unknown list.
-                // Count sources not used by other targets, slurp that many into list.
-                int leftovers = sources.length() - tuple->elements.length() + 1;
-                for ( ; leftovers > 0; leftovers--, ii++ ) {
-                    type->addContentType<Python::UnsureType>(sources.at(ii).type);
+void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
+    // Helper for assignToTuple() below.
+    // If sourceType is a container that can be unpacked into outTypes, do so.
+    if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
+        int spare = indexed->typesCount() - outTypes.length();
+        if ( spare < -1 or (starred == -1 and spare != 0) ) {
+            return; // Wrong number of elements to unpack.
+        }
+        for ( int i_out = 0, i_in = 0; i_out < outTypes.length(); ++i_out ) {
+            if ( i_out == starred ) { // PEP-3132. Made into list in assignToTuple().
+                for (; spare >= 0; --spare, ++i_in ) {
+                    auto content = indexed->typeAt(i_in).abstractType();
+                    outTypes[i_out] = Helper::mergeTypes(outTypes.at(i_out), content);
                 }
+            } else {
+                auto content = indexed->typeAt(i_in).abstractType();
+                outTypes[i_out] = Helper::mergeTypes(outTypes.at(i_out), content);
+                ++i_in;
             }
-            source.type = AbstractType::Ptr::staticCast(type);
-            // List is assigned to the child expression.
-            target = static_cast<StarredAst*>(target)->value;
-            foundStarred = true;
         }
-        else if ( ii < sources.length() ) {
-            source = sources.at(ii);
-            ii++;
+    } else {
+        auto content = Helper::contentOfIterable(sourceType);
+        if ( !Helper::isUsefulType(content) ) {
+            return;
         }
-        assignToUnknown(target, source);
+        for (auto out = outTypes.begin(); out != outTypes.end(); ++out) {
+            *out = Helper::mergeTypes(*out, content);
+        }
     }
+}
+
+void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& element) {
+    int starred = -1;  // Index (if any) of PEP-3132 starred assignment.
+    for (int ii = 0; ii < tuple->elements.length(); ++ii) {
+         if (tuple->elements.at(ii)->astType == Ast::StarredAstType) {
+            starred = ii;
+            break;
+        }
+    }
+
+    QVector<AbstractType::Ptr> outTypes(tuple->elements.length());
+
+    if ( auto unsure = element.type.cast<UnsureType>() ) {
+        FOREACH_FUNCTION ( const auto& type, unsure->types ) {
+            tryUnpackType(type.abstractType(), outTypes, starred);
+        }
+    } else {
+        tryUnpackType(element.type, outTypes, starred);
+    }
+
+    for (int ii = 0; ii < outTypes.length(); ++ii) {
+        const auto sourceType = outTypes.at(ii);
+        auto target = tuple->elements.at(ii);
+        if ( target->astType == Ast::StarredAstType ) {
+            DUChainReadLocker lock;
+            auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+            lock.unlock();
+            listType->addContentType<Python::UnsureType>(sourceType);
+            assignToUnknown(static_cast<StarredAst*>(target)->value, listType);
+        } else {
+            assignToUnknown(target, sourceType);
+        }
+    }
+}
+
+void DeclarationBuilder::assignToUnknown(ExpressionAst* target, const AbstractType::Ptr type) {
+    auto source = SourceType{
+        type,
+        DeclarationPointer(),
+        false
+    };
+    assignToUnknown(target, source);
 }
 
 void DeclarationBuilder::assignToUnknown(ExpressionAst* target, const DeclarationBuilder::SourceType& element) {

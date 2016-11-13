@@ -789,7 +789,6 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
-    QEXPECT_FAIL("tuple_unsure", "not implemented, rework DeclarationBuilder::sourcesOfAssignment", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -881,7 +880,6 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_nested2") << "mytuple = 3, ('foo', 5.5)\nfoobar, (checkme, other) = mytuple" << "str";
     QTest::newRow("tuple_nested3") << "mytuple = ((7, 'foo'), 5.5), 3\n((baz, checkme), other), foo = mytuple" << "str";
 
-    // This isn't actually defined behaviour, but it works in CPython, so people use it...
     QTest::newRow("tuple_nested_ext") << "mytuple = (2, ('foo', 'bar', 6), 7)\na, (b, *checkme, c), *d = mytuple" << "list of str";
 
     QTest::newRow("tuple_multi_assign") << "mytuple = 2, 'foo'\ncheckme = a = mytuple" << "tuple";
@@ -927,7 +925,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
     QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
 
-    QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure(int, str)";
+    QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 
     QTest::newRow("call_class") << "class Foo:\n"
                                     "    def __call__(self):\n"
@@ -1382,6 +1380,10 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("for_loop_tuple_2") << "d = [(3, 3.5)]\nfor a, b in d:\n checkme = b" << "float" << true;
     QTest::newRow("for_loop_tuple_unsure") << "d = [(3, 3.5), (3.5, 3)]\nfor a, b in d:\n checkme = b"
                                            << "unsure (float, int)" << true;
+    // Proposed by Nicolás Alvarez; why not? https://bugs.kde.org/show_bug.cgi?id=359915
+    QTest::newRow("comprehension_messy") << "users = {'a':19, 'b':42, 'c':35}\n"
+                                            "sorted_list = sorted(users.items(), key=lambda kv: (-kv[1], kv[0]))\n"
+                                            "checkme = [k for r,(k,v) in enumerate(sorted_list, 1)]" << "list of str" << true;
 }
 
 void PyDUChainTest::testVariableCreation()
@@ -1430,8 +1432,10 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{"i"} << QStringList{"int"};
     QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{"a", "b"}
                                                                        << QStringList{"int", "float"};
-    QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, 2, 3.5)]: pass" << QStringList{"a", "b", "c"}
+    QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, (2, 3.5))]: pass" << QStringList{"a", "b", "c"}
                                                                                 << QStringList{"int", "int", "float"};
+    QTest::newRow("for_loop_tuple") << "for a in 1, 2: pass" << QStringList{"a"} << QStringList{"int"};
+    QTest::newRow("for_loop_dict") << "for a in {'foo': 1}: pass" << QStringList{"a"} << QStringList{"str"};
 }
 
 void PyDUChainTest::testCleanupMultiplePasses()

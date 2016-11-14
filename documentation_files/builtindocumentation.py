@@ -233,12 +233,12 @@ class str():
     def ljust(self,width, fillchar = ""): return ""
     def lower(self,): return ""
     def lstrip(self,chars = ""): return ""
-    def partition(self,seperator): return (self,"", "", "")
+    def partition(self,seperator): return ("", "", "")
     def replace(self,old, new, count = 0): return ""
     def rfind(self,substring, start = 0, end = 0): return 0
     def rindex(self,substring, start = 0, end = 0): return 0
     def rjust(self,width, fillchar = ""): return ""
-    def rpartition(self,seperator): return (self,"", "", "")
+    def rpartition(self,seperator): return ("", "", "")
     def rsplit(self,seperator = "", maxsplit = 0): return []
     def rstrip(self,chars = ""): return ""
     def split(self,seperator = "", maxsplit = 0): return ["string"]

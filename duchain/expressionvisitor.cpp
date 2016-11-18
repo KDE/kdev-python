@@ -115,8 +115,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
         if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
             haveOneUsefulType = true;
         }
-        foundDeclaration = Helper::accessAttribute(current->declaration(context()->topContext()),
-                                                   node->attribute->value, context());
+        foundDeclaration = Helper::accessAttribute(current, node->attribute->value, context());
         if ( foundDeclaration ) {
             break;
         }
@@ -422,10 +421,8 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     }
 
     // Otherwise, try to use __getitem__.
-    ExpressionVisitor v(context());
-    v.visitNode(node->value);
     DUChainReadLocker lock;
-    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", context());
+    Declaration* function = Helper::accessAttribute(lastType(), "__getitem__", context());
     if ( function && function->isFunctionDeclaration() ) {
         if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
             return encounter(functionType->returnType());
@@ -682,7 +679,7 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         if ( ! type ) {
             return AbstractType::Ptr();
         }
-        Declaration* func = Helper::accessAttribute(type->declaration(context()->topContext()), op, context());
+        Declaration* func = Helper::accessAttribute(type, op, context());
         if ( ! func ) {
             return AbstractType::Ptr();
         }

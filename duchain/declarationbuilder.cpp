@@ -1177,7 +1177,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     Declaration* attributeDeclaration = nullptr;
     {
         DUChainReadLocker lock;
-        attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration.data(),
+        attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration->abstractType(),
                                                        attrib->attribute->value, currentContext());
     }
 

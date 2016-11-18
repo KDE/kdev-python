@@ -1384,6 +1384,15 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("comprehension_messy") << "users = {'a':19, 'b':42, 'c':35}\n"
                                             "sorted_list = sorted(users.items(), key=lambda kv: (-kv[1], kv[0]))\n"
                                             "checkme = [k for r,(k,v) in enumerate(sorted_list, 1)]" << "list of str" << true;
+    // From https://bugs.kde.org/show_bug.cgi?id=359912
+    QTest::newRow("subscript_multi") <<
+        "class Middle:\n def __getitem__(self, key):\n  return str()\n"
+        "class Outer:\n def __getitem__(self, key):\n  return Middle()\n"
+        "aaa = Outer()\ncheckme = aaa[0][0]" << "str" << true;
+    QTest::newRow("subscript_func_call") <<
+        "class Foo:\n def __getitem__(self, key):\n  return str()\n"
+        "def bar():\n return Foo()\n"
+        "checkme = bar()[0]" << "str" << true;
 }
 
 void PyDUChainTest::testVariableCreation()

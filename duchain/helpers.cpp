@@ -109,13 +109,13 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
     return KDevelop::IndexedDeclaration();
 }
 
-Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current)
+Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed, const QString& attribute, const DUContext* current)
 {
-    if ( ! accessed || ! accessed->abstractType() ) {
+    if ( ! accessed ) {
         return 0;
     }
     // if the type is unsure, search all the possibilities
-    auto structureTypes = Helper::filterType<StructureType>(accessed->abstractType(),
+    auto structureTypes = Helper::filterType<StructureType>(accessed,
         [](AbstractType::Ptr toFilter) {
             auto type = Helper::resolveAliasType(toFilter);
             return type && type->whichType() == AbstractType::TypeStructure;

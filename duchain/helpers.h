@@ -73,7 +73,7 @@ public:
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type);
 
-    static Declaration* accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current);
+    static Declaration* accessAttribute(const AbstractType::Ptr accessed, const QString& attribute, const DUContext* current);
 
     static AbstractType::Ptr resolveAliasType(const AbstractType::Ptr eventualAlias);
 

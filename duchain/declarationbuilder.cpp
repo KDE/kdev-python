@@ -1276,8 +1276,10 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
             DUChainReadLocker lock;
             auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
             lock.unlock();
-            listType->addContentType<Python::UnsureType>(sourceType);
-            assignToUnknown(static_cast<StarredAst*>(target)->value, listType);
+            if (listType) {
+                listType->addContentType<Python::UnsureType>(sourceType);
+                assignToUnknown(static_cast<StarredAst*>(target)->value, listType);
+            }
         } else {
             assignToUnknown(target, sourceType);
         }

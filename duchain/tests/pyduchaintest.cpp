@@ -1393,6 +1393,12 @@ void PyDUChainTest::testContainerTypes_data()
         "class Foo:\n def __getitem__(self, key):\n  return str()\n"
         "def bar():\n return Foo()\n"
         "checkme = bar()[0]" << "str" << true;
+    QTest::newRow("subscript_unknown_index") << "a = 1,str()\ncheckme = a[5-4]" << "unsure (int, str)" << true;
+    QTest::newRow("subscript_unsure") << "a = 1,2\na=[str()]\ncheckme = a[0]" << "unsure (int, str)" << true;
+    QTest::newRow("subscript_unsure_getitem") <<
+        "class Foo:\n def __getitem__(self, key):\n  return str()\n"
+        "class Bar:\n def __getitem__(self, key):\n  return float()\n"
+        "a = Foo()\na=Bar()\na=[1,2]\ncheckme = a[1]" << "unsure (str, float, int)" << true;
 }
 
 void PyDUChainTest::testVariableCreation()

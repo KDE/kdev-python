@@ -366,14 +366,21 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
-    if ( node->slice && node->slice->astType == Ast::IndexAstType ) {
-        DUChainReadLocker lock;
-        auto indexedTypes = Helper::filterType<IndexedContainer>(lastType(), [](AbstractType::Ptr toFilter) {
-            return toFilter.cast<IndexedContainer>();
-        });
-        for ( IndexedContainer::Ptr indexed: indexedTypes ) {
-            // TODO This loop currently only uses the first result, it could construct
-            // an unsure from all the matches.
+
+    auto valueTypes = Helper::filterType<AbstractType>(lastType(), [](AbstractType::Ptr) { return true; });
+    AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
+
+    foreach (const auto& type, valueTypes) {
+        if ( (node->slice && node->slice->astType != Ast::IndexAstType) &&
+             (type.cast<IndexedContainer>() || type.cast<ListType>()) ) {
+            if ( type.cast<MapType>() ) {
+                continue; // Can't slice dicts.
+            }
+            // Assume that slicing (e.g. foo[3:5]) a tuple/list returns the same type.
+            // TODO: we could do better for some tuple slices.
+            result = Helper::mergeTypes(result, type);
+        }
+        else if ( const auto& indexed = type.cast<IndexedContainer>() ) {
             IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
             NumberAst* number = nullptr;
             bool invert = false;
@@ -394,43 +401,27 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                     sliceIndex += indexed->typesCount();
                 }
                 if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
-                    return encounter(indexed->typeAt(sliceIndex).abstractType());
+                    result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
+                    continue;
                 }
             }
-            // the exact index is unknown, use unsure
-            return encounter(indexed->asUnsureType().cast<AbstractType>());
+            result = Helper::mergeTypes(result, indexed->asUnsureType());
         }
-        auto variableTypes = Helper::filterType<ListType>(lastType(), [](AbstractType::Ptr toFilter) {
-            return toFilter.cast<ListType>();
-        });
-        if ( ! variableTypes.isEmpty() ) {
-            AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
-            for ( auto variable: variableTypes ) {
-                result = Helper::mergeTypes(result, variable->contentType().abstractType());
+        else if ( const auto& listType = type.cast<ListType>() ) {
+            result = Helper::mergeTypes(result, listType->contentType().abstractType());
+        }
+        else {
+            // Type wasn't one with custom handling, so use return type of __getitem__().
+            DUChainReadLocker lock;
+            Declaration* function = Helper::accessAttribute(type, "__getitem__", context());
+            if ( function && function->isFunctionDeclaration() ) {
+                if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
+                    result = Helper::mergeTypes(result, functionType->returnType());
+                }
             }
-            return encounter(result);
         }
     }
-
-    // If that does not work and we have a slice like [3:5], guess it will remain the same type.
-    // That is an approximation we have to make now, should optimally be corrected later.
-    // The reason is that we'd need to parse decorators from the __getitem__ method to support
-    // list/dict/etc properly otherwise, which requires a bit of refactoring first. TODO do this
-    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
-        return;
-    }
-
-    // Otherwise, try to use __getitem__.
-    DUChainReadLocker lock;
-    Declaration* function = Helper::accessAttribute(lastType(), "__getitem__", context());
-    if ( function && function->isFunctionDeclaration() ) {
-        if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
-            return encounter(functionType->returnType());
-        }
-    }
-
-    // Otherwise, give up
-    return encounterUnknown();
+    encounter(result);
 }
 
 void ExpressionVisitor::visitList(ListAst* node)

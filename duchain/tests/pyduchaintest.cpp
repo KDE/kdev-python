@@ -704,7 +704,7 @@ void PyDUChainTest::testRanges()
         visitor->searchingForRange = r;
         visitor->searchingForIdentifier = identifier;
         visitor->visitCode(m_ast.data());
-
+        QEXPECT_FAIL("attr_dot_name_hash", "Insufficiently magic hack", Continue);
         QCOMPARE(visitor->found, true);
         delete visitor;
     }
@@ -733,6 +733,11 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
     QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );
     QTest::newRow("attr_parentheses") << "(\"foo\" + \"foo\").capitalize()" << 1 << ( QStringList() << "16,25,capitalize" );
+    QTest::newRow("attr_commented_name") << "base.attr # attr" << 2 << ( QStringList() << "5,8,attr" );
+    QTest::newRow("attr_name_in_strings") << "'attr' + base['attr'].attr # attr" << 4 << ( QStringList() << "22,25,attr" );
+    QTest::newRow("attr_dot_hash_in_strings") << "'.foo#' + base['.#'].attr # attr" << 4 << ( QStringList() << "21,24,attr" );
+    QTest::newRow("attr_dot_name_hash") << "base['.attr#'].attr" << 4 << ( QStringList() << "15,18,attr" );
+
     QTest::newRow("string_parentheses") << "(\"asdf\".join())" << 1 << ( QStringList() << "8,11,join" );
     QTest::newRow("string_parentheses2") << "(\"asdf\").join()" << 1 << ( QStringList() << "9,12,join" );
     QTest::newRow("string_parentheses3") << "(\"asdf\".join()).join()" << 2 << ( QStringList() << "8,11,join" << "16,19,join" );

@@ -135,30 +135,66 @@ public:
         }
 
         // take only the portion of the line up to that next expression
-        QString line = lines.at(node->startLine);
-        auto lineno = next_start.line();
-        auto colno = next_start.column();
+        auto endLine = next_start.line();
+        auto endCol = next_start.column();
         if ( ! (next_start > node->start()) ) {
-            colno = -1;
-            lineno = node->startLine;
+            endLine = node->startLine;
+            endCol = -1;
         }
-        do {
-            line = lines.at(lineno);
-            if ( colno != -1 ) {
-                line = line.left(colno);
-            }
-            colno = -1;
-            lineno -= 1;
-            // eventually go to previous line for multi-line expressions
-        } while ( ! line.contains(node->attribute->value) && lineno >= 0 );
 
-        node->startLine = lineno + 1;
+        const QString& name(node->attribute->value);
+
+        QString line;
+        for ( int n = node->startLine,
+                  pos = node->value->endCol + 1,
+                  dotFound = false,
+                  nameFound = false;
+               n <= endLine; ++n, pos = 0 ) {
+            line = lines.at(n);
+            if ( n == endLine && endCol != -1 ) {
+                // Never look at the next expression.
+                line = line.left(endCol);
+            }
+            if ( !dotFound ) {
+                // The real attr name can never be before a dot.
+                // Nor can the start of a comment.
+                // (Don't be misled by `foo["bar"].bar` or `foo["#"].bar`)
+                pos = line.indexOf('.', pos);
+                if ( pos == -1 ) continue;
+                dotFound = true;
+            }
+            if ( !nameFound ) {
+                // Track if the attr name has appeared at least once.
+                // This helps avoid interpreting '#'s in strings as comments -
+                //   there can never be a comment before the real attr name.
+                pos = line.indexOf(name, pos + 1);
+                if ( pos == -1 ) continue;
+                nameFound = true;
+            }
+            if ( dotFound && nameFound &&
+                  (pos = line.indexOf('#', pos + name.length())) != -1) {
+                // Remove the comment after a '#' iff we're certain it can't
+                //  be inside a string literal (e.g. `foo["#"].bar`).
+                line = line.left(pos);
+            }
+            // Take the last occurrence, any others are in string literals.
+            pos = line.lastIndexOf(name);
+            if ( pos != -1 ) {
+                node->startLine = n;
+                node->startCol = pos;
+            }
+            // N.B. we do this for all lines, the last non-comment occurrence
+            //  is the real one.
+        }
+        // This fails (only, AFAIK) in a very limited case:
+        // If the value expression (`foo` in `foo.bar`) contains a dot, the
+        //   attr name, _and_ a hash in that order (may not be consecutive),
+        //   and the hash is on the same line as the real attr name,
+        //   we wrongly interpret the hash as the start of a comment.
+        // e.g `foo["...barrier#"].bar` will highlight part of the string.
+
         node->endLine = node->startLine;
-        // now, just take the last occurrence of the value.
-        // it is guaranteed that this is the right one, otherwise
-        // that portion of the line would have been cut off above.
-        node->startCol = line.lastIndexOf(node->attribute->value);
-        node->endCol = node->startCol + node->attribute->value.length() - 1;
+        node->endCol = node->startCol + name.length() - 1;
         node->attribute->copyRange(node);
 
         AstDefaultVisitor::visitAttribute(node);

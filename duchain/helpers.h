@@ -73,7 +73,23 @@ public:
 
     static AbstractType::Ptr extractTypeHints(AbstractType::Ptr type);
 
-    static Declaration* accessAttribute(const AbstractType::Ptr accessed, const QString& attribute, const DUContext* current);
+    /**
+     * @brief Get the declaration of 'accessed.attribute', or return null.
+     *
+     * @param accessed Type (Structure or Unsure) that should have this attribute.
+     * @param attribute Which attribute to look for.
+     * @param topContext Top context (for this file?)
+     * @return Declaration* of the attribute, or null.
+     *  If UnsureType with >1 matching attributes, returns an arbitrary choice.
+     **/
+    static KDevelop::Declaration* accessAttribute(const KDevelop::AbstractType::Ptr accessed,
+                                                  const KDevelop::IndexedIdentifier& attribute,
+                                                  const KDevelop::TopDUContext* topContext);
+
+    static KDevelop::Declaration* accessAttribute(const KDevelop::AbstractType::Ptr accessed,
+        const QString& attribute, const KDevelop::TopDUContext* topContext) {
+        return accessAttribute(accessed, IndexedIdentifier(KDevelop::Identifier(attribute)), topContext);
+    }
 
     static AbstractType::Ptr resolveAliasType(const AbstractType::Ptr eventualAlias);
 
@@ -121,6 +137,7 @@ public:
 
     static KDevelop::IndexedDeclaration declarationUnderCursor(bool allowUse = true);
 
+    using FuncInfo = QPair<Python::FunctionDeclarationPointer, bool>;
     /**
      * @brief Finds whether the specified called declaration is a function declaration, and if not,
      *        checks for a class declaration; then returns the constructor
@@ -129,7 +146,6 @@ public:
      * @return the function pointer which was found, or an invalid pointer, and a bool
      *         which is true when it is a constructor
      **/
-    using FuncInfo = QPair<Python::FunctionDeclarationPointer, bool>;
     static FuncInfo functionDeclarationForCalledDeclaration(DeclarationPointer ptr);
 
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
@@ -191,12 +207,13 @@ public:
     /**
     * @brief Find all internal contexts for this class and its base classes recursively
     *
-    * @param klass Type object for the class to search contexts
+    * @param classType Type object for the class to search contexts
     * @param context TopContext for finding the declarations for types
     * @return list of contexts which were found
     **/
-    static QList<DUContext*> internalContextsForClass(KDevelop::StructureType::Ptr klassType,
-                                                      TopDUContext* context, ContextSearchFlags flags = NoFlags, int depth = 0);
+    static QVector<DUContext*> internalContextsForClass(const KDevelop::StructureType::Ptr classType,
+                                                        const TopDUContext* context,
+                                                        ContextSearchFlags flags = NoFlags, int depth = 0);
     /**
       * @brief Resolve the given declaration if it is an alias declaration.
       *

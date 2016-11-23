@@ -91,52 +91,22 @@ void ExpressionVisitor::encounter(AbstractType::Ptr type, DeclarationPointer dec
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
-    ExpressionAst* accessingAttributeOf = node->value;
-
     ExpressionVisitor v(this);
-    v.visitNode(accessingAttributeOf);
-    AbstractType::Ptr accessedType = v.lastType();
-    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<StructureType>(accessedType,
-        [](AbstractType::Ptr type) {
-            auto resolved = Helper::resolveAliasType(type);
-            return resolved && resolved->whichType() == AbstractType::TypeStructure;
-        },
-        [](AbstractType::Ptr type) {
-            return Helper::resolveAliasType(type).cast<StructureType>();
-        }
-    );
+    v.visitNode(node->value);
+    setConfident(false);
 
-    // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
-    // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
-    bool haveOneUsefulType = false;
-    Declaration* foundDeclaration = nullptr;
+    // Find a matching declaration which is made inside the type of the accessed object.
+    // Like, for B.C where B is an instance of foo, find a property of foo called C.
     DUChainReadLocker lock;
-    foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
-        if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
-            haveOneUsefulType = true;
-        }
-        foundDeclaration = Helper::accessAttribute(current, node->attribute->value, context());
-        if ( foundDeclaration ) {
-            break;
-        }
-    }
-    if ( ! haveOneUsefulType ) {
-        setConfident(false);
-    }
+    auto attribute = Helper::accessAttribute(v.lastType(), node->attribute->value, topContext());
 
-    // Step 2: Construct the type of the declaration which was found.
-    if ( foundDeclaration ) {
-        auto d = Helper::resolveAliasDeclaration(foundDeclaration);
-        if ( ! d ) {
-            return encounterUnknown();
-        }
-        bool isAlias =     dynamic_cast<AliasDeclaration*>(foundDeclaration) || d->isFunctionDeclaration()
-                        || dynamic_cast<ClassDeclaration*>(d);
-        encounter(foundDeclaration->abstractType(), DeclarationPointer(foundDeclaration));
-        setLastIsAlias(isAlias);
-    }
-    else {
-        return encounterUnknown();
+    if ( auto resolved = Helper::resolveAliasDeclaration(attribute) ) {
+        encounter(attribute->abstractType(), DeclarationPointer(attribute));
+        setLastIsAlias(dynamic_cast<AliasDeclaration*>(attribute) ||
+                        resolved->isFunctionDeclaration() ||
+                        dynamic_cast<ClassDeclaration*>(resolved));
+    } else {
+        encounterUnknown();
     }
 }
 
@@ -413,7 +383,8 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         else {
             // Type wasn't one with custom handling, so use return type of __getitem__().
             DUChainReadLocker lock;
-            Declaration* function = Helper::accessAttribute(type, "__getitem__", context());
+            static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
+            auto function = Helper::accessAttribute(type, getitemIdentifier, topContext());
             if ( function && function->isFunctionDeclaration() ) {
                 if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
                     result = Helper::mergeTypes(result, functionType->returnType());
@@ -670,7 +641,7 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         if ( ! type ) {
             return AbstractType::Ptr();
         }
-        Declaration* func = Helper::accessAttribute(type, op, context());
+        auto func = Helper::accessAttribute(type, op, topContext());
         if ( ! func ) {
             return AbstractType::Ptr();
         }

@@ -109,31 +109,35 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
     return KDevelop::IndexedDeclaration();
 }
 
-Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed, const QString& attribute, const DUContext* current)
+Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed,
+                                     const IndexedIdentifier& attribute,
+                                     const TopDUContext* topContext)
 {
     if ( ! accessed ) {
         return 0;
     }
-    // if the type is unsure, search all the possibilities
+    // if the type is unsure, search all the possibilities (but return the first match)
     auto structureTypes = Helper::filterType<StructureType>(accessed,
         [](AbstractType::Ptr toFilter) {
             auto type = Helper::resolveAliasType(toFilter);
             return type && type->whichType() == AbstractType::TypeStructure;
+        },
+        [](AbstractType::Ptr toMap) {
+            return StructureType::Ptr::staticCast(Helper::resolveAliasType(toMap));
         }
     );
-    for ( auto type: structureTypes ) {
-        QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
-        for ( DUContext* c: searchContexts ) {
-            auto found = c->findDeclarations(KDevelop::Identifier(attribute),
-                                             CursorInRevision::invalid(),
-                                             current->topContext(), DUContext::DontSearchInParent);
-            std::reverse(found.begin(), found.end());
-            // never consider decls from the builtins
-            if ( ! found.isEmpty() && (
-                   found.first()->topContext() != Helper::getDocumentationFileContext() ||
-                   c->topContext() == Helper::getDocumentationFileContext() ) )
-            {
-                return found.first();
+    auto docFileContext = Helper::getDocumentationFileContext();
+
+    for ( const auto& type: structureTypes ) {
+        auto searchContexts = Helper::internalContextsForClass(type, topContext);
+        for ( const auto ctx: searchContexts ) {
+            auto found = ctx->findDeclarations(attribute, CursorInRevision::invalid(),
+                                               topContext, DUContext::DontSearchInParent);
+            if ( !found.isEmpty() && (
+                   found.last()->topContext() != docFileContext ||
+                   ctx->topContext() == docFileContext) ) {
+                // never consider decls from the builtins
+                return found.last();
             }
         }
     }
@@ -158,32 +162,15 @@ Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPoin
     if ( ! ptr ) {
         return FuncInfo();
     }
-    bool isConstructor = false;
-    DeclarationPointer calledDeclaration = ptr;
-    if ( ! calledDeclaration->isFunctionDeclaration() ) {
-        // not a function -- try looking for a constructor
-        StructureType::Ptr classType = calledDeclaration->type<StructureType>();
-        auto contexts = Helper::internalContextsForClass(classType, ptr->topContext());
-        for ( DUContext* context: contexts ) {
-            static KDevelop::Identifier initIdentifier("__init__");
-            QList<Declaration*> constructors = context->findDeclarations(initIdentifier);
-            if ( ! constructors.isEmpty() ) {
-                calledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
-                isConstructor = true;
-                break;
-            }
-        }
-    }
-    FunctionDeclarationPointer lastFunctionDeclaration;
-    if ( calledDeclaration ) {
-        // It was a class -- use the constructor
-        lastFunctionDeclaration = calledDeclaration.dynamicCast<FunctionDeclaration>();
+    else if ( auto functionDecl = FunctionDeclarationPointer(ptr) ) {
+        return FuncInfo(functionDecl, false);
     }
     else {
-        // Use the original declaration
-        lastFunctionDeclaration = ptr.dynamicCast<FunctionDeclaration>();
+        // not a function -- try looking for a constructor
+        static const IndexedIdentifier initIdentifier(KDevelop::Identifier("__init__"));
+        auto attr = accessAttribute(ptr->abstractType(), initIdentifier, ptr->topContext());
+        return FuncInfo(FunctionDeclarationPointer(attr), true);
     }
-    return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
 }
 
 Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
@@ -228,23 +215,23 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
     return declaration;
 }
 
-QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, ContextSearchFlags flags, int depth)
+QVector<DUContext*> Helper::internalContextsForClass(const StructureType::Ptr classType,
+                        const TopDUContext* context, ContextSearchFlags flags, int depth)
 {
-    QList<DUContext*> searchContexts;
-    if ( ! klassType ) {
+    QVector<DUContext*> searchContexts;
+    if ( ! classType ) {
         return searchContexts;
     }
-    if ( auto c = klassType->internalContext(context) ) {
+    if ( auto c = classType->internalContext(context) ) {
         searchContexts << c;
     }
-    Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
-    ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-    if ( klass ) {
-        FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+    auto decl = Helper::resolveAliasDeclaration(classType->declaration(context));
+    if ( auto classDecl = dynamic_cast<ClassDeclaration*>(decl) ) {
+        FOREACH_FUNCTION ( const auto& base, classDecl->baseClasses ) {
             if ( flags == PublicOnly && base.access == KDevelop::Declaration::Private ) {
                 continue;
             }
-            StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
+            auto baseClassType = base.baseClass.type<StructureType>();
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
                 searchContexts.append(Helper::internalContextsForClass(baseClassType, context, flags, depth + 1));
@@ -291,7 +278,6 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;
     }
-    return ReferencedTopDUContext(0); // c++...
 }
 
 // stolen from KUrl. duh.

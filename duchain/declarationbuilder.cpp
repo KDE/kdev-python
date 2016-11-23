@@ -239,7 +239,6 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     return remainingDeclarations;
 }
 
-typedef QPair<Declaration*, int> p;
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous,
                                                                      AbstractType::Ptr type, VisitVariableFlags flags)
 {
@@ -1178,7 +1177,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     {
         DUChainReadLocker lock;
         attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration->abstractType(),
-                                                       attrib->attribute->value, currentContext());
+                                                       attrib->attribute->value, topContext());
     }
 
     if ( ! attributeDeclaration || ! wasEncountered(attributeDeclaration) ) {

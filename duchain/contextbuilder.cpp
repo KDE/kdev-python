@@ -400,29 +400,26 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
 {
     auto start = node->name->range().end();
     auto end = start;
-    if ( node->arguments->kwarg ) {
-        end = node->arguments->kwarg->range().end();
+    auto args = node->arguments;
+    if ( args->kwarg ) {
+        end = args->kwarg->range().end();
     }
-    else if ( node->arguments->vararg ) {
-        end = node->arguments->vararg->range().end();
+    else if ( args->vararg &&
+         ( args->arguments.isEmpty() ||
+           ! args->vararg->appearsBefore(args->arguments.last())) ) {
+        end = args->vararg->range().end();
     }
-    if ( ! node->arguments->arguments.isEmpty() && node->arguments->vararg ) {
-        if ( node->arguments->vararg->appearsBefore(node->arguments->arguments.last()) ) {
-            end = node->arguments->arguments.last()->range().end();
-        }
-    }
-    else if ( ! node->arguments->arguments.isEmpty() ) {
-        end = node->arguments->arguments.last()->range().end();
+    else if ( ! args->arguments.isEmpty() ) {
+        end = args->arguments.last()->range().end();
     }
 
-    if ( ! node->arguments->defaultValues.isEmpty() ) {
-        end = qMax<KTextEditor::Cursor>(node->arguments->defaultValues.last()->range().end(), end);
+    if ( ! args->defaultValues.isEmpty() ) {
+        end = qMax<KTextEditor::Cursor>(args->defaultValues.last()->range().end(), end);
     }
 
     RangeInRevision range(start.line(), start.column(), end.line(), end.column());
-    // make the range contain the closing and opening parentheses
-    range.start.column -= 1;
-    range.end.column += 1;
+    range.start.column += 1; // Don't include end of name.
+    range.end.column += 1; // Include end parenthesis (unless spaces...)
     return range;
 }
 

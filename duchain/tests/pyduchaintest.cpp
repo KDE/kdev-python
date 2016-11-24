@@ -928,7 +928,17 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("no_hints_type") << "def myfun(arg): arg = 3; return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("hints_type") << "def myfun(arg): return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
-    QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
+    QTest::newRow("kwarg_type") << "def myfun(**args): return args['a']\ncheckme = myfun(a=3)" << "int";
+    QTest::newRow("arg_args_type") << "def myfun(arg, *args): return args[0]\n"
+                                      "checkme = myfun(3, str())" << "str";
+    QTest::newRow("arg_kwargs_type") << "def myfun(arg, **kwargs): return kwargs['a']\n"
+                                         "checkme = myfun(12, a=str())" << "str";
+    QTest::newRow("varied_args_type_1") << "def myfun(arg, *args, **kwargs): return arg\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "int";
+    QTest::newRow("varied_args_type_2") << "def myfun(arg, *args, **kwargs): return args[0]\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "float";
+    QTest::newRow("varied_args_type_3") << "def myfun(arg, *args, **kwargs): return kwargs['a']\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "str";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 

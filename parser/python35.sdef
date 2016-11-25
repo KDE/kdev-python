@@ -50,7 +50,7 @@ RULE_FOR _expr;KIND DictComp_kind;ACTIONS create|DictionaryComprehensionAst set|
 RULE_FOR _expr;KIND GeneratorExp_kind;ACTIONS create|GeneratorExpressionAst set|element->ExpressionAst,elt set|generators=>ComprehensionAst,generators;;
 RULE_FOR _expr;KIND Yield_kind;ACTIONS create|YieldAst set|value->ExpressionAst,value;;
 RULE_FOR _expr;KIND Compare_kind;ACTIONS create|CompareAst set|leftmostElement->ExpressionAst,left set|operators#>ComparisonOperatorTypes,ops set|comparands=>ExpressionAst,comparators;;
-RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst,func set|arguments=>ExpressionAst,args set|keywords=>KeywordAst,keywords;CODE v->function->belongsToCall = v;;
+RULE_FOR _expr;KIND Call_kind;ACTIONS create|CallAst set|function->ExpressionAst,func set|arguments=>ExpressionAst,args set|keywords=>KeywordAst,keywords;;
 RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;CODE v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);;
 RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
 RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;;

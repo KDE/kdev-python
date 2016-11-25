@@ -60,23 +60,36 @@ DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
     return context;
 }
 
+void UseBuilder::useHiddenMethod(ExpressionAst* value, IndexedIdentifier method) {
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(value));
+    ExpressionVisitor v(context);
+    v.visitNode(value);
+    RangeInRevision useRange;
+    // TODO fixme! this does not necessarily use the opening bracket as it should
+    useRange.start = CursorInRevision(value->endLine, value->endCol + 1);
+    useRange.end = CursorInRevision(value->endLine, value->endCol + 2);
+    DUChainReadLocker lock;
+    auto function = Helper::accessAttribute(v.lastType(), method, context->topContext());
+    lock.unlock();
+    if ( function && function->isFunctionDeclaration() ) {
+        UseBuilderBase::newUse(value, useRange, DeclarationPointer(function));
+    }
+}
+
 void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
                                                           editorFindRange(node, node),
                                                           DUChainPointer<const DUContext>(context));
-    
-    static QStringList keywords;
-    if ( keywords.isEmpty() ) {
-        keywords << "None" << "True" << "False" << "print";
-    }
-    
+
+    static const QStringList keywords = {"None", "True", "False"};
+
     Q_ASSERT(node->identifier);
     RangeInRevision useRange = rangeForNode(node->identifier, true);
-    
+
     if ( declaration && declaration->range() == useRange ) return;
-    
+
     if ( ! declaration && ! keywords.contains(node->identifier->value) && m_errorReportingEnabled ) {
         if ( ! m_ignoreVariables.contains(IndexedString(node->identifier->value)) ) {
             KDevelop::Problem *p = new KDevelop::Problem();
@@ -91,23 +104,26 @@ void UseBuilder::visitName(NameAst* node)
             }
         }
     }
-    
-    if ( declaration && declaration->abstractType() && declaration->abstractType()->whichType() == AbstractType::TypeStructure ) {
-        if ( node->belongsToCall ) {
-            DUChainReadLocker lock;
-            auto constructor = Helper::functionForCalled(declaration);
-            lock.unlock();
-            if ( constructor.isConstructor ) {
-                RangeInRevision constructorRange;
-                // TODO fixme! this does not necessarily use the opening bracket as it should
-                constructorRange.start = CursorInRevision(node->endLine, node->endCol + 1);
-                constructorRange.end = CursorInRevision(node->endLine, node->endCol + 2);
-                UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.declaration));
-            }
-        }
-    }
-    
     UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
+}
+
+void UseBuilder::visitCall(CallAst* node)
+{
+    UseBuilderBase::visitCall(node);
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    ExpressionVisitor v(context);
+    v.visitNode(node->function);
+    if ( auto classType = v.lastType().cast<StructureType>() ) {
+        DUChainReadLocker lock;
+        // This is either __init__() or __call__(): `a = Foo()` or `b = a()`.
+        auto function = Helper::functionForCalled(classType->declaration(topContext()), v.isAlias());
+        lock.unlock();
+        RangeInRevision openingParenRange;
+        // TODO fixme! this does not necessarily use the opening bracket as it should
+        openingParenRange.start = CursorInRevision(node->endLine, node->endCol + 1);
+        openingParenRange.end = CursorInRevision(node->endLine, node->endCol + 2);
+        UseBuilderBase::newUse(node, openingParenRange, DeclarationPointer(function.declaration));
+    }
 }
 
 void UseBuilder::visitAttribute(AttributeAst* node)
@@ -140,6 +156,20 @@ void UseBuilder::visitAttribute(AttributeAst* node)
     UseBuilderBase::newUse(node, useRange, declaration);
 }
 
+void UseBuilder::visitSubscript(SubscriptAst* node) {
+    UseBuilderBase::visitSubscript(node);
+    static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
+    static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier("__setitem__"));
+    bool isAugTarget = (node->parent->astType == Ast::AugmentedAssignmentAstType &&
+                        static_cast<AugmentedAssignmentAst*>(node->parent)->target == node);
+    // e.g `a[0] += 2` uses both __getitem__ and __setitem__.
+    if (isAugTarget || node->context == ExpressionAst::Context::Load) {
+        useHiddenMethod(node->value, getitemIdentifier);
+    }
+    if ( node->context == ExpressionAst::Context::Store ) {
+        useHiddenMethod(node->value, setitemIdentifier);
+    }
+}
 
 ParseSession *UseBuilder::parseSession() const
 {

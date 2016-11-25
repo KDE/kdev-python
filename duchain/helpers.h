@@ -143,10 +143,11 @@ public:
      *        checks for a class declaration; then returns the constructor
      *
      * @param called the declaration to check
+     * @param isAlias whether the called declaration aliases a class or function definition.
      * @return the function pointer which was found, or an invalid pointer, and a bool
      *         which is true when it is a constructor
      **/
-    static FuncInfo functionForCalled(Declaration* called);
+    static FuncInfo functionForCalled(Declaration* called, bool isAlias=true);
 
     template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
         const int count = inDeclaration->decoratorsSize();

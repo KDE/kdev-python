@@ -158,7 +158,7 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
     }));
 }
 
-Helper::FuncInfo Helper::functionForCalled(Declaration* called )
+Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
 {
     if ( ! called ) {
         return { nullptr, false };
@@ -166,12 +166,14 @@ Helper::FuncInfo Helper::functionForCalled(Declaration* called )
     else if ( called->isFunctionDeclaration() ) {
         return { static_cast<FunctionDeclaration*>( called ), false };
     }
-    else {
-        // not a function -- try looking for a constructor
-        static const IndexedIdentifier initIdentifier(KDevelop::Identifier("__init__"));
-        auto attr = accessAttribute( called->abstractType(), initIdentifier, called->topContext());
-        return { dynamic_cast<FunctionDeclaration*>(attr), true };
-    }
+// If we're calling a type object (isAlias == true), look for a constructor.
+    static const IndexedIdentifier initId(KDevelop::Identifier("__init__"));
+
+// Otherwise look for a `__call__()` method.
+    static const IndexedIdentifier callId(KDevelop::Identifier("__call__"));
+
+    auto attr = accessAttribute(called->abstractType(), (isAlias ? initId : callId), called->topContext());
+    return { dynamic_cast<FunctionDeclaration*>(attr), isAlias };
 }
 
 Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,

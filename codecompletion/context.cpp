@@ -148,7 +148,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
         qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Tried: " << m_guessTypeOfExpression;
         return resultingItems;
     }
-    functionCalled = Helper::functionDeclarationForCalledDeclaration(v->lastDeclaration()).first.data();
+    functionCalled = Helper::functionForCalled(v->lastDeclaration().data()).declaration;
 
     auto current = Helper::resolveAliasDeclaration(functionCalled);
     QList<Declaration*> calltips;

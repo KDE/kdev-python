@@ -158,19 +158,19 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
     }));
 }
 
-Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+Helper::FuncInfo Helper::functionForCalled(Declaration* called )
 {
-    if ( ! ptr ) {
-        return FuncInfo();
+    if ( ! called ) {
+        return { nullptr, false };
     }
-    else if ( auto functionDecl = FunctionDeclarationPointer(ptr) ) {
-        return FuncInfo(functionDecl, false);
+    else if ( called->isFunctionDeclaration() ) {
+        return { static_cast<FunctionDeclaration*>( called ), false };
     }
     else {
         // not a function -- try looking for a constructor
         static const IndexedIdentifier initIdentifier(KDevelop::Identifier("__init__"));
-        auto attr = accessAttribute(ptr->abstractType(), initIdentifier, ptr->topContext());
-        return FuncInfo(FunctionDeclarationPointer(attr), true);
+        auto attr = accessAttribute( called->abstractType(), initIdentifier, called->topContext());
+        return { dynamic_cast<FunctionDeclaration*>(attr), true };
     }
 }
 

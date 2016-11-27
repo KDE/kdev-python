@@ -931,9 +931,8 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
 void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer function)
 {
     DUChainReadLocker lock;
-    QPair<FunctionDeclaration::Ptr, bool> called = Helper::functionDeclarationForCalledDeclaration(function);
-    FunctionDeclaration::Ptr lastFunctionDeclaration = called.first;
-    bool isConstructor = called.second;
+    auto funcInfo = Helper::functionForCalled(function.data());
+    auto lastFunctionDeclaration = funcInfo.declaration;
 
     if ( ! lastFunctionDeclaration ) {
         return;
@@ -941,7 +940,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
         return;
     }
-    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration.data());
+    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration);
     FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
     if ( ! args || ! functiontype ) {
         return;
@@ -952,7 +951,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
 
     // Look for the "self" in the argument list, the type of that should not be updated.
     bool hasSelfArgument = false;
-    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor )
+    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || funcInfo.isConstructor )
             && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
     {
         // ... unless for some reason the function only has *vararg, **kwarg as arguments

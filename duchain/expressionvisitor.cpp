@@ -153,15 +153,12 @@ void ExpressionVisitor::visitCall(CallAst* node)
     DUChainReadLocker lock;
     actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
     ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-    QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
-                                                DeclarationPointer(actualDeclaration));
-    FunctionDeclaration* funcDecl = d.first.data();
-    bool isConstructor = d.second;
+    auto function = Helper::functionForCalled(actualDeclaration);
     lock.unlock();
 
-    if ( funcDecl && funcDecl->type<FunctionType>() ) {
+    if ( function.declaration && function.declaration->type<FunctionType>() ) {
         // try to deduce type from a decorator
-        checkForDecorators(node, funcDecl, classDecl, isConstructor);
+        checkForDecorators(node, function.declaration, classDecl, function.isConstructor);
     }
     else if ( classDecl ) {
         return encounter(classDecl->abstractType(), DeclarationPointer(classDecl));

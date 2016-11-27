@@ -137,11 +137,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
 {
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "FunctionDeclarationCompletionItem executed";
     KTextEditor::Document* document = view->document();
-    DeclarationPointer resolvedDecl(Helper::resolveAliasDeclaration(declaration().data()));
+    auto resolvedDecl = Helper::resolveAliasDeclaration(declaration().data());
     DUChainReadLocker lock;
-    QPair<FunctionDeclarationPointer, bool> fdecl = Helper::functionDeclarationForCalledDeclaration(resolvedDecl);
+    auto functionDecl = Helper::functionForCalled(resolvedDecl).declaration;
     lock.unlock();
-    if ( ! fdecl.first && (! resolvedDecl || ! resolvedDecl->abstractType()
+    if ( ! functionDecl && (! resolvedDecl || ! resolvedDecl->abstractType()
                            || resolvedDecl->abstractType()->whichType() != AbstractType::TypeStructure) ) {
         qCritical(KDEV_PYTHON_CODECOMPLETION) << "ERROR: could not get declaration data, not executing completion item!";
         return;
@@ -151,7 +151,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), document->lineLength(word.end().line()));
     if ( m_doNotCall || document->text(checkSuffix).trimmed().startsWith('(')
          || document->text(checkPrefix).trimmed().endsWith('@')
-         || (fdecl.first && Helper::findDecoratorByName(fdecl.first.data(), QLatin1String("property"))) )
+         || (functionDecl && Helper::findDecoratorByName(functionDecl, QLatin1String("property"))) )
     {
         // don't insert brackets if they're already there,
         // the item is a decorator, or if it's an import item.
@@ -159,10 +159,10 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
     }
     // place cursor behind bracktes by default
     int skip = 2;
-    if ( fdecl.first ) {
+    if ( functionDecl ) {
         bool needsArguments = false;
-        int argumentCount = fdecl.first->type<FunctionType>()->arguments().length();
-        if ( fdecl.first->context()->type() == KDevelop::DUContext::Class ) {
+        int argumentCount = functionDecl->type<FunctionType>()->arguments().length();
+        if ( functionDecl->context()->type() == KDevelop::DUContext::Class ) {
             // it's a member function, so it has the implicit self
             // TODO static methods
             needsArguments = argumentCount > 1;

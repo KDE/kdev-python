@@ -95,16 +95,14 @@ void UseBuilder::visitName(NameAst* node)
     if ( declaration && declaration->abstractType() && declaration->abstractType()->whichType() == AbstractType::TypeStructure ) {
         if ( node->belongsToCall ) {
             DUChainReadLocker lock;
-            QPair< Python::FunctionDeclarationPointer, bool > constructor = Helper::
-                             functionDeclarationForCalledDeclaration(DeclarationPointer(declaration));
+            auto constructor = Helper::functionForCalled(declaration);
             lock.unlock();
-            bool isConstructor = constructor.second;
-            if ( isConstructor ) {
+            if ( constructor.isConstructor ) {
                 RangeInRevision constructorRange;
                 // TODO fixme! this does not necessarily use the opening bracket as it should
                 constructorRange.start = CursorInRevision(node->endLine, node->endCol + 1);
                 constructorRange.end = CursorInRevision(node->endLine, node->endCol + 2);
-                UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.first));
+                UseBuilderBase::newUse(node, constructorRange, DeclarationPointer(constructor.declaration));
             }
         }
     }

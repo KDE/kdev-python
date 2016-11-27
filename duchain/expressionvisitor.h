@@ -80,15 +80,14 @@ public:
     virtual void visitNameConstant(NameConstantAst* node);
 
     /**
-     * @brief Checks the decorators of the given function declaration.
+     * @brief Checks for magic docstrings that override a call's return type.
      *
-     * @param node The node to visit
-     * @param funcDecl The call's function declaration, if any
-     * @param classDecl The call's class declaration, if any
-     * @param isConstructor whether a constructor is being called
+     * @param node The node to visit.
+     * @param normalType The return type as determined without docstrings.
+     * @param docstring Docstring of the function.
      */
-    void checkForDecorators(CallAst* node, Python::FunctionDeclaration* funcDecl,
-                            Python::ClassDeclaration* classDecl, bool isConstructor);
+    AbstractType::Ptr docstringTypeOverride(CallAst* node, const AbstractType::Ptr normalType,
+                                              const QString& docstring);
 
     bool isAlias() const {
         return m_isAlias;

@@ -153,6 +153,9 @@ protected:
         bool isAlias;
     };
 
+    /** @brief If sourceType is a container that can be unpacked into outTypes, do so. */
+    void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred);
+
     /**
       * @brief Handle a variable assignment to @p name and give it the type @p element.
       */

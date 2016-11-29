@@ -794,6 +794,7 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
+    QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -941,6 +942,21 @@ void PyDUChainTest::testTypes_data()
                                            "checkme = myfun(1, 1.5, a=str())" << "str";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
+
+    QTest::newRow("custom_iterable") << "class Gen2:\n"
+                                        "    def __iter__(self): return self\n"
+                                        "    def __next__(self): return 'blah'\n"
+                                        "for checkme in Gen2(): pass" << "str";
+    QTest::newRow("separate_iterator") << "class Foo:\n"
+                                          "    def __iter__(self): return Bar()\n"
+                                          "    def __next__(self): return 'blah'\n" // Not used (or shouldn't be!)
+                                          "class Bar:\n"
+                                          "    def __next__(self): return {1}\n"
+                                          "checkme = [a for a in Foo()]" << "list of set of int";
+    QTest::newRow("return_builtin_iterator") << "class Gen2:\n"
+                                                "    contents = [1, 2, 3]\n"
+                                                "    def __iter__(self): return iter(Gen2.contents)\n"
+                                                "for checkme in Gen2(): pass" << "int";
 
     QTest::newRow("call_class") << "class Foo:\n"
                                     "    def __call__(self):\n"
@@ -1459,6 +1475,11 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
     QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}
                                                                             << QStringList{"int", "int"};
+    QTest::newRow("unpack_custom_iterable") <<
+        "class Foo:\n"
+        "    def __iter__(self): return self\n"
+        "    def __next__(self): return 1.5\n"
+        "a, *b = Foo()" << QStringList{"a", "b"} << QStringList {"float", "list of float"};
     QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{"i"} << QStringList{"int"};
     QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{"a", "b"}
                                                                        << QStringList{"int", "float"};

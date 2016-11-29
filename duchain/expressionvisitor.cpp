@@ -264,7 +264,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         auto intType = typeObjectForIntegralType<AbstractType>("int");
         auto enumerated = enumeratedTypeVisitor.lastType();
-        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated));
+        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
         encounter(result, DeclarationPointer(useDeclaration));
         return true;
     };

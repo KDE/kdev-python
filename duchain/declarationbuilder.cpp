@@ -388,7 +388,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     if ( node->iterator ) {
         ExpressionVisitor v(currentContext());
         v.visitNode(node->iterator);
-        assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
+        assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));
     }
     Python::ContextBuilder::visitFor(node);
 }
@@ -497,7 +497,7 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 
     ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
-    assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
+    assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));
 }
 
 void DeclarationBuilder::visitImport(ImportAst* node)
@@ -1218,9 +1218,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
 }
 
-void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
-    // Helper for assignToTuple() below.
-    // If sourceType is a container that can be unpacked into outTypes, do so.
+void DeclarationBuilder::tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
     if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
         int spare = indexed->typesCount() - outTypes.length();
         if ( spare < -1 or (starred == -1 and spare != 0) ) {
@@ -1239,7 +1237,7 @@ void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& out
             }
         }
     } else {
-        auto content = Helper::contentOfIterable(sourceType);
+        auto content = Helper::contentOfIterable(sourceType, topContext());
         if ( !Helper::isUsefulType(content) ) {
             return;
         }

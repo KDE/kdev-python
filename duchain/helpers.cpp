@@ -30,6 +30,7 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/containertypes.h>
+#include <language/duchain/types/functiontype.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -488,35 +489,40 @@ bool Helper::isUsefulType(AbstractType::Ptr type)
     return TypeUtils::isUsefulType(type);
 }
 
-AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
+AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable, const TopDUContext* topContext)
 {
-    auto items = filterType<AbstractType>(iterable,
-        [](AbstractType::Ptr t) {
-            return ListType::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
-        },
-        [](AbstractType::Ptr t) {
-            if (auto map = MapType::Ptr::dynamicCast(t)) {
-                // Iterating over dicts gets keys, not values
-                return map->keyType().abstractType();
-            }
-            else if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
-                return AbstractType::Ptr(variable->contentType().abstractType());
-            }
-            else {
-                auto indexed = t.cast<IndexedContainer>();
-                return indexed->asUnsureType();
+    auto types = filterType<StructureType>(iterable,
+        [](AbstractType::Ptr t) { return t->whichType() == AbstractType::TypeStructure; } );
+
+    static const IndexedIdentifier iterId(KDevelop::Identifier("__iter__"));
+    static const IndexedIdentifier nextId(KDevelop::Identifier("__next__"));
+    AbstractType::Ptr content(new IntegralType(IntegralType::TypeMixed));
+
+    for ( const auto& type: types ) {
+        if ( auto map = type.cast<MapType>() ) {
+            // Iterating over dicts gets keys, not values
+            content = mergeTypes(content, map->keyType().abstractType());
+            continue;
+        }
+        else if ( auto list = type.cast<ListType>() ) {
+            content = mergeTypes(content, list->contentType().abstractType());
+            continue;
+        }
+        else if ( auto indexed = type.cast<IndexedContainer>() ) {
+            content = mergeTypes(content, indexed->asUnsureType());
+            continue;
+        }
+        DUChainReadLocker lock;
+        // Content of an iterable object is iterable.__iter__().__next__().
+        if ( auto iterFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(type, iterId, topContext)) ) {
+            if ( auto iterator = iterFunc->type<FunctionType>()->returnType().cast<StructureType>() ) {
+                if ( auto nextFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(iterator, nextId, topContext)) ) {
+                    content = mergeTypes(content, nextFunc->type<FunctionType>()->returnType());
+                }
             }
         }
-    );
-
-    if ( items.size() == 1 ) {
-        return items.first();
     }
-    auto unsure = AbstractType::Ptr(new UnsureType);
-    for ( auto type: items ) {
-        Helper::mergeTypes(unsure, type);
-    }
-    return unsure;
+    return content;
 }
 
 AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)

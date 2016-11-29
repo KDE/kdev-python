@@ -99,7 +99,7 @@ public:
      * @param iterable Type to get the contents of. Can be an unsure.
      * @return KDevelop::AbstractType::Ptr Content type. Might be an unsure.
      */
-    static AbstractType::Ptr contentOfIterable(const AbstractType::Ptr iterable);
+    static AbstractType::Ptr contentOfIterable(const AbstractType::Ptr iterable, const TopDUContext* topContext);
 
     /**
      * @brief Get a list of types inside the passed type which match the specified filter.

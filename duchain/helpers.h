@@ -159,9 +159,8 @@ public:
         return 0;
     };
 
-    static bool docstringContainsHint(Declaration* declaration, const QString& hintName, QStringList* args = 0) {
+    static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = 0) {
         // TODO cache types! this is horribly inefficient
-        const QString& comment = declaration->comment();
         const QString search = "! " + hintName + " !";
         int index = comment.indexOf(search);
         if ( index >= 0 ) {

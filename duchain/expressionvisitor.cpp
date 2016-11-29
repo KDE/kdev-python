@@ -314,15 +314,18 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         return false;
     };
 
-    foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
-        QStringList arguments;
-        if ( ! Helper::docstringContainsHint(funcDecl, currentHint, &arguments) ) {
-            continue;
-        }
-        // If the hint word appears in the docstring, run the evaluation function.
-        if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
-            // We indeed found something, so we're done.
-            return;
+    auto docstring = funcDecl->comment();
+    if ( ! docstring.isEmpty() ) {
+        foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
+            QStringList arguments;
+            if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
+                continue;
+            }
+            // If the hint word appears in the docstring, run the evaluation function.
+            if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
+                // We indeed found something, so we're done.
+                return;
+            }
         }
     }
 

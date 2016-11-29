@@ -920,10 +920,12 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
             v.lastDeclaration()->setType(container);
         }
     };
-
-    foreach ( const QString& key, items.keys() ) {
-        if ( Helper::docstringContainsHint(function.data(), key, &args) ) {
-            items[key]();
+    auto docstring = function->comment();
+    if ( ! docstring.isEmpty() ) {
+        foreach ( const auto& key, items.keys() ) {
+            if ( Helper::docstringContainsHint(docstring, key, &args) ) {
+                items[key]();
+            }
         }
     }
 }
@@ -1345,24 +1347,25 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
 
-    dec->setComment(getDocstring(node->body));
-    
-    // check whether this is a type container (list, dict, ...) or just a "normal" class
-    if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
-        ListType* container = nullptr;
-        if ( Helper::docstringContainsHint(dec, "hasTypedKeys") ) {
-            container = new MapType();
+    auto docstring = getDocstring(node->body);
+    dec->setComment(docstring);
+    if ( ! docstring.isEmpty() ) {
+        // check whether this is a type container (list, dict, ...) or just a "normal" class
+        if ( Helper::docstringContainsHint(docstring, "TypeContainer") ) {
+            ListType* container = nullptr;
+            if ( Helper::docstringContainsHint(docstring, "hasTypedKeys") ) {
+                container = new MapType();
+            }
+            else {
+                container = new ListType();
+            }
+            type = StructureType::Ptr(container);
         }
-        else {
-            container = new ListType();
+        if ( Helper::docstringContainsHint(docstring, "IndexedTypeContainer") ) {
+            IndexedContainer* container = new IndexedContainer();
+            type = StructureType::Ptr(container);
         }
-        type = StructureType::Ptr(container);
     }
-    if ( Helper::docstringContainsHint(dec, "IndexedTypeContainer") ) {
-        IndexedContainer* container = new IndexedContainer();
-        type = StructureType::Ptr(container);
-    }
-    
     lock.unlock();
     foreach ( ExpressionAst* c, node->baseClasses ) {
         // Iterate over all the base classes, and add them to the duchain.

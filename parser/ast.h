@@ -454,7 +454,6 @@ public:
         Invalid = -1
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
-    CallAst* belongsToCall;
 };
 
 class KDEVPYTHONPARSER_EXPORT AwaitAst : public ExpressionAst {

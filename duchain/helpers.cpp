@@ -30,6 +30,7 @@
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/types/containertypes.h>
+#include <language/duchain/types/functiontype.h>
 #include <language/duchain/duchainutils.h>
 #include <language/duchain/duchainlock.h>
 #include <language/duchain/duchain.h>
@@ -109,31 +110,35 @@ IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
     return KDevelop::IndexedDeclaration();
 }
 
-Declaration* Helper::accessAttribute(Declaration* accessed, const QString& attribute, const DUContext* current)
+Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed,
+                                     const IndexedIdentifier& attribute,
+                                     const TopDUContext* topContext)
 {
-    if ( ! accessed || ! accessed->abstractType() ) {
+    if ( ! accessed ) {
         return 0;
     }
-    // if the type is unsure, search all the possibilities
-    auto structureTypes = Helper::filterType<StructureType>(accessed->abstractType(),
+    // if the type is unsure, search all the possibilities (but return the first match)
+    auto structureTypes = Helper::filterType<StructureType>(accessed,
         [](AbstractType::Ptr toFilter) {
             auto type = Helper::resolveAliasType(toFilter);
             return type && type->whichType() == AbstractType::TypeStructure;
+        },
+        [](AbstractType::Ptr toMap) {
+            return StructureType::Ptr::staticCast(Helper::resolveAliasType(toMap));
         }
     );
-    for ( auto type: structureTypes ) {
-        QList<DUContext*> searchContexts = Helper::internalContextsForClass(type, current->topContext());
-        for ( DUContext* c: searchContexts ) {
-            auto found = c->findDeclarations(KDevelop::Identifier(attribute),
-                                             CursorInRevision::invalid(),
-                                             current->topContext(), DUContext::DontSearchInParent);
-            std::reverse(found.begin(), found.end());
-            // never consider decls from the builtins
-            if ( ! found.isEmpty() && (
-                   found.first()->topContext() != Helper::getDocumentationFileContext() ||
-                   c->topContext() == Helper::getDocumentationFileContext() ) )
-            {
-                return found.first();
+    auto docFileContext = Helper::getDocumentationFileContext();
+
+    for ( const auto& type: structureTypes ) {
+        auto searchContexts = Helper::internalContextsForClass(type, topContext);
+        for ( const auto ctx: searchContexts ) {
+            auto found = ctx->findDeclarations(attribute, CursorInRevision::invalid(),
+                                               topContext, DUContext::DontSearchInParent);
+            if ( !found.isEmpty() && (
+                   found.last()->topContext() != docFileContext ||
+                   ctx->topContext() == docFileContext) ) {
+                // never consider decls from the builtins
+                return found.last();
             }
         }
     }
@@ -153,37 +158,22 @@ AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
     }));
 }
 
-Helper::FuncInfo Helper::functionDeclarationForCalledDeclaration(DeclarationPointer ptr)
+Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
 {
-    if ( ! ptr ) {
-        return FuncInfo();
+    if ( ! called ) {
+        return { nullptr, false };
     }
-    bool isConstructor = false;
-    DeclarationPointer calledDeclaration = ptr;
-    if ( ! calledDeclaration->isFunctionDeclaration() ) {
-        // not a function -- try looking for a constructor
-        StructureType::Ptr classType = calledDeclaration->type<StructureType>();
-        auto contexts = Helper::internalContextsForClass(classType, ptr->topContext());
-        for ( DUContext* context: contexts ) {
-            static KDevelop::Identifier initIdentifier("__init__");
-            QList<Declaration*> constructors = context->findDeclarations(initIdentifier);
-            if ( ! constructors.isEmpty() ) {
-                calledDeclaration = dynamic_cast<FunctionDeclaration*>(constructors.first());
-                isConstructor = true;
-                break;
-            }
-        }
+    else if ( called->isFunctionDeclaration() ) {
+        return { static_cast<FunctionDeclaration*>( called ), false };
     }
-    FunctionDeclarationPointer lastFunctionDeclaration;
-    if ( calledDeclaration ) {
-        // It was a class -- use the constructor
-        lastFunctionDeclaration = calledDeclaration.dynamicCast<FunctionDeclaration>();
-    }
-    else {
-        // Use the original declaration
-        lastFunctionDeclaration = ptr.dynamicCast<FunctionDeclaration>();
-    }
-    return QPair<FunctionDeclarationPointer, bool>(lastFunctionDeclaration, isConstructor);
+// If we're calling a type object (isAlias == true), look for a constructor.
+    static const IndexedIdentifier initId(KDevelop::Identifier("__init__"));
+
+// Otherwise look for a `__call__()` method.
+    static const IndexedIdentifier callId(KDevelop::Identifier("__call__"));
+
+    auto attr = accessAttribute(called->abstractType(), (isAlias ? initId : callId), called->topContext());
+    return { dynamic_cast<FunctionDeclaration*>(attr), isAlias };
 }
 
 Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
@@ -228,23 +218,23 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
     return declaration;
 }
 
-QList< DUContext* > Helper::internalContextsForClass(StructureType::Ptr klassType, TopDUContext* context, ContextSearchFlags flags, int depth)
+QVector<DUContext*> Helper::internalContextsForClass(const StructureType::Ptr classType,
+                        const TopDUContext* context, ContextSearchFlags flags, int depth)
 {
-    QList<DUContext*> searchContexts;
-    if ( ! klassType ) {
+    QVector<DUContext*> searchContexts;
+    if ( ! classType ) {
         return searchContexts;
     }
-    if ( auto c = klassType->internalContext(context) ) {
+    if ( auto c = classType->internalContext(context) ) {
         searchContexts << c;
     }
-    Declaration* decl = Helper::resolveAliasDeclaration(klassType->declaration(context));
-    ClassDeclaration* klass = dynamic_cast<ClassDeclaration*>(decl);
-    if ( klass ) {
-        FOREACH_FUNCTION ( const BaseClassInstance& base, klass->baseClasses ) {
+    auto decl = Helper::resolveAliasDeclaration(classType->declaration(context));
+    if ( auto classDecl = dynamic_cast<ClassDeclaration*>(decl) ) {
+        FOREACH_FUNCTION ( const auto& base, classDecl->baseClasses ) {
             if ( flags == PublicOnly && base.access == KDevelop::Declaration::Private ) {
                 continue;
             }
-            StructureType::Ptr baseClassType = base.baseClass.type<StructureType>();
+            auto baseClassType = base.baseClass.type<StructureType>();
             // recursive call, because the base class will have more base classes eventually
             if ( depth < 10 ) {
                 searchContexts.append(Helper::internalContextsForClass(baseClassType, context, flags, depth + 1));
@@ -291,7 +281,6 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;
     }
-    return ReferencedTopDUContext(0); // c++...
 }
 
 // stolen from KUrl. duh.
@@ -502,35 +491,40 @@ bool Helper::isUsefulType(AbstractType::Ptr type)
     return TypeUtils::isUsefulType(type);
 }
 
-AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable)
+AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable, const TopDUContext* topContext)
 {
-    auto items = filterType<AbstractType>(iterable,
-        [](AbstractType::Ptr t) {
-            return ListType::Ptr::dynamicCast(t) || IndexedContainer::Ptr::dynamicCast(t);
-        },
-        [](AbstractType::Ptr t) {
-            if (auto map = MapType::Ptr::dynamicCast(t)) {
-                // Iterating over dicts gets keys, not values
-                return map->keyType().abstractType();
-            }
-            else if ( auto variable = ListType::Ptr::dynamicCast(t) ) {
-                return AbstractType::Ptr(variable->contentType().abstractType());
-            }
-            else {
-                auto indexed = t.cast<IndexedContainer>();
-                return indexed->asUnsureType();
+    auto types = filterType<StructureType>(iterable,
+        [](AbstractType::Ptr t) { return t->whichType() == AbstractType::TypeStructure; } );
+
+    static const IndexedIdentifier iterId(KDevelop::Identifier("__iter__"));
+    static const IndexedIdentifier nextId(KDevelop::Identifier("__next__"));
+    AbstractType::Ptr content(new IntegralType(IntegralType::TypeMixed));
+
+    for ( const auto& type: types ) {
+        if ( auto map = type.cast<MapType>() ) {
+            // Iterating over dicts gets keys, not values
+            content = mergeTypes(content, map->keyType().abstractType());
+            continue;
+        }
+        else if ( auto list = type.cast<ListType>() ) {
+            content = mergeTypes(content, list->contentType().abstractType());
+            continue;
+        }
+        else if ( auto indexed = type.cast<IndexedContainer>() ) {
+            content = mergeTypes(content, indexed->asUnsureType());
+            continue;
+        }
+        DUChainReadLocker lock;
+        // Content of an iterable object is iterable.__iter__().__next__().
+        if ( auto iterFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(type, iterId, topContext)) ) {
+            if ( auto iterator = iterFunc->type<FunctionType>()->returnType().cast<StructureType>() ) {
+                if ( auto nextFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(iterator, nextId, topContext)) ) {
+                    content = mergeTypes(content, nextFunc->type<FunctionType>()->returnType());
+                }
             }
         }
-    );
-
-    if ( items.size() == 1 ) {
-        return items.first();
     }
-    auto unsure = AbstractType::Ptr(new UnsureType);
-    for ( auto type: items ) {
-        Helper::mergeTypes(unsure, type);
-    }
-    return unsure;
+    return content;
 }
 
 AbstractType::Ptr Helper::mergeTypes(AbstractType::Ptr type, const AbstractType::Ptr newType)

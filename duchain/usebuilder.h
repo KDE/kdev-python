@@ -43,7 +43,9 @@ public:
 
 protected:
     virtual void visitName(NameAst* node);
+    virtual void visitCall(CallAst* node);
     virtual void visitAttribute(AttributeAst* node);
+    virtual void visitSubscript(SubscriptAst* node);
 private:
     ParseSession* m_session;
     inline int& nextUseIndex()
@@ -59,6 +61,7 @@ private:
         m_errorReportingEnabled = true;
     };
     DUContext* contextAtOrCurrent(const CursorInRevision& pos);
+    void useHiddenMethod(ExpressionAst* value, IndexedIdentifier method);
 
     QVector<IndexedString> m_ignoreVariables;
 };

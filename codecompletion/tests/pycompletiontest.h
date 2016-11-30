@@ -84,6 +84,8 @@ class PyCompletionTest : public QObject
         void testAddImportCompletion_data();
         void testFunctionDeclarationCompletion();
         void testFunctionDeclarationCompletion_data();
+        void testCompletionScopes();
+        void testCompletionScopes_data();
         void testStringFormattingCompletion();
         void testStringFormattingCompletion_data();
         void testStringFormatter();

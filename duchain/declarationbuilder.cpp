@@ -239,7 +239,6 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     return remainingDeclarations;
 }
 
-typedef QPair<Declaration*, int> p;
 template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous,
                                                                      AbstractType::Ptr type, VisitVariableFlags flags)
 {
@@ -389,7 +388,7 @@ void DeclarationBuilder::visitFor(ForAst* node)
     if ( node->iterator ) {
         ExpressionVisitor v(currentContext());
         v.visitNode(node->iterator);
-        assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
+        assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));
     }
     Python::ContextBuilder::visitFor(node);
 }
@@ -474,14 +473,15 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     }
 }
 
-void spoofNodePosition(Ast* node, int column) {
+void spoofNodePosition(Ast* node, const CursorInRevision& pos) {
     // Ridiculous hack, see next comment.
-    node->startCol = node-> endCol = column;
+    node->startLine = node->endLine = pos.line;
+    node->startCol = node->endCol = pos.column - 1;
     if (node->astType == Ast::TupleAstType) {
         //  Recursion to bodge all declarations, e.g.
         //  [x + y * z for x, (y, z) in foo]
         foreach(auto elem, static_cast<TupleAst*>(node)->elements) {
-            spoofNodePosition(elem, column);
+            spoofNodePosition(elem, pos);
         }
     }
 }
@@ -494,11 +494,11 @@ void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
     // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
     // and both other occurrences are uses of that declaration.
     // TODO add a special case to the usebuilder to display the second occurrence as a declaration
-    spoofNodePosition(node->target, currentContext()->range().start.column - 1);
+    spoofNodePosition(node->target, currentContext()->range().start);
 
     ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
-    assignToUnknown(node->target, Helper::contentOfIterable(v.lastType()));
+    assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));
 }
 
 void DeclarationBuilder::visitImport(ImportAst* node)
@@ -921,10 +921,12 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
             v.lastDeclaration()->setType(container);
         }
     };
-
-    foreach ( const QString& key, items.keys() ) {
-        if ( Helper::docstringContainsHint(function.data(), key, &args) ) {
-            items[key]();
+    auto docstring = function->comment();
+    if ( ! docstring.isEmpty() ) {
+        foreach ( const auto& key, items.keys() ) {
+            if ( Helper::docstringContainsHint(docstring, key, &args) ) {
+                items[key]();
+            }
         }
     }
 }
@@ -932,9 +934,8 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
 void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer function)
 {
     DUChainReadLocker lock;
-    QPair<FunctionDeclaration::Ptr, bool> called = Helper::functionDeclarationForCalledDeclaration(function);
-    FunctionDeclaration::Ptr lastFunctionDeclaration = called.first;
-    bool isConstructor = called.second;
+    auto funcInfo = Helper::functionForCalled(function.data());
+    auto lastFunctionDeclaration = funcInfo.declaration;
 
     if ( ! lastFunctionDeclaration ) {
         return;
@@ -942,7 +943,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
         return;
     }
-    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration.data());
+    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration);
     FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
     if ( ! args || ! functiontype ) {
         return;
@@ -953,7 +954,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
 
     // Look for the "self" in the argument list, the type of that should not be updated.
     bool hasSelfArgument = false;
-    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || isConstructor )
+    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || funcInfo.isConstructor )
             && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
     {
         // ... unless for some reason the function only has *vararg, **kwarg as arguments
@@ -1177,8 +1178,8 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     Declaration* attributeDeclaration = nullptr;
     {
         DUChainReadLocker lock;
-        attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration.data(),
-                                                       attrib->attribute->value, currentContext());
+        attributeDeclaration = Helper::accessAttribute(parentObjectDeclaration->abstractType(),
+                                                       attrib->attribute->value, topContext());
     }
 
     if ( ! attributeDeclaration || ! wasEncountered(attributeDeclaration) ) {
@@ -1219,9 +1220,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     }
 }
 
-void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
-    // Helper for assignToTuple() below.
-    // If sourceType is a container that can be unpacked into outTypes, do so.
+void DeclarationBuilder::tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
     if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
         int spare = indexed->typesCount() - outTypes.length();
         if ( spare < -1 or (starred == -1 and spare != 0) ) {
@@ -1240,7 +1239,7 @@ void tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& out
             }
         }
     } else {
-        auto content = Helper::contentOfIterable(sourceType);
+        auto content = Helper::contentOfIterable(sourceType, topContext());
         if ( !Helper::isUsefulType(content) ) {
             return;
         }
@@ -1276,8 +1275,10 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
             DUChainReadLocker lock;
             auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
             lock.unlock();
-            listType->addContentType<Python::UnsureType>(sourceType);
-            assignToUnknown(static_cast<StarredAst*>(target)->value, listType);
+            if (listType) {
+                listType->addContentType<Python::UnsureType>(sourceType);
+                assignToUnknown(static_cast<StarredAst*>(target)->value, listType);
+            }
         } else {
             assignToUnknown(target, sourceType);
         }
@@ -1347,24 +1348,25 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
 
-    dec->setComment(getDocstring(node->body));
-    
-    // check whether this is a type container (list, dict, ...) or just a "normal" class
-    if ( Helper::docstringContainsHint(dec, "TypeContainer") ) {
-        ListType* container = nullptr;
-        if ( Helper::docstringContainsHint(dec, "hasTypedKeys") ) {
-            container = new MapType();
+    auto docstring = getDocstring(node->body);
+    dec->setComment(docstring);
+    if ( ! docstring.isEmpty() ) {
+        // check whether this is a type container (list, dict, ...) or just a "normal" class
+        if ( Helper::docstringContainsHint(docstring, "TypeContainer") ) {
+            ListType* container = nullptr;
+            if ( Helper::docstringContainsHint(docstring, "hasTypedKeys") ) {
+                container = new MapType();
+            }
+            else {
+                container = new ListType();
+            }
+            type = StructureType::Ptr(container);
         }
-        else {
-            container = new ListType();
+        if ( Helper::docstringContainsHint(docstring, "IndexedTypeContainer") ) {
+            IndexedContainer* container = new IndexedContainer();
+            type = StructureType::Ptr(container);
         }
-        type = StructureType::Ptr(container);
     }
-    if ( Helper::docstringContainsHint(dec, "IndexedTypeContainer") ) {
-        IndexedContainer* container = new IndexedContainer();
-        type = StructureType::Ptr(container);
-    }
-    
     lock.unlock();
     foreach ( ExpressionAst* c, node->baseClasses ) {
         // Iterate over all the base classes, and add them to the duchain.

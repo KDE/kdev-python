@@ -704,7 +704,7 @@ void PyDUChainTest::testRanges()
         visitor->searchingForRange = r;
         visitor->searchingForIdentifier = identifier;
         visitor->visitCode(m_ast.data());
-
+        QEXPECT_FAIL("attr_dot_name_hash", "Insufficiently magic hack", Continue);
         QCOMPARE(visitor->found, true);
         delete visitor;
     }
@@ -733,6 +733,11 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
     QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );
     QTest::newRow("attr_parentheses") << "(\"foo\" + \"foo\").capitalize()" << 1 << ( QStringList() << "16,25,capitalize" );
+    QTest::newRow("attr_commented_name") << "base.attr # attr" << 2 << ( QStringList() << "5,8,attr" );
+    QTest::newRow("attr_name_in_strings") << "'attr' + base['attr'].attr # attr" << 4 << ( QStringList() << "22,25,attr" );
+    QTest::newRow("attr_dot_hash_in_strings") << "'.foo#' + base['.#'].attr # attr" << 4 << ( QStringList() << "21,24,attr" );
+    QTest::newRow("attr_dot_name_hash") << "base['.attr#'].attr" << 4 << ( QStringList() << "15,18,attr" );
+
     QTest::newRow("string_parentheses") << "(\"asdf\".join())" << 1 << ( QStringList() << "8,11,join" );
     QTest::newRow("string_parentheses2") << "(\"asdf\").join()" << 1 << ( QStringList() << "9,12,join" );
     QTest::newRow("string_parentheses3") << "(\"asdf\".join()).join()" << 2 << ( QStringList() << "8,11,join" << "16,19,join" );
@@ -789,6 +794,7 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
+    QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -820,6 +826,11 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
     QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";
+
+    QTest::newRow("class_scope_end_inside") << "a = str()\nclass M:\n"
+                                               "  a = 2\n  foo = a\n"
+                                               "checkme = M().foo" << "int";
+    QTest::newRow("class_scope_end_outside") << "a = str()\nclass M:\n  a = 2\ncheckme = a" << "str";
 
     QTest::newRow("list_access_right_open_slice") << "some_list = []; checkme = some_list[2:]" << "list";
     QTest::newRow("list_access_left_open_slice") << "some_list = []; checkme = some_list[:2]" << "list";
@@ -923,9 +934,34 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("no_hints_type") << "def myfun(arg): arg = 3; return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("hints_type") << "def myfun(arg): return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
-    QTest::newRow("kwarg_type") << "def myfun(**args): return args[0]\ncheckme = myfun(a=3)" << "int";
+    QTest::newRow("kwarg_type") << "def myfun(**args): return args['a']\ncheckme = myfun(a=3)" << "int";
+    QTest::newRow("arg_args_type") << "def myfun(arg, *args): return args[0]\n"
+                                      "checkme = myfun(3, str())" << "str";
+    QTest::newRow("arg_kwargs_type") << "def myfun(arg, **kwargs): return kwargs['a']\n"
+                                         "checkme = myfun(12, a=str())" << "str";
+    QTest::newRow("varied_args_type_1") << "def myfun(arg, *args, **kwargs): return arg\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "int";
+    QTest::newRow("varied_args_type_2") << "def myfun(arg, *args, **kwargs): return args[0]\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "float";
+    QTest::newRow("varied_args_type_3") << "def myfun(arg, *args, **kwargs): return kwargs['a']\n"
+                                           "checkme = myfun(1, 1.5, a=str())" << "str";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
+
+    QTest::newRow("custom_iterable") << "class Gen2:\n"
+                                        "    def __iter__(self): return self\n"
+                                        "    def __next__(self): return 'blah'\n"
+                                        "for checkme in Gen2(): pass" << "str";
+    QTest::newRow("separate_iterator") << "class Foo:\n"
+                                          "    def __iter__(self): return Bar()\n"
+                                          "    def __next__(self): return 'blah'\n" // Not used (or shouldn't be!)
+                                          "class Bar:\n"
+                                          "    def __next__(self): return {1}\n"
+                                          "checkme = [a for a in Foo()]" << "list of set of int";
+    QTest::newRow("return_builtin_iterator") << "class Gen2:\n"
+                                                "    contents = [1, 2, 3]\n"
+                                                "    def __iter__(self): return iter(Gen2.contents)\n"
+                                                "for checkme in Gen2(): pass" << "int";
 
     QTest::newRow("call_class") << "class Foo:\n"
                                     "    def __call__(self):\n"
@@ -1384,6 +1420,22 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("comprehension_messy") << "users = {'a':19, 'b':42, 'c':35}\n"
                                             "sorted_list = sorted(users.items(), key=lambda kv: (-kv[1], kv[0]))\n"
                                             "checkme = [k for r,(k,v) in enumerate(sorted_list, 1)]" << "list of str" << true;
+    QTest::newRow("comprehension_multiline") << "checkme = [a for\n a in \n (1, 2)]" << "list of int" << true;
+    // From https://bugs.kde.org/show_bug.cgi?id=359912
+    QTest::newRow("subscript_multi") <<
+        "class Middle:\n def __getitem__(self, key):\n  return str()\n"
+        "class Outer:\n def __getitem__(self, key):\n  return Middle()\n"
+        "aaa = Outer()\ncheckme = aaa[0][0]" << "str" << true;
+    QTest::newRow("subscript_func_call") <<
+        "class Foo:\n def __getitem__(self, key):\n  return str()\n"
+        "def bar():\n return Foo()\n"
+        "checkme = bar()[0]" << "str" << true;
+    QTest::newRow("subscript_unknown_index") << "a = 1,str()\ncheckme = a[5-4]" << "unsure (int, str)" << true;
+    QTest::newRow("subscript_unsure") << "a = 1,2\na=[str()]\ncheckme = a[0]" << "unsure (int, str)" << true;
+    QTest::newRow("subscript_unsure_getitem") <<
+        "class Foo:\n def __getitem__(self, key):\n  return str()\n"
+        "class Bar:\n def __getitem__(self, key):\n  return float()\n"
+        "a = Foo()\na=Bar()\na=[1,2]\ncheckme = a[1]" << "unsure (str, float, int)" << true;
 }
 
 void PyDUChainTest::testVariableCreation()
@@ -1429,6 +1481,11 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
     QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}
                                                                             << QStringList{"int", "int"};
+    QTest::newRow("unpack_custom_iterable") <<
+        "class Foo:\n"
+        "    def __iter__(self): return self\n"
+        "    def __next__(self): return 1.5\n"
+        "a, *b = Foo()" << QStringList{"a", "b"} << QStringList {"float", "list of float"};
     QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{"i"} << QStringList{"int"};
     QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{"a", "b"}
                                                                        << QStringList{"int", "float"};

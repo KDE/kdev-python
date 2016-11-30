@@ -579,6 +579,23 @@ void PyCompletionTest::testFunctionDeclarationCompletion_data()
                                                         << "Foo()";
 }
 
+void PyCompletionTest::testCompletionScopes()
+{
+    QFETCH(QString, invokeCode);
+    QFETCH(QString, completionCode);
+    QFETCH(QString, expectedDeclaration);
+    QVERIFY(declarationInCompletionList(invokeCode, completionCode, expectedDeclaration));
+}
+
+void PyCompletionTest::testCompletionScopes_data()
+{
+    QTest::addColumn<QString>("invokeCode");
+    QTest::addColumn<QString>("completionCode");
+    QTest::addColumn<QString>("expectedDeclaration");
+    QTest::newRow("class_scope_end_inside") << "class A:\n test1=1\nclass B:\n test2=1\nf = A()\nclass T:\n f = B()\n f%INVOKE" << ".%CURSOR" << "test2";
+    QTest::newRow("class_scope_end_outside") << "class A:\n test1=1\nclass B:\n test2=1\nf = A()\nclass T:\n f = B()\nf%INVOKE" << ".%CURSOR" << "test1";
+}
+
 void PyCompletionTest::testStringFormattingCompletion()
 {
     QFETCH(QString, completionCode);

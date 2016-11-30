@@ -148,7 +148,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
         qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Tried: " << m_guessTypeOfExpression;
         return resultingItems;
     }
-    functionCalled = Helper::functionDeclarationForCalledDeclaration(v->lastDeclaration()).first.data();
+    functionCalled = Helper::functionForCalled(v->lastDeclaration().data()).declaration;
 
     auto current = Helper::resolveAliasDeclaration(functionCalled);
     QList<Declaration*> calltips;
@@ -203,7 +203,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
     if ( ! klass ) {
         return resultingItems;
     }
-    QList<DUContext*> baseClassContexts = Helper::internalContextsForClass(
+    auto baseClassContexts = Helper::internalContextsForClass(
         klass->type<StructureType>(), m_duContext->topContext()
     );
     // This class' context is put first in the list, so all functions existing here
@@ -776,7 +776,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         return QList<CompletionTreeItemPointer>();
     }
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
-    QList<DUContext*> searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
+    auto searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
     QList<DeclarationDepthPair> keepDeclarations;
     foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";

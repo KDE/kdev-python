@@ -158,7 +158,7 @@ ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, A
 
 }
 
-ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0), belongsToCall(0)
+ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0)
 {
     
 }

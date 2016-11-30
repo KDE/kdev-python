@@ -91,53 +91,22 @@ void ExpressionVisitor::encounter(AbstractType::Ptr type, DeclarationPointer dec
 
 void ExpressionVisitor::visitAttribute(AttributeAst* node)
 {
-    ExpressionAst* accessingAttributeOf = node->value;
-
     ExpressionVisitor v(this);
-    v.visitNode(accessingAttributeOf);
-    AbstractType::Ptr accessedType = v.lastType();
-    QList<StructureType::Ptr> accessingAttributeOfType = Helper::filterType<StructureType>(accessedType,
-        [](AbstractType::Ptr type) {
-            auto resolved = Helper::resolveAliasType(type);
-            return resolved && resolved->whichType() == AbstractType::TypeStructure;
-        },
-        [](AbstractType::Ptr type) {
-            return Helper::resolveAliasType(type).cast<StructureType>();
-        }
-    );
+    v.visitNode(node->value);
+    setConfident(false);
 
-    // Step 1: Find all matching declarations which are made inside the type of which the accessed object is.
-    // Like, for A.B.C where B is an instance of foo, when processing C, find all properties of foo which are called C.
-    bool haveOneUsefulType = false;
-    Declaration* foundDeclaration = nullptr;
+    // Find a matching declaration which is made inside the type of the accessed object.
+    // Like, for B.C where B is an instance of foo, find a property of foo called C.
     DUChainReadLocker lock;
-    foreach ( StructureType::Ptr current, accessingAttributeOfType ) {
-        if ( Helper::isUsefulType(current.cast<AbstractType>()) ) {
-            haveOneUsefulType = true;
-        }
-        foundDeclaration = Helper::accessAttribute(current->declaration(context()->topContext()),
-                                                   node->attribute->value, context());
-        if ( foundDeclaration ) {
-            break;
-        }
-    }
-    if ( ! haveOneUsefulType ) {
-        setConfident(false);
-    }
+    auto attribute = Helper::accessAttribute(v.lastType(), node->attribute->value, topContext());
 
-    // Step 2: Construct the type of the declaration which was found.
-    if ( foundDeclaration ) {
-        auto d = Helper::resolveAliasDeclaration(foundDeclaration);
-        if ( ! d ) {
-            return encounterUnknown();
-        }
-        bool isAlias =     dynamic_cast<AliasDeclaration*>(foundDeclaration) || d->isFunctionDeclaration()
-                        || dynamic_cast<ClassDeclaration*>(d);
-        encounter(foundDeclaration->abstractType(), DeclarationPointer(foundDeclaration));
-        setLastIsAlias(isAlias);
-    }
-    else {
-        return encounterUnknown();
+    if ( auto resolved = Helper::resolveAliasDeclaration(attribute) ) {
+        encounter(attribute->abstractType(), DeclarationPointer(attribute));
+        setLastIsAlias(dynamic_cast<AliasDeclaration*>(attribute) ||
+                        resolved->isFunctionDeclaration() ||
+                        dynamic_cast<ClassDeclaration*>(resolved));
+    } else {
+        encounterUnknown();
     }
 }
 
@@ -184,15 +153,12 @@ void ExpressionVisitor::visitCall(CallAst* node)
     DUChainReadLocker lock;
     actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
     ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-    QPair<FunctionDeclarationPointer, bool> d = Helper::functionDeclarationForCalledDeclaration(
-                                                DeclarationPointer(actualDeclaration));
-    FunctionDeclaration* funcDecl = d.first.data();
-    bool isConstructor = d.second;
+    auto function = Helper::functionForCalled(actualDeclaration);
     lock.unlock();
 
-    if ( funcDecl && funcDecl->type<FunctionType>() ) {
+    if ( function.declaration && function.declaration->type<FunctionType>() ) {
         // try to deduce type from a decorator
-        checkForDecorators(node, funcDecl, classDecl, isConstructor);
+        checkForDecorators(node, function.declaration, classDecl, function.isConstructor);
     }
     else if ( classDecl ) {
         return encounter(classDecl->abstractType(), DeclarationPointer(classDecl));
@@ -295,7 +261,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         auto intType = typeObjectForIntegralType<AbstractType>("int");
         auto enumerated = enumeratedTypeVisitor.lastType();
-        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated));
+        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
         encounter(result, DeclarationPointer(useDeclaration));
         return true;
     };
@@ -348,15 +314,18 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         return false;
     };
 
-    foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
-        QStringList arguments;
-        if ( ! Helper::docstringContainsHint(funcDecl, currentHint, &arguments) ) {
-            continue;
-        }
-        // If the hint word appears in the docstring, run the evaluation function.
-        if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
-            // We indeed found something, so we're done.
-            return;
+    auto docstring = funcDecl->comment();
+    if ( ! docstring.isEmpty() ) {
+        foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
+            QStringList arguments;
+            if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
+                continue;
+            }
+            // If the hint word appears in the docstring, run the evaluation function.
+            if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
+                // We indeed found something, so we're done.
+                return;
+            }
         }
     }
 
@@ -367,14 +336,21 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
-    if ( node->slice && node->slice->astType == Ast::IndexAstType ) {
-        DUChainReadLocker lock;
-        auto indexedTypes = Helper::filterType<IndexedContainer>(lastType(), [](AbstractType::Ptr toFilter) {
-            return toFilter.cast<IndexedContainer>();
-        });
-        for ( IndexedContainer::Ptr indexed: indexedTypes ) {
-            // TODO This loop currently only uses the first result, it could construct
-            // an unsure from all the matches.
+
+    auto valueTypes = Helper::filterType<AbstractType>(lastType(), [](AbstractType::Ptr) { return true; });
+    AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
+
+    foreach (const auto& type, valueTypes) {
+        if ( (node->slice && node->slice->astType != Ast::IndexAstType) &&
+             (type.cast<IndexedContainer>() || type.cast<ListType>()) ) {
+            if ( type.cast<MapType>() ) {
+                continue; // Can't slice dicts.
+            }
+            // Assume that slicing (e.g. foo[3:5]) a tuple/list returns the same type.
+            // TODO: we could do better for some tuple slices.
+            result = Helper::mergeTypes(result, type);
+        }
+        else if ( const auto& indexed = type.cast<IndexedContainer>() ) {
             IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
             NumberAst* number = nullptr;
             bool invert = false;
@@ -395,45 +371,28 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                     sliceIndex += indexed->typesCount();
                 }
                 if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
-                    return encounter(indexed->typeAt(sliceIndex).abstractType());
+                    result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
+                    continue;
                 }
             }
-            // the exact index is unknown, use unsure
-            return encounter(indexed->asUnsureType().cast<AbstractType>());
+            result = Helper::mergeTypes(result, indexed->asUnsureType());
         }
-        auto variableTypes = Helper::filterType<ListType>(lastType(), [](AbstractType::Ptr toFilter) {
-            return toFilter.cast<ListType>();
-        });
-        if ( ! variableTypes.isEmpty() ) {
-            AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
-            for ( auto variable: variableTypes ) {
-                result = Helper::mergeTypes(result, variable->contentType().abstractType());
+        else if ( const auto& listType = type.cast<ListType>() ) {
+            result = Helper::mergeTypes(result, listType->contentType().abstractType());
+        }
+        else {
+            // Type wasn't one with custom handling, so use return type of __getitem__().
+            DUChainReadLocker lock;
+            static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
+            auto function = Helper::accessAttribute(type, getitemIdentifier, topContext());
+            if ( function && function->isFunctionDeclaration() ) {
+                if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
+                    result = Helper::mergeTypes(result, functionType->returnType());
+                }
             }
-            return encounter(result);
         }
     }
-
-    // If that does not work and we have a slice like [3:5], guess it will remain the same type.
-    // That is an approximation we have to make now, should optimally be corrected later.
-    // The reason is that we'd need to parse decorators from the __getitem__ method to support
-    // list/dict/etc properly otherwise, which requires a bit of refactoring first. TODO do this
-    if ( node->slice && node->slice->astType != Ast::IndexAstType ) {
-        return;
-    }
-
-    // Otherwise, try to use __getitem__.
-    ExpressionVisitor v(context());
-    v.visitNode(node->value);
-    DUChainReadLocker lock;
-    Declaration* function = Helper::accessAttribute(v.lastDeclaration().data(), "__getitem__", context());
-    if ( function && function->isFunctionDeclaration() ) {
-        if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
-            return encounter(functionType->returnType());
-        }
-    }
-
-    // Otherwise, give up
-    return encounterUnknown();
+    encounter(result);
 }
 
 void ExpressionVisitor::visitList(ListAst* node)
@@ -682,7 +641,7 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         if ( ! type ) {
             return AbstractType::Ptr();
         }
-        Declaration* func = Helper::accessAttribute(type->declaration(context()->topContext()), op, context());
+        auto func = Helper::accessAttribute(type, op, topContext());
         if ( ! func ) {
             return AbstractType::Ptr();
         }

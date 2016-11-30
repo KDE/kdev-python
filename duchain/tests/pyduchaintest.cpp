@@ -827,6 +827,11 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
     QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";
 
+    QTest::newRow("class_scope_end_inside") << "a = str()\nclass M:\n"
+                                               "  a = 2\n  foo = a\n"
+                                               "checkme = M().foo" << "int";
+    QTest::newRow("class_scope_end_outside") << "a = str()\nclass M:\n  a = 2\ncheckme = a" << "str";
+
     QTest::newRow("list_access_right_open_slice") << "some_list = []; checkme = some_list[2:]" << "list";
     QTest::newRow("list_access_left_open_slice") << "some_list = []; checkme = some_list[:2]" << "list";
     QTest::newRow("list_access_closed_slice") << "some_list = []; checkme = some_list[2:17]" << "list";

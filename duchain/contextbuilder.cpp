@@ -279,7 +279,7 @@ void ContextBuilder::openContextForClassDefinition(ClassDefinitionAst* node)
     if ( start.line > node->startLine ) {
         start = CursorInRevision(node->startLine + 1, 0);
     }
-    RangeInRevision range(start, CursorInRevision(endLine + 1, 0));
+    RangeInRevision range(start, CursorInRevision(endLine, 0));
     DUChainWriteLocker lock;
     openContext(node, range, DUContext::Class, node->name);
     currentContext()->setLocalScopeIdentifier(identifierForNode(node->name));

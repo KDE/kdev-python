@@ -18,6 +18,6 @@
 */
 
 #include "parserdebug.h"
-Q_LOGGING_CATEGORY(KDEV_PYTHON_PARSER, "kdev.python.parser")
+Q_LOGGING_CATEGORY(KDEV_PYTHON_PARSER, "kdevelop.languages.python.parser")
 
 

@@ -1415,6 +1415,7 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("comprehension_messy") << "users = {'a':19, 'b':42, 'c':35}\n"
                                             "sorted_list = sorted(users.items(), key=lambda kv: (-kv[1], kv[0]))\n"
                                             "checkme = [k for r,(k,v) in enumerate(sorted_list, 1)]" << "list of str" << true;
+    QTest::newRow("comprehension_multiline") << "checkme = [a for\n a in \n (1, 2)]" << "list of int" << true;
     // From https://bugs.kde.org/show_bug.cgi?id=359912
     QTest::newRow("subscript_multi") <<
         "class Middle:\n def __getitem__(self, key):\n  return str()\n"

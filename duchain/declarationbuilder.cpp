@@ -860,6 +860,12 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     foreach ( ArgAst* argument, node->arguments->arguments ) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
+    if (node->arguments->vararg) {
+        visitVariableDeclaration<Declaration>(node->arguments->vararg->argumentName);
+    }
+    if (node->arguments->kwarg) {
+        visitVariableDeclaration<Declaration>(node->arguments->kwarg->argumentName);
+    }
     closeContext();
 }
 

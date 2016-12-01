@@ -374,6 +374,18 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     encounter(result);
 }
 
+void ExpressionVisitor::visitLambda(LambdaAst* node)
+{
+    AstDefaultVisitor::visitLambda(node);
+    FunctionType::Ptr type(new FunctionType());
+    AbstractType::Ptr mixed(new IntegralType(IntegralType::TypeMixed));
+    for (int ii = 0; ii < node->arguments->arguments.length(); ++ii) {
+        type->addArgument(mixed);
+    }
+    type->setReturnType(lastType());
+    encounter(type);
+}
+
 void ExpressionVisitor::visitList(ListAst* node)
 {
     DUChainReadLocker lock;

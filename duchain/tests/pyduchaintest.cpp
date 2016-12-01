@@ -799,7 +799,6 @@ void PyDUChainTest::testTypes()
     visitor->ctx = TopDUContextPointer(ctx.data());
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
-    QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);

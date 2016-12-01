@@ -73,6 +73,7 @@ public:
     virtual void visitCall(CallAst* node);
     virtual void visitAttribute(AttributeAst* node);
     virtual void visitTuple(TupleAst* node);
+    virtual void visitLambda(LambdaAst* node);
     virtual void visitListComprehension(ListComprehensionAst* node);
     virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
     virtual void visitSetComprehension(SetComprehensionAst* node);

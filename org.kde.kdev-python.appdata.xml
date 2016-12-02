@@ -5,6 +5,7 @@
   <name>kdev-python</name>
   <name xml:lang="ca">kdev-python</name>
   <name xml:lang="ca-valencia">kdev-python</name>
+  <name xml:lang="cs">kdev-python</name>
   <name xml:lang="en-GB">kdev-python</name>
   <name xml:lang="es">kdev-python</name>
   <name xml:lang="it">kdev-python</name>
@@ -32,6 +33,7 @@
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="cs">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="en-GB">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="it">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

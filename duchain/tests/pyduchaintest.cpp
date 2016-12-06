@@ -795,6 +795,7 @@ void PyDUChainTest::testTypes()
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
+    QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -963,11 +964,24 @@ void PyDUChainTest::testTypes_data()
                                                 "    def __iter__(self): return iter(Gen2.contents)\n"
                                                 "for checkme in Gen2(): pass" << "int";
 
+    QTest::newRow("init_class") <<  "class Foo:\n"
+                                    "  def __init__(self): pass\n"
+                                    "  def __call__(self): return 1.5\n"
+                                    "checkme = Foo()\n" << "Foo";
+    QTest::newRow("init_class_no_decl") <<  "class Foo:\n"
+                                            "  def __init__(self): pass\n"
+                                            "  def __call__(self): return 1.5\n"
+                                            "a = [Foo]\n"
+                                            "checkme = a[0]()\n" << "Foo";
     QTest::newRow("call_class") << "class Foo:\n"
                                     "    def __call__(self):\n"
                                     "         return 0\n"
                                     "f = Foo()\n"
                                     "checkme = f()\n" << "int";
+    QTest::newRow("call_class_no_decl") << "class Foo:\n"
+                                           "  def __call__(self): return 1.5\n"
+                                           "a = [Foo()]\n"
+                                           "checkme = a[0]()" << "float";
     QTest::newRow("classmethod") << "class Foo:\n"
                                     "    @classmethod\n"
                                     "    def foo(cls):\n"

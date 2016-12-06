@@ -18,6 +18,6 @@
 */
 
 #include "duchaindebug.h"
-Q_LOGGING_CATEGORY(KDEV_PYTHON_DUCHAIN, "kdev.python.duchain")
+Q_LOGGING_CATEGORY(KDEV_PYTHON_DUCHAIN, "kdevelop.languages.python.duchain")
 
 

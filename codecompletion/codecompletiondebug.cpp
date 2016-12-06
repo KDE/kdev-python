@@ -18,6 +18,6 @@
 */
 
 #include "codecompletiondebug.h"
-Q_LOGGING_CATEGORY(KDEV_PYTHON_CODECOMPLETION, "kdev.python.codecompletion")
+Q_LOGGING_CATEGORY(KDEV_PYTHON_CODECOMPLETION, "kdevelop.languages.python.codecompletion")
 
 

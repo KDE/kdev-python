@@ -18,6 +18,6 @@
 */
 
 #include "codegendebug.h"
-Q_LOGGING_CATEGORY(KDEV_PYTHON_CODEGEN, "kdev.python.codegen")
+Q_LOGGING_CATEGORY(KDEV_PYTHON_CODEGEN, "kdevelop.languages.python.codegen")
 
 

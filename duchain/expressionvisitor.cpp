@@ -115,75 +115,61 @@ void ExpressionVisitor::visitCall(CallAst* node)
     foreach ( ExpressionAst* c, node->arguments ) {
         AstDefaultVisitor::visitNode(c);
     }
-    
     ExpressionVisitor v(this);
     v.visitNode(node->function);
-    Declaration* actualDeclaration = 0;
-    FunctionType::Ptr unidentifiedFunctionType;
-    if ( ! v.m_isAlias && v.lastType() && v.lastType()->whichType() == AbstractType::TypeFunction ) {
-        unidentifiedFunctionType = v.lastType().cast<FunctionType>();
-    }
-    else if ( ! v.m_isAlias && v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
-        // use __call__
-        DUChainReadLocker lock;
-        auto c = v.lastType().cast<StructureType>()->internalContext(topContext());
-        if ( c ) {
-            auto decls = c->findDeclarations(QualifiedIdentifier("__call__"));
-            if ( ! decls.isEmpty() ) {
-                auto decl = dynamic_cast<FunctionDeclaration*>(decls.first());
-                if ( decl ) {
-                    unidentifiedFunctionType = decl->abstractType().cast<FunctionType>();
-                }
-            }
+    auto declaration = Helper::resolveAliasDeclaration(v.lastDeclaration().data());
+    if ( ! v.isAlias() && v.lastType() ) {
+        if ( auto functionType = v.lastType().cast<FunctionType>() ) {
+            encounter(functionType->returnType());
+            return;
+        }
+        if ( auto classType = v.lastType().cast<StructureType>() ) {
+            declaration = classType->declaration(topContext());
         }
     }
-    else {
-        actualDeclaration = v.lastDeclaration().data();
-    }
-    
-    if ( unidentifiedFunctionType ) {
-        encounter(unidentifiedFunctionType->returnType());
+    if ( ! declaration ) {
+        encounterUnknown();
         return;
     }
-    else if ( !actualDeclaration ) {
-        setConfident(false);
-        return encounterUnknown();
-    }
-
+    ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(declaration);
     DUChainReadLocker lock;
-    actualDeclaration = Helper::resolveAliasDeclaration(actualDeclaration);
-    ClassDeclaration* classDecl = dynamic_cast<ClassDeclaration*>(actualDeclaration);
-    auto function = Helper::functionForCalled(actualDeclaration);
+    auto function = Helper::functionForCalled(declaration, v.isAlias());
     lock.unlock();
 
-    if ( function.declaration && function.declaration->type<FunctionType>() ) {
-        // try to deduce type from a decorator
-        checkForDecorators(node, function.declaration, classDecl, function.isConstructor);
+    AbstractType::Ptr type;
+    Declaration* decl;
+
+    if ( function.isConstructor && classDecl ) {
+        // Don't use return type from constructor.
+        // It's wrong for builtins, or classes without their own __init__ methods().
+        type = classDecl->abstractType();
+        decl = classDecl;
     }
-    else if ( classDecl ) {
-        return encounter(classDecl->abstractType(), DeclarationPointer(classDecl));
+    else if ( function.declaration && function.declaration->type<FunctionType>() ) {
+        // But do use the return value of normal functions or __call__().
+        type = function.declaration->type<FunctionType>()->returnType();
+        decl = function.declaration;
     }
     else {
-        if ( actualDeclaration ) {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaraton is not a class or function declaration";
-        }
-        return encounterUnknown();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration is not a class or function declaration";
+        encounterUnknown();
+        return;
     }
+    if ( function.declaration ) {
+        auto docstring = function.declaration->comment();
+        if ( ! docstring.isEmpty() ) {
+            // Our documentation data uses special docstrings that override the return type
+            //  of some functions (including constructors).
+            type = docstringTypeOverride(node, type, docstring);
+        }
+    }
+    encounter(type, DeclarationPointer(decl));
 }
 
-void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* funcDecl, ClassDeclaration* classDecl, bool isConstructor)
+AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
+    CallAst* node, const AbstractType::Ptr normalType, const QString& docstring)
 {
-    AbstractType::Ptr type;
-    Declaration* useDeclaration = nullptr;
-    if ( isConstructor && classDecl ) {
-        type = classDecl->abstractType();
-        useDeclaration = classDecl;
-    }
-    else {
-        type = funcDecl->type<FunctionType>()->returnType();
-        useDeclaration = funcDecl;
-    }
-
+    auto docstringType = normalType;
     auto listOfTuples = [&](AbstractType::Ptr key, AbstractType::Ptr value) {
         auto newType = typeObjectForIntegralType<ListType>("list");
         IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple");
@@ -214,8 +200,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Found container, using type";
-            AbstractType::Ptr newType = t->contentType().abstractType();
-            encounter(newType, DeclarationPointer(useDeclaration));
+            docstringType = t->contentType().abstractType();
             return true;
         }
         return false;
@@ -243,8 +228,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
                 contentType = map->keyType().abstractType();
             }
             newType->addContentType<Python::UnsureType>(contentType);
-            AbstractType::Ptr resultingType = newType.cast<AbstractType>();
-            encounter(resultingType, DeclarationPointer(useDeclaration));
+            docstringType = newType.cast<AbstractType>();
             return true;
         }
         return false;
@@ -261,8 +245,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         auto intType = typeObjectForIntegralType<AbstractType>("int");
         auto enumerated = enumeratedTypeVisitor.lastType();
-        auto result = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
-        encounter(result, DeclarationPointer(useDeclaration));
+        docstringType = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
         return true;
     };
 
@@ -277,8 +260,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
         DUChainWriteLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
-            auto resultingType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
-            encounter(resultingType, DeclarationPointer(useDeclaration));
+            docstringType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
             return true;
         }
         return false;
@@ -297,7 +279,7 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
             return false;
         }
         ListType::Ptr realTarget;
-        if ( auto target = ListType::Ptr::dynamicCast(type) ) {
+        if ( auto target = ListType::Ptr::dynamicCast(normalType) ) {
             realTarget = target;
         }
         if ( auto source = ListType::Ptr::dynamicCast(v.lastType()) ) {
@@ -308,29 +290,26 @@ void ExpressionVisitor::checkForDecorators(CallAst* node, FunctionDeclaration* f
             auto newType = ListType::Ptr::staticCast(AbstractType::Ptr(realTarget->clone()));
             Q_ASSERT(newType);
             newType->addContentType<Python::UnsureType>(source->contentType().abstractType());
-            encounter(AbstractType::Ptr::staticCast(newType), DeclarationPointer(useDeclaration));
+            docstringType = AbstractType::Ptr::staticCast(newType);
             return true;
         }
         return false;
     };
 
-    auto docstring = funcDecl->comment();
-    if ( ! docstring.isEmpty() ) {
-        foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
-            QStringList arguments;
-            if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
-                continue;
-            }
-            // If the hint word appears in the docstring, run the evaluation function.
-            if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
-                // We indeed found something, so we're done.
-                return;
-            }
+    foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
+        QStringList arguments;
+        if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
+            continue;
+        }
+        // If the hint word appears in the docstring, run the evaluation function.
+        if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
+            // We indeed found something, so we're done.
+            return docstringType;
         }
     }
 
     // if none of the above decorator-finding methods worked, just use the ordinary return type.
-    return encounter(type, DeclarationPointer(useDeclaration));
+    return docstringType;
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)

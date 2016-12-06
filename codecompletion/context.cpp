@@ -253,6 +253,9 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     DUChainReadLocker lock;
     ItemList resultingItems;
     ReferencedTopDUContext ctx = Helper::getDocumentationFileContext();
+    if ( !ctx ) {
+        return {};
+    }
     QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
     if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "No valid exception classes found, aborting";

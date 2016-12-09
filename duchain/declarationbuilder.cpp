@@ -1774,6 +1774,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
                 qCDebug(KDEV_PYTHON_DUCHAIN) << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
                 decl->setAliasedDeclaration(m_currentClassType->declaration(currentContext()->topContext()));
             }
+            closeDeclaration();
             paramDeclaration = decl;
         }
         else {

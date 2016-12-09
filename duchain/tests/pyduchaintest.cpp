@@ -795,6 +795,7 @@ void PyDUChainTest::testTypes()
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
+    QEXPECT_FAIL("staticmethod_args_type", "bugged somewhere", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
     QCOMPARE(visitor->found, true);
 }
@@ -946,6 +947,24 @@ void PyDUChainTest::testTypes_data()
                                            "checkme = myfun(1, 1.5, a=str())" << "float";
     QTest::newRow("varied_args_type_3") << "def myfun(arg, *args, **kwargs): return kwargs['a']\n"
                                            "checkme = myfun(1, 1.5, a=str())" << "str";
+    QTest::newRow("method_args_type_1") << "class MyClass:\n"
+                                           "   def method(self, arg): return self\n"
+                                           "checkme = MyClass().method(12)" << "MyClass";
+    QTest::newRow("method_args_type_2") << "class MyClass:\n"
+                                           "   def method(self, arg): return arg\n"
+                                           "checkme = MyClass().method(12)" << "int";
+    QTest::newRow("clsmethod_args_type_1") << "class MyClass:\n"
+                                              "   @classmethod\n"
+                                              "   def method(cls, arg): return cls\n"
+                                              "checkme = MyClass().method(12)" << "MyClass";
+    QTest::newRow("clsmethod_args_type_2") << "class MyClass:\n"
+                                              "   @classmethod\n"
+                                              "   def method(cls, arg): return arg\n"
+                                              "checkme = MyClass().method(12)" << "int";
+    QTest::newRow("staticmethod_args_type") << "class MyClass:\n"
+                                               "   @staticmethod\n"
+                                               "   def method(arg): return arg\n"
+                                               "checkme = MyClass().method(12)" << "int";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 

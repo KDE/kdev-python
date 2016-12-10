@@ -795,7 +795,6 @@ void PyDUChainTest::testTypes()
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
-    QEXPECT_FAIL("staticmethod_args_type", "bugged somewhere", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
     QCOMPARE(visitor->found, true);
 }

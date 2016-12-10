@@ -1479,12 +1479,13 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     
     lock.unlock();
     visitDecorators<FunctionDeclaration>(node->decorators, dec);
-    visitFunctionArguments(node);
-    
-    lock.lock();
     const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
     const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
     dec->setStatic(isStatic);
+    dec->setClassMethod(isClassMethod);
+    visitFunctionArguments(node);
+
+    lock.lock();
     
     // If this is a member function, set the type of the first argument (the "self") to be
     // an instance of the class.
@@ -1742,7 +1743,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     }
     FunctionDeclaration* workingOnDeclaration = static_cast<FunctionDeclaration*>(Helper::resolveAliasDeclaration(currentDeclaration()));
     workingOnDeclaration->clearDefaultParameters();
-    const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(workingOnDeclaration, "classmethod");
     if ( ! hasCurrentType() || ! currentType<FunctionType>() ) {
         return;
     }
@@ -1766,7 +1766,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
         // Create a variable declaration for the parameter, to be used in the function body.
         Declaration* paramDeclaration = nullptr;
-        if ( currentIndex == 1 && isClassMethod ) {
+        if ( currentIndex == 1 && workingOnDeclaration->isClassMethod() ) {
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
                                                                                    arg, AliasDeclarationType);
@@ -1807,7 +1807,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         }
 
         qCDebug(KDEV_PYTHON_DUCHAIN) << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
-        if ( isFirst && hasCurrentDeclaration() && currentContext() && currentContext()->parentContext() ) {
+        if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
                 argumentType = m_currentClassType.cast<AbstractType>();

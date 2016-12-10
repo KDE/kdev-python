@@ -36,6 +36,7 @@ public:
     FunctionDeclarationData()
         : KDevelop::FunctionDeclarationData()
         , m_isStatic(false)
+        , m_isClassMethod(false)
         , m_vararg(-1)
         , m_kwarg(-1)
     {
@@ -45,6 +46,7 @@ public:
     FunctionDeclarationData(const FunctionDeclarationData& rhs)
         : KDevelop::FunctionDeclarationData(rhs)
         , m_isStatic(rhs.m_isStatic)
+        , m_isClassMethod(rhs.m_isClassMethod)
         , m_vararg(rhs.m_vararg)
         , m_kwarg(rhs.m_kwarg)
     {
@@ -57,6 +59,7 @@ public:
     }
     
     bool m_isStatic: 1;
+    bool m_isClassMethod: 1;
     short m_vararg;
     short m_kwarg;
 
@@ -100,6 +103,13 @@ public:
     
     inline void setStatic(bool isStatic) {
         d_func_dynamic()->m_isStatic = isStatic;
+    }
+    inline bool isClassMethod() const {
+        return d_func()->m_isClassMethod;
+    }
+
+    inline void setClassMethod(bool isClassMethod) {
+        d_func_dynamic()->m_isClassMethod = isClassMethod;
     }
     
     inline const Decorator* decorators() const {

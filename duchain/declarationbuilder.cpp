@@ -953,7 +953,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     const int specialParamsCount = (lastFunctionDeclaration->vararg() > 0) + (lastFunctionDeclaration->kwarg() > 0);
 
     // Look for the "self" in the argument list, the type of that should not be updated.
-    bool hasSelfArgument = false;
+    bool hasSelfParam = false;
     if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || funcInfo.isConstructor )
             && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
     {
@@ -961,17 +961,29 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         // (this could happen for example if the method is static but kdev-python does not know,
         // or if the user just made a mistake in his code)
         if ( specialParamsCount < parameters.size() ) {
-            hasSelfArgument = true;
+            hasSelfParam = true;
         }
     }
-    int currentParamIndex = hasSelfArgument;
-    int currentArgumentIndex = 0;
+
+    lock.unlock();
+
+    bool explicitSelfArgument = false;
+    if ( hasSelfParam && ! lastFunctionDeclaration->isClassMethod() && node->function->astType == Ast::AttributeAstType ) {
+        // Calling an attribute, e.g. `instance.foo(arg)` or `MyClass.foo(instance, arg)`.
+        ExpressionVisitor valueVisitor(currentContext());
+        valueVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
+        if ( valueVisitor.lastDeclaration().dynamicCast<ClassDeclaration>() && valueVisitor.isAlias() ) {
+            // Function is attribute of a class _type_ (not instance), so first arg is used as `self`.
+            explicitSelfArgument = true;
+        }
+    }
+
+    int currentParamIndex = hasSelfParam;
+    int currentArgumentIndex = explicitSelfArgument;
     int indexInVararg = -1;
     int paramsAvailable = qMin(functiontype->arguments().length(), parameters.size());
     int argsAvailable = node->arguments.size();
     bool atVararg = false;
-
-    lock.unlock();
 
     // Iterate over all the arguments, trying to guess the type of the object being
     // passed as an argument, and update the parameter accordingly.
@@ -1002,7 +1014,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         DUChainWriteLocker wlock;
         if ( atVararg ) {
             indexInVararg++;
-            Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfArgument);
+            Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfParam);
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
             qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
@@ -1021,8 +1033,8 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
                                                            addType.cast<AbstractType>());
             // TODO this does not correctly update the types in quickopen! Investigate why.
-            functiontype->removeArgument(currentArgumentIndex + hasSelfArgument);
-            functiontype->addArgument(newType, currentArgumentIndex + hasSelfArgument);
+            functiontype->removeArgument(currentParamIndex);
+            functiontype->addArgument(newType, currentParamIndex);
             lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
             parameters.at(currentParamIndex)->setType(newType);
         }

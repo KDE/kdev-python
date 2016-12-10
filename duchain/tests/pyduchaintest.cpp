@@ -418,6 +418,12 @@ void PyDUChainTest::testCrashes_data() {
 
     QTest::newRow("list_extend_missing") << "foo = []\nfoo.extend(missing)";
     QTest::newRow("list_extend_missing_arg") << "foo = []\nfoo.extend()";
+    QTest::newRow("method_of_call_with_list_arg") <<
+        "class MyClass:\n"
+        "    def bar(self): pass\n"
+        "def foo(x):\n"
+        "    return MyClass()\n"
+        "foo([0]).bar()";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -795,6 +801,7 @@ void PyDUChainTest::testTypes()
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("lambda", "not implemented: aliasing lambdas", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
+    QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
     QCOMPARE(visitor->found, true);
 }
@@ -964,6 +971,28 @@ void PyDUChainTest::testTypes_data()
                                                "   @staticmethod\n"
                                                "   def method(arg): return arg\n"
                                                "checkme = MyClass().method(12)" << "int";
+    QTest::newRow("method_explicit_self") << "class MyClass:\n"
+                                             "   def method(self, arg): return arg\n"
+                                             "instance = MyClass()\n"
+                                             "checkme = MyClass.method(instance, 12)" << "int";
+    QTest::newRow("clsmethod_explicit_self") << "class MyClass:\n"
+                                                "   @classmethod\n"
+                                                "   def method(cls, arg1, arg2): return arg2\n"
+                                                "instance = MyClass()\n"
+                                                "checkme = MyClass.method('a', 12)" << "int";
+    QTest::newRow("staticmethod_explicit_self") << "class MyClass:\n"
+                                                   "   @staticmethod\n"
+                                                   "   def method(arg1, arg2): return arg1\n"
+                                                   "instance = MyClass()\n"
+                                                   "checkme = MyClass.method('a', 12)" << "str";
+    QTest::newRow("parent_constructor_arg_type") << "class Base:\n" // https://bugs.kde.org/show_bug.cgi?id=369364
+                                                    "    def __init__(self, foo):\n"
+                                                    "        self.foo = foo\n"
+                                                    "class Derived(Base):\n"
+                                                    "    def __init__(self, foo):\n"
+                                                    "       Base.__init__(self, foo)\n"
+                                                    "instance = Derived('string')\n"
+                                                    "checkme = instance.foo" << "str";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 

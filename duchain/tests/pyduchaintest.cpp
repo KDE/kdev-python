@@ -424,6 +424,7 @@ void PyDUChainTest::testCrashes_data() {
         "def foo(x):\n"
         "    return MyClass()\n"
         "foo([0]).bar()";
+    QTest::newRow("unpacked_dict_kwarg") << "def foo(arg): pass\nfoo(**{'arg': 2})";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -942,10 +943,17 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("hints_type") << "def myfun(arg): return arg\ncheckme = myfun(3)" << "int";
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
     QTest::newRow("kwarg_type") << "def myfun(**args): return args['a']\ncheckme = myfun(a=3)" << "int";
+    QTest::newRow("named_arg_type") << "def myfun(arg): return arg\ncheckme = myfun(arg=3)" << "int";
     QTest::newRow("arg_args_type") << "def myfun(arg, *args): return args[0]\n"
                                       "checkme = myfun(3, str())" << "str";
     QTest::newRow("arg_kwargs_type") << "def myfun(arg, **kwargs): return kwargs['a']\n"
                                          "checkme = myfun(12, a=str())" << "str";
+    QTest::newRow("named_kwargs_type_1") << "def myfun(arg, **kwargs): return arg\n"
+                                            "checkme = myfun(arg=12, a=str())" << "int";
+    QTest::newRow("named_kwargs_type_2") << "def myfun(arg, **kwargs): return kwargs['a']\n"
+                                            "checkme = myfun(arg=12, a=str())" << "str";
+    QTest::newRow("kwargs_named_type") << "def myfun(arg, **kwargs): return kwargs['a']\n"
+                                          "checkme = myfun(a=str(), arg=12)" << "str";
     QTest::newRow("varied_args_type_1") << "def myfun(arg, *args, **kwargs): return arg\n"
                                            "checkme = myfun(1, 1.5, a=str())" << "int";
     QTest::newRow("varied_args_type_2") << "def myfun(arg, *args, **kwargs): return args[0]\n"

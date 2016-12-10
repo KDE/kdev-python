@@ -959,12 +959,15 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         return;
     }
     QVector<Declaration*> parameters = parameterContext->localDeclarations();
-    const int specialParamsCount = (function->vararg() > 0) + (function->kwarg() > 0);
+    if ( parameters.isEmpty() ) {
+        return;
+    }
+    const int specialParamsCount = (function->vararg() != -1) + (function->kwarg() != -1);
 
     // Look for the "self" in the argument list, the type of that should not be updated.
     bool hasSelfParam = false;
     if ( ( function->context()->type() == DUContext::Class || funcInfo.isConstructor )
-            && ! parameters.isEmpty() && ! function->isStatic() )
+            && ! function->isStatic() )
     {
         // ... unless for some reason the function only has *vararg, **kwarg as parameters
         // (this could happen for example if the method is static but kdev-python does not know,
@@ -998,7 +1001,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     // passed as an argument, and update the parameter accordingly.
     // Stop if more parameters supplied than possible, and we're not at the vararg.
     for ( ; ( atVararg || currentParamIndex < paramsAvailable ) && currentArgumentIndex < argsAvailable;
-            currentParamIndex++, currentArgumentIndex++ )
+            currentArgumentIndex++ )
     {
         atVararg = atVararg || currentParamIndex == function->vararg(); // Not >=, nonexistent vararg is -1.
 
@@ -1044,19 +1047,20 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             functionType->addArgument(newType, currentParamIndex);
             function->setAbstractType(functionType.cast<AbstractType>());
             parameters.at(currentParamIndex)->setType(newType);
+            currentParamIndex++;
         }
     }
 
+    // **kwargs is always the last parameter
+    MapType::Ptr kwargsDict;
+    if ( function->kwarg() != -1 ) {
+        kwargsDict = parameters.last()->abstractType().cast<MapType>();
+    }
     lock.unlock();
     DUChainWriteLocker wlock;
-    if ( function->kwarg() < 0 || parameters.isEmpty() ) {
-        // no kwarg, stop here.
-        return;
-    }
     foreach ( KeywordAst* keyword, node->keywords ) {
-        AbstractType::Ptr param = parameters.last()->abstractType();
-        auto list = param.cast<ListType>();
-        if ( ! list ) {
+        if ( ! keyword->argumentName ) {
+            // 'keyword is actually an unpacked dict: `foo(**{'a': 12}). Not handled currently.
             continue;
         }
         wlock.unlock();
@@ -1071,9 +1075,23 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         addType->setType(argumentVisitor.lastType());
         addType->setCreatedBy(topContext(), m_futureModificationRevision);
         closeType();
-        list->addContentType<Python::UnsureType>(addType.cast<AbstractType>());
-        parameters.last()->setAbstractType(list.cast<AbstractType>());
+        bool matchedNamedParam = false;
+        for (int ip = currentParamIndex; ip < paramsAvailable; ++ip ) {
+            if ( parameters.at(ip)->identifier().toString() != keyword->argumentName->value ) {
+                continue;
+            }
+            matchedNamedParam = true;
+            auto newType = Helper::mergeTypes(parameters.at(ip)->abstractType(), addType);
+            functionType->removeArgument(ip);
+            functionType->addArgument(newType, ip);
+            parameters.at(ip)->setType(newType);
+        }
+        if ( ! matchedNamedParam && kwargsDict ) {
+            kwargsDict->addContentType<Python::UnsureType>(addType);
+            parameters.last()->setAbstractType(kwargsDict);
+        }
     }
+    function->setAbstractType(functionType);
 }
 
 void DeclarationBuilder::visitCall(CallAst* node)

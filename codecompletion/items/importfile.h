@@ -35,7 +35,7 @@ public:
     ImportFileItem(const KDevelop::IncludeItem& include);
     virtual ~ImportFileItem();
     
-    virtual void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
+    void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
     QString moduleName;
     KDevelop::IProject* fromProject;
 };

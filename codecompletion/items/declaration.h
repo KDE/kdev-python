@@ -31,7 +31,7 @@ public:
     PythonDeclarationCompletionItem(KDevelop::DeclarationPointer decl = KDevelop::DeclarationPointer(), 
                                     QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext> context = QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext>(), 
                                     int inheritanceDepth = 0);
-    virtual QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const override;
+    QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const override;
     QString shortenedTypeString(KDevelop::DeclarationPointer decl, int desiredTypeLength) const override;
 
     void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);

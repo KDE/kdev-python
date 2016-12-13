@@ -1,6 +1,7 @@
 # KDE Config File
 [General]
 Name=New Django project
+Name[ast]=Proyeutu nuevu Django
 Name[ca]=Projecte nou del Django
 Name[ca@valencia]=Projecte nou del Django
 Name[cs]=Nový projekt Django

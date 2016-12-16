@@ -37,6 +37,11 @@ DocfilesKCModule::~DocfilesKCModule()
 {
 }
 
+KDevelop::ConfigPage::ConfigPageType DocfilesKCModule::configPageType() const
+{
+    return KDevelop::ConfigPage::DocumentationConfigPage;
+}
+
 void DocfilesKCModule::apply()
 {
     // nothing to do, but must override since we do not use KCoreConfigSkeleton

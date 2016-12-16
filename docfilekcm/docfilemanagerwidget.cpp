@@ -69,7 +69,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
     QPushButton* generateButton = new QPushButton(i18n("Generate..."));
     generateButton->setIcon(QIcon::fromTheme("tools-wizard"));
-    QPushButton* importButton = new QPushButton(i18n("Import from editor"));
+    QPushButton* importButton = new QPushButton(i18n("Import From Editor"));
     importButton->setToolTip(i18n("Copy the contents of the active editor window "
                                   "to a new file in the documentation directory"));
     buttonsLayout->addWidget(generateButton);
@@ -82,9 +82,9 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     separator->setFrameShape(QFrame::HLine);
     QFrame* separator2 = new QFrame();
     separator2->setFrameShape(QFrame::HLine);
-    QPushButton* openFileManagerButton = new QPushButton(i18n("Open file manager"));
+    QPushButton* openFileManagerButton = new QPushButton(i18n("Open File Manager"));
     QPushButton* openTextEditorButton = new QPushButton(i18nc("Edit selected files", "Edit selected"));
-    QPushButton* searchPathsButton = new QPushButton(i18n("Search paths..."));
+    QPushButton* searchPathsButton = new QPushButton(i18n("Search Paths..."));
     buttonsLayout->addWidget(separator);
     buttonsLayout->addWidget(openFileManagerButton);
     buttonsLayout->addWidget(openTextEditorButton);

@@ -36,6 +36,8 @@ public:
     PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent = nullptr);
     ~PEP8KCModule() override;
 
+    KDevelop::ConfigPage::ConfigPageType configPageType() const override;
+
     QString name() const override;
     QString fullName() const override;
     QIcon icon() const override;

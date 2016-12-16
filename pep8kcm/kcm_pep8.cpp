@@ -119,3 +119,7 @@ PEP8KCModule::~PEP8KCModule()
     delete configGroup.config();
 }
 
+KDevelop::ConfigPage::ConfigPageType PEP8KCModule::configPageType() const
+{
+    return KDevelop::ConfigPage::AnalyzerConfigPage;
+}

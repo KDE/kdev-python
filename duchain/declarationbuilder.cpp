@@ -931,33 +931,36 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     }
 }
 
-void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer function)
+void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer called)
 {
     DUChainReadLocker lock;
-    auto funcInfo = Helper::functionForCalled(function.data());
-    auto lastFunctionDeclaration = funcInfo.declaration;
+    auto funcInfo = Helper::functionForCalled(called.data());
+    auto function = funcInfo.declaration;
 
-    if ( ! lastFunctionDeclaration ) {
+    if ( ! function ) {
         return;
     }
-    if ( lastFunctionDeclaration->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+    if ( function->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
         return;
     }
-    DUContext* args = DUChainUtils::getArgumentContext(lastFunctionDeclaration);
-    FunctionType::Ptr functiontype = lastFunctionDeclaration->type<FunctionType>();
-    if ( ! args || ! functiontype ) {
+    // Note: within this function:
+    // - 'parameters' refers to the parameters of the function definition.
+    // - 'arguments' refers to the arguments of the function call.
+
+    DUContext* parameterContext = DUChainUtils::getArgumentContext(function);
+    FunctionType::Ptr functionType = function->type<FunctionType>();
+    if ( ! parameterContext || ! functionType ) {
         return;
     }
-    // The declaration which was found is a function declaration, and has a valid arguments list assigned.
-    QVector<Declaration*> parameters = args->localDeclarations();
-    const int specialParamsCount = (lastFunctionDeclaration->vararg() > 0) + (lastFunctionDeclaration->kwarg() > 0);
+    QVector<Declaration*> parameters = parameterContext->localDeclarations();
+    const int specialParamsCount = (function->vararg() > 0) + (function->kwarg() > 0);
 
     // Look for the "self" in the argument list, the type of that should not be updated.
     bool hasSelfParam = false;
-    if ( ( lastFunctionDeclaration->context()->type() == DUContext::Class || funcInfo.isConstructor )
-            && ! parameters.isEmpty() && ! lastFunctionDeclaration->isStatic() )
+    if ( ( function->context()->type() == DUContext::Class || funcInfo.isConstructor )
+            && ! parameters.isEmpty() && ! function->isStatic() )
     {
-        // ... unless for some reason the function only has *vararg, **kwarg as arguments
+        // ... unless for some reason the function only has *vararg, **kwarg as parameters
         // (this could happen for example if the method is static but kdev-python does not know,
         // or if the user just made a mistake in his code)
         if ( specialParamsCount < parameters.size() ) {
@@ -968,7 +971,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     lock.unlock();
 
     bool explicitSelfArgument = false;
-    if ( hasSelfParam && ! lastFunctionDeclaration->isClassMethod() && node->function->astType == Ast::AttributeAstType ) {
+    if ( hasSelfParam && ! function->isClassMethod() && node->function->astType == Ast::AttributeAstType ) {
         // Calling an attribute, e.g. `instance.foo(arg)` or `MyClass.foo(instance, arg)`.
         ExpressionVisitor valueVisitor(currentContext());
         valueVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
@@ -981,7 +984,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     int currentParamIndex = hasSelfParam;
     int currentArgumentIndex = explicitSelfArgument;
     int indexInVararg = -1;
-    int paramsAvailable = qMin(functiontype->arguments().length(), parameters.size());
+    int paramsAvailable = qMin(functionType->arguments().length(), parameters.size());
     int argsAvailable = node->arguments.size();
     bool atVararg = false;
 
@@ -991,11 +994,11 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     for ( ; ( atVararg || currentParamIndex < paramsAvailable ) && currentArgumentIndex < argsAvailable;
             currentParamIndex++, currentArgumentIndex++ )
     {
-        if ( ! atVararg && currentArgumentIndex == lastFunctionDeclaration->vararg() ) {
+        if ( ! atVararg && currentArgumentIndex == function->vararg() ) {
             atVararg = true;
         }
 
-        qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << lastFunctionDeclaration->vararg();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << function->vararg();
 
         ExpressionAst* arg = node->arguments.at(currentArgumentIndex);
 
@@ -1014,7 +1017,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         DUChainWriteLocker wlock;
         if ( atVararg ) {
             indexInVararg++;
-            Declaration* parameter = parameters.at(lastFunctionDeclaration->vararg()+hasSelfParam);
+            Declaration* parameter = parameters.at(function->vararg()+hasSelfParam);
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
             qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
@@ -1033,16 +1036,16 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
                                                            addType.cast<AbstractType>());
             // TODO this does not correctly update the types in quickopen! Investigate why.
-            functiontype->removeArgument(currentParamIndex);
-            functiontype->addArgument(newType, currentParamIndex);
-            lastFunctionDeclaration->setAbstractType(functiontype.cast<AbstractType>());
+            functionType->removeArgument(currentParamIndex);
+            functionType->addArgument(newType, currentParamIndex);
+            function->setAbstractType(functionType.cast<AbstractType>());
             parameters.at(currentParamIndex)->setType(newType);
         }
     }
 
     lock.unlock();
     DUChainWriteLocker wlock;
-    if ( lastFunctionDeclaration->kwarg() < 0 || parameters.isEmpty() ) {
+    if ( function->kwarg() < 0 || parameters.isEmpty() ) {
         // no kwarg, stop here.
         return;
     }

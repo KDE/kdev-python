@@ -130,12 +130,12 @@ protected:
 
     /**
      * @brief Try to deduce types of function arguments from a call and stores it in the duchain
-     * @param node the called function
-     * @param function the declaration which belongs to @p node
+     * @param node the called function or class (i.e. constructor)
+     * @param called the declaration which belongs to @p node
      *
      * Used for example in def f(x): pass; a = f(3) to set the type of x to "int"
      */
-    void addArgumentTypeHints(CallAst* node, DeclarationPointer function);
+    void addArgumentTypeHints(CallAst* node, DeclarationPointer called);
 
     /**
      * @brief Adjust the type of foo in an expression like assert isinstance(fooinstance, Foo)

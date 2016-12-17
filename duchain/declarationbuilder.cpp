@@ -994,9 +994,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     for ( ; ( atVararg || currentParamIndex < paramsAvailable ) && currentArgumentIndex < argsAvailable;
             currentParamIndex++, currentArgumentIndex++ )
     {
-        if ( ! atVararg && currentArgumentIndex == function->vararg() ) {
-            atVararg = true;
-        }
+        atVararg = atVararg || currentParamIndex == function->vararg(); // Not >=, nonexistent vararg is -1.
 
         qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << function->vararg();
 
@@ -1017,7 +1015,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         DUChainWriteLocker wlock;
         if ( atVararg ) {
             indexInVararg++;
-            Declaration* parameter = parameters.at(function->vararg()+hasSelfParam);
+            Declaration* parameter = parameters.at(function->vararg());
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
             qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
@@ -1499,24 +1497,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setStatic(isStatic);
     dec->setClassMethod(isClassMethod);
     visitFunctionArguments(node);
-
-    lock.lock();
-    
-    // If this is a member function, set the type of the first argument (the "self") to be
-    // an instance of the class.
-    // this must be done here, because the type of self must be known when parsing the body
-    if ( eventualParentDeclaration && currentType<FunctionType>()->arguments().length()
-            && currentContext()->type() == DUContext::Class && ! isStatic )
-    {
-        if ( dec->vararg() != -1 ) {
-            dec->setVararg(dec->vararg() - 1);
-        }
-        if ( dec->kwarg() != -1 ) {
-            dec->setKwarg(dec->kwarg() - 1);
-        }
-    }
-
-    lock.unlock();
     visitFunctionBody(node);
     lock.lock();
     

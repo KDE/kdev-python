@@ -971,10 +971,18 @@ void PyDUChainTest::testTypes_data()
                                                "   @staticmethod\n"
                                                "   def method(arg): return arg\n"
                                                "checkme = MyClass().method(12)" << "int";
+    QTest::newRow("staticmethod_vararg_type") << "class MyClass:\n"
+                                                 "   @staticmethod\n"
+                                                 "   def method(arg, *args): return args[0]\n"
+                                                 "checkme = MyClass().method(12, 2.5)" << "float";
     QTest::newRow("method_explicit_self") << "class MyClass:\n"
                                              "   def method(self, arg): return arg\n"
                                              "instance = MyClass()\n"
                                              "checkme = MyClass.method(instance, 12)" << "int";
+    QTest::newRow("method_vararg_explicit_self") << "class MyClass:\n"
+                                                    "    def foo(self, arg, *args): return args[0]\n"
+                                                    "mc = MyClass()\n"
+                                                    "checkme = MyClass.foo(mc, 'str', 3, 4.5)" << "int";
     QTest::newRow("clsmethod_explicit_self") << "class MyClass:\n"
                                                 "   @classmethod\n"
                                                 "   def method(cls, arg1, arg2): return arg2\n"

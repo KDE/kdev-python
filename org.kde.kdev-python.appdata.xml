@@ -21,7 +21,6 @@
   <name xml:lang="uk">kdev-python</name>
   <name xml:lang="x-test">xxkdev-pythonxx</name>
   <summary>Python language support for KDevelop</summary>
-  <summary xml:lang="ast">Sofitu del llinguax Python pa KDevelop</summary>
   <summary xml:lang="ca">Implementació del llenguatge Python al KDevelop</summary>
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python al KDevelop</summary>
   <summary xml:lang="de">Python-Sprachunterstützung für KDevelop</summary>
@@ -39,7 +38,6 @@
   <summary xml:lang="x-test">xxPython language support for KDevelopxx</summary>
   <url type="homepage">kdevelop.org</url>
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ast">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="cs">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

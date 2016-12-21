@@ -86,9 +86,6 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     , m_highlighting( new Highlighting( this ) )
     , m_refactoring( new Refactoring( this ) )
 {
-    KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageSupport )
-    KDEV_USE_EXTENSION_INTERFACE( KDevelop::ILanguageCheckProvider )
-
     m_self = this;
 
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);

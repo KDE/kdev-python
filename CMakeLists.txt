@@ -31,10 +31,11 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
-find_package(Python 3.6 REQUIRED)
+find_package(PythonInterp 3.5 REQUIRED)
+find_package(PythonLibs 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 if ( (NOT PYTHON_LIBRARIES) OR "${PYTHON_VERSION_MINOR}" GREATER 6 )
-    message(FATAL_ERROR "Python >= 3.6.0 but < 3.7 with --enable-shared is required to build kdev-python")
+    message(FATAL_ERROR "Python >= 3.5.0 but < 3.7 with --enable-shared is required to build kdev-python")
 endif()
 
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test)

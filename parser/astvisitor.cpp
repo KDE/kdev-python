@@ -46,6 +46,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::DeleteAstType:                                this->visitDelete(static_cast<DeleteAst*>(node)); break;
         case Ast::AssignmentAstType:                            this->visitAssignment(static_cast<AssignmentAst*>(node)); break;
         case Ast::AugmentedAssignmentAstType:                   this->visitAugmentedAssignment(static_cast<AugmentedAssignmentAst*>(node)); break;
+        case Ast::AnnotationAssignmentAstType:                  this->visitAnnotationAssignment(static_cast<AnnotationAssignmentAst*>(node)); break;
         case Ast::ForAstType:                                   this->visitFor(static_cast<ForAst*>(node)); break;
         case Ast::WhileAstType:                                 this->visitWhile(static_cast<WhileAst*>(node)); break;
         case Ast::IfAstType:                                    this->visitIf(static_cast<IfAst*>(node)); break;
@@ -74,6 +75,8 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::CompareAstType:                               this->visitCompare(static_cast<CompareAst*>(node)); break;
         case Ast::NumberAstType:                                this->visitNumber(static_cast<NumberAst*>(node)); break;
         case Ast::StringAstType:                                this->visitString(static_cast<StringAst*>(node)); break;
+        case Ast::FormattedValueAstType:                        this->visitFormattedValue(static_cast<FormattedValueAst*>(node)); break;
+        case Ast::JoinedStringAstType:                          this->visitJoinedString(static_cast<JoinedStringAst*>(node)); break;
         case Ast::BytesAstType:                                 this->visitBytes(static_cast<BytesAst*>(node)); break;
         case Ast::YieldAstType:                                 this->visitYield(static_cast<YieldAst*>(node)); break;
         case Ast::NameAstType:                                  this->visitName(static_cast<NameAst*>(node)); break;

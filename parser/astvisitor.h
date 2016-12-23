@@ -53,6 +53,7 @@ public:
     virtual void visitDelete(DeleteAst* node) { Q_UNUSED(node); };
     virtual void visitAssignment(AssignmentAst* node) { Q_UNUSED(node); };
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node) { Q_UNUSED(node); };
+    virtual void visitAnnotationAssignment(AnnotationAssignmentAst* node) { Q_UNUSED(node); };
     virtual void visitFor(ForAst* node) { Q_UNUSED(node); };
     virtual void visitWhile(WhileAst* node) { Q_UNUSED(node); };
     virtual void visitIf(IfAst* node) { Q_UNUSED(node); };
@@ -83,6 +84,8 @@ public:
     virtual void visitCompare(CompareAst* node) { Q_UNUSED(node); };
     virtual void visitNumber(NumberAst* node) { Q_UNUSED(node); };
     virtual void visitString(StringAst* node) { Q_UNUSED(node); };
+    virtual void visitFormattedValue(FormattedValueAst* node) { Q_UNUSED(node); };
+    virtual void visitJoinedString(JoinedStringAst* node) { Q_UNUSED(node); };
     virtual void visitBytes(BytesAst* node) { Q_UNUSED(node); };
     virtual void visitYield(YieldAst* node) { Q_UNUSED(node); };
     virtual void visitName(NameAst* node) { Q_UNUSED(node); };

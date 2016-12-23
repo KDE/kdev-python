@@ -376,11 +376,11 @@ QString getPythonExecutablePath(IProject* project)
     }
 
     // Find python 3 (https://www.python.org/dev/peps/pep-0394/)
-    auto result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR "." PYTHON_VERSION_MINOR);
+    auto result = QStandardPaths::findExecutable("python" PYTHON_VERSION_STR);
     if ( ! result.isEmpty() ) {
         return result;
     }
-    result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR);
+    result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR_STR);
     if ( ! result.isEmpty() ) {
         return result;
     }
@@ -399,7 +399,7 @@ QString getPythonExecutablePath(IProject* project)
         "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath",
         "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath"
     };
-    auto version = QString(PYTHON_VERSION_MAJOR) + "." + PYTHON_VERSION_MINOR;
+    auto version = QString(PYTHON_VERSION_STR);
     foreach ( QString key, keys ) {
         key.replace("PYTHON_VERSION", version);
         QSettings base(key.left(key.indexOf("Python")), QSettings::NativeFormat);

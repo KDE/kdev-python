@@ -64,9 +64,14 @@ AugmentedAssignmentAst::AugmentedAssignmentAst(Ast* parent): StatementAst(parent
     
 }
 
+AnnotationAssignmentAst::AnnotationAssignmentAst(Ast* parent): StatementAst(parent, Ast::AnnotationAssignmentAstType), target(0), value(0), annotation(0)
+{
+
+}
+
 BinaryOperationAst::BinaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::BinaryOperationAstType), lhs(0), rhs(0)
 {
-    
+
 }
 
 BooleanOperationAst::BooleanOperationAst(Ast* parent): ExpressionAst(parent, Ast::BooleanOperationAstType)
@@ -290,7 +295,17 @@ StatementAst::StatementAst(Ast* parent, AstType type): Ast(parent, type)
 
 StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value(""), usedAsComment(false)
 {
-    
+
+}
+
+JoinedStringAst::JoinedStringAst(Ast* parent): ExpressionAst(parent, Ast::JoinedStringAstType), values()
+{
+
+}
+
+FormattedValueAst::FormattedValueAst(Ast* parent): ExpressionAst(parent, Ast::FormattedValueAstType), value(nullptr), conversion(0), formatSpec(0)
+{
+
 }
 
 BytesAst::BytesAst(Ast* parent): ExpressionAst(parent, Ast::BytesAstType), value("")

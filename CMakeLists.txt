@@ -31,6 +31,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
+set(Python_ADDITIONAL_VERSIONS 3.6 3.5)
 find_package(PythonInterp 3.5 REQUIRED)
 find_package(PythonLibs 3.5 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )

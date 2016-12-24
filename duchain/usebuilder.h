@@ -61,7 +61,8 @@ private:
         m_errorReportingEnabled = true;
     };
     DUContext* contextAtOrCurrent(const CursorInRevision& pos);
-    void useHiddenMethod(ExpressionAst* value, IndexedIdentifier method);
+    // Add a use for `method` immediately after `value`.
+    void useHiddenMethod(ExpressionAst* value, Declaration* method);
 
     QVector<IndexedString> m_ignoreVariables;
 };

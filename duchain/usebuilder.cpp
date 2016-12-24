@@ -60,17 +60,11 @@ DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
     return context;
 }
 
-void UseBuilder::useHiddenMethod(ExpressionAst* value, IndexedIdentifier method) {
-    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(value));
-    ExpressionVisitor v(context);
-    v.visitNode(value);
+void UseBuilder::useHiddenMethod(ExpressionAst* value, Declaration* function) {
     RangeInRevision useRange;
     // TODO fixme! this does not necessarily use the opening bracket as it should
     useRange.start = CursorInRevision(value->endLine, value->endCol + 1);
     useRange.end = CursorInRevision(value->endLine, value->endCol + 2);
-    DUChainReadLocker lock;
-    auto function = Helper::accessAttribute(v.lastType(), method, context->topContext());
-    lock.unlock();
     if ( function && function->isFunctionDeclaration() ) {
         UseBuilderBase::newUse(value, useRange, DeclarationPointer(function));
     }
@@ -118,11 +112,7 @@ void UseBuilder::visitCall(CallAst* node)
         // This is either __init__() or __call__(): `a = Foo()` or `b = a()`.
         auto function = Helper::functionForCalled(classType->declaration(topContext()), v.isAlias());
         lock.unlock();
-        RangeInRevision openingParenRange;
-        // TODO fixme! this does not necessarily use the opening bracket as it should
-        openingParenRange.start = CursorInRevision(node->endLine, node->endCol + 1);
-        openingParenRange.end = CursorInRevision(node->endLine, node->endCol + 2);
-        UseBuilderBase::newUse(node, openingParenRange, DeclarationPointer(function.declaration));
+        useHiddenMethod(node->function, function.declaration);
     }
 }
 
@@ -158,16 +148,28 @@ void UseBuilder::visitAttribute(AttributeAst* node)
 
 void UseBuilder::visitSubscript(SubscriptAst* node) {
     UseBuilderBase::visitSubscript(node);
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node->value));
+    ExpressionVisitor v(context);
+    v.visitNode(node->value);
+
     static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
     static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier("__setitem__"));
+
     bool isAugTarget = (node->parent->astType == Ast::AugmentedAssignmentAstType &&
                         static_cast<AugmentedAssignmentAst*>(node->parent)->target == node);
+
     // e.g `a[0] += 2` uses both __getitem__ and __setitem__.
     if (isAugTarget || node->context == ExpressionAst::Context::Load) {
-        useHiddenMethod(node->value, getitemIdentifier);
+        DUChainReadLocker lock;
+        auto getItemFunc = Helper::accessAttribute(v.lastType(), getitemIdentifier, context->topContext());
+        lock.unlock();
+        useHiddenMethod(node->value, getItemFunc);
     }
     if ( node->context == ExpressionAst::Context::Store ) {
-        useHiddenMethod(node->value, setitemIdentifier);
+        DUChainReadLocker lock;
+        auto setItemFunc = Helper::accessAttribute(v.lastType(), setitemIdentifier, context->topContext());
+        lock.unlock();
+        useHiddenMethod(node->value, setItemFunc);
     }
 }
 

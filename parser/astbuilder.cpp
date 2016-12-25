@@ -424,9 +424,9 @@ private:
 };
 // FIXME This only works for single-quoted (and oneline) strings.
 //  (otherwise it gives length 0 or 2, which is no worse than before).
-const auto RangeFixVisitor::findString = QRegExp("^\".*[^\\\\]\"");
+const QRegExp RangeFixVisitor::findString = QRegExp("^(?:\".*[^\\\\]\"|'.*[^\\\\]')");
 // Looser than the real spec, but since we know there *is* a valid number it finds the end ok.
-const auto RangeFixVisitor::findNumber = QRegExp("^(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
+const QRegExp RangeFixVisitor::findNumber = QRegExp("^(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
 
 #include "generated.h"
 

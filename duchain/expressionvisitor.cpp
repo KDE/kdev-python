@@ -320,7 +320,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
 
     foreach (const auto& type, valueTypes) {
-        if ( (node->slice && node->slice->astType != Ast::IndexAstType) &&
+        if ( (node->slice->astType != Ast::IndexAstType) &&
              (type.cast<IndexedContainer>() || type.cast<ListType>()) ) {
             if ( type.cast<MapType>() ) {
                 continue; // Can't slice dicts.
@@ -333,7 +333,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
             NumberAst* number = nullptr;
             bool invert = false;
-            if ( sliceIndexAst->value && sliceIndexAst->value->astType == Ast::UnaryOperationAstType ) {
+            if ( sliceIndexAst->value->astType == Ast::UnaryOperationAstType ) {
                 // might be -3
                 UnaryOperationAst* unary = static_cast<UnaryOperationAst*>(sliceIndexAst->value);
                 if ( unary->type == Ast::UnaryOperatorSub && unary->operand->astType == Ast::NumberAstType ) {

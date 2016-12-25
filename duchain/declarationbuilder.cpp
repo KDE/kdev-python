@@ -214,7 +214,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
         // been encountered yet in this pass
         bool reallyEncountered = wasEncountered(d) && ! m_scheduledForDeletion.contains(d);
         bool invalidType = false;
-        if ( d && d->abstractType() && mustFitType != NoTypeRequired ) {
+        if ( d->abstractType() && mustFitType != NoTypeRequired ) {
             invalidType = ( ( d->isFunctionDeclaration() ) != ( mustFitType == FunctionDeclarationType ) );
             if ( ! invalidType ) {
                 invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != 0 ) != ( mustFitType == AliasDeclarationType ) );

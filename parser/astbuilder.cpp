@@ -70,7 +70,7 @@ public:
     KTextEditor::Cursor findNext(Python::Ast* node) {
         m_root = node;
         auto parent = node;
-        while ( parent && parent->parent && parent->parent->isExpression() ) {
+        while ( parent->parent && parent->parent->isExpression() ) {
             parent = parent->parent;
         }
         visitNode(parent);
@@ -226,7 +226,6 @@ public:
     }
 
     void visitString(Python::StringAst * node) override {
-        if (!node) return;
         findString.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
         if ( findString.matchedLength() > 0 ) {
             node->endCol += findString.matchedLength();
@@ -234,7 +233,6 @@ public:
     }
 
     void visitNumber(Python::NumberAst * node) override {
-        if (!node) return;
         findNumber.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
         if ( findNumber.matchedLength() > 0 ) {
             node->endCol += findNumber.matchedLength();
@@ -242,7 +240,6 @@ public:
     }
 
     void visitSubscript(Python::SubscriptAst * node) override {
-        if (! node) return;
         AstDefaultVisitor::visitSubscript(node);
         node->endCol = node->slice->endCol + 1; // Closing bracket (unless spaces...)
     }

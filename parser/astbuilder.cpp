@@ -227,12 +227,10 @@ public:
 
     void visitString(Python::StringAst * node) override {
         if (!node) return;
-        qWarning() << node->range();
         findString.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
         if ( findString.matchedLength() > 0 ) {
             node->endCol += findString.matchedLength();
         }
-        qWarning() << "Match" << node->range() << findString.matchedLength();
     }
 
     void visitNumber(Python::NumberAst * node) override {

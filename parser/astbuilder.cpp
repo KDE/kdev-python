@@ -225,11 +225,36 @@ public:
         node->name->endCol = end;
     }
 
+    void visitString(Python::StringAst * node) override {
+        if (!node) return;
+        qWarning() << node->range();
+        findString.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
+        if ( findString.matchedLength() > 0 ) {
+            node->endCol += findString.matchedLength();
+        }
+        qWarning() << "Match" << node->range() << findString.matchedLength();
+    }
+
+    void visitNumber(Python::NumberAst * node) override {
+        if (!node) return;
+        findNumber.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
+        if ( findNumber.matchedLength() > 0 ) {
+            node->endCol += findNumber.matchedLength();
+        }
+    }
+
+    void visitSubscript(Python::SubscriptAst * node) override {
+        if (! node) return;
+        AstDefaultVisitor::visitSubscript(node);
+        node->endCol = node->slice->endCol + 1; // Closing bracket (unless spaces...)
+    }
+
 private:
     const QStringList lines;
     QVector<KTextEditor::Cursor> dots;
     KTextEditor::Cursor attributeStart;
-
+    static const QRegExp findString;
+    static const QRegExp findNumber;
 
     // skip the decorators and the "def" at the beginning
     // of a class or function declaration and modify @arg node
@@ -397,6 +422,11 @@ private:
         return 0;
     };
 };
+// FIXME This only works for single-quoted (and oneline) strings.
+//  (otherwise it gives length 0 or 2, which is no worse than before).
+const auto RangeFixVisitor::findString = QRegExp("^\".*[^\\\\]\"");
+// Looser than the real spec, but since we know there *is* a valid number it finds the end ok.
+const auto RangeFixVisitor::findNumber = QRegExp("^(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
 
 #include "generated.h"
 

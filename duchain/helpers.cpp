@@ -166,10 +166,10 @@ Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
     else if ( called->isFunctionDeclaration() ) {
         return { static_cast<FunctionDeclaration*>( called ), false };
     }
-// If we're calling a type object (isAlias == true), look for a constructor.
+    // If we're calling a type object (isAlias == true), look for a constructor.
     static const IndexedIdentifier initId(KDevelop::Identifier("__init__"));
 
-// Otherwise look for a `__call__()` method.
+    // Otherwise look for a `__call__()` method.
     static const IndexedIdentifier callId(KDevelop::Identifier("__call__"));
 
     auto attr = accessAttribute(called->abstractType(), (isAlias ? initId : callId), called->topContext());

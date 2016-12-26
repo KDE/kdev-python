@@ -23,6 +23,7 @@
 
 #include <QTimer>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 #include <language/duchain/problem.h>
 #include <interfaces/icore.h>
@@ -91,21 +92,21 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
 
 void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
 {
-    QRegExp errorFormat("(.*):(\\d*):(\\d*): (.*)", Qt::CaseInsensitive, QRegExp::RegExp2);
+    static QRegularExpression errorFormat("(.*):(\\d*):(\\d*): (.*)", QRegularExpression::CaseInsensitiveOption);
     DUChainWriteLocker lock;
     auto document = m_currentlyChecking->url();
     for ( const auto& error : errors ) {
-        if ( errorFormat.exactMatch(error) ) {
-            const QStringList texts = errorFormat.capturedTexts();
+        QRegularExpressionMatch match;
+        if ( (match = errorFormat.match(error)).hasMatch() ) {
             bool lineno_ok = false;
             bool colno_ok = false;
-            int lineno = texts.at(2).toInt(&lineno_ok);
-            int colno = texts.at(3).toInt(&colno_ok);
+            int lineno = match.captured(2).toInt(&lineno_ok);
+            int colno = match.captured(3).toInt(&colno_ok);
             if ( ! lineno_ok || ! colno_ok ) {
-                qDebug() << "invalid line / col number:" << texts;
+                qDebug() << "invalid line / col number";
                 continue;
             }
-            QString error = texts.at(4);
+            QString error = match.captured(4);
             KDevelop::Problem* p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
                                                                            lineno - 1, colno + 4)));

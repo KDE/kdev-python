@@ -54,7 +54,7 @@ public:
 
     virtual CodeAst* ast() const;
     bool wasReadFromDisk() const;
-    static void eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext);
+    void eventuallyDoPEP8Checking(TopDUContext* topContext);
 
     ControlFlowGraph* controlFlowGraph() override;
     DataAccessRepository* dataAccessInformation() override;

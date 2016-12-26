@@ -56,6 +56,7 @@
 #include <QReadLocker>
 #include <QFile>
 #include <QThread>
+#include <QCoreApplication>
 #include <QProcess>
 #include <QTemporaryFile>
 #include <QDebug>
@@ -258,8 +259,8 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     }
 
     // If enabled, and if the document is open, do PEP8 checking.
-    eventuallyDoPEP8Checking(document(), m_duContext);
-    
+    eventuallyDoPEP8Checking(m_duContext);
+
     if ( minimumFeatures() & TopDUContext::AST ) {
         DUChainWriteLocker lock;
         m_currentSession->ast = m_ast;
@@ -280,88 +281,17 @@ DataAccessRepository* ParseJob::dataAccessInformation()
     return nullptr;
 }
 
-void ParseJob::eventuallyDoPEP8Checking(const IndexedString document, TopDUContext* topContext)
+void ParseJob::eventuallyDoPEP8Checking(TopDUContext* topContext)
 {
-    IDocument* idoc = ICore::self()->documentController()->documentForUrl(document.toUrl());
-    if ( ! idoc || ! topContext || ! idoc->textDocument() || topContext->features() & PEP8Checking ) {
-        return;
-    }
-
     KConfig config("kdevpythonsupportrc");
     KConfigGroup configGroup = config.group("pep8");
     if ( ! PEP8KCModule::isPep8Enabled(configGroup) ) {
         return;
     }
-    {
-        DUChainWriteLocker lock;
-        topContext->setFeatures((TopDUContext::Features) ( topContext->features() | PEP8Checking ));
-    }
-    qDebug() << "doing pep8 checking";
-    // TODO that's not very elegant, better would be making pep8 read from stdin -- but it doesn't support that atm
-    QTemporaryFile tempfile;
-    tempfile.open();
-    tempfile.write(idoc->textDocument()->text().toUtf8());
-    tempfile.close();
-    QString url = PEP8KCModule::pep8Path(configGroup);
     QString arguments = PEP8KCModule::pep8Arguments(configGroup);
-    QFileInfo f(url);
-    bool error = false;
-    if ( url.isEmpty() || ! f.isExecutable() ) {
-        error = true;
-        return; // don't bother executing an invalid executable
-    }
-    // create a string that contains the command to call pep8 with the given arguments
-    QStringList commandArgs = (QStringList() << tempfile.fileName() << KShell::splitArgs(arguments));
-    QProcess process;
-    process.setProcessChannelMode(QProcess::MergedChannels);
-    // call the pep8 command
-    process.start(url, commandArgs);
-    process.waitForFinished(1000);
-    if ( process.state() != QProcess::NotRunning || ( process.exitCode() != 0 && process.exitCode() != 1 )  ) {
-        process.kill();
-        error = true;
-    }
-    else {
-        QByteArray data = process.readAll();
-        QList<QByteArray> errors = data.split('\n');
-        QRegExp errorFormat("(.*):(\\d*):(\\d*): (.*)", Qt::CaseInsensitive, QRegExp::RegExp2);
-        DUChainWriteLocker lock;
-        foreach ( const QByteArray& error, errors ) {
-            if ( errorFormat.exactMatch(error.data()) ) {
-                const QStringList texts = errorFormat.capturedTexts();
-                bool lineno_ok = false;
-                bool colno_ok = false;
-                int lineno = texts.at(2).toInt(&lineno_ok);
-                int colno = texts.at(3).toInt(&colno_ok);
-                if ( ! lineno_ok || ! colno_ok ) {
-                    qDebug() << "invalid line / col number:" << texts;
-                    continue;
-                }
-                QString error = texts.at(4);
-                KDevelop::Problem *p = new KDevelop::Problem();
-                p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
-                                                                        lineno - 1, colno + 4)));
-                p->setSource(KDevelop::IProblem::Preprocessor);
-                p->setSeverity(error.startsWith('W') ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
-                p->setDescription(i18n("PEP8 checker error: %1", error));
-                ProblemPointer ptr(p);
-                topContext->addProblem(ptr);
-            }
-            else {
-                qDebug() << "invalid pep8 error line:" << error;
-            }
-        }
-    }
-    if ( error ) {
-        DUChainWriteLocker lock;
-        KDevelop::Problem *p = new KDevelop::Problem();
-        p->setFinalLocation(DocumentRange(document, KTextEditor::Range(0, 0, 0, 0)));
-        p->setSource(KDevelop::IProblem::Preprocessor);
-        p->setSeverity(KDevelop::IProblem::Warning);
-        p->setDescription(i18n("The selected PEP8 syntax checker \"%1\" does not seem to work correctly.", url));
-        ProblemPointer ptr(p);
-        topContext->addProblem(ptr);
-    }
+
+    auto ls = static_cast<Python::LanguageSupport*>(languageSupport());
+    QMetaObject::invokeMethod(ls, "updateStyleChecking", Q_ARG(KDevelop::ReferencedTopDUContext, topContext));
 }
 
 }

@@ -55,8 +55,11 @@
 #include "pep8kcm/kcm_pep8.h"
 #include "projectconfig/projectconfigpage.h"
 #include "docfilekcm/kcm_docfiles.h"
+#include "pythonstylechecking.h"
+#include "helpers.h"
 
 #include <QDebug>
+#include <QProcess>
 #include "pythondebug.h"
 
 using namespace KDevelop;
@@ -85,6 +88,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     , KDevelop::ILanguageSupport()
     , m_highlighting( new Highlighting( this ) )
     , m_refactoring( new Refactoring( this ) )
+    , m_styleChecking( new StyleChecking( this ) )
 {
     m_self = this;
 
@@ -106,9 +110,14 @@ void LanguageSupport::documentOpened(IDocument* doc)
     }
 
     DUChainReadLocker lock;
-    TopDUContextPointer topContext = TopDUContextPointer(DUChain::self()->chainForDocument(doc->url()));
+    ReferencedTopDUContext top = DUChain::self()->chainForDocument(doc->url());
     lock.unlock();
-    ParseJob::eventuallyDoPEP8Checking(IndexedString(doc->url()), topContext.data());
+    updateStyleChecking(top);
+}
+
+void LanguageSupport::updateStyleChecking(KDevelop::ReferencedTopDUContext top)
+{
+    m_styleChecking->updateStyleChecking(top);
 }
 
 LanguageSupport::~LanguageSupport()
@@ -215,7 +224,6 @@ KDevelop::ConfigPage* LanguageSupport::perProjectConfigPage(int number, const KD
     }
     return nullptr;
 }
-
 
 }
 

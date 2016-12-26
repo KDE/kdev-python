@@ -225,6 +225,8 @@ public:
 
     static Declaration* declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
                                            DUChainPointer<const DUContext> context);
+
+    static QString getPythonExecutablePath(IProject* project);
 };
 
 }

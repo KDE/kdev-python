@@ -361,7 +361,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     return absolutePath;
 }
 
-QString getPythonExecutablePath(IProject* project)
+QString Helper::getPythonExecutablePath(IProject* project)
 {
     if ( project ) {
         auto interpreter = project->projectConfiguration()->group("pythonsupport").readEntry("interpreter");

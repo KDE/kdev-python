@@ -74,6 +74,7 @@ set(kdevpythonlanguagesupport_PART_SRCS
     pythonparsejob.cpp
     pythonhighlighting.cpp
     pythondebug.cpp
+    pythonstylechecking.cpp
 
     # config pages:
     docfilekcm/docfilewizard.cpp
@@ -104,5 +105,6 @@ include_directories(${DEFINESANDINCLUDES_INCLUDE_DIRS})
 
 install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
+install(FILES codestyle.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

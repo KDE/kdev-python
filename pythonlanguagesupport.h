@@ -24,7 +24,10 @@
 #include <interfaces/ilanguagecheck.h>
 #include <interfaces/ilanguagecheckprovider.h>
 #include <language/interfaces/ilanguagesupport.h>
-#include <QtCore/QVariant>
+#include <language/duchain/topducontext.h>
+
+#include <QVariant>
+#include <QProcess>
 
 namespace KDevelop
 {
@@ -38,6 +41,7 @@ namespace Python
 
 class Highlighting;
 class Refactoring;
+class StyleChecking;
 
 class LanguageSupport
     : public KDevelop::IPlugin
@@ -79,12 +83,14 @@ public:
     int perProjectConfigPages() const override;
     KDevelop::ConfigPage* perProjectConfigPage(int number, const KDevelop::ProjectConfigOptions& options, QWidget* parent) override;
 
-public slots:
+public Q_SLOTS:
     void documentOpened(KDevelop::IDocument*);
+    void updateStyleChecking(KDevelop::ReferencedTopDUContext top);
 
 private:
     Highlighting* m_highlighting;
-    Refactoring *m_refactoring;
+    Refactoring* m_refactoring;
+    StyleChecking* m_styleChecking;
     static LanguageSupport* m_self;
 };
 

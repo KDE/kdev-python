@@ -147,8 +147,9 @@ void StyleChecking::processOutputStarted()
         size -= d.size();
 
         auto ofs = -1;
-        while ( (ofs = buf.indexOf('\n', ofs+1)) != -1 ) {
-            errors.append(buf.left(ofs));
+        auto prev = ofs;
+        while ( prev = ofs, (ofs = buf.indexOf('\n', ofs+1)) != -1 ) {
+            errors.append(buf.mid(prev+1, ofs-prev));
         }
     }
     if ( !t.isActive() ) {

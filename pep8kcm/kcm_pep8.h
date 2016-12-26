@@ -29,6 +29,8 @@
 
 #include <interfaces/configpage.h>
 
+#include "ui_pep8.h"
+
 class PEP8KCModule : public KDevelop::ConfigPage
 {
 Q_OBJECT
@@ -44,18 +46,14 @@ public:
 
 
     // TODO: use KConfigXT instead (this will additionally allow removing apply/reset/defaults)
-    static QString pep8Path(const KConfigGroup& group);
     static bool isPep8Enabled(const KConfigGroup& group);
-    static QString pep8Arguments(const KConfigGroup& group);
 
     void apply() override;
     void reset() override;
     void defaults() override;
 private:
     KConfigGroup configGroup;
-    QLineEdit* pep8url;
-    QLineEdit* pep8arguments;
-    QCheckBox* enableChecking;
+    Ui_pep8 m_ui;
 };
 
 #endif

@@ -84,7 +84,11 @@ set(kdevpythonlanguagesupport_PART_SRCS
     projectconfig/projectconfigpage.cpp
 )
 
-ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS codegen/correctionwidget.ui projectconfig/projectconfig.ui)
+ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS
+    codegen/correctionwidget.ui
+    projectconfig/projectconfig.ui
+    pep8kcm/pep8.ui
+)
 
 kdevplatform_add_plugin(kdevpythonlanguagesupport JSON kdevpythonsupport.json SOURCES ${kdevpythonlanguagesupport_PART_SRCS})
 

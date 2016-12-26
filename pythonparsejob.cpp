@@ -285,11 +285,9 @@ void ParseJob::eventuallyDoPEP8Checking(TopDUContext* topContext)
 {
     KConfig config("kdevpythonsupportrc");
     KConfigGroup configGroup = config.group("pep8");
-    if ( ! PEP8KCModule::isPep8Enabled(configGroup) ) {
+    if ( !PEP8KCModule::isPep8Enabled(configGroup) ) {
         return;
     }
-    QString arguments = PEP8KCModule::pep8Arguments(configGroup);
-
     auto ls = static_cast<Python::LanguageSupport*>(languageSupport());
     QMetaObject::invokeMethod(ls, "updateStyleChecking", Q_ARG(KDevelop::ReferencedTopDUContext, topContext));
 }

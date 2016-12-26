@@ -25,6 +25,8 @@
 
 #include <QObject>
 #include <QProcess>
+#include <KConfig>
+#include <KConfigGroup>
 
 #include <language/duchain/topducontext.h>
 
@@ -53,6 +55,7 @@ private:
     QProcess m_checkerProcess;
     KDevelop::ReferencedTopDUContext m_currentlyChecking;
     QMutex m_mutex;
+    KConfigGroup m_pep8Group;
 };
 
 };

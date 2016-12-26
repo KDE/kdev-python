@@ -43,6 +43,8 @@ StyleChecking::StyleChecking(QObject* parent)
             [this]() {
                 qWarning() << "python code checker error:" << m_checkerProcess.readAllStandardError();
             });
+    auto config = KSharedConfig::openConfig("kdevpythonsupportrc");
+    m_pep8Group = config->group("pep8");
 }
 
 StyleChecking::~StyleChecking()
@@ -54,7 +56,7 @@ StyleChecking::~StyleChecking()
 }
 
 void StyleChecking::startChecker(const QString& text, const QString& select,
-                                                   const QString& ignore, const int maxLineLength)
+                                 const QString& ignore, const int maxLineLength)
 {
     // start up the server
     if ( m_checkerProcess.state() == QProcess::NotRunning ) {
@@ -83,6 +85,7 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
     header.append("\n");
     // size, always 10 bytes
     header.insert(0, QString::number(header.size() + data.size()).leftJustified(10));
+    qDebug() << "writing header:" << header;
     m_checkerProcess.write(header);
     m_checkerProcess.write(data);
 }
@@ -175,7 +178,11 @@ void StyleChecking::updateStyleChecking(const KDevelop::ReferencedTopDUContext& 
         return;
     }
     m_currentlyChecking = top;
-    startChecker(text);
+
+    auto select = m_pep8Group.readEntry<QString>("enableErrors", "");
+    auto ignore = m_pep8Group.readEntry<QString>("disableErrors", "");
+    auto maxLineLength = m_pep8Group.readEntry<int>("maxLineLength", 80);
+    startChecker(text, select, ignore, maxLineLength);
 }
 
 void StyleChecking::addSetupErrorToContext(const QString& error)

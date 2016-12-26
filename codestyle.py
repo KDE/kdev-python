@@ -23,9 +23,12 @@ while True:
     if Checker is not None:
         style_guide = StyleGuide()
         options = style_guide.options
-        options.select = tuple(opts[0].strip().split(','))
-        options.ignore = tuple(opts[1].strip().split(','))
+        select = [x for x in opts[0].strip().split(',') if len(x) > 0]
+        ignore = [x for x in opts[1].strip().split(',') if len(x) > 0]
+        options.select = tuple(select)
+        options.ignore = tuple(ignore)
         options.max_line_length = int(opts[2])
+        stderr.flush()
         c = Checker(lines=text, options=options)
         output = StringIO()
         with redirect_stdout(output):

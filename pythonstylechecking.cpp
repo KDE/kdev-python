@@ -85,7 +85,6 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
     header.append("\n");
     // size, always 10 bytes
     header.insert(0, QString::number(header.size() + data.size()).leftJustified(10));
-    qDebug() << "writing header:" << header;
     m_checkerProcess.write(header);
     m_checkerProcess.write(data);
 }
@@ -179,6 +178,8 @@ void StyleChecking::updateStyleChecking(const KDevelop::ReferencedTopDUContext& 
     }
     m_currentlyChecking = top;
 
+    // default empty is ok, it will never be used, because the config has to be written at least once
+    // to even enable this feature.
     auto select = m_pep8Group.readEntry<QString>("enableErrors", "");
     auto ignore = m_pep8Group.readEntry<QString>("disableErrors", "");
     auto maxLineLength = m_pep8Group.readEntry<int>("maxLineLength", 80);

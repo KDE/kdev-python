@@ -23,6 +23,12 @@
 #include <KSharedConfig>
 #include <QDebug>
 
+namespace {
+    QString pep8DefaultIgnoreErrors() {
+        return QStringLiteral("E121,E123,E126,E226,E24,E704,W503");
+    }
+}
+
 PEP8KCModule::PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent)
     : KDevelop::ConfigPage(plugin, nullptr, parent)
 {
@@ -52,7 +58,7 @@ bool PEP8KCModule::isPep8Enabled(const KConfigGroup& group)
 void PEP8KCModule::reset()
 {
     m_ui.enableErrors->setText(configGroup.readEntry("enableErrors", QString()));
-    m_ui.disableErrors->setText(configGroup.readEntry("disableErrors", QString()));
+    m_ui.disableErrors->setText(configGroup.readEntry("disableErrors", pep8DefaultIgnoreErrors()));
     m_ui.maxLineLength->setValue(configGroup.readEntry("maxLineLength", 80));
     m_ui.enableChecking->setChecked(configGroup.readEntry("pep8enabled", false));
 }
@@ -60,7 +66,7 @@ void PEP8KCModule::reset()
 void PEP8KCModule::defaults()
 {
     m_ui.enableErrors->setText("");
-    m_ui.disableErrors->setText("");
+    m_ui.disableErrors->setText(pep8DefaultIgnoreErrors());
     m_ui.maxLineLength->setValue(80);
     m_ui.enableChecking->setChecked(false);
 }

@@ -855,6 +855,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "str";
     QTest::newRow("tuple2_negative_index") << "foo = (1, 2, 'foo')\ncheckme = foo[-1]" << "str";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
+    QTest::newRow("tuple_rhs_unpack") << "foo = 1, 2.5\nbar = 1, *foo, 2\ncheckme = bar[2]" << "float";
     
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
     QTest::newRow("enumerate_key") << "d = [str(), str()]\nfor checkme, value in enumerate(d): pass" << "int";

@@ -478,11 +478,15 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
         foreach ( ExpressionAst* expr, node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
-            if ( v.lastType() ) {
+            if ( expr->astType == Ast::StarredAstType ) {
+                // foo = a, *b, c
+                if ( auto unpackedType = v.lastType().cast<IndexedContainer>() ) {
+                    for ( int ii = 0; ii < unpackedType->typesCount(); ++ii ) {
+                        type->addEntry(unpackedType->typeAt(ii).abstractType());
+                    }
+                } // Unpacking something else, do nothing (i.e. assume it was empty).
+            } else {
                 type->addEntry(v.lastType());
-            }
-            else {
-                type->addEntry(AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed)));
             }
         }
         encounter(AbstractType::Ptr::staticCast(type));

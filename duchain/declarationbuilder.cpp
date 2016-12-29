@@ -1059,10 +1059,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     lock.unlock();
     DUChainWriteLocker wlock;
     foreach ( KeywordAst* keyword, node->keywords ) {
-        if ( ! keyword->argumentName ) {
-            // 'keyword is actually an unpacked dict: `foo(**{'a': 12}). Not handled currently.
-            continue;
-        }
         wlock.unlock();
         ExpressionVisitor argumentVisitor(currentContext());
         argumentVisitor.visitNode(keyword->value);
@@ -1070,21 +1066,33 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             continue;
         }
         wlock.lock();
-        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
-        openType(addType);
-        addType->setType(argumentVisitor.lastType());
-        addType->setCreatedBy(topContext(), m_futureModificationRevision);
-        closeType();
         bool matchedNamedParam = false;
-        for (int ip = currentParamIndex; ip < paramsAvailable; ++ip ) {
-            if ( parameters.at(ip)->identifier().toString() != keyword->argumentName->value ) {
-                continue;
+        HintedType::Ptr addType = HintedType::Ptr(new HintedType());
+        if ( keyword->argumentName ) {
+            openType(addType);
+            addType->setType(argumentVisitor.lastType());
+            addType->setCreatedBy(topContext(), m_futureModificationRevision);
+            closeType();
+            for (int ip = currentParamIndex; ip < paramsAvailable; ++ip ) {
+                if ( parameters.at(ip)->identifier().toString() != keyword->argumentName->value ) {
+                    continue;
+                }
+                matchedNamedParam = true;
+                auto newType = Helper::mergeTypes(parameters.at(ip)->abstractType(), addType);
+                functionType->removeArgument(ip);
+                functionType->addArgument(newType, ip);
+                parameters.at(ip)->setType(newType);
             }
-            matchedNamedParam = true;
-            auto newType = Helper::mergeTypes(parameters.at(ip)->abstractType(), addType);
-            functionType->removeArgument(ip);
-            functionType->addArgument(newType, ip);
-            parameters.at(ip)->setType(newType);
+        }
+        else if ( auto unpackedDict = argumentVisitor.lastType().cast<MapType>() ) {
+            // 'keyword is actually an unpacked dict: `foo(**{'a': 12}).
+            openType(addType);
+            addType->setType(unpackedDict->contentType().abstractType());
+            addType->setCreatedBy(topContext(), m_futureModificationRevision);
+            closeType();
+        }
+        else { // Maybe the dict type wasn't loaded yet, or something else happened.
+            continue;
         }
         if ( ! matchedNamedParam && kwargsDict ) {
             kwargsDict->addContentType<Python::UnsureType>(addType);

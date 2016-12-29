@@ -533,13 +533,19 @@ void ExpressionVisitor::visitDict(DictAst* node)
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
     if ( type ) {
-        foreach ( ExpressionAst* content, node->values ) {
-            contentVisitor.visitNode(content);
-            type->addContentType<Python::UnsureType>(contentVisitor.lastType());
-        }
-        foreach ( ExpressionAst* key, node->keys ) {
-            keyVisitor.visitNode(key);
-            type->addKeyType<Python::UnsureType>(keyVisitor.lastType());
+        Q_ASSERT(node->keys.length() == node->values.length());
+        for ( int ii = 0; ii < node->values.length(); ++ii ) {
+            contentVisitor.visitNode(node->values.at(ii));
+            if ( node->keys.at(ii) ) {
+                type->addContentType<Python::UnsureType>(contentVisitor.lastType());
+                keyVisitor.visitNode(node->keys.at(ii));
+                type->addKeyType<Python::UnsureType>(keyVisitor.lastType());
+            }
+            else if ( auto unpackedType = contentVisitor.lastType().cast<MapType>() ) {
+                // Key is null for `{**foo}`
+                type->addContentType<Python::UnsureType>(unpackedType->contentType().abstractType());
+                type->addKeyType<Python::UnsureType>(unpackedType->keyType().abstractType());
+            }
         }
     }
     encounter(AbstractType::Ptr::staticCast(type));

@@ -536,7 +536,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT DictAst : public ExpressionAst {
 public:
     DictAst(Ast* parent);
-    QList<ExpressionAst*> keys;
+    QList<ExpressionAst*> keys; // WARNING: Can contain null elements: `{**other}`
     QList<ExpressionAst*> values;
 };
 

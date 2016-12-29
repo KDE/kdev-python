@@ -39,11 +39,6 @@ private:
         if ( ! node ) return nodelist;
         for ( int i=0; i < node->size; i++ ) {
             T* currentNode = static_cast<T*>(node->elements[i]);
-            if ( ! currentNode ) {
-                // can happen in some obscure cases, e.g. a = {**{3:5 for x in range(3)}} (dict->key is null)
-                qWarning() << "warning: null child node on" << node;
-                continue;
-            }
             Ast* result = visitNode(currentNode);
             K* transformedNode = static_cast<K*>(result);
             nodelist.append(transformedNode);

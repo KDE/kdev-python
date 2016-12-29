@@ -395,7 +395,13 @@ void ExpressionVisitor::visitList(ListAst* node)
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
             contentVisitor.visitNode(content);
-            type->addContentType<Python::UnsureType>(contentVisitor.lastType());
+            if ( content->astType == Ast::StarredAstType ) {
+                auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());
+                type->addContentType<Python::UnsureType>(contentType);
+            }
+            else {
+                type->addContentType<Python::UnsureType>(contentVisitor.lastType());
+            }
         }
     }
     else {
@@ -519,7 +525,13 @@ void ExpressionVisitor::visitSet(SetAst* node)
     if ( type ) {
         foreach ( ExpressionAst* content, node->elements ) {
             contentVisitor.visitNode(content);
-            type->addContentType<Python::UnsureType>(contentVisitor.lastType());
+            if ( content->astType == Ast::StarredAstType ) {
+                auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());
+                type->addContentType<Python::UnsureType>(contentType);
+            }
+            else {
+                type->addContentType<Python::UnsureType>(contentVisitor.lastType());
+            }
         }
     }
     encounter(AbstractType::Ptr::staticCast(type));

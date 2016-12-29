@@ -1260,7 +1260,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
 void DeclarationBuilder::tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
     if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
         int spare = indexed->typesCount() - outTypes.length();
-        if ( spare < -1 or (starred == -1 and spare != 0) ) {
+        if ( spare < -1 || (starred == -1 && spare != 0) ) {
             return; // Wrong number of elements to unpack.
         }
         for ( int i_out = 0, i_in = 0; i_out < outTypes.length(); ++i_out ) {

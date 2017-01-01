@@ -319,10 +319,6 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
         if (DUChainUtils::getArgumentContext(dec))
             parameters = DUChainUtils::getArgumentContext(dec)->localDeclarations();
 
-        uint defaultParamNum = 0;
-
-        int firstDefaultParam = parameters.count() - decl->defaultParametersSize();
-
         ret = '(';
         bool first = true;
         int num = 0;
@@ -332,7 +328,10 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
             // the function is a class method, and its first argument is "self". Don't display that.
             skipFirst = true;
         }
-        
+
+        uint defaultParamNum = 0;
+        int firstDefaultParam = parameters.count() - decl->defaultParametersSize() - skipFirst;
+
         // disable highlighting when in default arguments, it doesn't make much sense then
         bool disableHighlighting = false;
         

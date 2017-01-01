@@ -212,6 +212,9 @@ class str():
         pass
     def __mod__(self, modulo):
         return str()
+    def __getitem__(self): return ""
+    def __iter__(self): return self
+    def __next__(self): return ""
     def replace(self,before, after): return ""
     def capitalize(self,): return ""
     def center(self,width, fillchar = None): return ""
@@ -382,6 +385,9 @@ class tuple():
 class bytes:
     def __init__(self, data):
         pass
+    def __getitem__(self, key): return int()
+    def __iter__(self): return self
+    def __next__(self): return int()
     def capitalize(self): return bytes()
     def center(self): return bytes()
     def count(self): return int()

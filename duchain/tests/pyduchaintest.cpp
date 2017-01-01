@@ -868,6 +868,11 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
 
+    QTest::newRow("str_iter") << "checkme = [char for char in 'Hello, world!']" << "list of str";
+    QTest::newRow("str_subscript") << "checkme = 'Hello, world!'[0]" << "str";
+    QTest::newRow("bytes_iter") << "checkme = [byte for byte in b'Hello, world!']" << "list of int";
+    QTest::newRow("bytes_subscript") << "checkme = b'Hello, world!'[0]" << "int";
+
     QTest::newRow("fromAssertIsinstance") << "class c(): pass\ncheckme = mixed()\nassert isinstance(checkme, c)\n" << "c";
     QTest::newRow("fromAssertIsinstanceInvalid") << "class c(): pass\ncheckme = mixed()\nassert isinstance(c, checkme)\n" << "mixed";
     QTest::newRow("fromAssertIsinstanceInvalid2") << "class c(): pass\ncheckme = mixed()\nassert isinstance(D, c)\n" << "mixed";

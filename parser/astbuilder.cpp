@@ -25,6 +25,7 @@
 #include <QStringList>
 #include <QStack>
 #include <QMutexLocker>
+#include <QRegularExpression>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>
 #include <language/duchain/duchain.h>
@@ -48,22 +49,6 @@ extern grammar _PyParser_Grammar;
 
 namespace Python
 {
-
-// Update the "end" cursors of all nodes in the given tree.
-class RangeUpdateVisitor : public AstDefaultVisitor {
-public:
-    void visitNode(Ast* node) override {
-        AstDefaultVisitor::visitNode(node);
-        if ( node && node->parent && node->parent->astType != Ast::AttributeAstType ) {
-            if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
-                 || node->parent->endLine < node->endLine )
-            {
-                node->parent->endLine = node->endLine;
-                node->parent->endCol = node->endCol;
-            }
-        }
-    };
-};
 
 class NextAstFindVisitor : public AstDefaultVisitor {
 public:
@@ -114,10 +99,24 @@ class RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents)
         : lines(contents.split('\n')) { };
+
+    void visitNode(Ast* node) override {
+        AstDefaultVisitor::visitNode(node);
+        if ( node && node->parent && node->parent->astType != Ast::AttributeAstType ) {
+            if ( ( node->parent->endLine <= node->endLine && node->parent->endCol <= node->endCol )
+                 || node->parent->endLine < node->endLine )
+            {
+                node->parent->endLine = node->endLine;
+                node->parent->endCol = node->endCol;
+            }
+        }
+    };
+
     void visitFunctionDefinition(FunctionDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, node->async ? "asyncdef" : "def");
         AstDefaultVisitor::visitFunctionDefinition(node);
     };
+
     void visitClassDefinition(ClassDefinitionAst* node) override {
         cutDefinitionPreamble(node->name, "class");
         AstDefaultVisitor::visitClassDefinition(node);
@@ -225,31 +224,62 @@ public:
         node->name->endCol = end;
     }
 
-    void visitString(Python::StringAst * node) override {
-        findString.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
-        if ( findString.matchedLength() > 0 ) {
-            node->endCol += findString.matchedLength();
+    void visitString(Python::StringAst* node) override {
+        AstDefaultVisitor::visitString(node);
+        auto match = findString.match(lines.at(node->startLine), node->startCol);
+        if ( match.capturedLength() > 0 ) {
+            node->endCol += match.capturedLength() - 1; // Ranges are inclusive.
+        }
+    }
+    void visitBytes(Python::BytesAst* node) override {
+        AstDefaultVisitor::visitBytes(node);
+        auto match = findString.match(lines.at(node->startLine), node->startCol + 1);
+        if ( match.capturedLength() > 0 ) {
+            node->endCol += match.capturedLength(); // -1 then +1, because of the 'b'.
+        }
+    }
+    void visitFormattedValue(Python::FormattedValueAst * node) override {
+        AstDefaultVisitor::visitFormattedValue(node);
+        auto match = findString.match(lines.at(node->startLine), node->startCol + 1);
+        if ( match.capturedLength() > 0 ) {
+            node->endCol += match.capturedLength();
         }
     }
 
-    void visitNumber(Python::NumberAst * node) override {
-        findNumber.indexIn(lines.at(node->startLine), node->startCol, QRegExp::CaretAtOffset);
-        if ( findNumber.matchedLength() > 0 ) {
-            node->endCol += findNumber.matchedLength();
+    void visitNumber(Python::NumberAst* node) override {
+        AstDefaultVisitor::visitNumber(node);
+        auto match = findNumber.match(lines.at(node->startLine), node->startCol);
+        if ( match.capturedLength() > 0 ) {
+            node->endCol += match.capturedLength() - 1; // Ranges are inclusive.
         }
     }
 
-    void visitSubscript(Python::SubscriptAst * node) override {
+    // Add one column after the last child to cover the closing bracket: `[1,2,3]`
+    // TODO This is still wrong if the last child is followed by parens or whitespace.
+    // endCol matters most in single-line expressions, so this isn't a huge problem.
+    void visitSubscript(Python::SubscriptAst* node) override {
         AstDefaultVisitor::visitSubscript(node);
-        node->endCol = node->slice->endCol + 1; // Closing bracket (unless spaces...)
+        node->endCol++;
+    }
+    void visitComprehension(Python::ComprehensionAst* node) override {
+        AstDefaultVisitor::visitComprehension(node);
+        node->endCol++;
+    }
+    void visitList(Python::ListAst* node) override {
+        AstDefaultVisitor::visitList(node);
+        node->endCol++;
+    }
+    void visitTuple(Python::TupleAst* node) override {
+        AstDefaultVisitor::visitTuple(node);
+        node->endCol++;
     }
 
 private:
     const QStringList lines;
     QVector<KTextEditor::Cursor> dots;
     KTextEditor::Cursor attributeStart;
-    static const QRegExp findString;
-    static const QRegExp findNumber;
+    static const QRegularExpression findString;
+    static const QRegularExpression findNumber;
 
     // skip the decorators and the "def" at the beginning
     // of a class or function declaration and modify @arg node
@@ -417,11 +447,11 @@ private:
         return 0;
     };
 };
-// FIXME This only works for single-quoted (and oneline) strings.
-//  (otherwise it gives length 0 or 2, which is no worse than before).
-const QRegExp RangeFixVisitor::findString = QRegExp("^(?:\".*[^\\\\]\"|'.*[^\\\\]')");
+// FIXME This doesn't work for triple-quoted strings
+//  (it gives length 2, which is no worse than before).
+const QRegularExpression RangeFixVisitor::findString = QRegularExpression("\\G(['\"]).*?(?<!\\\\)\\g1");
 // Looser than the real spec, but since we know there *is* a valid number it finds the end ok.
-const QRegExp RangeFixVisitor::findNumber = QRegExp("^(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
+const QRegularExpression RangeFixVisitor::findNumber = QRegularExpression("\\G(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
 
 #include "generated.h"
 
@@ -722,12 +752,9 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 
     PythonAstTransformer t(lineOffset);
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
-    
+
     RangeFixVisitor fixVisitor(contents);
     fixVisitor.visitNode(t.ast);
-    
-    RangeUpdateVisitor updateVisitor;
-    updateVisitor.visitNode(t.ast);
 
     cythonSyntaxRemover.fixAstRanges(t.ast);
 

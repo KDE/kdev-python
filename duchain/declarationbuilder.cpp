@@ -910,20 +910,10 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         }
         ExpressionVisitor argVisitor(currentContext());
         argVisitor.visitNode(node->arguments.at(offset));
-        DUChainWriteLocker wlock;
-        if ( ! argVisitor.lastType() ) {
-            return;
-        }
-        auto sources = Helper::filterType<ListType>(
-            argVisitor.lastType(), [](AbstractType::Ptr type) {
-                return type.cast<ListType>();
-            }
-        );
-        for ( auto sourceContainer : sources ) {
-            if ( ! sourceContainer->contentType() ) {
-                continue;
-            }
-            container->addContentType<Python::UnsureType>(sourceContainer->contentType().abstractType());
+        if ( argVisitor.lastType() ) {
+            DUChainWriteLocker wlock;
+            auto contentType = Helper::contentOfIterable(argVisitor.lastType(), topContext());
+            container->addContentType<Python::UnsureType>(contentType);
             v.lastDeclaration()->setType(container);
         }
     };

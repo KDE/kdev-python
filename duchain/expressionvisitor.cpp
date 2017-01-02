@@ -278,22 +278,23 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         if ( ! v.lastType() ) {
             return false;
         }
-        ListType::Ptr realTarget;
-        if ( auto target = ListType::Ptr::dynamicCast(normalType) ) {
-            realTarget = target;
+        AbstractType::Ptr newType;
+        if ( auto targetContainer = ListType::Ptr::dynamicCast(normalType) ) {
+            // Copy the return type, to set contents for this call only.
+            docstringType = AbstractType::Ptr(targetContainer->clone());
+            // Add content type of the source.
+            auto sourceContentType = Helper::contentOfIterable(v.lastType(), topContext());
+            ListType::Ptr::staticCast(docstringType)->addContentType<Python::UnsureType>(sourceContentType);
         }
-        if ( auto source = ListType::Ptr::dynamicCast(v.lastType()) ) {
-            if ( ! realTarget ) {
-                // if the function does not force a return type, just copy the source (like for reversed())
-                realTarget = source;
-            }
-            auto newType = ListType::Ptr::staticCast(AbstractType::Ptr(realTarget->clone()));
-            Q_ASSERT(newType);
-            newType->addContentType<Python::UnsureType>(source->contentType().abstractType());
-            docstringType = AbstractType::Ptr::staticCast(newType);
-            return true;
+        else if ( auto sourceContainer = ListType::Ptr::dynamicCast(v.lastType()) ) {
+            // if the function does not force a return type, just copy the source (like for reversed())
+            docstringType = AbstractType::Ptr(sourceContainer->clone());
         }
-        return false;
+        else {
+            return false; // No target container type
+        }
+        Q_ASSERT(docstringType);
+        return true;
     };
 
     foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {

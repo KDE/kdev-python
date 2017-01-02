@@ -1470,6 +1470,8 @@ void PyDUChainTest::testContainerTypes()
     }
     else {
         QVERIFY(decls.first()->abstractType());
+        QEXPECT_FAIL("dict_of_int_call", "returnContentEqualsContentOf isn't suitable", Continue);
+        QEXPECT_FAIL("dict_from_tuples", "returnContentEqualsContentOf isn't suitable", Continue);
         QCOMPARE(decls.first()->abstractType()->toString(), contenttype);
     }
 }
@@ -1483,25 +1485,40 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("list_of_int") << "checkme = [1, 2, 3]" << "int" << false;
     QTest::newRow("list_from_unpacked") << "foo = [1.3]\ncheckme = [1, *foo, 3]" << "unsure (int, float)" << false;
     QTest::newRow("list_of_int_call") << "checkme = list([1, 2, 3])" << "int" << false;
+    QTest::newRow("list_from_tuple") << "checkme = list((1, 2, 3))" << "int" << false;
+    QTest::newRow("list_from_dict") << "checkme = list({'a':1, 'b':2})" << "str" << false; // Gets key type!
+    QTest::newRow("list_from_custom_iter") <<
+        "class MyClass:\n"
+        "    def __iter__(self): return self\n"
+        "    def __next__(self): return 3.1417\n"
+        "checkme = list(MyClass())" << "float" << false;
     QTest::newRow("generator") << "checkme = [i for i in [1, 2, 3]]" << "int" << false;
     QTest::newRow("list_access") << "list = [1, 2, 3]\ncheckme = list[0]" << "int" << true;
     QTest::newRow("set_of_int") << "checkme = {1, 2, 3}" << "int" << false;
     QTest::newRow("set_from_unpacked") << "foo = [1.3]\ncheckme = {1, *foo, 3}" << "unsure (int, float)" << false;
     QTest::newRow("set_of_int_call") << "checkme = set({1, 2, 3})" << "int" << false;
+    QTest::newRow("set_from_tuple") << "checkme = set((1, 2, 3))" << "int" << false;
     QTest::newRow("set_generator") << "checkme = {i for i in [1, 2, 3]}" << "int" << false;
-    QTest::newRow("dict_of_int") << "checkme = {a:1, b:2, c:3}" << "int" << false;
+    QTest::newRow("dict_of_int") << "checkme = {'a':1, 'b':2, 'c':3}" << "dict of str : int" << true;
     QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
     QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<
                                          "dict of unsure (str, int) : unsure (int, float)" << true;
-    QTest::newRow("dict_of_int_call") << "checkme = dict({a:1, b:2, c:3})" << "int" << false;
+    QTest::newRow("dict_of_int_call") << "checkme = dict({'a':1, 'b':2, 'c':3})" << "dict of str : int" << true;
+    QTest::newRow("dict_from_tuples") << "checkme = dict([('a', 1), ('b', 2)])" << "dict of str : int" << true;
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
-    QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
+    QTest::newRow("dict_access") << "list = {'a':1, 'b':2, 'c':3}\ncheckme = list[0]" << "int" << true;
     QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "str" << false;
     QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "str" << false;
     QTest::newRow("cannot_change_type2") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "str" << false;
-    
+
     QTest::newRow("list_append") << "d = []\nd.append(3)\ncheckme = d[0]" << "int" << true;
     QTest::newRow("list_extend") << "d = []; q = [int()]\nd.extend(q)\ncheckme = d[0]" << "int" << true;
+    QTest::newRow("list_extend_with_tuple") << "d = []; q = (1, 2)\nd.extend(q)\ncheckme = d[0]" << "int" << true;
+    QTest::newRow("list_extend_with_custom_iter") <<
+        "class MyClass:\n"
+        "    def __iter__(self): return self\n"
+        "    def __next__(self): return 3.1417\n"
+        "checkme = []\ncheckme.extend(MyClass())" << "float" << false;
 
     QTest::newRow("for_loop") << "d = [3]\nfor item in d:\n checkme = item" << "int" << true;
     QTest::newRow("for_loop_unsure") << "d = [3, \"foo\"]\nfor item in d:\n checkme = item" << "unsure (int, str)" << true;

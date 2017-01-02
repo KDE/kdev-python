@@ -425,6 +425,16 @@ void PyDUChainTest::testCrashes_data() {
         "    return MyClass()\n"
         "foo([0]).bar()";
     QTest::newRow("unpacked_dict_kwarg") << "def foo(arg): pass\nfoo(**{'arg': 2})";
+    QTest::newRow("negative_container_hints") <<
+        "class Evil:\n"
+        "   def aa(self, arg):\n"
+        "      \"\"\"! addsTypeOfArgContent ! -1\"\"\"\n"
+        "   def bb(self, arg):\n"
+        "      \"\"\"! addsTypeOfArg ! -2\"\"\"\n"
+        "   def cc(self, arg):\n"
+        "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
+        "e = Evil()\n"
+        "z = [e.aa(1), e.bb(2), e.cc(3)]";
 }
 
 void PyDUChainTest::testClassVariables()

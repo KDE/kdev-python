@@ -887,7 +887,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     QStringList args;
     QHash< QString, std::function<void()> > items;
     items["addsTypeOfArg"] = [&]() {
-        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
         }
@@ -904,7 +904,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         v.lastDeclaration()->setType(container);
     };
     items["addsTypeOfArgContent"] = [&]() {
-        const int offset = ! args.isEmpty() ? args.at(0).toInt() : 0;
+        const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
         }

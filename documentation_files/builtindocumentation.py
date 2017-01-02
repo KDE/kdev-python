@@ -429,7 +429,7 @@ class bytes:
 
 class set():
     """! TypeContainer !"""
-    def __init__(self, objects):
+    def __init__(self, iterable):
         """! returnContentEqualsContentOf ! 0"""
         pass
     def len(self): return 0
@@ -450,6 +450,21 @@ class set():
     def discard(self, elem): pass
     def pop(self): pass
     def clear(self): pass
+
+class frozenset():
+    """! TypeContainer !"""
+    def __init__(self, iterable):
+        """! returnContentEqualsContentOf ! 0"""
+        pass
+    def len(self): return 0
+    def isdisjoint(self, other): return True
+    def issubset(self, other): return True
+    def issuperset(self, other): return True
+    def union(self, other, *others): return set()
+    def intersection(self, other, *others): return set()
+    def difference(self, other, *others): return set()
+    def symmetric_difference(self, other): return set()
+    def copy(self): return set()
 
 def abs(x):
     """ Return the absolute value of a number. The argument may be a plain or long integer or a floating point number. If the argument is a complex number, its magnitude is returned."""
@@ -515,9 +530,6 @@ def float(x = 0):
 def format(value, format_spec = None):
     """Convert a value to a “formatted” representation, as controlled by format_spec."""
     return ""
-def frozenset(iterable = None):
-    """Return a new frozenset object, optionally with elements taken from iterable."""
-    return set()
 def getattr(obj, name, default = None):
     """Return the value of the named attribute of object. name must be a string."""
     return None

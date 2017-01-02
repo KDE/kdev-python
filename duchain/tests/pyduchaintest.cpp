@@ -1489,6 +1489,7 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("set_from_unpacked") << "foo = [1.3]\ncheckme = {1, *foo, 3}" << "unsure (int, float)" << false;
     QTest::newRow("set_of_int_call") << "checkme = set({1, 2, 3})" << "int" << false;
     QTest::newRow("set_generator") << "checkme = {i for i in [1, 2, 3]}" << "int" << false;
+    QTest::newRow("frozenset_of_int_call") << "checkme = frozenset({1, 2, 3})" << "int" << false;
     QTest::newRow("dict_of_int") << "checkme = {a:1, b:2, c:3}" << "int" << false;
     QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
     QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<

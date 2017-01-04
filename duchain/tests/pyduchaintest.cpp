@@ -418,6 +418,8 @@ void PyDUChainTest::testCrashes_data() {
 
     QTest::newRow("list_extend_missing") << "foo = []\nfoo.extend(missing)";
     QTest::newRow("list_extend_missing_arg") << "foo = []\nfoo.extend()";
+    QTest::newRow("comprehension_in_fstring") <<
+        "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
 }
 
 void PyDUChainTest::testClassVariables()

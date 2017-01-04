@@ -435,6 +435,8 @@ void PyDUChainTest::testCrashes_data() {
         "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
         "e = Evil()\n"
         "z = [e.aa(1), e.bb(2), e.cc(3)]";
+    QTest::newRow("comprehension_in_fstring") <<
+        "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
 }
 
 void PyDUChainTest::testClassVariables()

@@ -86,6 +86,7 @@ protected:
     void visitClassDefinition(ClassDefinitionAst* node) override;
     void visitFunctionDefinition(FunctionDefinitionAst* node) override;
     void visitAssignment(AssignmentAst* node) override;
+    void visitAnnotationAssignment(AnnotationAssignmentAst* node) override;
     void visitFor(ForAst* node) override;
     void visitImport(ImportAst* node) override;
     void visitImportFrom(ImportFromAst* node) override;

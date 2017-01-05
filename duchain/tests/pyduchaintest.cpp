@@ -799,7 +799,9 @@ void PyDUChainTest::testTypes_data()
 {
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("expectedType");
-    
+
+    QTest::newRow("annotate_decl") << "checkme: int" << "int";
+    QTest::newRow("annotate_assign") << "checkme: int = 3.5" << "unsure (float, int)";
     QTest::newRow("listtype") << "checkme = []" << "list";
     QTest::newRow("listtype_func") << "checkme = list()" << "list";
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";

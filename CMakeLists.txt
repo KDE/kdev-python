@@ -1,4 +1,6 @@
-PROJECT(kdevpython)
+cmake_minimum_required(VERSION 2.8.12)
+
+project(kdevpython)
 
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 5)
@@ -12,8 +14,6 @@ find_package(ECM 0.0.9 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 set(REQUIRED QT_VERSION 5.2.0)
-
-cmake_minimum_required(VERSION 2.8.12)
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(GenerateExportHeader)

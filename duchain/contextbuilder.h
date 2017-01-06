@@ -184,7 +184,7 @@ protected:
     // those functions can be used if you want to do something to a context you are in,
     // but which is not the current one. Example: You want to add a variable to a class context,
     // but the current context is inside that class context (method declaration, ...)
-    bool contextAlreayOpen(DUContextPointer context);
+    bool contextAlreadyOpen(DUContextPointer context);
     void activateAlreadyOpenedContext(DUContextPointer context);
     void closeAlreadyOpenedContext(DUContextPointer context);
     QList<DUContextPointer> m_temporarilyClosedContexts;

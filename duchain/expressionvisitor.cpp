@@ -267,7 +267,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
     };
 
     knownDecoratorHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
-        int argNum = ! arguments.isEmpty() ? arguments.at(0).toInt() : 0;
+        const int argNum = ! arguments.isEmpty() ? (int) arguments.at(0).toUInt() : 0;
         qCDebug(KDEV_PYTHON_DUCHAIN) << "Found argument dependent decorator, checking argument type" << argNum;
         if ( argNum >= node->arguments.length() ) {
             return false;

@@ -425,6 +425,18 @@ void PyDUChainTest::testCrashes_data() {
         "    return MyClass()\n"
         "foo([0]).bar()";
     QTest::newRow("unpacked_dict_kwarg") << "def foo(arg): pass\nfoo(**{'arg': 2})";
+    QTest::newRow("negative_container_hints") <<
+        "class Evil:\n"
+        "   def aa(self, arg):\n"
+        "      \"\"\"! addsTypeOfArgContent ! -1\"\"\"\n"
+        "   def bb(self, arg):\n"
+        "      \"\"\"! addsTypeOfArg ! -2\"\"\"\n"
+        "   def cc(self, arg):\n"
+        "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
+        "e = Evil()\n"
+        "z = [e.aa(1), e.bb(2), e.cc(3)]";
+    QTest::newRow("comprehension_in_fstring") <<
+        "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -1499,7 +1511,9 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("set_of_int_call") << "checkme = set({1, 2, 3})" << "int" << false;
     QTest::newRow("set_from_tuple") << "checkme = set((1, 2, 3))" << "int" << false;
     QTest::newRow("set_generator") << "checkme = {i for i in [1, 2, 3]}" << "int" << false;
-    QTest::newRow("dict_of_int") << "checkme = {'a':1, 'b':2, 'c':3}" << "dict of str : int" << true;
+    QTest::newRow("dict_of_str_int") << "checkme = {'a':1, 'b':2, 'c':3}" << "dict of str : int" << true;
+    QTest::newRow("frozenset_of_int_call") << "checkme = frozenset({1, 2, 3})" << "int" << false;
+    QTest::newRow("dict_of_int") << "checkme = {a:1, b:2, c:3}" << "int" << false;
     QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
     QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<
                                          "dict of unsure (str, int) : unsure (int, float)" << true;

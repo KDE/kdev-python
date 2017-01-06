@@ -49,9 +49,11 @@ void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
-    foreach (Ast* value, node->values) {
-        visitNode(value);
-    }
+//TODO: Fix range/context/??? bugs, then re-enable this.
+    Q_UNUSED(node);
+//     foreach (Ast* value, node->values) {
+//         visitNode(value);
+//     }
 }
 
 void AstDefaultVisitor::visitFormattedValue(FormattedValueAst* node) {

@@ -189,9 +189,9 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return resultingType;
     };
 
-    QHash< QString, std::function<bool(QStringList, QString)> > knownDecoratorHints;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "Got function declaration with decorators, checking for list content type...";
-    knownDecoratorHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+    QHash< QString, std::function<bool(QStringList, QString)> > knownDocstringHints;
+    qCDebug(KDEV_PYTHON_DUCHAIN) << "Got function declaration with docstring hint, checking for type...";
+    knownDocstringHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -206,7 +206,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return false;
     };
 
-    knownDecoratorHints["getsList"] = [&](QStringList /*arguments*/, QString currentHint) {
+    knownDocstringHints["getsList"] = [&](QStringList /*arguments*/, QString currentHint) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -233,9 +233,9 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         }
         return false;
     };
-    knownDecoratorHints["getListOfKeys"] = knownDecoratorHints["getsList"];
+    knownDocstringHints["getListOfKeys"] = knownDocstringHints["getsList"];
 
-    knownDecoratorHints["enumerate"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+    knownDocstringHints["enumerate"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::NameAstType || node->arguments.size() < 1 ) {
             return false;
         }
@@ -249,8 +249,8 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return true;
     };
 
-    knownDecoratorHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "Got getsListOfBoth decorator, checking container";
+    knownDocstringHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Got getsListOfBoth hint, checking container";
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -266,9 +266,9 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return false;
     };
 
-    knownDecoratorHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
+    knownDocstringHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
         const int argNum = ! arguments.isEmpty() ? (int) arguments.at(0).toUInt() : 0;
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found argument dependent decorator, checking argument type" << argNum;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found argument dependent hint, checking argument type" << argNum;
         if ( argNum >= node->arguments.length() ) {
             return false;
         }
@@ -296,19 +296,17 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return false;
     };
 
-    foreach ( const QString& currentHint, knownDecoratorHints.keys() ) {
+    foreach ( const QString& currentHint, knownDocstringHints.keys() ) {
         QStringList arguments;
         if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
             continue;
         }
         // If the hint word appears in the docstring, run the evaluation function.
-        if ( knownDecoratorHints[currentHint](arguments, currentHint) ) {
+        if ( knownDocstringHints[currentHint](arguments, currentHint) ) {
             // We indeed found something, so we're done.
-            return docstringType;
+            break;
         }
     }
-
-    // if none of the above decorator-finding methods worked, just use the ordinary return type.
     return docstringType;
 }
 

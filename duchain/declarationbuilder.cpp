@@ -1366,6 +1366,16 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
     }
 }
 
+void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node) {
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->target);
+    v.visitNode(node->value);
+    auto assignType = v.lastType(); // Never mind aliasing, why annotate that?
+    v.visitNode(node->annotation);
+    assignType = Helper::mergeTypes(assignType, v.lastType());
+    assignToUnknown(node->target, assignType);
+}
+
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));

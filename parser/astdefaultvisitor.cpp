@@ -57,8 +57,10 @@ void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
 }
 
 void AstDefaultVisitor::visitFormattedValue(FormattedValueAst* node) {
-    visitNode(node->value);
-    visitNode(node->formatSpec);
+// TODO: Fix range issues, then re-enable (if required)
+    Q_UNUSED(node);
+//     visitNode(node->value);
+//     visitNode(node->formatSpec);
 }
 
 void AstDefaultVisitor::visitStarred(StarredAst* node) {

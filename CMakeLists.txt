@@ -24,8 +24,11 @@ include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
 
 include(KDEInstallDirs)
-
 include(KDECMakeSettings)
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
+endif()
 
 add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 

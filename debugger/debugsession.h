@@ -60,7 +60,6 @@ public:
      * (of local variables, location, ...) will be triggered.
      *
      * @param cmd The command to enqeue.
-     * @return void
      **/
     void addCommand(PdbCommand* cmd);
     

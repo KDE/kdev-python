@@ -39,7 +39,6 @@ public slots:
      * before the program was started.
      * 
      * @param evt passed by kdevplatform, specifies the type of the event.
-     * @return void
      **/
     void slotEvent(IDebugSession::event_t evt);
 protected:
@@ -49,7 +48,6 @@ protected:
      * Deleting breakpoints is also handled here.
      * 
      * @param breakpoint The breakpoint to update.
-     * @return void
      **/
     void sendMaybe(KDevelop::Breakpoint* breakpoint) override;
     DebugSession* session();

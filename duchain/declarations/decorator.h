@@ -58,7 +58,7 @@ public:
     /**
     * @brief Gets the additional information associated with this Decorator
     *
-    * @return :IndexedString the additional information, as IndexedString
+    * @return IndexedString the additional information, as IndexedString
     **/
     inline const IndexedString additionalInformation() const {
         return m_additionalInformation;
@@ -83,7 +83,6 @@ public:
     * @brief Sets the name of the Decorator.
     *
     * @param name well, the name to use.
-    * @return void
     **/
     inline void setName(const QString& name) {
         m_name = IndexedString(name);
@@ -92,7 +91,6 @@ public:
     * @brief Sets the additional information which should be stored with this Decorator.
     *
     * @param arg ...
-    * @return void
     **/
     inline void setAdditionalInformation(const QString& arg) {
         m_additionalInformation = IndexedString(arg);

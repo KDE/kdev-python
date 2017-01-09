@@ -237,7 +237,7 @@ protected:
      * @param declarationIdentifier provides the name and range
      * @param innerCtx the internalContext() to set on the last created declaration. Either this or aliasDeclaration must be provided!
      * @param aliasDeclaration the declaration to alias with the last created declaration
-     * @param rangeNode can be used to override the declarationIdentifier's range, if required. Defaults to 0.
+     * @param range can be used to override the declarationIdentifier's range, if required. Defaults to an invalid range.
      * @return :Declaration* the top level declaration created
      **/
     Declaration* createDeclarationTree(const QStringList& nameComponents, Identifier* declarationIdentifier,

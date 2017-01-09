@@ -35,8 +35,6 @@ public:
     
     /**
      * @brief Create a debug session and start it.
-     *
-     * @return void
      **/
     void start() override;
     bool doKill() override;

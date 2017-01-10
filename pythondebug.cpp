@@ -18,6 +18,6 @@
 */
 
 #include "pythondebug.h"
-Q_LOGGING_CATEGORY(KDEV_PYTHON, "kdev.python")
+Q_LOGGING_CATEGORY(KDEV_PYTHON, "kdevelop.languages.python")
 
 

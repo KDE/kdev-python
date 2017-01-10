@@ -19,6 +19,7 @@
  */
 #include "pythonparsejob.h"
 
+#include "pythondebug.h"
 #include "pythonhighlighting.h"
 #include "pythoneditorintegrator.h"
 #include "dumpchain.h"
@@ -102,7 +103,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
         return abortJob();
     }
     
-    qDebug() << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
+    qCDebug(KDEV_PYTHON) << " ====> PARSING ====> parsing file " << document().toUrl() << "; has priority" << parsePriority();
 
     {
         QMutexLocker l(&Helper::projectPathLock);
@@ -126,7 +127,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
                 continue;
             }
             if ( ! file->needsUpdate() && file->featuresSatisfied(minimumFeatures()) && file->topContext() ) {
-                qDebug() << " ====> NOOP    ====> Already up to date:" << document().str();
+                qCDebug(KDEV_PYTHON) << " ====> NOOP    ====> Already up to date:" << document().str();
                 setDuChain(file->topContext());
                 if ( ICore::self()->languageController()->backgroundParser()->trackerForUrl(document()) ) {
                     lock.unlock();
@@ -180,7 +181,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
         
         // check whether any unresolved imports were encountered
         bool needsReparse = ! builder.unresolvedImports().isEmpty();
-        qDebug() << "Document needs update because of unresolved identifiers: " << needsReparse;
+        qCDebug(KDEV_PYTHON) << "Document needs update because of unresolved identifiers: " << needsReparse;
         if ( needsReparse ) {
             // check whether one of the imports is queued for parsing, this is to avoid deadlocks
             // it's also ok if the duchain is now available (and thus has been parsed before already)
@@ -212,7 +213,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
             DUChain::self()->updateContextEnvironment(m_duContext, parsingEnvironmentFile.data());
         }
         
-        qDebug() << "---- Parsing Succeeded ----";
+        qCDebug(KDEV_PYTHON) << "---- Parsing Succeeded ----";
         
         if ( abortRequested() ) {
             return abortJob();

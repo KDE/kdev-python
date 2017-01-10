@@ -563,7 +563,7 @@ struct PythonInitializer : private QMutexLocker {
 
 CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
-    qDebug() << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
+    qCDebug(KDEV_PYTHON_PARSER) << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
     Py_NoSiteFlag = 1;
     
@@ -591,7 +591,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
 
     if ( ! syntaxtree ) {
-        qDebug() << " ====< parse error, trying to fix";
+        qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
         
         PyErr_Fetch(&exception, &value, &backtrace);
         qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;

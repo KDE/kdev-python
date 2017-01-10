@@ -63,14 +63,14 @@ ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node
         }
     }
     if (updateContext) {
-        qDebug() << " ====> DUCHAIN ====>     rebuilding duchain for" << url.str() << "(was built before)";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " ====> DUCHAIN ====>     rebuilding duchain for" << url.str() << "(was built before)";
         DUChainWriteLocker lock(DUChain::lock());
         Q_ASSERT(updateContext->type() == DUContext::Global);
         updateContext->clearImportedParentContexts();
         updateContext->parsingEnvironmentFile()->clearModificationRevisions();
         updateContext->clearProblems();
     } else {
-        qDebug() << " ====> DUCHAIN ====>     building duchain for" << url.str();
+        qCDebug(KDEV_PYTHON_DUCHAIN) << " ====> DUCHAIN ====>     building duchain for" << url.str();
     }
     return ContextBuilderBase::build(url, node, updateContext);
 }

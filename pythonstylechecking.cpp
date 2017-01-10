@@ -29,6 +29,7 @@
 #include <interfaces/icore.h>
 #include <shell/documentcontroller.h>
 
+#include "pythondebug.h"
 #include "pythonparsejob.h"
 #include "helpers.h"
 
@@ -103,7 +104,7 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
             int lineno = match.captured(2).toInt(&lineno_ok);
             int colno = match.captured(3).toInt(&colno_ok);
             if ( ! lineno_ok || ! colno_ok ) {
-                qDebug() << "invalid line / col number";
+                qCDebug(KDEV_PYTHON) << "invalid line / col number";
                 continue;
             }
             QString error = match.captured(4);
@@ -117,7 +118,7 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
             m_currentlyChecking->addProblem(ptr);
         }
         else {
-            qDebug() << "invalid pep8 error line:" << error;
+            qCDebug(KDEV_PYTHON) << "invalid pep8 error line:" << error;
         }
     }
 

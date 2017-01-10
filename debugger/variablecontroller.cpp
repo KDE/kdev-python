@@ -134,12 +134,12 @@ void VariableController::localsUpdateReady(QByteArray rawData)
         auto model = v->model();
         auto parent = model->indexForItem(v, 0);
         auto childCount = v->model()->rowCount(parent);
-        qDebug() << "updating:" << v->expression() << "active children:" << childCount;
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "updating:" << v->expression() << "active children:" << childCount;
         for ( int j = 0; j < childCount; j++ ) {
             auto index = model->index(j, 0, parent);
             auto child = static_cast<KDevelop::TreeItem*>(index.internalPointer());
             if ( auto childVariable = qobject_cast<Variable*>(child) ) {
-                qDebug() << "   got child var:" << childVariable->expression();
+                qCDebug(KDEV_PYTHON_DEBUGGER) << "   got child var:" << childVariable->expression();
                 v->fetchMoreChildren();
                 break;
             }
@@ -156,7 +156,7 @@ void VariableController::update() {
 
 void VariableController::_update()
 {
-    qDebug() << " ************************* update requested";
+    qCDebug(KDEV_PYTHON_DEBUGGER) << " ************************* update requested";
     DebugSession* d = static_cast<DebugSession*>(parent());
     if (autoUpdate() & UpdateWatches) {
         variableCollection()->watches()->reinstall();

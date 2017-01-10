@@ -157,7 +157,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
     QString autopep8path = QStandardPaths::findExecutable("autopep8");
     if (autopep8path.isEmpty()) {
         // TODO: proper error handling/user notification
-        qDebug() << "Could not find the autopep8 executable";
+        qCDebug(KDEV_PYTHON) << "Could not find the autopep8 executable";
         autopep8path = "/usr/bin/autopep8";
     }
     autopep8.setContent(autopep8path + " -i $TMPFILE");
@@ -183,7 +183,7 @@ int LanguageSupport::suggestedReparseDelayForChange(KTextEditor::Document* doc, 
         return 0;
     }
     if ( std::all_of(changedText.begin(), changedText.end(), [](const QChar& c) { return c.isSpace(); }) ) {
-        qDebug() << changedText << changedRange.end().column() << doc->lineLength(changedRange.end().line());
+        qCDebug(KDEV_PYTHON) << changedText << changedRange.end().column() << doc->lineLength(changedRange.end().line());
         if ( changedRange.end().column()-1 == doc->lineLength(changedRange.end().line()) ) {
             return ILanguageSupport::NoUpdateRequired;
         }

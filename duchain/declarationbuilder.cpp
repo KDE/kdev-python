@@ -1220,7 +1220,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     if ( ! attributeDeclaration || ! wasEncountered(attributeDeclaration) ) {
         // inject a new attribute into the class type
         DUContext* previousContext = currentContext();
-        bool isAlreadyOpen = contextAlreayOpen(internal);
+        bool isAlreadyOpen = contextAlreadyOpen(internal);
         if ( isAlreadyOpen ) {
             activateAlreadyOpenedContext(internal);
             visitVariableDeclaration<ClassMemberDeclaration>(

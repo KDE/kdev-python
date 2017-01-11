@@ -99,7 +99,6 @@ class object():
 class basestring():
     pass
 
-@TypeContainer
 class list():
     """! TypeContainer !"""
     def __init__(self, items):

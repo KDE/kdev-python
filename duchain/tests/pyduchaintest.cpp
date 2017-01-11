@@ -880,7 +880,7 @@ void PyDUChainTest::testTypes_data()
                                        << "unsure (dict of str : int, dict)";
     
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
-    QTest::newRow("getsListDecorator") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
+    QTest::newRow("getsListDocstring") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
 
     QTest::newRow("str_iter") << "checkme = [char for char in 'Hello, world!']" << "list of str";
     QTest::newRow("str_subscript") << "checkme = 'Hello, world!'[0]" << "str";

@@ -344,10 +344,10 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             }
             if ( number ) {
                 int sliceIndex = number->value * ( invert ? -1 : 1 );
-                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
+                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() >= 0 ) {
                     sliceIndex += indexed->typesCount();
                 }
-                if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
+                if ( sliceIndex >= 0 && sliceIndex < indexed->typesCount() ) {
                     result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
                     continue;
                 }

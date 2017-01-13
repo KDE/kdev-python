@@ -80,15 +80,15 @@ QString IndexedContainer::toString() const
     QString prefix = KDevelop::StructureType::toString();
     QStringList typesArray;
     for ( int i = 0; i < typesCount(); i++ ) {
-        if ( i > 5 ) {
+        if ( i >= 5 ) {
             // Don't print more than five types explicitly
             typesArray << "...";
             break;
         }
         typesArray << typeAt(i).abstractType()->toString();
     }
-    QString typesArrayString = typesArray.join(", ");
-    return i18n("%1 of ( %2 )", prefix, typesArrayString);
+    const QString contentType = QStringLiteral("(") + typesArray.join(", ") + ")";
+    return i18nc("as in list of int, set of string", "%1 of %2", prefix, contentType);
 }
 
 AbstractType::Ptr IndexedContainer::asUnsureType() const

@@ -37,11 +37,14 @@ public:
     DeclarationNavigationContext(KDevelop::DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, KDevelop::AbstractNavigationContext* previousContext = 0);
 
     QString m_fullyQualifiedModuleIdentifier;
-    
+
 protected:
     void htmlIdentifiedType(KDevelop::AbstractType::Ptr type, const KDevelop::IdentifiedType* idType) override;
     void eventuallyMakeTypeLinks(AbstractType::Ptr type) override;
     QString getLink(const QString& name, DeclarationPointer declaration, NavigationAction::Type actionType);
+
+private:
+    QString typeLinkOrString(const AbstractType::Ptr type);
 };
 
 }

@@ -4,7 +4,7 @@ class Exception(object):
 
 class object():
     def __init__(self): pass
-    def __new__(self): pass
+    def __new__(cls): pass
     def __del__(self): pass
     def __repr__(self): pass
     def __str__(self): pass
@@ -134,22 +134,30 @@ class list():
 
 class _io_TextIOWrapper():
     def close(self,): return None
+    def detach(self): return self # Not quite
     def flush(self,): return None
-    def fileno(self,): return None
+    def fileno(self,): return 0
     def isatty(self,): return True
     def next(self,): return None
     def read(self,size = 0): return ""
+    def readable(self): return True
     def readline(self,size = 0): return ""
     def readlines(self,sizehint = 0): return [""]
-    def xreadlines(self,): return None
     def seek(self,offset, whence = 0): return None
-    def tell(self,): return None
-    def truncate(self,size = 0): return None
+    def seekable(self): return True
+    def tell(self,): return 0
+    def truncate(self,size = 0): return 0
     def write(self,string): return None
+    def writable(self): return True
     def writelines(self,sequence): return None
+    def __iter__(self): return self
+    def __next__(self): return ""
+    buffer = _io_TextIOWrapper() # Not quite
     closed = True
+    encoding = ""
     errors = None
-    mode = None
+    line_buffering = True
+    mode = ""
     name = ""
     newlines = ""
     softspace = True

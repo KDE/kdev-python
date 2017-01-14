@@ -137,21 +137,22 @@ void StyleChecking::processOutputStarted()
         return;
     }
 
-    // read and process actual output
+    // read actual output
     QByteArray buf;
-    QVector<QString> errors;
     QTimer t;
     t.start(100);
     while ( size > 0 && t.isActive() ) {
         auto d = m_checkerProcess.read(size);
         buf.append(d);
         size -= d.size();
+    }
 
-        auto ofs = -1;
-        auto prev = ofs;
-        while ( prev = ofs, (ofs = buf.indexOf('\n', ofs+1)) != -1 ) {
-            errors.append(buf.mid(prev+1, ofs-prev));
-        }
+    // process it
+    QVector<QString> errors;
+    auto ofs = -1;
+    auto prev = ofs;
+    while ( prev = ofs, (ofs = buf.indexOf('\n', ofs+1)) != -1 ) {
+        errors.append(buf.mid(prev+1, ofs-prev));
     }
     if ( !t.isActive() ) {
         addSetupErrorToContext("Output took longer than 100 ms.");

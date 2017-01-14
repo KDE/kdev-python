@@ -57,6 +57,8 @@
 
 #include "duchain/helpers.h"
 
+#include "kdevpythonversion.h"
+
 QTEST_MAIN(PyDUChainTest)
 
 using namespace KDevelop;
@@ -435,8 +437,10 @@ void PyDUChainTest::testCrashes_data() {
         "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
         "e = Evil()\n"
         "z = [e.aa(1), e.bb(2), e.cc(3)]";
+#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
     QTest::newRow("comprehension_in_fstring") <<
         "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
+#endif
 }
 
 void PyDUChainTest::testClassVariables()

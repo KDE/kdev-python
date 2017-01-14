@@ -288,101 +288,106 @@ class complex():
     def __div__(self, other): return complex()
     def __mod__(self, other): return complex()
 
-class BaseException():
+class BaseException:
     args = ()
+    __cause__ = BaseException
+    __context__ = BaseException
+    __traceback__ = TracebackType
+    def __init__(self, *args): ...
+    def with_traceback(self, tb): return self
 
-class NameError(BaseException):
-    pass
-class AttributeError(BaseException):
-    pass
-class IndexError(BaseException):
-    pass
-class IOError(BaseException):
-    pass
-class StandardError(BaseException):
-    pass
-class Exception(BaseException):
-    pass
-class StopIteration(BaseException):
-    pass
-class StopAsyncIteration(BaseException):
-    pass
-class BufferError(BaseException):
-    pass
-class LookupError(BaseException):
-    pass
-class EnvironmentError(BaseException):
-    pass
-class AssertionError(BaseException):
-    pass
-class EOFError(BaseException):
-    pass
-class FloatingPointError(BaseException):
-    pass
-class GeneratorExit(BaseException):
-    pass
-class ImportError(BaseException):
-    pass
-class KeyError(BaseException):
-    pass
-class MemoryError(BaseException):
-    pass
-class NotImplementedError(BaseException):
-    pass
-class OSError(BaseException):
-    pass
-class OverflowError(BaseException):
-    pass
-class ReferenceError(BaseException):
-    pass
-class RuntimeError(BaseException):
-    pass
-class StopIteration(BaseException):
-    pass
-class SyntaxError(BaseException):
-    pass
-class IndentationError(BaseException):
-    pass
-class TabError(BaseException):
-    pass
-class SystemError(BaseException):
-    pass
+class GeneratorExit(BaseException): ...
+class KeyboardInterrupt(BaseException): ...
 class SystemExit(BaseException):
-    pass
-class TypeError(BaseException):
-    pass
-class UnboundLocalError(BaseException):
-    pass
-class UnicodeError(BaseException):
-    pass
-class UnicodeEncodeError(BaseException):
-    pass
-class UnicodeDecodeError(BaseException):
-    pass
-class UnicodeTranslateError(BaseException):
-    pass
-class ValueError(BaseException):
-    pass
-class ZeroDivisionError(BaseException):
-    pass
-class Warning():
-    pass
-class UserWarning(Warning):
-    pass
-class DeprecationWarning(Warning):
-    pass
-class KeyboardInterrupt(Exception):
-    pass
-class PendingDeprecationWarning(Warning):
-    pass
-class RuntimeWarning(Warning):
-    pass
-class FutureWarning(Warning):
-    pass
-class ImportWarning(Warning):
-    pass
-class UnicodeWarning(Warning):
-    pass
+    code = 0
+class Exception(BaseException): ...
+class ArithmeticError(Exception): ...
+class EnvironmentError(Exception):
+    errno = 0
+    strerror = ""
+    filename = ""
+class LookupError(Exception): ...
+class RuntimeError(Exception): ...
+class ValueError(Exception): ...
+class AssertionError(Exception): ...
+class AttributeError(Exception): ...
+class BufferError(Exception): ...
+class EOFError(Exception): ...
+class FloatingPointError(ArithmeticError): ...
+class IOError(EnvironmentError): ...
+class ImportError(Exception): ...
+class IndexError(LookupError): ...
+class KeyError(LookupError): ...
+class MemoryError(Exception): ...
+class NameError(Exception): ...
+class NotImplementedError(RuntimeError): ...
+class OSError(EnvironmentError): ...
+class BlockingIOError(OSError):
+    characters_written = 0
+class ChildProcessError(OSError): ...
+class ConnectionError(OSError): ...
+class BrokenPipeError(ConnectionError): ...
+class ConnectionAbortedError(ConnectionError): ...
+class ConnectionRefusedError(ConnectionError): ...
+class ConnectionResetError(ConnectionError): ...
+class FileExistsError(OSError): ...
+class FileNotFoundError(OSError): ...
+class InterruptedError(OSError): ...
+class IsADirectoryError(OSError): ...
+class NotADirectoryError(OSError): ...
+class PermissionError(OSError): ...
+class ProcessLookupError(OSError): ...
+class TimeoutError(OSError): ...
+class WindowsError(OSError):
+    winerror = 0
+class OverflowError(ArithmeticError): ...
+class ReferenceError(Exception): ...
+class StopIteration(Exception):
+    value = ...  # type: Any
+class StopAsyncIteration(Exception):
+    value = ...  # type: Any
+class RecursionError(RuntimeError): ...
+class SyntaxError(Exception):
+    msg = ""
+    lineno = 0
+    offset = 0
+    text = ""
+class IndentationError(SyntaxError): ...
+class TabError(IndentationError): ...
+class SystemError(Exception): ...
+class TypeError(Exception): ...
+class UnboundLocalError(NameError): ...
+class UnicodeError(ValueError): ...
+class UnicodeDecodeError(UnicodeError):
+    encoding = ""
+    object = b""
+    start = 0
+    end = 0
+    reason = ""
+    def __init__(self, __encoding: str, __object: bytes,
+                 __start: int, __end: int, __reason: str): ...
+class UnicodeEncodeError(UnicodeError):
+    encoding = ""
+    object = ""
+    start = 0
+    end = 0
+    reason = ""
+    def __init__(self, __encoding: str, __object: str,
+                 __start: int, __end: int, __reason: str): ...
+class UnicodeTranslateError(UnicodeError): ...
+class ZeroDivisionError(ArithmeticError): ...
+
+class Warning(Exception): ...
+class UserWarning(Warning): ...
+class DeprecationWarning(Warning): ...
+class SyntaxWarning(Warning): ...
+class RuntimeWarning(Warning): ...
+class FutureWarning(Warning): ...
+class PendingDeprecationWarning(Warning): ...
+class ImportWarning(Warning): ...
+class UnicodeWarning(Warning): ...
+class BytesWarning(Warning): ...
+class ResourceWarning(Warning): ...
 
 class tuple():
     """! IndexedTypeContainer !"""

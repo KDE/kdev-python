@@ -60,7 +60,6 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type)
 ExpressionVisitor::ExpressionVisitor(const DUContext* ctx)
     : DynamicLanguageExpressionVisitor(ctx)
 {
-    ENSURE_CHAIN_NOT_LOCKED
     if ( m_defaultTypes.isEmpty() ) {
         m_defaultTypes.insert(NameConstantAst::True, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         m_defaultTypes.insert(NameConstantAst::False, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
@@ -76,7 +75,6 @@ ExpressionVisitor::ExpressionVisitor(ExpressionVisitor* parent, const DUContext*
     , m_reportUnknownNames(parent->m_reportUnknownNames)
     , m_scanUntilCursor(parent->m_scanUntilCursor)
 {
-    ENSURE_CHAIN_NOT_LOCKED
     if ( overrideContext ) {
         m_context = overrideContext;
     }
@@ -213,7 +211,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         ExpressionVisitor baseTypeVisitor(this);
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-        DUChainWriteLocker lock;
+        DUChainReadLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             auto newType = typeObjectForIntegralType<ListType>("list");
@@ -242,7 +240,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         ExpressionVisitor enumeratedTypeVisitor(this);
         enumeratedTypeVisitor.visitNode(node->arguments.first());
 
-        DUChainWriteLocker lock;
+        DUChainReadLocker lock;
         auto intType = typeObjectForIntegralType<AbstractType>("int");
         auto enumerated = enumeratedTypeVisitor.lastType();
         docstringType = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
@@ -257,7 +255,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         ExpressionVisitor baseTypeVisitor(this);
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-        DUChainWriteLocker lock;
+        DUChainReadLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             docstringType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
@@ -345,10 +343,10 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             }
             if ( number ) {
                 int sliceIndex = number->value * ( invert ? -1 : 1 );
-                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() > 0 ) {
+                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() >= 0 ) {
                     sliceIndex += indexed->typesCount();
                 }
-                if ( sliceIndex < indexed->typesCount() && sliceIndex >= 0 ) {
+                if ( sliceIndex >= 0 && sliceIndex < indexed->typesCount() ) {
                     result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
                     continue;
                 }

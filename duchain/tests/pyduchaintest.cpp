@@ -812,6 +812,10 @@ void PyDUChainTest::testTypes()
     visitor->ctx = TopDUContextPointer(ctx.data());
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
+    QEXPECT_FAIL("tuple_func", "no suitable docstring hint", Continue);
+    QEXPECT_FAIL("tuple_slice", "not implemented", Continue);
+    QEXPECT_FAIL("tuple_add", "not implemented", Continue);
+    QEXPECT_FAIL("tuple_mul", "not implemented", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
@@ -833,6 +837,11 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("dicttype_get") << "d = {0.4:5}; checkme = d.get(0)" << "int";
     QTest::newRow("dicttype_func") << "checkme = dict()" << "dict";
     QTest::newRow("dicttype_extended") << "some_misc_var = {}; checkme = some_misc_var" << "dict";
+    QTest::newRow("tuple") << "checkme = ()" << "tuple of ()";
+    QTest::newRow("tuple_func") << "checkme = tuple((1, 2.3))" << "tuple of (int, float)";
+    QTest::newRow("tuple_with_contents") << "checkme = 1, 2.3" << "tuple of (int, float)";
+    QTest::newRow("tuple_extended") << "some_misc_var = (); checkme = some_misc_var" << "tuple of ()";
+    QTest::newRow("tuple_max_display") << "checkme = 1,2,3,4,5,6" << "tuple of (int, int, int, int, int, ...)";
     QTest::newRow("bool") << "checkme = True" << "bool";
     QTest::newRow("float") << "checkme = 3.7" << "float";
     QTest::newRow("int") << "checkme = 3" << "int";
@@ -859,7 +868,7 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("list_access_closed_slice") << "some_list = []; checkme = some_list[2:17]" << "list";
     QTest::newRow("list_access_step") << "some_list = []; checkme = some_list[::2]" << "list";
     QTest::newRow("list_access_singleItem") << "some_list = []; checkme = some_list[42]" << "mixed";
-    
+
     QTest::newRow("funccall_number") << "def foo(): return 3; \ncheckme = foo();" << "int";
     QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "str";
     QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << "list";
@@ -951,6 +960,16 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_indexaccess") << "t = 3, 5.5\ncheckme = t[0]" << "int";
     QTest::newRow("tuple_indexaccess2") << "t = 3, 5.5\ncheckme = t[1]" << "float";
     QTest::newRow("tuple_indexaccess3") << "t = 3, 4\ncheckme = t[1]" << "int";
+    QTest::newRow("tuple_indexaccess4") << "t = 3, 4.5\ncheckme = t[2]" << "unsure (int, float)";
+
+    QTest::newRow("tuple_indexaccess_neg") << "t = 3, 4.5; checkme = t[-1]" << "float";
+    QTest::newRow("tuple_indexaccess_neg2") << "t = 3, 4.5; checkme = t[-2]" << "int";
+    QTest::newRow("tuple_indexaccess_neg3") << "t = 3, 4.5; checkme = t[-3]" << "unsure (int, float)";
+
+    QTest::newRow("tuple_slice") << "t = 3, 'q', 4.5; checkme = t[-3: 2]" << "tuple of (int, str)";
+
+    QTest::newRow("tuple_add") << "t, u = (3,), ('q', 4.5); checkme = t + u" << "tuple of (int, str, float)";
+    QTest::newRow("tuple_mul") << "t = 3, 4.5; checkme = t * 2" << "tuple of (int, float, int, float)";
 
     QTest::newRow("dict_unsure") << "t = dict(); t = {3: str()}\ncheckme = t[1].capitalize()" << "str";
     QTest::newRow("unsure_attr_access") << "d = str(); d = 3; checkme = d.capitalize()" << "str";

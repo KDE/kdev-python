@@ -10,14 +10,14 @@ except ImportError:
     Checker = None
 
 while True:
-    size = stdin.read(10)
+    size = stdin.buffer.read(10)
     size = int(size)
     if not size > 0:
         continue
-    buf = str()
+    buf = bytes()
     while len(buf) < size:
-        buf += stdin.read(size-len(buf))
-    lines = buf.splitlines()
+        buf += stdin.buffer.read(min(1024, size - len(buf)))
+    lines = buf.decode("utf-8").splitlines()
     opts, text = lines[:3], [l + "\n" for l in lines[3:]]
 
     if Checker is not None:

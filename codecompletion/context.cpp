@@ -75,11 +75,14 @@ PythonCodeCompletionContext::CompletionContextType PythonCodeCompletionContext::
 std::unique_ptr<ExpressionVisitor> visitorForString(QString str, DUContext* context,
                                                     CursorInRevision scanUntil = CursorInRevision::invalid())
 {
-    ENSURE_CHAIN_NOT_LOCKED
+    ENSURE_CHAIN_READ_LOCKED
+    if ( !context ) {
+        return nullptr;
+    }
     AstBuilder builder;
     CodeAst::Ptr tmpAst = builder.parse({}, str);
     if ( ! tmpAst ) {
-        return std::unique_ptr<ExpressionVisitor>(nullptr);
+        return nullptr;
     }
     ExpressionVisitor* v = new ExpressionVisitor(context);
     v->enableGlobalSearching();
@@ -141,8 +144,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
 
     // gather additional items to show above the real ones (for parameters, and stuff)
     FunctionDeclaration* functionCalled = 0;
-    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     DUChainReadLocker lock;
+    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     if ( ! v || ! v->lastDeclaration() ) {
         qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Did not receive a function declaration from expression visitor! Not offering call tips.";
         qCWarning(KDEV_PYTHON_CODECOMPLETION) << "Tried: " << m_guessTypeOfExpression;
@@ -305,9 +308,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
     QList<DeclarationDepthPair> declarations;
     if ( ! m_guessTypeOfExpression.isEmpty() ) {
         // The class completion is a member access
-        lock.unlock();
         auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
-        lock.lock();
         if ( v ) {
             TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
             if ( cls && cls->declaration(m_duContext->topContext()) ) {
@@ -337,8 +338,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessItems()
 {
     ItemList resultingItems;
-    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     DUChainReadLocker lock;
+    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     if ( v ) {
         if ( v->lastType() ) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << v->lastType()->toString();
@@ -525,8 +526,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
     ItemList resultingItems;
     QList<KeywordItem*> items;
 
-    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
     DUChainReadLocker lock;
+    auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data(), m_position);
     if ( ! v || v->unknownNames().isEmpty() ) {
         return resultingItems;
     }

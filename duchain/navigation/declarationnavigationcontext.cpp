@@ -31,6 +31,7 @@
 #include <language/duchain/types/containertypes.h>
 
 #include "helpers.h"
+#include <types/indexedcontainer.h>
 
 namespace Python
 {
@@ -47,43 +48,47 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
     return createLink(name, targetId, action);
 };
 
+QString DeclarationNavigationContext::typeLinkOrString(const AbstractType::Ptr type) {
+    if ( type ) {
+        if ( auto idType = dynamic_cast<IdentifiedType*>(type.data()) ) {
+            return getLink(type->toString(),
+                           DeclarationPointer(idType->declaration(m_topContext.data())),
+                           NavigationAction::NavigateDeclaration);
+        }
+        return type->toString().toHtmlEscaped();
+    }
+    return i18nc("refers to an unknown type in programming", "unknown");
+}
+
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
-    if ( auto t = ListType::Ptr::dynamicCast(type) ) {
-        auto map = MapType::Ptr::dynamicCast(t);
-        const QString containerType = getLink(t->containerToString(), DeclarationPointer(idType->declaration(m_topContext.data())), NavigationAction::NavigateDeclaration );
+    if ( auto listType = type.cast<ListType>() ) {
         QString contentType;
-        if ( map ) {
-            if ( auto key = map->keyType().abstractType() ) {
-                IdentifiedType* identifiedKey = dynamic_cast<IdentifiedType*>(key.data());
-                if ( identifiedKey ) {
-                    contentType.append(getLink(key->toString(), DeclarationPointer(
-                        identifiedKey->declaration(m_topContext.data())),
-                        NavigationAction::NavigateDeclaration
-                    ));
-                }
-                else {
-                    contentType.append(key->toString());
-                }
-                contentType.append(" : ");
-            }
+        const QString containerType = getLink(listType->containerToString(),
+                                              DeclarationPointer(idType->declaration(m_topContext.data())),
+                                              NavigationAction::NavigateDeclaration );
+        if ( auto map = listType.cast<MapType>() ) {
+            contentType.append(typeLinkOrString(map->keyType().abstractType()));
+            contentType.append(" : ");
         }
-        if ( AbstractType::Ptr contents = t->contentType().abstractType() ) {
-            IdentifiedType* identifiedContent = dynamic_cast<IdentifiedType*>(contents.data());
-            if ( identifiedContent ) {
-                contentType.append(getLink(contents->toString(), DeclarationPointer(
-                    identifiedContent->declaration(m_topContext.data())),
-                    NavigationAction::NavigateDeclaration
-                ));
+        contentType.append(typeLinkOrString(listType->contentType().abstractType()));
+        modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
+    }
+    else if (auto indexedContainer = type.cast<IndexedContainer>()) {
+        const QString containerType = getLink(indexedContainer->containerToString(),
+                                              DeclarationPointer(idType->declaration(m_topContext.data())),
+                                              NavigationAction::NavigateDeclaration );
+        QStringList typesArray;
+        for ( int i = 0; i < indexedContainer->typesCount(); i++ ) {
+            if ( i >= 5 ) {
+                // Don't print more than five types explicitly
+                typesArray << "...";
+                break;
             }
-            else {
-                contentType.append(contents->toString());
-            }
+            typesArray << typeLinkOrString(indexedContainer->typeAt(i).abstractType());
         }
-        else {
-            contentType.append(i18nc("refers to an unknown type in programming", "unknown"));
-        }
+        const QString contentType = QStringLiteral("(") + typesArray.join(", ") + ")";
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }
     else {

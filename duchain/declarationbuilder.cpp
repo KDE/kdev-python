@@ -834,6 +834,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     if ( auto previous = t->returnType().cast<ListType>() ) {
         // If the return type of the function already is set to a list, *add* the encountered type
         // to its possible content types.
+        DUChainWriteLocker lock;
         previous->addContentType<Python::UnsureType>(encountered);
         t->setReturnType(previous.cast<AbstractType>());
     }
@@ -1085,6 +1086,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             continue;
         }
         if ( ! matchedNamedParam && kwargsDict ) {
+            DUChainWriteLocker lock;
             kwargsDict->addContentType<Python::UnsureType>(addType);
             parameters.last()->setAbstractType(kwargsDict);
         }
@@ -1158,6 +1160,7 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     targetVisitor.visitNode(v);
     auto list = ListType::Ptr::dynamicCast(targetVisitor.lastType());
     if ( list ) {
+        DUChainWriteLocker lock;
         list->addContentType<Python::UnsureType>(element.type);
     }
     auto map = MapType::Ptr::dynamicCast(list);

@@ -177,6 +177,7 @@ void StyleChecking::updateStyleChecking(const KDevelop::ReferencedTopDUContext& 
     auto text = idoc->textDocument()->text();
 
     if ( !m_mutex.tryLock(1000) ) {
+        qWarning() << "timed out waiting for the style checker mutex";
         return;
     }
     m_currentlyChecking = top;

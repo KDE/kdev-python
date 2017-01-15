@@ -48,6 +48,25 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
     return createLink(name, targetId, action);
 };
 
+void DeclarationNavigationContext::htmlClass()
+{
+    StructureType::Ptr klass = m_declaration->abstractType().cast<StructureType>();
+    Q_ASSERT(klass);
+
+    modifyHtml() += QStringLiteral("class ");
+    eventuallyMakeTypeLinks( klass.cast<AbstractType>() );
+
+    auto classDecl = dynamic_cast<ClassDeclaration*>(klass->declaration(m_topContext.data()));
+    if ( classDecl && classDecl->baseClassesSize() ) {
+        int count = 0;
+        FOREACH_FUNCTION( const BaseClassInstance& base, classDecl->baseClasses ) {
+            modifyHtml() += count++ ? QStringLiteral(", ") : QStringLiteral(" (");
+            eventuallyMakeTypeLinks(base.baseClass.abstractType());
+        }
+        modifyHtml() += QStringLiteral(")");
+    }
+}
+
 QString DeclarationNavigationContext::typeLinkOrString(const AbstractType::Ptr type) {
     if ( type ) {
         if ( auto idType = dynamic_cast<IdentifiedType*>(type.data()) ) {

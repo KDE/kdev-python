@@ -19,6 +19,7 @@
  */
 
 #include "expressionvisitor.h"
+#include "types/nonetype.h"
 #include "types/indexedcontainer.h"
 #include "declarations/functiondeclaration.h"
 #include "pythonduchainexport.h"
@@ -63,7 +64,7 @@ ExpressionVisitor::ExpressionVisitor(const DUContext* ctx)
     if ( m_defaultTypes.isEmpty() ) {
         m_defaultTypes.insert(NameConstantAst::True, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
         m_defaultTypes.insert(NameConstantAst::False, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        m_defaultTypes.insert(NameConstantAst::None, AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+        m_defaultTypes.insert(NameConstantAst::None, AbstractType::Ptr(new NoneType()));
     }
     Q_ASSERT(context());
     Q_ASSERT(context()->topContext());

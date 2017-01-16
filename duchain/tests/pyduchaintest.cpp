@@ -881,9 +881,9 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "str";
     QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << "list";
     QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << "dict";
-    QTest::newRow("funccall_no_return") << "def foo(): pass\ncheckme = foo()" << "void";
-    QTest::newRow("funccall_def_return") << "def foo(): return\ncheckme = foo()" << "void";
-    QTest::newRow("funccall_maybe_def_return") << "def foo():\n if False: return\n return 7\ncheckme = foo()" << "unsure (void, int)";
+    QTest::newRow("funccall_no_return") << "def foo(): pass\ncheckme = foo()" << "None";
+    QTest::newRow("funccall_def_return") << "def foo(): return\ncheckme = foo()" << "None";
+    QTest::newRow("funccall_maybe_def_return") << "def foo():\n if False: return\n return 7\ncheckme = foo()" << "unsure (None, int)";
 
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "int";
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "str";
@@ -1362,7 +1362,7 @@ void PyDUChainTest::testFunctionHints_data()
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("expectedType");
     
-    QTest::newRow("func_return_type") << "def myfun(arg) -> int: pass\ncheckme = myfun(\"3\")" << "unsure (void, int)";
+    QTest::newRow("func_return_type") << "def myfun(arg) -> int: pass\ncheckme = myfun(\"3\")" << "unsure (None, int)";
     QTest::newRow("argument_type") << "def myfun(arg : int): return arg\ncheckme = myfun(foobar)" << "int";
     QTest::newRow("argument_type_only_if_typeof") << "def myfun(arg : 3): return arg\ncheckme = myfun(foobar)" << "mixed";
 }

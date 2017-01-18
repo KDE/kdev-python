@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   This file is part of KDevelop                                         *
  *   Copyright 2007 Andreas Pakulat <apaku@gmx.de>                         *
@@ -41,8 +42,14 @@ public:
     virtual ~AstVisitor();
 
     typedef void (AstVisitor::*visitFunc)(Ast *);
-    
+
     virtual void visitNode(Ast* node);
+
+    template <typename T> void visitNodeList( const QList<T*>& l ) {
+        foreach ( T* node, l ) {
+            visitNode(node);
+        }
+    }
 
     virtual void visitCode(CodeAst* node) { Q_UNUSED(node); };
     virtual void visitStatement(StatementAst* node) { Q_UNUSED(node); };

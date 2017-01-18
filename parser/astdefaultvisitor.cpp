@@ -83,16 +83,12 @@ void AstDefaultVisitor::visitName(NameAst* node) {
 }
 
 void AstDefaultVisitor::visitGlobal(GlobalAst* node) {
-    foreach (Identifier* identifier, node->names) {
-        visitIdentifier(identifier);
-    }
+    visitNodeList(node->names);
 }
 
 void AstDefaultVisitor::visitCode(CodeAst* node)
 {
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
     visitIdentifier(node->name);
 }
 
@@ -114,47 +110,33 @@ void AstDefaultVisitor::visitAssertion(AssertionAst* node)
 
 void AstDefaultVisitor::visitDelete(DeleteAst* node)
 {
-    foreach (ExpressionAst* expression, node->targets) {
-        visitNode(expression);
-    }
+    visitNodeList(node->targets);
 }
 
 void AstDefaultVisitor::visitExtendedSlice(ExtendedSliceAst* node)
 {
-    foreach (SliceAst* slice, node->dims) {
-        visitNode(slice);
-    }
+    visitNodeList(node->dims);
 }
 
 void AstDefaultVisitor::visitFor(ForAst* node)
 {
     visitNode(node->target);
     visitNode(node->iterator);
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->orelse) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
+    visitNodeList(node->orelse);
 }
 
 void AstDefaultVisitor::visitGeneratorExpression(GeneratorExpressionAst* node)
 {
     visitNode(node->element);
-    foreach (ComprehensionAst* comp, node->generators) {
-        visitNode(comp);
-    }
+    visitNodeList(node->generators);
 }
 
 void AstDefaultVisitor::visitIf(IfAst* node)
 {
     visitNode(node->condition);
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->orelse) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
+    visitNodeList(node->orelse);
 }
 
 void AstDefaultVisitor::visitIfExpression(IfExpressionAst* node)
@@ -166,16 +148,12 @@ void AstDefaultVisitor::visitIfExpression(IfExpressionAst* node)
 
 void AstDefaultVisitor::visitImport(ImportAst* node)
 {
-    foreach (AliasAst* alias, node->names) {
-        visitNode(alias);
-    }
+    visitNodeList(node->names);
 }
 
 void AstDefaultVisitor::visitImportFrom(ImportFromAst* node)
 {
-    foreach (AliasAst* alias, node->names) {
-        visitNode(alias);
-    }
+    visitNodeList(node->names);
     visitIdentifier(node->module);
 }
 
@@ -206,17 +184,13 @@ void AstDefaultVisitor::visitAwait(AwaitAst* node) {
 
 void AstDefaultVisitor::visitSet(SetAst* node)
 {
-    foreach (ExpressionAst* expression, node->elements) {
-        visitNode(expression);
-    }
+    visitNodeList(node->elements);
 }
 
 void AstDefaultVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     visitNode(node->element);
-    foreach (ComprehensionAst* comp, node->generators) {
-        visitNode(comp);
-    }
+    visitNodeList(node->generators);
 }
 
 void AstDefaultVisitor::visitSlice(SliceAst* node)
@@ -234,25 +208,15 @@ void AstDefaultVisitor::visitSubscript(SubscriptAst* node)
 
 void AstDefaultVisitor::visitTry(TryAst* node)
 {
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (ExceptionHandlerAst* handler, node->handlers) {
-        visitNode(handler);
-    }
-    foreach (Ast* statement, node->orelse) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->finally) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
+    visitNodeList(node->handlers);
+    visitNodeList(node->orelse);
+    visitNodeList(node->finally);
 }
 
 void AstDefaultVisitor::visitTuple(TupleAst* node)
 {
-    foreach (ExpressionAst* expression, node->elements) {
-        visitNode(expression);
-    }
+    visitNodeList(node->elements);
 }
 
 void AstDefaultVisitor::visitUnaryOperation(UnaryOperationAst* node)
@@ -263,22 +227,14 @@ void AstDefaultVisitor::visitUnaryOperation(UnaryOperationAst* node)
 void AstDefaultVisitor::visitWhile(WhileAst* node)
 {
     visitNode(node->condition);
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (Ast* statement, node->orelse) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
+    visitNodeList(node->orelse);
 }
 
 void AstDefaultVisitor::visitWith(WithAst* node)
 {
-    foreach (Ast* item, node->items) {
-        visitNode(item);
-    }
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
+    visitNodeList(node->items);
+    visitNodeList(node->body);
 }
 
 void AstDefaultVisitor::visitWithItem(WithItemAst* node)
@@ -294,45 +250,33 @@ void AstDefaultVisitor::visitYield(YieldAst* node)
 
 void AstDefaultVisitor::visitList(ListAst* node)
 {
-    foreach (ExpressionAst* expression, node->elements) {
-        visitNode(expression);
-    }
+    visitNodeList(node->elements);
 }
 
 void AstDefaultVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     visitNode(node->element);
-    foreach (ComprehensionAst* comp, node->generators) {
-        visitNode(comp);
-    }
+    visitNodeList(node->generators);
 }
 
 void AstDefaultVisitor::visitExceptionHandler(ExceptionHandlerAst* node)
 {
     visitNode(node->type);
     visitNode(node->name);
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
+    visitNodeList(node->body);
 }
 
 void AstDefaultVisitor::visitDict(DictAst* node)
 {
-    foreach (ExpressionAst* expression, node->keys) {
-        visitNode(expression);
-    }
-    foreach (ExpressionAst* expression, node->values) {
-        visitNode(expression);
-    }
+    visitNodeList(node->keys);
+    visitNodeList(node->values);
 }
 
 void AstDefaultVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
     visitNode(node->key);
     visitNode(node->value);
-    foreach (ComprehensionAst* comp, node->generators) {
-        visitNode(comp);
-    }
+    visitNodeList(node->generators);
 }
 
 void AstDefaultVisitor::visitAugmentedAssignment(AugmentedAssignmentAst* node)
@@ -356,71 +300,49 @@ void AstDefaultVisitor::visitBinaryOperation(BinaryOperationAst* node)
 
 void AstDefaultVisitor::visitBooleanOperation(BooleanOperationAst* node)
 {
-    foreach (ExpressionAst* expression, node->values) {
-        visitNode(expression);
-    }
+    visitNodeList(node->values);
 }
 
 void AstDefaultVisitor::visitClassDefinition(ClassDefinitionAst* node)
 {
-    foreach (ExpressionAst* expression, node->baseClasses) {
-        visitNode(expression);
-    }
-    foreach (Ast* statement, node->body) {
-        visitNode(statement);
-    }
-    foreach (ExpressionAst* expression, node->decorators) {
-        visitNode(expression);
-    }
+    visitNodeList(node->baseClasses);
+    visitNodeList(node->body);
+    visitNodeList(node->decorators);
     visitIdentifier(node->name);
 }
 
 void AstDefaultVisitor::visitCompare(CompareAst* node)
 {
     visitNode(node->leftmostElement);
-    foreach (ExpressionAst* expression, node->comparands) {
-        visitNode(expression);
-    }
+    visitNodeList(node->comparands);
 }
 
 void AstDefaultVisitor::visitComprehension(ComprehensionAst* node)
 {
     visitNode(node->target);
     visitNode(node->iterator);
-    foreach (ExpressionAst* expression, node->conditions) {
-        visitNode(expression);
-    }
+    visitNodeList(node->conditions);
 }
 
 void AstDefaultVisitor::visitAssignment(AssignmentAst* node)
 {
-    foreach (ExpressionAst* expression, node->targets) {
-        visitNode(expression);
-    };
+    visitNodeList(node->targets);
     visitNode(node->value);
 }
 
 void AstDefaultVisitor::visitCall(CallAst* node)
 {
     visitNode(node->function);
-    foreach (ExpressionAst* argument, node->arguments) {
-        visitNode(argument);
-    }
-    foreach (KeywordAst* kwd, node->keywords) {
-        visitNode(kwd);
-    }
+    visitNodeList(node->arguments);
+    visitNodeList(node->keywords);
 }
 
 void AstDefaultVisitor::visitFunctionDefinition(FunctionDefinitionAst* node)
 {
-    foreach (ExpressionAst* decorator, node->decorators) {
-        visitNode(decorator);
-    }
+    visitNodeList(node->decorators);
     visitNode(node->arguments);
     visitNode(node->returns);
-    foreach (Ast* stmt, node->body) {
-        visitNode(stmt);
-    }
+    visitNodeList(node->body);
     visitIdentifier(node->name);
 }
 
@@ -438,12 +360,8 @@ void AstDefaultVisitor::visitKeyword(KeywordAst* node)
 
 void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
 {
-    foreach (ArgAst* expression, node->arguments) {
-        visitNode(expression);
-    }
-    foreach (ExpressionAst* expression, node->defaultValues ) {
-        visitNode(expression);
-    }
+    visitNodeList(node->arguments);
+    visitNodeList(node->defaultValues);
 }
 
 }

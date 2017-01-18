@@ -110,9 +110,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
 
 void ExpressionVisitor::visitCall(CallAst* node)
 {
-    foreach ( ExpressionAst* c, node->arguments ) {
-        AstDefaultVisitor::visitNode(c);
-    }
+    visitNodeList(node->arguments);
     ExpressionVisitor v(this);
     v.visitNode(node->function);
     auto declaration = Helper::resolveAliasDeclaration(v.lastDeclaration().data());
@@ -705,10 +703,7 @@ void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
 {
-    foreach (ExpressionAst* expression, node->values) {
-        visitNode(expression);
-    }
-
+    AstDefaultVisitor::visitBooleanOperation(node);
     encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
 }
 

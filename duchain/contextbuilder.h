@@ -174,12 +174,6 @@ protected:
     virtual void visitFunctionBody(FunctionDefinitionAst* node);
     void openContextForClassDefinition(ClassDefinitionAst* node);
 
-    template <typename T> void visitNodeList( const QList<T*>& l ) {
-        foreach ( T* node, l ) {
-            visitNode(node);
-        }
-    }
-
 protected:
     // those functions can be used if you want to do something to a context you are in,
     // but which is not the current one. Example: You want to add a variable to a class context,

@@ -97,15 +97,21 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     // Like, for B.C where B is an instance of foo, find a property of foo called C.
     DUChainReadLocker lock;
     auto attribute = Helper::accessAttribute(v.lastType(), node->attribute->value, topContext());
-
-    if ( auto resolved = Helper::resolveAliasDeclaration(attribute) ) {
-        encounter(attribute->abstractType(), DeclarationPointer(attribute));
-        setLastIsAlias(dynamic_cast<AliasDeclaration*>(attribute) ||
-                        resolved->isFunctionDeclaration() ||
-                        dynamic_cast<ClassDeclaration*>(resolved));
-    } else {
+    auto resolved = Helper::resolveAliasDeclaration(attribute);
+    if ( ! resolved ) {
         encounterUnknown();
+        return;
     }
+    auto function = dynamic_cast<FunctionDeclaration*>(resolved);
+    if ( function && function->type<FunctionType>() &&
+          Helper::findDecoratorByName(function, QLatin1String("property")) ) {
+        encounter(function->type<FunctionType>()->returnType(), DeclarationPointer(function));
+        return;
+    }
+    encounter(attribute->abstractType(), DeclarationPointer(attribute));
+    setLastIsAlias(function ||
+                    dynamic_cast<AliasDeclaration*>(attribute) ||
+                    dynamic_cast<ClassDeclaration*>(resolved) );
 }
 
 void ExpressionVisitor::visitCall(CallAst* node)

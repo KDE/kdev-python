@@ -806,11 +806,11 @@ void PyDUChainTest::testTypes()
     
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
-    
+
     ReferencedTopDUContext ctx = parse(code.toUtf8());
     QVERIFY(ctx);
     QVERIFY(m_ast);
-    
+
     DUChainReadLocker lock(DUChain::lock());
     TypeTestVisitor* visitor = new TypeTestVisitor();
     visitor->ctx = TopDUContextPointer(ctx.data());
@@ -823,6 +823,8 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
+    QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
+    QEXPECT_FAIL("property_setter", "very basic property support", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -1105,11 +1107,25 @@ void PyDUChainTest::testTypes_data()
                                     "         return k\n"
                                     "f = Foo.foo()\n"
                                     "checkme = f\n" << "Foo";
+    QTest::newRow("property_getter") << "class Foo:\n"
+                                        "    @property\n"
+                                        "    def bar(self): return 35\n"
+                                        "checkme = Foo().bar" << "int";
+    QTest::newRow("property_wrong") << "class Foo:\n"
+                                       "    @property\n"
+                                       "    def bar(self): return True\n"
+                                       "checkme = Foo().bar()" << "mixed";
+    QTest::newRow("property_setter") << "class Foo:\n"
+                                        "    @property\n"
+                                        "    def bar(self): return 35\n"
+                                        "    @bar.setter\n"
+                                        "    def bar(self, value): return 18.3\n" // Return should be ignored
+                                        "checkme = Foo().bar" << "int";
 
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
 
     QTest::newRow("getitem") << "class c:\n def __getitem__(self, slice): return 3.14\na = c()\ncheckme = a[2]" << "float";
-    
+
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"
                                                    "checkme = myclass(3).foo" << "int";

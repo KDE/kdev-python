@@ -107,6 +107,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
 
     setLayout(new QVBoxLayout);
     layout()->addWidget(splitter);
+    layout()->setContentsMargins(0, 0, 0, 0);
 }
 
 void DocfileManagerWidget::showSearchPaths()

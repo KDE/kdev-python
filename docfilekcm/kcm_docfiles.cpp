@@ -29,6 +29,7 @@ DocfilesKCModule::DocfilesKCModule(KDevelop::IPlugin* plugin, QWidget* parent)
     managerWidget = new DocfileManagerWidget(this);
 
     QVBoxLayout* layout = new QVBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(managerWidget);
     setLayout(layout);
 }

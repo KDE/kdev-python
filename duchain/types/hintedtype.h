@@ -98,7 +98,6 @@ public:
     };
 
     typedef HintedTypeData Data;
-    typedef KDevelop::TypeAliasType BaseType;
 
 protected:
     TYPE_DECLARE_DATA(HintedType);

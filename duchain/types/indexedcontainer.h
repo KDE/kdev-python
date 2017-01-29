@@ -89,7 +89,6 @@ public:
     };
     
     typedef IndexedContainerData Data;
-    typedef KDevelop::StructureType BaseType;
     
 protected:
     TYPE_DECLARE_DATA(IndexedContainer);

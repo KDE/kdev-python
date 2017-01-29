@@ -64,7 +64,6 @@ public:
     };
 
     typedef KDevelop::UnsureTypeData Data;
-    typedef KDevelop::UnsureType BaseType;
 
 protected:
     TYPE_DECLARE_DATA(KDevelop::UnsureType);

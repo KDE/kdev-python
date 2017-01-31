@@ -61,12 +61,6 @@ public:
     const ModificationRevision& futureModificationRevision() const;
     void setFutureModificationRevision(const ModificationRevision& revision);
     
-    void mapAstUse(Ast* node, const SimpleUse& use)
-    {
-        Q_UNUSED(node);
-        Q_UNUSED(use);
-    }
-    
     CodeAst::Ptr ast;
     
 private:

@@ -198,7 +198,6 @@ protected:
     ModificationRevision m_futureModificationRevision;
 
     IndexedString m_currentlyParsedDocument;
-    bool m_mapAst = false;
 
 private:
     // The top-context being built.

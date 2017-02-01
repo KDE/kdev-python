@@ -58,7 +58,7 @@ void DocfilesKCModule::defaults()
 
 QString DocfilesKCModule::fullName() const
 {
-    return i18n("Manage documentation files used by the Python plugin");
+    return i18n("Manage Documentation Files Used by the Python Plugin");
 }
 
 QIcon DocfilesKCModule::icon() const

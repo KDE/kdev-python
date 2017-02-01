@@ -73,7 +73,7 @@ void PEP8KCModule::defaults()
 
 QString PEP8KCModule::fullName() const
 {
-    return i18n("Configure Python style checking");
+    return i18n("Configure Python Style Checking");
 }
 
 QIcon PEP8KCModule::icon() const

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from contextlib import redirect_stdout
 from io import StringIO
@@ -7,7 +7,10 @@ import sys
 try:
     from pycodestyle import Checker, StyleGuide
 except ImportError:
-    Checker = None
+    try:
+        from pep8 import Checker, StyleGuide
+    except ImportError:
+        Checker = None
 
 while True:
     size = stdin.buffer.read(10)
@@ -40,5 +43,5 @@ while True:
         stdout.write(output)
         stdout.flush()
     else:
-        stderr.write("The `pycodestyle` module is not installed.")
+        stderr.write("The `pycodestyle` (previously `pep8`) module is not installed.")
         stderr.flush()

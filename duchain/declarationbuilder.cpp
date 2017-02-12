@@ -1737,29 +1737,28 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
-    // Find the type of the object being "return"ed
-    ExpressionVisitor v(currentContext());
-    v.visitNode(node->value);
-    
-    if ( node->value ) {
-        if ( ! hasCurrentType() ) {
-            DUChainWriteLocker lock;
-            KDevelop::Problem *p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
-            p->setSource(KDevelop::IProblem::SemanticAnalysis);
-            p->setDescription(i18n("Return statement not within function declaration"));
-            ProblemPointer ptr(p);
-            topContext()->addProblem(ptr);
+    static auto noneType = AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid));
+
+    if ( auto function = currentType<FunctionType>() ) {
+        // Statements with no explicit value return `None`.
+        auto encountered = noneType;
+        if ( node->value ) {
+            // Find the type of the object being "return"ed
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->value);
+            encountered = v.lastType();
         }
-        else {
-            TypePtr<FunctionType> t = currentType<FunctionType>();
-            AbstractType::Ptr encountered = v.lastType();
-            DUChainWriteLocker lock;
-            if ( t ) {
-                // Update the containing function's return type
-                t->setReturnType(Helper::mergeTypes(t->returnType(), encountered));
-            }
-        }
+        // Update the containing function's return type
+        DUChainWriteLocker lock;
+        function->setReturnType(Helper::mergeTypes(function->returnType(), encountered));
+    } else {
+        DUChainWriteLocker lock;
+        KDevelop::Problem *p = new KDevelop::Problem();
+        p->setFinalLocation(DocumentRange(currentlyParsedDocument(), node->range())); // only mark first line
+        p->setSource(KDevelop::IProblem::SemanticAnalysis);
+        p->setDescription(i18n("Return statement not within function declaration"));
+        ProblemPointer ptr(p);
+        topContext()->addProblem(ptr);
     }
     DeclarationBuilderBase::visitReturn(node);
 }

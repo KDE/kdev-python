@@ -86,7 +86,7 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
     header.append(QByteArray::number(maxLineLength));
     header.append("\n");
     // size, always 10 bytes
-    header.insert(0, QString::number(header.size() + data.size()).leftJustified(10));
+    header.insert(0, QByteArray::number(header.size() + data.size()).leftJustified(10));
     m_checkerProcess.write(header);
     m_checkerProcess.write(data);
 }
@@ -178,6 +178,7 @@ void StyleChecking::updateStyleChecking(const KDevelop::ReferencedTopDUContext& 
     auto text = idoc->textDocument()->text();
 
     if ( !m_mutex.tryLock(1000) ) {
+        qWarning() << "timed out waiting for the style checker mutex";
         return;
     }
     m_currentlyChecking = top;

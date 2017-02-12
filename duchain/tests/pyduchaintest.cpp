@@ -57,6 +57,8 @@
 
 #include "duchain/helpers.h"
 
+#include "kdevpythonversion.h"
+
 QTEST_MAIN(PyDUChainTest)
 
 using namespace KDevelop;
@@ -435,8 +437,10 @@ void PyDUChainTest::testCrashes_data() {
         "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
         "e = Evil()\n"
         "z = [e.aa(1), e.bb(2), e.cc(3)]";
+#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
     QTest::newRow("comprehension_in_fstring") <<
         "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
+#endif
 }
 
 void PyDUChainTest::testClassVariables()
@@ -802,11 +806,11 @@ void PyDUChainTest::testTypes()
     
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
-    
+
     ReferencedTopDUContext ctx = parse(code.toUtf8());
     QVERIFY(ctx);
     QVERIFY(m_ast);
-    
+
     DUChainReadLocker lock(DUChain::lock());
     TypeTestVisitor* visitor = new TypeTestVisitor();
     visitor->ctx = TopDUContextPointer(ctx.data());
@@ -819,6 +823,8 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
+    QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
+    QEXPECT_FAIL("property_setter", "very basic property support", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -827,8 +833,10 @@ void PyDUChainTest::testTypes_data()
     QTest::addColumn<QString>("code");
     QTest::addColumn<QString>("expectedType");
 
+#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
     QTest::newRow("annotate_decl") << "checkme: int" << "int";
     QTest::newRow("annotate_assign") << "checkme: int = 3.5" << "unsure (float, int)";
+#endif
     QTest::newRow("listtype") << "checkme = []" << "list";
     QTest::newRow("listtype_func") << "checkme = list()" << "list";
     QTest::newRow("listtype_with_contents") << "checkme = [1, 2, 3, 4, 5]" << "list of int";
@@ -873,13 +881,16 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("funccall_string") << "def foo(): return 'a'; \ncheckme = foo();" << "str";
     QTest::newRow("funccall_list") << "def foo(): return []; \ncheckme = foo();" << "list";
     QTest::newRow("funccall_dict") << "def foo(): return {}; \ncheckme = foo();" << "dict";
-    
+    QTest::newRow("funccall_no_return") << "def foo(): pass\ncheckme = foo()" << "void";
+    QTest::newRow("funccall_def_return") << "def foo(): return\ncheckme = foo()" << "void";
+    QTest::newRow("funccall_maybe_def_return") << "def foo():\n if False: return\n return 7\ncheckme = foo()" << "unsure (void, int)";
+
     QTest::newRow("tuple1") << "checkme, foo = 3, \"str\"" << "int";
     QTest::newRow("tuple2") << "foo, checkme = 3, \"str\"" << "str";
     QTest::newRow("tuple2_negative_index") << "foo = (1, 2, 'foo')\ncheckme = foo[-1]" << "str";
     QTest::newRow("tuple_type") << "checkme = 1, 2" << "tuple";
     QTest::newRow("tuple_rhs_unpack") << "foo = 1, 2.5\nbar = 1, *foo, 2\ncheckme = bar[2]" << "float";
-    
+
     QTest::newRow("dict_iteritems") << "d = {1:2, 3:4}\nfor checkme, k in d.iteritems(): pass" << "int";
     QTest::newRow("enumerate_key") << "d = [str(), str()]\nfor checkme, value in enumerate(d): pass" << "int";
     QTest::newRow("enumerate_value") << "d = [str(), str()]\nfor key, checkme in enumerate(d): pass" << "str";
@@ -887,7 +898,7 @@ void PyDUChainTest::testTypes_data()
 
     QTest::newRow("dict_assign_twice") << "d = dict(); d[''] = 0; d = dict(); d[''] = 0; checkme = d"
                                        << "unsure (dict of str : int, dict)";
-    
+
     QTest::newRow("class_method_import") << "class c:\n attr = \"foo\"\n def m():\n  return attr;\n  return 3;\ni=c()\ncheckme=i.m()" << "int";
     QTest::newRow("getsListDocstring") << "foo = [1, 2, 3]\ncheckme = foo.reverse()" << "list of int";
 
@@ -1096,11 +1107,25 @@ void PyDUChainTest::testTypes_data()
                                     "         return k\n"
                                     "f = Foo.foo()\n"
                                     "checkme = f\n" << "Foo";
+    QTest::newRow("property_getter") << "class Foo:\n"
+                                        "    @property\n"
+                                        "    def bar(self): return 35\n"
+                                        "checkme = Foo().bar" << "int";
+    QTest::newRow("property_wrong") << "class Foo:\n"
+                                       "    @property\n"
+                                       "    def bar(self): return True\n"
+                                       "checkme = Foo().bar()" << "mixed";
+    QTest::newRow("property_setter") << "class Foo:\n"
+                                        "    @property\n"
+                                        "    def bar(self): return 35\n"
+                                        "    @bar.setter\n"
+                                        "    def bar(self, value): return 18.3\n" // Return should be ignored
+                                        "checkme = Foo().bar" << "int";
 
     QTest::newRow("tuple_listof") << "l = [(1, 2), (3, 4)]\ncheckme = l[1][0]" << "int";
 
     QTest::newRow("getitem") << "class c:\n def __getitem__(self, slice): return 3.14\na = c()\ncheckme = a[2]" << "float";
-    
+
     QTest::newRow("constructor_type_deduction") << "class myclass:\n"
                                                    "\tdef __init__(self, param): self.foo=param\n"
                                                    "checkme = myclass(3).foo" << "int";
@@ -1217,6 +1242,10 @@ void PyDUChainTest::testProblemCount_data()
                                         "  [x for a in [1, 2, 3]]" << 1;
     QTest::newRow("list_comp_staticmethod_wrong") << "class A:\n @staticmethod\n def func(cls):\n"
                                         "  [x for a in [1, 2, 3]]" << 1;
+    QTest::newRow("misplaced_return_plain") << "return" << 1;
+    QTest::newRow("misplaced_return_value") << "return 15" << 1;
+    QTest::newRow("misplaced_return_class") << "class A:\n return 25" << 1;
+    QTest::newRow("correct_return") << "def foo():\n return" << 0;
 }
 
 void PyDUChainTest::testImportDeclarations_data() {

@@ -1436,7 +1436,7 @@ void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node
     v.visitNode(node->annotation);
     assignType = Helper::mergeTypes(assignType, v.lastType());
     auto sourceType = SourceType{ assignType, DeclarationPointer(), false };
-    assignToUnknown(node->target, assignType);
+    assignToUnknown(node->target, sourceType);
 }
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )

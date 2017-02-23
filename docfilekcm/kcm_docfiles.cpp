@@ -39,7 +39,7 @@ DocfilesKCModule::~DocfilesKCModule()
 
 KDevelop::ConfigPage::ConfigPageType DocfilesKCModule::configPageType() const
 {
-    return KDevelop::ConfigPage::DocumentationConfigPage;
+    return KDevelop::ConfigPage::LanguageConfigPage;
 }
 
 void DocfilesKCModule::apply()

@@ -1466,7 +1466,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setType(type);
 
     openType(type);
-    m_currentClassType = type;
+    m_currentClassTypes.append(type);
 
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
@@ -1479,6 +1479,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     
     closeContext();
+    m_currentClassTypes.removeLast();
     closeType();
     closeDeclaration();
 }
@@ -1809,9 +1810,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
                                                                                    arg, AliasDeclarationType);
-            if ( m_currentClassType ) {
-                qCDebug(KDEV_PYTHON_DUCHAIN) << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
-                decl->setAliasedDeclaration(m_currentClassType->declaration(currentContext()->topContext()));
+            if ( ! m_currentClassTypes.isEmpty() ) {
+                auto classDecl = m_currentClassTypes.last()->declaration(topContext());
+
+                decl->setAliasedDeclaration(classDecl);
             }
             closeDeclaration();
             paramDeclaration = decl;
@@ -1849,7 +1851,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
-                argumentType = m_currentClassType.cast<AbstractType>();
+                argumentType = m_currentClassTypes.last().cast<AbstractType>();
                 isFirst = false;
             }
         }

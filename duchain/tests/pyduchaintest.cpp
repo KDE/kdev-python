@@ -823,6 +823,7 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
+    QEXPECT_FAIL("nested_class_self_inside", "broken", Continue);
     QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
     QEXPECT_FAIL("property_setter", "very basic property support", Continue);
     QCOMPARE(visitor->found, true);
@@ -1064,6 +1065,16 @@ void PyDUChainTest::testTypes_data()
                                                     "       Base.__init__(self, foo)\n"
                                                     "instance = Derived('string')\n"
                                                     "checkme = instance.foo" << "str";
+    QTest::newRow("nested_class_self_inside") << "class Foo:\n"
+                                                 "   def foo(self):\n"
+                                                 "       class Bar:\n"
+                                                 "           def bar(self): return self\n"
+                                                 "       return Bar().bar()\n"
+                                                 "checkme = Foo().foo()\n" << "Foo::foo::Bar";
+    QTest::newRow("nested_class_self_after") << "class Foo:\n"
+                                                "    class Bar: pass\n"
+                                                "    def foo(self): return self\n"
+                                                "checkme = Foo().foo()\n" << "Foo";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 

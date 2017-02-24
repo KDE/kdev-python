@@ -277,7 +277,7 @@ private:
     QList<DUChainBase*> m_scheduledForDeletion;
     QScopedPointer<CorrectionHelper> m_correctionHelper;
     int m_ownPriority = 0;
-    StructureType::Ptr m_currentClassType;
+    QVector<StructureType::Ptr> m_currentClassTypes;
     // missing modules, for not reporting them as unknown variables
     QVector<IndexedString> m_missingModules;
 

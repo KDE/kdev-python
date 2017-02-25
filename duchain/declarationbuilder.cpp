@@ -20,7 +20,6 @@
  */
 
 #include "declarationbuilder.h"
-#include "duchain/declarations/decorator.h"
 #include "duchain/declarations/functiondeclaration.h"
 #include "duchain/declarations/classdeclaration.h"
 
@@ -1383,17 +1382,15 @@ void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
+    visitNodeList(node->decorators);
     const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));
 
     StructureType::Ptr type(new StructureType());
-    
+
     DUChainWriteLocker lock;
     ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
-    lock.unlock();
-    visitDecorators<ClassDeclaration>(node->decorators, dec);
-    lock.lock();
     eventuallyAssignInternalContext();
-    
+
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
@@ -1469,41 +1466,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         AstDefaultVisitor::visitNode(_node);
     }
     lock.lock();
-    
+
     closeContext();
     m_currentClassTypes.removeLast();
     closeType();
     closeDeclaration();
-}
-
-template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::ExpressionAst* > decorators, T* addTo) {
-    foreach ( ExpressionAst* decorator, decorators ) {
-        AstDefaultVisitor::visitNode(decorator);
-        if ( decorator->astType == Ast::CallAstType ) {
-            CallAst* call = static_cast<CallAst*>(decorator);
-            Decorator d;
-            if ( call->function->astType != Ast::NameAstType ) {
-                continue;
-            }
-            d.setName(*static_cast<NameAst*>(call->function)->identifier);
-            foreach ( ExpressionAst* arg, call->arguments ) {
-                if ( arg->astType == Ast::NumberAstType ) {
-                    d.setAdditionalInformation(QString::number(static_cast<NumberAst*>(arg)->value));
-                }
-                else if ( arg->astType == Ast::StringAstType ) {
-                    d.setAdditionalInformation(static_cast<StringAst*>(arg)->value);
-                }
-                break; // we only need the first argument for documentation analysis
-            }
-            addTo->addDecorator(d);
-        }
-        else if ( decorator->astType == Ast::NameAstType ) {
-            NameAst* name = static_cast<NameAst*>(decorator);
-            Decorator d;
-            d.setName(*(name->identifier));
-            addTo->addDecorator(d);
-        }
-    }
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
@@ -1520,29 +1487,51 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                                                                                 FunctionDeclarationType);
 
     Q_ASSERT(dec->isFunctionDeclaration());
-    
+
     // check for documentation
     dec->setComment(getDocstring(node->body));
-    
+
     openType(type);
     dec->setInSymbolTable(false);
     dec->setType(type);
-    
+
     lock.unlock();
-    visitDecorators<FunctionDeclaration>(node->decorators, dec);
-    const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
-    const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
-    dec->setStatic(isStatic);
-    dec->setClassMethod(isClassMethod);
+    dec->setStatic(false);
+    dec->setClassMethod(false);
+    dec->setProperty(false);
+    foreach ( auto decorator, node->decorators) {
+        visitNode(decorator);
+        switch (decorator->astType) {
+          case Ast::AttributeAstType: {
+            auto attr = static_cast<AttributeAst*>(decorator)->attribute->value;
+            if ( attr == QStringLiteral("setter") ||
+                 attr == QStringLiteral("getter") ||
+                 attr == QStringLiteral("deleter") )
+                dec->setProperty(true);
+            break;
+          }
+          case Ast::NameAstType: {
+            auto name = static_cast<NameAst*>(decorator)->identifier->value;
+            if ( name == QStringLiteral("staticmethod") )
+                dec->setStatic(true);
+            else if ( name == QStringLiteral("classmethod") )
+                dec->setClassMethod(true);
+            else if ( name == QStringLiteral("property") )
+                dec->setProperty(true);
+            break;
+          }
+          default: {}
+        }
+    }
     visitFunctionArguments(node);
     visitFunctionBody(node);
     lock.lock();
-    
+
     closeDeclaration();
     eventuallyAssignInternalContext();
-    
+
     closeType();
-    
+
     // python methods don't have their parents attributes directly inside them
     if ( eventualParentDeclaration && eventualParentDeclaration->internalContext() && dec->internalContext() ) {
         dec->internalContext()->removeImportedParentContext(eventualParentDeclaration->internalContext());
@@ -1562,14 +1551,14 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType(type);
     }
 
-    if ( ! isStatic ) {
+    if ( ! dec->isStatic() ) {
         DUContext* args = DUChainUtils::getArgumentContext(dec);
         if ( args )  {
             QVector<Declaration*> parameters = args->localDeclarations();
             static IndexedString newMethodName("__new__");
             static IndexedString selfArgumentName("self");
             static IndexedString clsArgumentName("cls");
-            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! isClassMethod ) {
+            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! dec->isClassMethod() ) {
                 QString description;
                 if ( dec->identifier().identifier() == newMethodName
                      && parameters[0]->identifier().identifier() != clsArgumentName )

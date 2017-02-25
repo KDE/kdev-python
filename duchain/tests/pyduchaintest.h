@@ -70,8 +70,6 @@ class PyDUChainTest : public QObject
         void testAutocompletionFlickering();
         void testContainerTypes();
         void testContainerTypes_data();
-        void testDecorators();
-        void testDecorators_data();
         void testInheritance();
         void testInheritance_data();
         void testClassVariables();

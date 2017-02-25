@@ -32,7 +32,6 @@
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/types/integraltype.h>
 #include <language/duchain/functiondeclaration.h>
-#include <duchain/declarations/decorator.h>
 
 #include <QList>
 
@@ -148,16 +147,6 @@ public:
      *         which is true when it is a constructor
      **/
     static FuncInfo functionForCalled(Declaration* called, bool isAlias=true);
-
-    template<typename T> static const Decorator* findDecoratorByName(T* inDeclaration, const QString& name) {
-        const int count = inDeclaration->decoratorsSize();
-        const IndexedString indexedName = IndexedString(name);
-        for ( int i = 0; i < count; i++ ) {
-            if ( inDeclaration->decorators()[i].fastName() == indexedName )
-                return &(inDeclaration->decorators()[i]);
-        }
-        return 0;
-    };
 
     static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = 0) {
         // TODO cache types! this is horribly inefficient

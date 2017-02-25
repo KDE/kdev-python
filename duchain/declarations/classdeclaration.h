@@ -24,37 +24,21 @@
 #include <serialization/indexedstring.h>
 
 #include "pythonduchainexport.h"
-#include "decorator.h"
 
 namespace Python {
-
-DECLARE_LIST_MEMBER_HASH(ClassDeclarationData, m_decorators, Decorator);
 
 class KDEVPYTHONDUCHAIN_EXPORT ClassDeclarationData : public KDevelop::ClassDeclarationData
 {
 public:
     ClassDeclarationData()
-        : KDevelop::ClassDeclarationData()
-    {
-        initializeAppendedLists();
-    }
+        : KDevelop::ClassDeclarationData() {}
 
     ClassDeclarationData(const ClassDeclarationData& rhs)
-        : KDevelop::ClassDeclarationData(rhs) 
-    {
-        initializeAppendedLists();
-        copyListsFrom(rhs);
-    }
-    
-    ~ClassDeclarationData() {
-        freeAppendedLists();
-    }
+        : KDevelop::ClassDeclarationData(rhs) {}
 
-    START_APPENDED_LISTS_BASE(ClassDeclarationData, KDevelop::ClassDeclarationData);
-    APPENDED_LIST_FIRST(ClassDeclarationData, Decorator, m_decorators);
-    END_APPENDED_LISTS(ClassDeclarationData, m_decorators);
+    ~ClassDeclarationData() {}
 };
-    
+
 class KDEVPYTHONDUCHAIN_EXPORT ClassDeclaration : public KDevelop::ClassDeclaration
 {
 public:
@@ -66,20 +50,7 @@ public:
     enum {
         Identity = 125
     };
-    
-    inline const Decorator* decorators() {
-        return d_func()->m_decorators();
-    };
-    
-    inline unsigned int decoratorsSize() {
-        return d_func()->m_decoratorsSize();
-    };
-    
-    inline void addDecorator(const Decorator& d) {
-        d_func_dynamic()->m_decoratorsList().insert(0, d);
-    }
-    
-    typedef DUChainPointer<ClassDeclaration> Ptr;
+    typedef KDevelop::DUChainPointer<ClassDeclaration> Ptr;
     
 private:
     DUCHAIN_DECLARE_DATA(ClassDeclaration);

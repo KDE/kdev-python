@@ -111,7 +111,6 @@ protected:
         AbortIfReopenMismatch = 0x1
     };
     /// Visitor helper functions
-    template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);

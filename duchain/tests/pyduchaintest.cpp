@@ -1389,33 +1389,6 @@ void PyDUChainTest::testHintedTypes_data()
     QTest::newRow("unsure_attribute") << "def myfunc(x): return x.capitalize()\nmyfunc(3.5)\ncheckme = myfunc(str())" << "str";
 }
 
-void PyDUChainTest::testDecorators()
-{
-    QFETCH(QString, code);
-//     QFETCH(int, amountOfDecorators);
-    QFETCH(QStringList, names);
-    ReferencedTopDUContext ctx = parse(code);
-    QVERIFY(ctx);
-    DUChainReadLocker lock(DUChain::lock());
-    Python::FunctionDeclaration* decl = dynamic_cast<Python::FunctionDeclaration*>(
-        ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
-    QVERIFY(decl);
-    foreach ( const QString& decoratorName, names ) {
-        QVERIFY(Helper::findDecoratorByName<Python::FunctionDeclaration>(decl, decoratorName));
-    }
-}
-
-void PyDUChainTest::testDecorators_data()
-{
-    QTest::addColumn<QString>("code");
-    QTest::addColumn<int>("amountOfDecorators");
-    QTest::addColumn<QStringList>("names");
-    
-    QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1 << ( QStringList() << "foo" );
-    QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1 << ( QStringList() << "foo");
-    QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2 << ( QStringList() << "foo" << "bar" );
-}
-
 void PyDUChainTest::testOperators()
 {
     QFETCH(QString, code);

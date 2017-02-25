@@ -151,7 +151,7 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), document->lineLength(word.end().line()));
     if ( m_doNotCall || document->text(checkSuffix).trimmed().startsWith('(')
          || document->text(checkPrefix).trimmed().endsWith('@')
-         || (functionDecl && Helper::findDecoratorByName(functionDecl, QLatin1String("property"))) )
+         || (functionDecl && functionDecl->isProperty()) )
     {
         // don't insert brackets if they're already there,
         // the item is a decorator, or if it's an import item.

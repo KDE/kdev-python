@@ -22,7 +22,6 @@
 
 namespace Python {
 
-DEFINE_LIST_MEMBER_HASH(ClassDeclarationData, m_decorators, Decorator);
 REGISTER_DUCHAIN_ITEM(ClassDeclaration);
 
 ClassDeclaration::ClassDeclaration(const ClassDeclaration& rhs)

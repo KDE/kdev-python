@@ -190,10 +190,6 @@ protected:
     QList<DUContextPointer> m_temporarilyClosedContexts;
 
 protected:
-    // Pointer to the most recently encountered arguments context;
-    // useful while visiting a function body
-    DUContextPointer m_mostRecentArgumentsContext;
-
     // true if the first of the two performed passes is currently active
     bool m_prebuilding = false;
 

@@ -823,7 +823,6 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
     QEXPECT_FAIL("parent_constructor_arg_type", "Not enough passes?", Continue);
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
-    QEXPECT_FAIL("nested_class_self_inside", "broken", Continue);
     QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
     QEXPECT_FAIL("property_setter", "very basic property support", Continue);
     QCOMPARE(visitor->found, true);
@@ -1017,6 +1016,10 @@ void PyDUChainTest::testTypes_data()
                                            "checkme = myfun(1, 1.5, a=str())" << "float";
     QTest::newRow("varied_args_type_3") << "def myfun(arg, *args, **kwargs): return kwargs['a']\n"
                                            "checkme = myfun(1, 1.5, a=str())" << "str";
+    QTest::newRow("nested_arg_name_type") << "def foo(xxx):\n"
+                                             "  def bar(xxx): return xxx\n"
+                                             "  return bar('test')\n"
+                                             "checkme = foo(10)\n" << "str";
     QTest::newRow("method_args_type_1") << "class MyClass:\n"
                                            "   def method(self, arg): return self\n"
                                            "checkme = MyClass().method(12)" << "MyClass";

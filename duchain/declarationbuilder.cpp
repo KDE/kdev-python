@@ -168,18 +168,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(
+    return currentContext()->findDeclarations(
         identifierForNode(node).last(), CursorInRevision::invalid(), 0,
         (DUContext::SearchFlag) (DUContext::DontSearchInParent | DUContext::DontResolveAliases)
     );
-    // append arguments context
-    if ( m_mostRecentArgumentsContext ) {
-        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(
-            identifierForNode(node).last(), CursorInRevision::invalid(), 0, DUContext::DontSearchInParent
-        );
-        existingDeclarations.append(args);
-    }
-    return existingDeclarations;
 }
 
 DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractType::Ptr type, bool isAlias)

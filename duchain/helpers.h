@@ -20,7 +20,6 @@
 #ifndef GLOBALHELPERS_H
 #define GLOBALHELPERS_H
 
-#include "declarations/classdeclaration.h"
 #include "pythonduchainexport.h"
 #include "types/unsuretype.h"
 #include "ast.h"
@@ -31,6 +30,7 @@
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/structuretype.h>
 #include <language/duchain/types/integraltype.h>
+#include <language/duchain/classdeclaration.h>
 #include <language/duchain/functiondeclaration.h>
 
 #include <QList>

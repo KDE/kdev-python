@@ -1463,7 +1463,7 @@ void PyDUChainTest::testInheritance()
     bool classDeclFound = false;
     foreach ( const p& item, decls ) {
         if ( item.first->identifier().toString() == "B" ) {
-            auto klass = dynamic_cast<Python::ClassDeclaration*>(item.first);
+            auto klass = dynamic_cast<ClassDeclaration*>(item.first);
             QVERIFY(klass);
             QCOMPARE(klass->baseClassesSize(), static_cast<unsigned int>(expectedBaseClasses));
             classDeclFound = true;

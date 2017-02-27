@@ -21,7 +21,6 @@
 
 #include "declarationbuilder.h"
 #include "duchain/declarations/functiondeclaration.h"
-#include "duchain/declarations/classdeclaration.h"
 
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
@@ -33,6 +32,7 @@
 #include "assistants/missingincludeassistant.h"
 #include "correctionhelper.h"
 
+#include <language/duchain/classdeclaration.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>

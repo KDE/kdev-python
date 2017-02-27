@@ -5,7 +5,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}
 
 set(duchain_SRCS
     declarations/functiondeclaration.cpp
-    declarations/classdeclaration.cpp
 
     types/hintedtype.cpp
     types/unsuretype.cpp

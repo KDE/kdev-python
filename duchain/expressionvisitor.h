@@ -31,6 +31,7 @@
 #include <language/duchain/duchainpointer.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/types/structuretype.h>
+#include <language/duchain/classdeclaration.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/builders/dynamiclanguageexpressionvisitor.h>
 
@@ -38,7 +39,6 @@
 #include "pythonduchainexport.h"
 #include "pythoneditorintegrator.h"
 
-#include "duchain/declarations/classdeclaration.h"
 #include "duchain/declarations/functiondeclaration.h"
 #include "duchain/helpers.h"
 

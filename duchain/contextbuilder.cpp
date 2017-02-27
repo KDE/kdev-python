@@ -426,7 +426,7 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
 void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
     RangeInRevision range = rangeForArgumentsContext(node);
-    
+
     // The DUChain expects the context containing a function's arguments to be of type Function.
     // The function body will have DUContext::Other as type, as it contains only code.
     DUContext* funcctx = openContext(node->arguments, range, DUContext::Function, node->name);
@@ -435,7 +435,6 @@ void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
     closeContext();
     // the parameters should be visible in the function body, so import that context there
     m_importedParentContexts.append(funcctx);
-    m_mostRecentArgumentsContext = DUContextPointer(funcctx);
 }
 
 void ContextBuilder::visitFunctionDefinition(FunctionDefinitionAst* node)
@@ -479,7 +478,6 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
     visitNodeList(node->body);
     
     closeContext();
-    m_mostRecentArgumentsContext = DUContextPointer(0);
 }
 
 }

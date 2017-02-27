@@ -21,12 +21,13 @@
 #ifndef PYTHON_DECLARATIONBUILDER_H
 #define PYTHON_DECLARATIONBUILDER_H
 
+#include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/builders/abstractdeclarationbuilder.h>
 
 #include <QList>
 
+#include "contextbuilder.h"
 #include "declarations/functiondeclaration.h"
-#include "typebuilder.h"
 #include "ast.h"
 
 namespace Python
@@ -34,7 +35,9 @@ namespace Python
 
 class CorrectionHelper;
 
-typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> DeclarationBuilderBase;
+typedef KDevelop::AbstractTypeBuilder<Ast, Identifier, ContextBuilder> TypeBuilderBase;
+
+typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilderBase> DeclarationBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
@@ -111,7 +114,6 @@ protected:
         AbortIfReopenMismatch = 0x1
     };
     /// Visitor helper functions
-    template<typename T> void visitDecorators(QList<ExpressionAst*> decorators, T* addTo);
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
@@ -277,7 +279,7 @@ private:
     QList<DUChainBase*> m_scheduledForDeletion;
     QScopedPointer<CorrectionHelper> m_correctionHelper;
     int m_ownPriority = 0;
-    StructureType::Ptr m_currentClassType;
+    QVector<StructureType::Ptr> m_currentClassTypes;
     // missing modules, for not reporting them as unknown variables
     QVector<IndexedString> m_missingModules;
 

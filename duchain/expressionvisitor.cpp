@@ -104,7 +104,7 @@ void ExpressionVisitor::visitAttribute(AttributeAst* node)
     }
     auto function = dynamic_cast<FunctionDeclaration*>(resolved);
     if ( function && function->type<FunctionType>() &&
-          Helper::findDecoratorByName(function, QLatin1String("property")) ) {
+          function->isProperty() ) {
         encounter(function->type<FunctionType>()->returnType(), DeclarationPointer(function));
         return;
     }

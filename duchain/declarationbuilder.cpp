@@ -20,9 +20,7 @@
  */
 
 #include "declarationbuilder.h"
-#include "duchain/declarations/decorator.h"
 #include "duchain/declarations/functiondeclaration.h"
-#include "duchain/declarations/classdeclaration.h"
 
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
@@ -34,6 +32,7 @@
 #include "assistants/missingincludeassistant.h"
 #include "correctionhelper.h"
 
+#include <language/duchain/classdeclaration.h>
 #include <language/duchain/functiondeclaration.h>
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
@@ -168,18 +167,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
-    QList<Declaration*> existingDeclarations = currentContext()->findDeclarations(
+    return currentContext()->findDeclarations(
         identifierForNode(node).last(), CursorInRevision::invalid(), 0,
         (DUContext::SearchFlag) (DUContext::DontSearchInParent | DUContext::DontResolveAliases)
     );
-    // append arguments context
-    if ( m_mostRecentArgumentsContext ) {
-        QList<Declaration*> args = m_mostRecentArgumentsContext->findDeclarations(
-            identifierForNode(node).last(), CursorInRevision::invalid(), 0, DUContext::DontSearchInParent
-        );
-        existingDeclarations.append(args);
-    }
-    return existingDeclarations;
 }
 
 DeclarationBuilder::FitDeclarationType DeclarationBuilder::kindForType(AbstractType::Ptr type, bool isAlias)
@@ -1381,17 +1372,15 @@ void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node
 
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
+    visitNodeList(node->decorators);
     const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));
 
     StructureType::Ptr type(new StructureType());
-    
+
     DUChainWriteLocker lock;
     ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
-    lock.unlock();
-    visitDecorators<ClassDeclaration>(node->decorators, dec);
-    lock.lock();
     eventuallyAssignInternalContext();
-    
+
     dec->setKind(KDevelop::Declaration::Type);
     dec->clearBaseClasses();
     dec->setClassType(ClassDeclarationData::Class);
@@ -1456,7 +1445,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setType(type);
 
     openType(type);
-    m_currentClassType = type;
+    m_currentClassTypes.append(type);
 
     // needs to be done here, so the assignment of the internal context happens before visiting the body
     openContextForClassDefinition(node);
@@ -1465,40 +1454,11 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.unlock();
     visitNodeList(node->body);
     lock.lock();
-    
+
     closeContext();
+    m_currentClassTypes.removeLast();
     closeType();
     closeDeclaration();
-}
-
-template<typename T> void DeclarationBuilder::visitDecorators(QList< Python::ExpressionAst* > decorators, T* addTo) {
-    foreach ( ExpressionAst* decorator, decorators ) {
-        AstDefaultVisitor::visitNode(decorator);
-        if ( decorator->astType == Ast::CallAstType ) {
-            CallAst* call = static_cast<CallAst*>(decorator);
-            Decorator d;
-            if ( call->function->astType != Ast::NameAstType ) {
-                continue;
-            }
-            d.setName(*static_cast<NameAst*>(call->function)->identifier);
-            foreach ( ExpressionAst* arg, call->arguments ) {
-                if ( arg->astType == Ast::NumberAstType ) {
-                    d.setAdditionalInformation(QString::number(static_cast<NumberAst*>(arg)->value));
-                }
-                else if ( arg->astType == Ast::StringAstType ) {
-                    d.setAdditionalInformation(static_cast<StringAst*>(arg)->value);
-                }
-                break; // we only need the first argument for documentation analysis
-            }
-            addTo->addDecorator(d);
-        }
-        else if ( decorator->astType == Ast::NameAstType ) {
-            NameAst* name = static_cast<NameAst*>(decorator);
-            Decorator d;
-            d.setName(*(name->identifier));
-            addTo->addDecorator(d);
-        }
-    }
 }
 
 void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
@@ -1515,29 +1475,51 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
                                                                                 FunctionDeclarationType);
 
     Q_ASSERT(dec->isFunctionDeclaration());
-    
+
     // check for documentation
     dec->setComment(getDocstring(node->body));
-    
+
     openType(type);
     dec->setInSymbolTable(false);
     dec->setType(type);
-    
+
     lock.unlock();
-    visitDecorators<FunctionDeclaration>(node->decorators, dec);
-    const bool isStatic = Helper::findDecoratorByName<FunctionDeclaration>(dec, "staticmethod");
-    const bool isClassMethod = Helper::findDecoratorByName<FunctionDeclaration>(dec, "classmethod");
-    dec->setStatic(isStatic);
-    dec->setClassMethod(isClassMethod);
+    dec->setStatic(false);
+    dec->setClassMethod(false);
+    dec->setProperty(false);
+    foreach ( auto decorator, node->decorators) {
+        visitNode(decorator);
+        switch (decorator->astType) {
+          case Ast::AttributeAstType: {
+            auto attr = static_cast<AttributeAst*>(decorator)->attribute->value;
+            if ( attr == QStringLiteral("setter") ||
+                 attr == QStringLiteral("getter") ||
+                 attr == QStringLiteral("deleter") )
+                dec->setProperty(true);
+            break;
+          }
+          case Ast::NameAstType: {
+            auto name = static_cast<NameAst*>(decorator)->identifier->value;
+            if ( name == QStringLiteral("staticmethod") )
+                dec->setStatic(true);
+            else if ( name == QStringLiteral("classmethod") )
+                dec->setClassMethod(true);
+            else if ( name == QStringLiteral("property") )
+                dec->setProperty(true);
+            break;
+          }
+          default: {}
+        }
+    }
     visitFunctionArguments(node);
     visitFunctionBody(node);
     lock.lock();
-    
+
     closeDeclaration();
     eventuallyAssignInternalContext();
-    
+
     closeType();
-    
+
     // python methods don't have their parents attributes directly inside them
     if ( eventualParentDeclaration && eventualParentDeclaration->internalContext() && dec->internalContext() ) {
         dec->internalContext()->removeImportedParentContext(eventualParentDeclaration->internalContext());
@@ -1557,14 +1539,14 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         dec->setType(type);
     }
 
-    if ( ! isStatic ) {
+    if ( ! dec->isStatic() ) {
         DUContext* args = DUChainUtils::getArgumentContext(dec);
         if ( args )  {
             QVector<Declaration*> parameters = args->localDeclarations();
             static IndexedString newMethodName("__new__");
             static IndexedString selfArgumentName("self");
             static IndexedString clsArgumentName("cls");
-            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! isClassMethod ) {
+            if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! dec->isClassMethod() ) {
                 QString description;
                 if ( dec->identifier().identifier() == newMethodName
                      && parameters[0]->identifier().identifier() != clsArgumentName )
@@ -1797,9 +1779,10 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
                                                                                    arg, AliasDeclarationType);
-            if ( m_currentClassType ) {
-                qCDebug(KDEV_PYTHON_DUCHAIN) << "setting declaration:" << m_currentClassType->declaration(topContext())->toString();
-                decl->setAliasedDeclaration(m_currentClassType->declaration(currentContext()->topContext()));
+            if ( ! m_currentClassTypes.isEmpty() ) {
+                auto classDecl = m_currentClassTypes.last()->declaration(topContext());
+
+                decl->setAliasedDeclaration(classDecl);
             }
             closeDeclaration();
             paramDeclaration = decl;
@@ -1837,7 +1820,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
-                argumentType = m_currentClassType.cast<AbstractType>();
+                argumentType = m_currentClassTypes.last().cast<AbstractType>();
                 isFirst = false;
             }
         }

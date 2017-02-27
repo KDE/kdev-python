@@ -1016,6 +1016,10 @@ void PyDUChainTest::testTypes_data()
                                            "checkme = myfun(1, 1.5, a=str())" << "float";
     QTest::newRow("varied_args_type_3") << "def myfun(arg, *args, **kwargs): return kwargs['a']\n"
                                            "checkme = myfun(1, 1.5, a=str())" << "str";
+    QTest::newRow("nested_arg_name_type") << "def foo(xxx):\n"
+                                             "  def bar(xxx): return xxx\n"
+                                             "  return bar('test')\n"
+                                             "checkme = foo(10)\n" << "str";
     QTest::newRow("method_args_type_1") << "class MyClass:\n"
                                            "   def method(self, arg): return self\n"
                                            "checkme = MyClass().method(12)" << "MyClass";
@@ -1064,6 +1068,16 @@ void PyDUChainTest::testTypes_data()
                                                     "       Base.__init__(self, foo)\n"
                                                     "instance = Derived('string')\n"
                                                     "checkme = instance.foo" << "str";
+    QTest::newRow("nested_class_self_inside") << "class Foo:\n"
+                                                 "   def foo(self):\n"
+                                                 "       class Bar:\n"
+                                                 "           def bar(self): return self\n"
+                                                 "       return Bar().bar()\n"
+                                                 "checkme = Foo().foo()\n" << "Foo::foo::Bar";
+    QTest::newRow("nested_class_self_after") << "class Foo:\n"
+                                                "    class Bar: pass\n"
+                                                "    def foo(self): return self\n"
+                                                "checkme = Foo().foo()\n" << "Foo";
 
     QTest::newRow("tuple_unsure") << "q = (3, str())\nq=(str(), 3)\ncheckme, _ = q" << "unsure (int, str)";
 
@@ -1375,33 +1389,6 @@ void PyDUChainTest::testHintedTypes_data()
     QTest::newRow("unsure_attribute") << "def myfunc(x): return x.capitalize()\nmyfunc(3.5)\ncheckme = myfunc(str())" << "str";
 }
 
-void PyDUChainTest::testDecorators()
-{
-    QFETCH(QString, code);
-//     QFETCH(int, amountOfDecorators);
-    QFETCH(QStringList, names);
-    ReferencedTopDUContext ctx = parse(code);
-    QVERIFY(ctx);
-    DUChainReadLocker lock(DUChain::lock());
-    Python::FunctionDeclaration* decl = dynamic_cast<Python::FunctionDeclaration*>(
-        ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext()).first().first);
-    QVERIFY(decl);
-    foreach ( const QString& decoratorName, names ) {
-        QVERIFY(Helper::findDecoratorByName<Python::FunctionDeclaration>(decl, decoratorName));
-    }
-}
-
-void PyDUChainTest::testDecorators_data()
-{
-    QTest::addColumn<QString>("code");
-    QTest::addColumn<int>("amountOfDecorators");
-    QTest::addColumn<QStringList>("names");
-    
-    QTest::newRow("one_decorator") << "@foo\ndef func(): pass" << 1 << ( QStringList() << "foo" );
-    QTest::newRow("decorator_with_args") << "@foo(2, \"bar\")\ndef func(): pass" << 1 << ( QStringList() << "foo");
-    QTest::newRow("two_decorators") << "@foo\n@bar(17)\ndef func(): pass" << 2 << ( QStringList() << "foo" << "bar" );
-}
-
 void PyDUChainTest::testOperators()
 {
     QFETCH(QString, code);
@@ -1476,7 +1463,7 @@ void PyDUChainTest::testInheritance()
     bool classDeclFound = false;
     foreach ( const p& item, decls ) {
         if ( item.first->identifier().toString() == "B" ) {
-            auto klass = dynamic_cast<Python::ClassDeclaration*>(item.first);
+            auto klass = dynamic_cast<ClassDeclaration*>(item.first);
             QVERIFY(klass);
             QCOMPARE(klass->baseClassesSize(), static_cast<unsigned int>(expectedBaseClasses));
             classDeclFound = true;

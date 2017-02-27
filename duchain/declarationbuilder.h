@@ -21,12 +21,13 @@
 #ifndef PYTHON_DECLARATIONBUILDER_H
 #define PYTHON_DECLARATIONBUILDER_H
 
+#include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/builders/abstractdeclarationbuilder.h>
 
 #include <QList>
 
+#include "contextbuilder.h"
 #include "declarations/functiondeclaration.h"
-#include "typebuilder.h"
 #include "ast.h"
 
 namespace Python
@@ -34,7 +35,9 @@ namespace Python
 
 class CorrectionHelper;
 
-typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilder> DeclarationBuilderBase;
+typedef KDevelop::AbstractTypeBuilder<Ast, Identifier, ContextBuilder> TypeBuilderBase;
+
+typedef KDevelop::AbstractDeclarationBuilder<Ast, Identifier, TypeBuilderBase> DeclarationBuilderBase;
 
 class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {

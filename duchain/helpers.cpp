@@ -471,9 +471,6 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         qCDebug(KDEV_PYTHON_DUCHAIN) << " *** Done. Got search paths: " << cachedSearchPaths;
         cachedSearchPaths.insert(project, cachedForProject);
     }
-    else {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << " --- Search paths from cache: " << cachedSearchPaths;
-    }
     
     searchPaths.append(cachedSearchPaths.value(project));
     

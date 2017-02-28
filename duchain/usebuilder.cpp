@@ -118,9 +118,7 @@ void UseBuilder::visitCall(CallAst* node)
 
 void UseBuilder::visitAttribute(AttributeAst* node)
 {
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "VisitAttribute start";
     UseBuilderBase::visitAttribute(node);
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "Visit Attribute base end";
 
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     ExpressionVisitor v(context);

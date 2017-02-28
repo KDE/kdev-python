@@ -65,7 +65,6 @@ DeclarationBuilder::DeclarationBuilder(Python::PythonEditorIntegrator* editor, i
     , m_ownPriority(ownPriority)
 {
     setEditor(editor);
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "Building Declarations";
 }
 
 DeclarationBuilder:: ~DeclarationBuilder()
@@ -91,17 +90,16 @@ ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* 
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions
     // which are called before they are defined (which is easily possible, due to python's dynamic nature).
     if ( ! m_prebuilding ) {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "building, but running pre-builder first";
         DeclarationBuilder* prebuilder = new DeclarationBuilder(editor(), m_ownPriority);
         prebuilder->m_currentlyParsedDocument = currentlyParsedDocument();
         prebuilder->setPrebuilding(true);
         prebuilder->m_futureModificationRevision = m_futureModificationRevision;
         updateContext = prebuilder->build(url, node, updateContext);
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "pre-builder finished";
         delete prebuilder;
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Second declarationbuilder pass";
     }
     else {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "prebuilding";
+        qCDebug(KDEV_PYTHON_DUCHAIN) << "Prebuilding declarations";
     }
     return DeclarationBuilderBase::build(url, node, updateContext);
 }
@@ -307,7 +305,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
-            qCDebug(KDEV_PYTHON_DUCHAIN) << hints->toString();
             if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
@@ -997,8 +994,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     {
         atVararg = atVararg || currentParamIndex == function->vararg(); // Not >=, nonexistent vararg is -1.
 
-        qCDebug(KDEV_PYTHON_DUCHAIN) << currentParamIndex << currentArgumentIndex << atVararg << function->vararg();
-
         ExpressionAst* arg = node->arguments.at(currentArgumentIndex);
 
         ExpressionVisitor argumentVisitor(currentContext());
@@ -1018,7 +1013,6 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             indexInVararg++;
             Declaration* parameter = parameters.at(function->vararg());
             IndexedContainer::Ptr varargContainer = parameter->type<IndexedContainer>();
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "adding" << addType->toString() << "at position" << indexInVararg;
             if ( ! varargContainer ) continue;
             if ( varargContainer->typesCount() > indexInVararg ) {
                 AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
@@ -1608,7 +1602,6 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         lock.lock();
         if ( v.lastType() && v.isAlias() ) {
             type->setReturnType(Helper::mergeTypes(type->returnType(), v.lastType()));
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "updated function return type to " << type->toString();
             dec->setType(type);
         }
         else if ( ! v.isAlias()) {
@@ -1773,7 +1766,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int parametersCount = node->arguments.length();
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
     int currentIndex = 0;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "arguments:" << node->arguments.size();
     foreach ( ArgAst* arg, node->arguments + node->kwonlyargs ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
@@ -1782,8 +1774,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( ! arg->argumentName ) {
             continue;
         }
-
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "visiting argument:" << arg->argumentName->value;
 
         // Create a variable declaration for the parameter, to be used in the function body.
         Declaration* paramDeclaration = nullptr;
@@ -1828,7 +1818,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             workingOnDeclaration->addDefaultParameter(IndexedString("..."));
         }
 
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "is first:" << isFirst << hasCurrentDeclaration() << currentDeclaration();
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
@@ -1840,9 +1829,6 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         DUChainWriteLocker lock;
         paramDeclaration->setAbstractType(Helper::mergeTypes(paramDeclaration->abstractType(), argumentType));
         type->addArgument(argumentType);
-        if ( argumentType ) {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "creating argument with type" << argumentType->toString();
-        }
     }
     // Handle *args, **kwargs, and assign them a list / dictionary type.
     if ( node->vararg ) {

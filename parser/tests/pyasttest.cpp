@@ -130,9 +130,11 @@ void PyAstTest::testStatements_data()
     QTest::addColumn<QString>("code");
     QTest::newRow("assign_int") << "a = 3";
     QTest::newRow("funcdef") << "def myfun(): pass";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
     QTest::newRow("asyncfuncdef") << "async def myfun(): pass";
     QTest::newRow("asyncfuncdef2") << "async    def myfun(): pass";
     QTest::newRow("asyncfuncdef_await") << "async def myfun(): await 3";
+#endif
     QTest::newRow("funcdef_args") << "def myfun(arg1, arg2): pass";
     QTest::newRow("funcdef_vararg") << "def myfun(arg1, *arg): pass";
     QTest::newRow("funcdef_kwarg") << "def myfun(**arg): pass";
@@ -234,10 +236,12 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("underscore_literals") << "0x_FF_FF_FF_FF";
     QTest::newRow("formatted_string_literal") << "f\"He said his name is {name}.\"";
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
     QTest::newRow("dstar_unpack") << "ext_map = {\n"
         "       **{ext: self.obj_extension for ext in self.src_extensions},\n"
         "       **{ext: self.res_extension for ext in self._rc_extensions + self._mc_extensions},\n"
     "}";
+#endif
 }
 
 void PyAstTest::testCorrectedFuncRanges()

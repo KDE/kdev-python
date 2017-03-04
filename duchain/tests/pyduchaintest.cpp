@@ -994,10 +994,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("args_type") << "def myfun(*args): return args[0]\ncheckme = myfun(3)" << "int";
     QTest::newRow("kwarg_type") << "def myfun(**kwargs): return kwargs['a']\ncheckme = myfun(a=3)" << "int";
     QTest::newRow("dict_kwarg_type") << "def foo(**kwargs): return kwargs['']\ncheckme = foo(**{'a': 12})" << "int";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
     QTest::newRow("dict_norm_kwarg_type") << "def foo(**kwargs): return kwargs['']\n"
                                              "checkme = foo(**{'a': 12}, b=1.2)" << "unsure (int, float)";
     QTest::newRow("multi_dict_kwarg_type") << "def foo(**kwargs): return kwargs['']\n"
                                               "checkme = foo(**{'a': 12}, b=1.2, **{'c': ''})" << "unsure (int, float, str)";
+#endif
     QTest::newRow("named_arg_type") << "def myfun(arg): return arg\ncheckme = myfun(arg=3)" << "int";
 
     QTest::newRow("arg_args_type") << "def myfun(arg, *args): return args[0]\n"
@@ -1535,17 +1537,19 @@ void PyDUChainTest::testContainerTypes_data()
     QTest::newRow("generator") << "checkme = [i for i in [1, 2, 3]]" << "int" << false;
     QTest::newRow("list_access") << "list = [1, 2, 3]\ncheckme = list[0]" << "int" << true;
     QTest::newRow("set_of_int") << "checkme = {1, 2, 3}" << "int" << false;
-    QTest::newRow("set_from_unpacked") << "foo = [1.3]\ncheckme = {1, *foo, 3}" << "unsure (int, float)" << false;
     QTest::newRow("set_of_int_call") << "checkme = set({1, 2, 3})" << "int" << false;
     QTest::newRow("set_generator") << "checkme = {i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("frozenset_of_int_call") << "checkme = frozenset({1, 2, 3})" << "int" << false;
     QTest::newRow("dict_of_int") << "checkme = {a:1, b:2, c:3}" << "int" << false;
-    QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
-    QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<
-                                         "dict of unsure (str, int) : unsure (int, float)" << true;
     QTest::newRow("dict_of_int_call") << "checkme = dict({a:1, b:2, c:3})" << "int" << false;
     QTest::newRow("dict_generator") << "checkme = {\"Foo\":i for i in [1, 2, 3]}" << "int" << false;
     QTest::newRow("dict_access") << "list = {a:1, b:2, c:3}\ncheckme = list[0]" << "int" << true;
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
+    QTest::newRow("set_from_unpacked") << "foo = [1.3]\ncheckme = {1, *foo, 3}" << "unsure (int, float)" << false;
+    QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
+    QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<
+                                         "dict of unsure (str, int) : unsure (int, float)" << true;
+#endif
     QTest::newRow("generator_attribute") << "checkme = [item.capitalize() for item in ['foobar']]" << "str" << false;
     QTest::newRow("cannot_change_type") << "checkme = [\"Foo\", \"Bar\"]" << "str" << false;
     QTest::newRow("cannot_change_type2") << "[1, 2, 3].append(5)\ncheckme = [\"Foo\", \"Bar\"]" << "str" << false;

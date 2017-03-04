@@ -209,8 +209,8 @@ for rule in contents:
     else:
         current_stmt = switch_line.replace('%{KIND}', kind).replace('%{ACTIONS}', current_actions)
     if since_version:
-        version_cpp_if = ("#if PYTHON_VERSION_MINOR >= %d\n"
-                           %(since_version[1]))
+        version_cpp_if = ("#if PYTHON_VERSION >= QT_VERSION_CHECK(%d, %d, 0)"
+                           %(since_version[0], since_version[1]))
         current_stmt = version_cpp_if + current_stmt + "\n#endif"
     results[rule_for].append(current_stmt)
     does_match_any[rule_for] = any

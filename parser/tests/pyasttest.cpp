@@ -154,7 +154,7 @@ void PyAstTest::testStatements_data()
     QTest::newRow("continue") << "while True: continue";
     QTest::newRow("pass") << "pass";
     QTest::newRow("nonlocal") << "nonlocal x";
-#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
+#if PYTHON_VERSION_MINOR >= 6
     QTest::newRow("varannotation1") << "primes: List[int] = []";
     QTest::newRow("varannotation2") << "captain: str  # Note: no initial value!";
 #endif
@@ -227,7 +227,7 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("False") << "False";
     QTest::newRow("True") << "True";
 
-#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
+#if PYTHON_VERSION_MINOR >= 6
     QTest::newRow("async_generator") << "async def foo(): result = [i async for i in aiter() if i % 2]";
     QTest::newRow("await_generator") << "async def foo(): result = [await fun() for fun in funcs]";
 

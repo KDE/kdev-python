@@ -220,7 +220,7 @@ protected:
      * @param dottedName The dotted name of the module, like "random.randint".
      * @param declarationIdentifier provides the name and range
      * @param rangeNode can be used to override the declarationIdentifier's range, if required. Defaults to 0.
-     * @param createProblem whether or not to create DUChain problems Defaults to CreateProblems.
+     * @param problemEncountered the encountered problem, if there's any
      * @return :Declaration* the declaration created, or 0 if none was found.
      **/
     Declaration* createModuleImportDeclaration(QString dottedName, QString declarationName, Python::Identifier* declarationIdentifier,

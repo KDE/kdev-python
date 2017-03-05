@@ -146,9 +146,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         // this prevents "bar" from being declared in something like "foo = bar"
         // This is just a sanity check, the code should never request creation of a variable
         // in such cases.
-        QList<ExpressionAst::Context> declaringContexts;
-        declaringContexts << ExpressionAst::Store << ExpressionAst::Parameter << ExpressionAst::AugStore;
-        if ( ! declaringContexts.contains(currentVariableDefinition->context) ) {
+        if ( currentVariableDefinition->context != ExpressionAst::Context::Store ) {
             return 0;
         }
         Identifier* id = currentVariableDefinition->identifier;

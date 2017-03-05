@@ -122,13 +122,18 @@ for rule in contents:
     actions = outline[2].split(' ')[1:]
     code = None
     since_version = None
+    before_version = None
     if len(outline) > 3:
-        if outline[3].startswith('SINCE'):
+        if outline[3].startswith('BEFORE'):
+            before_version = [int(n) for n in outline[3][7:].split('.')]
+        elif outline[3].startswith('SINCE'):
             since_version = [int(n) for n in outline[3][6:].split('.')]
         elif outline[3].startswith('CODE'):
             code = ' '.join(';'.join(outline[3:]).split('CODE')[1:]) + ";"
         else:
             raise SyntaxError('Invalid syntax in sdef file, line: ' + rule)
+    if len(outline) > 4 and outline[4].startswith('CODE'):
+        code = ' '.join(';'.join(outline[4:]).split('CODE')[1:]) + ";"
     
     if rule_for not in results:
         results[rule_for] = list()
@@ -208,8 +213,12 @@ for rule in contents:
         current_stmt = current_actions
     else:
         current_stmt = switch_line.replace('%{KIND}', kind).replace('%{ACTIONS}', current_actions)
+    if before_version:
+        version_cpp_if = ("#if PYTHON_VERSION < QT_VERSION_CHECK(%d, %d, 0)\n"
+                           %(before_version[0], before_version[1]))
+        current_stmt = version_cpp_if + current_stmt + "\n#endif"
     if since_version:
-        version_cpp_if = ("#if PYTHON_VERSION_MAJOR >= %d && PYTHON_VERSION_MINOR >= %d\n"
+        version_cpp_if = ("#if PYTHON_VERSION >= QT_VERSION_CHECK(%d, %d, 0)\n"
                            %(since_version[0], since_version[1]))
         current_stmt = version_cpp_if + current_stmt + "\n#endif"
     results[rule_for].append(current_stmt)

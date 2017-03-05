@@ -192,7 +192,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
     };
 
     QHash< QString, std::function<bool(QStringList, QString)> > knownDocstringHints;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "Got function declaration with docstring hint, checking for type...";
     knownDocstringHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
@@ -201,7 +200,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "Found container, using type";
             docstringType = t->contentType().abstractType();
             return true;
         }
@@ -217,7 +215,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainReadLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             auto newType = typeObjectForIntegralType<ListType>("list");
             if ( ! newType ) {
                 return false;
@@ -252,7 +249,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
     };
 
     knownDocstringHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "Got getsListOfBoth hint, checking container";
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -261,7 +257,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainReadLocker lock;
         if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << "Got container:" << t->toString();
             docstringType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
             return true;
         }
@@ -270,7 +265,6 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
 
     knownDocstringHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
         const int argNum = ! arguments.isEmpty() ? (int) arguments.at(0).toUInt() : 0;
-        qCDebug(KDEV_PYTHON_DUCHAIN) << "Found argument dependent hint, checking argument type" << argNum;
         if ( argNum >= node->arguments.length() ) {
             return false;
         }

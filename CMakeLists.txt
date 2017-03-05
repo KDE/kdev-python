@@ -13,8 +13,6 @@ set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINO
 find_package(ECM 0.0.9 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
-set(REQUIRED QT_VERSION 5.2.0)
-
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(GenerateExportHeader)
 include(CMakePackageConfigHelpers)
@@ -34,15 +32,15 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 # find the system python 3 interpreter, only used for determining search paths.
 # must be called before find_package(KF5) because it searchs for python too, but finds python2
-set(Python_ADDITIONAL_VERSIONS 3.6 3.5)
-find_package(PythonInterp 3.5 REQUIRED)
-find_package(PythonLibs 3.5 REQUIRED)
+set(Python_ADDITIONAL_VERSIONS 3.6 3.5 3.4)
+find_package(PythonInterp 3.4.3 REQUIRED)
+find_package(PythonLibs 3.4.3 REQUIRED)
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 if ( (NOT PYTHON_LIBRARIES) OR "${PYTHON_VERSION_MINOR}" GREATER 6 )
-    message(FATAL_ERROR "Python >= 3.5.0 but < 3.7 with --enable-shared is required to build kdev-python")
+    message(FATAL_ERROR "Python >= 3.4.3 but < 3.7 with --enable-shared is required to build kdev-python")
 endif()
 
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Widgets Test)
+find_package(Qt5 CONFIG REQUIRED Core Widgets Test)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)

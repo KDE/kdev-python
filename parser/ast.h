@@ -29,6 +29,7 @@
 #include <QSharedPointer>
 #include <KTextEditor/Range>
 #include "parserexport.h"
+#include "kdevpythonversion.h"
 
 namespace KDevelop
 {
@@ -149,7 +150,9 @@ public:
         OperatorAdd = 1,
         OperatorSub,
         OperatorMult,
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         OperatorMatMult,
+#endif
         OperatorDiv,
         OperatorMod,
         OperatorPow,
@@ -449,8 +452,6 @@ public:
         Load = 1, // the object is read
         Store = 2, // the object is written
         Delete = 3, // the object is deleted
-        Parameter = 6, // the object is passed as a parameter
-        AugLoad = 4, AugStore = 5, // Augmented assignments, like a += 1
         Invalid = -1
     };
     ExpressionAst* value; // WARNING this is not set in most cases!
@@ -492,7 +493,9 @@ public:
             case Python::Ast::OperatorLeftShift: return QLatin1String("__lshift__");
             case Python::Ast::OperatorMod: return QLatin1String("__mod__");
             case Python::Ast::OperatorMult: return QLatin1String("__mul__");
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
             case Python::Ast::OperatorMatMult: return QLatin1String("__matmul__");
+#endif
             case Python::Ast::OperatorPow: return QLatin1String("__pow__");
             case Python::Ast::OperatorRightShift: return QLatin1String("__rshift__");
             case Python::Ast::OperatorSub: return QLatin1String("__sub__");

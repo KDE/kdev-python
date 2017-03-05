@@ -156,12 +156,14 @@ private:
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = 0;
         switch ( node->kind ) {
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case Await_kind: {
                 AwaitAst* v = new  AwaitAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Await.value)); nodeStack.pop();
                 result = v;
                 break;
             }
+#endif
         case BoolOp_kind: {
                 BooleanOperationAst* v = new  BooleanOperationAst(parent());
                 v->type = (ExpressionAst::BooleanOperationTypes) node->v.BoolOp.op;
@@ -259,6 +261,7 @@ private:
                 result = v;
                 break;
             }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case Call_kind: {
                 CallAst* v = new  CallAst(parent());
                 nodeStack.push(v); v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func)); nodeStack.pop();
@@ -267,6 +270,18 @@ private:
                 result = v;
                 break;
             }
+#endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 5, 0)
+        case Call_kind: {
+                CallAst* v = new  CallAst(parent());
+                nodeStack.push(v); v->function = static_cast<ExpressionAst*>(visitNode(node->v.Call.func)); nodeStack.pop();
+                nodeStack.push(v); v->arguments = visitNodeList<_expr, ExpressionAst>(node->v.Call.args); nodeStack.pop();
+                nodeStack.push(v); v->keywords = visitNodeList<_keyword, KeywordAst>(node->v.Call.keywords); nodeStack.pop();
+ /* Convert 3.4 unpacked-args AST to match the new format from 3.5+ */if (node->v.Call.starargs) {    nodeStack.push(v);    auto starred = new StarredAst(v);    starred->context = ExpressionAst::Context::Load;    nodeStack.push(starred);    starred->value = static_cast<ExpressionAst*>(visitNode(node->v.Call.starargs));    nodeStack.pop();    v->arguments.append(starred);    nodeStack.pop();};if (node->v.Call.kwargs) {    nodeStack.push(v);    auto kwargs = new KeywordAst(v);    nodeStack.push(kwargs);    kwargs->value = static_cast<ExpressionAst*>(visitNode(node->v.Call.kwargs));    nodeStack.pop();    v->keywords.append(kwargs);    nodeStack.pop();};
+                result = v;
+                break;
+            }
+#endif
         case Num_kind: {
                 NumberAst* v = new  NumberAst(parent());
  v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
@@ -279,7 +294,7 @@ private:
                 result = v;
                 break;
             }
-#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         case JoinedStr_kind: {
                 JoinedStringAst* v = new  JoinedStringAst(parent());
                 nodeStack.push(v); v->values = visitNodeList<_expr, ExpressionAst>(node->v.JoinedStr.values); nodeStack.pop();
@@ -287,7 +302,7 @@ private:
                 break;
             }
 #endif
-#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         case FormattedValue_kind: {
                 FormattedValueAst* v = new  FormattedValueAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.FormattedValue.value)); nodeStack.pop();
@@ -517,6 +532,7 @@ private:
                 result = v;
                 break;
             }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case AsyncFunctionDef_kind: {
                 FunctionDefinitionAst* v = new  FunctionDefinitionAst(parent());
                 v->name = node->v.AsyncFunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.AsyncFunctionDef.name)) : 0;
@@ -535,6 +551,7 @@ private:
                 result = v;
                 break;
             }
+#endif
         case ClassDef_kind: {
                 ClassDefinitionAst* v = new  ClassDefinitionAst(parent());
                 v->name = node->v.ClassDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ClassDef.name)) : 0;
@@ -578,7 +595,7 @@ private:
                 result = v;
                 break;
             }
-#if PYTHON_VERSION_MAJOR >= 3 && PYTHON_VERSION_MINOR >= 6
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         case AnnAssign_kind: {
                 AnnotationAssignmentAst* v = new  AnnotationAssignmentAst(parent());
                 nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AnnAssign.target)); nodeStack.pop();
@@ -597,6 +614,7 @@ private:
                 result = v;
                 break;
             }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case AsyncFor_kind: {
                 ForAst* v = new  ForAst(parent());
                 nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.AsyncFor.target)); nodeStack.pop();
@@ -606,6 +624,7 @@ private:
                 result = v;
                 break;
             }
+#endif
         case While_kind: {
                 WhileAst* v = new  WhileAst(parent());
                 nodeStack.push(v); v->condition = static_cast<ExpressionAst*>(visitNode(node->v.While.test)); nodeStack.pop();
@@ -629,6 +648,7 @@ private:
                 result = v;
                 break;
             }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case AsyncWith_kind: {
                 WithAst* v = new  WithAst(parent());
                 nodeStack.push(v); v->body = visitNodeList<_stmt, Ast>(node->v.AsyncWith.body); nodeStack.pop();
@@ -636,6 +656,7 @@ private:
                 result = v;
                 break;
             }
+#endif
         case Raise_kind: {
                 RaiseAst* v = new  RaiseAst(parent());
                 nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.Raise.exc)); nodeStack.pop();

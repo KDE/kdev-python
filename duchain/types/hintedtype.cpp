@@ -60,8 +60,6 @@ bool HintedType::isValid()
         return false;
     }
     ModificationRevision rev(creator->parsingEnvironmentFile()->modificationRevision());
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.revision << "; created:" << d_func()->m_modificationRevision.revision;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "current: " << rev.modificationTime << "; created:" << d_func()->m_modificationRevision.modificationTime;
     if ( d_func()->m_modificationRevision < rev ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "modification revision mismatch, invalidating";
         return false;
@@ -73,8 +71,6 @@ void HintedType::setCreatedBy(TopDUContext* context, const ModificationRevision&
 {
     d_func_dynamic()->m_createdByContext = context->indexed();
     d_func_dynamic()->m_modificationRevision = revision;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << "new HintedType with modification time: " << d_func()->m_modificationRevision.modificationTime 
-             << "; " << d_func()->m_modificationRevision.revision;
 }
 
 IndexedTopDUContext HintedType::createdBy() const

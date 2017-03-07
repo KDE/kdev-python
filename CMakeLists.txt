@@ -29,6 +29,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 set(Python_ADDITIONAL_VERSIONS 3.6 3.5 3.4)
 find_package(PythonInterp 3.4.3 REQUIRED)
+unset(Python_ADDITIONAL_VERSIONS)
 find_package(PythonLibs ${PYTHON_VERSION_STRING} REQUIRED EXACT) # No, we don't support mismatched versions
 configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 if ( (NOT PYTHON_LIBRARIES) OR "${PYTHON_VERSION_MINOR}" GREATER 6 )

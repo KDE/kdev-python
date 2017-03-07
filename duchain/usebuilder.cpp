@@ -49,7 +49,7 @@ UseBuilder::UseBuilder(PythonEditorIntegrator* editor, QVector<IndexedString> ig
 
 DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
 {
-    DUContext* context = 0;
+    DUContext* context = nullptr;
     {
         DUChainReadLocker lock;
         context = topContext()->findContextAt(pos, true);

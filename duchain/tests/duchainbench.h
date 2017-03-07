@@ -42,7 +42,7 @@ class DUChainBench : public QObject
 {
     Q_OBJECT
 public:
-    explicit DUChainBench(QObject* parent = 0);
+    explicit DUChainBench(QObject* parent = nullptr);
     void initShell();
     ~DUChainBench() override;
 

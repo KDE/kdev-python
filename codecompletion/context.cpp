@@ -143,7 +143,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
     ItemList resultingItems;
 
     // gather additional items to show above the real ones (for parameters, and stuff)
-    FunctionDeclaration* functionCalled = 0;
+    FunctionDeclaration* functionCalled = nullptr;
     DUChainReadLocker lock;
     auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
     if ( ! v || ! v->lastDeclaration() ) {
@@ -267,7 +267,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     Declaration* base = declarations.first();
     IndexedType baseType = base->abstractType()->indexed();
     QList<DeclarationDepthPair> validDeclarations;
-    ClassDeclaration* current = 0;
+    ClassDeclaration* current = nullptr;
     StructureType::Ptr type;
     auto decls = m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
     foreach ( const DeclarationDepthPair d, decls ) {
@@ -682,7 +682,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
     QList<CompletionTreeItemPointer> items;
     
     DeclarationPointer currentDeclaration;
-    Declaration* checkDeclaration = 0;
+    Declaration* checkDeclaration = nullptr;
     int count = declarations.length();
     for ( int i = 0; i < count; i++ ) {
         if ( maxDepth && maxDepth > declarations.at(i).second ) {
@@ -691,7 +691,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
         }
         currentDeclaration = DeclarationPointer(declarations.at(i).first);
         
-        PythonDeclarationCompletionItem* item = 0;
+        PythonDeclarationCompletionItem* item = nullptr;
         checkDeclaration = Helper::resolveAliasDeclaration(currentDeclaration.data());
         if ( ! checkDeclaration ) {
             continue;
@@ -898,10 +898,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(Q
 
 DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUContext* topContext, QStringList remainingIdentifiers)
 {
-    Declaration* d = 0;
+    Declaration* d = nullptr;
     DUContext* c = topContext;
     if ( ! topContext ) {
-        return 0;
+        return nullptr;
     }
     if ( remainingIdentifiers.isEmpty() ) {
         return topContext;
@@ -910,7 +910,7 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
         QList< Declaration* > decls = c->findDeclarations(QualifiedIdentifier(remainingIdentifiers.first()));
         remainingIdentifiers.removeFirst();
         if ( decls.isEmpty() ) {
-            return 0;
+            return nullptr;
         }
         d = decls.first();
         if ( (c = d->internalContext()) ) {
@@ -918,10 +918,10 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
                 return c;
             }
         }
-        else return 0;
+        else return nullptr;
         
     } while ( d && ! remainingIdentifiers.isEmpty() );
-    return 0;
+    return nullptr;
 }
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
@@ -1030,7 +1030,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     : CodeCompletionContext(context, text, position, depth)
     , m_operation(PythonCodeCompletionContext::DefaultCompletion)
     , m_itemTypeHint(NoHint)
-    , m_child(0)
+    , m_child(nullptr)
     , m_followingText(followingText)
     , m_position(position)
 {

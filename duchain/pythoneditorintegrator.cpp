@@ -37,7 +37,7 @@ PythonEditorIntegrator::PythonEditorIntegrator(ParseSession* session) :
 PythonEditorIntegrator::~PythonEditorIntegrator() 
 {
     delete m_indentInformationCache;
-    m_indentInformationCache = 0;
+    m_indentInformationCache = nullptr;
 }
 
 ParseSession* PythonEditorIntegrator::parseSession() const

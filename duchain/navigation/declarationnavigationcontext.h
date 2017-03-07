@@ -34,7 +34,7 @@ class DeclarationNavigationContext : public KDevelop::AbstractDeclarationNavigat
     Q_OBJECT
 
 public:
-    DeclarationNavigationContext(KDevelop::DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, KDevelop::AbstractNavigationContext* previousContext = 0);
+    DeclarationNavigationContext(KDevelop::DeclarationPointer decl, KDevelop::TopDUContextPointer topContext, KDevelop::AbstractNavigationContext* previousContext = nullptr);
 
     QString m_fullyQualifiedModuleIdentifier;
 

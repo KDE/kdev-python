@@ -49,7 +49,7 @@ class Refactoring : public KDevelop::BasicRefactoring
     Q_OBJECT
 
 public:
-    explicit Refactoring(QObject *parent = 0);
+    explicit Refactoring(QObject *parent = nullptr);
 
 protected:
     bool acceptForContextMenu(const KDevelop::Declaration *decl) override;

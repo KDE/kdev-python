@@ -274,7 +274,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
     return expression;
 }
 
-QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor, int *cursorPositionInString = 0)
+QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor, int *cursorPositionInString = nullptr)
 {
     QPair<QString, QString> beforeAndAfter = splitCodeByCursor(code, range, cursor);
 

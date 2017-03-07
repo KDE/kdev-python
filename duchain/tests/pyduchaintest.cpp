@@ -159,7 +159,7 @@ void PyDUChainTest::initShell()
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    TestFile* testfile = new TestFile(code + "\n", "py", 0, testDir.absolutePath().append("/"));
+    TestFile* testfile = new TestFile(code + "\n", "py", nullptr, testDir.absolutePath().append("/"));
     createdFiles << testfile;
 
     testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
@@ -171,7 +171,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
         return testfile->topContext();
     }
     else Q_ASSERT(false && "Timed out waiting for parser results, aborting all tests");
-    return 0;
+    return nullptr;
 }
 
 PyDUChainTest::~PyDUChainTest()

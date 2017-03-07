@@ -36,7 +36,7 @@ public:
      * @param callback Object to notify. Skipped if 0. Defaults to 0.
      * @param callbackMethod Method to call. Skipped if 0. Defaults to 0.
      **/
-    void attachMaybe(QObject* callback = 0, const char* callbackMethod = 0) override;
+    void attachMaybe(QObject* callback = nullptr, const char* callbackMethod = nullptr) override;
     
     /**
      * @brief Fetches children (list items, object attributes...) for this variable.

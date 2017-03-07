@@ -34,7 +34,7 @@ class DocfileWizard : public QDialog
 {
 Q_OBJECT
 public:
-    DocfileWizard(const QString& workingDirectory, QWidget* parent = 0);
+    DocfileWizard(const QString& workingDirectory, QWidget* parent = nullptr);
     QString fileNameForModule(QString moduleName) const;
     void setModuleName(const QString& moduleName);
     // Returns the path the file was saved as when exiting the dialog,

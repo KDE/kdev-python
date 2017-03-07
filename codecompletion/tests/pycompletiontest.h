@@ -40,7 +40,7 @@ class PyCompletionTest : public QObject
 {
     Q_OBJECT
     public:
-        explicit PyCompletionTest(QObject* parent = 0);
+        explicit PyCompletionTest(QObject* parent = nullptr);
         void initShell();
         
         const QList<CompletionTreeItem*> invokeCompletionOn(const QString& initCode, const QString& invokeCode);

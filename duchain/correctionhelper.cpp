@@ -40,7 +40,7 @@ namespace Python {
 
 CorrectionHelper::CorrectionHelper(const IndexedString& _url, DeclarationBuilder* builder)
 {
-    m_contextStack.push(0);
+    m_contextStack.push(nullptr);
     auto absolutePath = Helper::getCorrectionFile(_url.toUrl());
 
     if ( !absolutePath.isValid() || absolutePath.isEmpty() || ! QFile::exists(absolutePath.path()) ) {
@@ -71,7 +71,7 @@ void CorrectionHelper::enter(const KDevelop::Identifier& identifier)
     DUContext* current = m_contextStack.top();
     if ( ! current ) {
         // no hints for the parent object, so no hints for its children either
-        m_contextStack.push(0);
+        m_contextStack.push(nullptr);
         return;
     }
 
@@ -79,7 +79,7 @@ void CorrectionHelper::enter(const KDevelop::Identifier& identifier)
     const QList<Declaration*> decls = current->findDeclarations(identifier);
     if ( decls.isEmpty() ) {
         // no hints for the current object
-        m_contextStack.push(0);
+        m_contextStack.push(nullptr);
         return;
     }
 

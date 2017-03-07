@@ -50,19 +50,19 @@ private:
 
     Ast* visitNode(_alias* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 AliasAst* v = new  AliasAst(parent());
-            v->name = node->name ? new Python::Identifier(PyUnicodeObjectToQString(node->name)) : 0;
-            v->asName = node->asname ? new Python::Identifier(PyUnicodeObjectToQString(node->asname)) : 0;
+            v->name = node->name ? new Python::Identifier(PyUnicodeObjectToQString(node->name)) : nullptr;
+            v->asName = node->asname ? new Python::Identifier(PyUnicodeObjectToQString(node->asname)) : nullptr;
         return v;
     }
 
 
     Ast* visitNode(_arg* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 ArgAst* v = new  ArgAst(parent());
-            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : nullptr;
                 if ( v->argumentName ) {
                     v->argumentName->startCol = node->col_offset; v->startCol = v->argumentName->startCol;
                     v->argumentName->startLine = tline(node->lineno - 1);  v->startLine = v->argumentName->startLine;
@@ -77,7 +77,7 @@ private:
 
     Ast* visitNode(_arguments* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 ArgumentsAst* v = new  ArgumentsAst(parent());
             nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
             nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
@@ -90,7 +90,7 @@ private:
 
     Ast* visitNode(_comprehension* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 ComprehensionAst* v = new  ComprehensionAst(parent());
             nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->target)); nodeStack.pop();
             nodeStack.push(v); v->iterator = static_cast<ExpressionAst*>(visitNode(node->iter)); nodeStack.pop();
@@ -100,14 +100,14 @@ private:
 
 
     Ast* visitNode(_excepthandler* node) {
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
+        Ast* result = nullptr;
         switch ( node->kind ) {
         case ExceptHandler_kind: {
                 ExceptionHandlerAst* v = new  ExceptionHandlerAst(parent());
                 nodeStack.push(v); v->type = static_cast<ExpressionAst*>(visitNode(node->v.ExceptHandler.type)); nodeStack.pop();
-                v->name = node->v.ExceptHandler.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ExceptHandler.name)) : 0;
+                v->name = node->v.ExceptHandler.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ExceptHandler.name)) : nullptr;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -152,9 +152,9 @@ private:
 
 
     Ast* visitNode(_expr* node) {
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
+        Ast* result = nullptr;
         switch ( node->kind ) {
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case Await_kind: {
@@ -320,7 +320,7 @@ private:
             }
         case Attribute_kind: {
                 AttributeAst* v = new  AttributeAst(parent());
-                v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyUnicodeObjectToQString(node->v.Attribute.attr)) : 0;
+                v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyUnicodeObjectToQString(node->v.Attribute.attr)) : nullptr;
                 if ( v->attribute ) {
                     v->attribute->startCol = node->col_offset; v->startCol = v->attribute->startCol;
                     v->attribute->startLine = tline(node->lineno - 1);  v->startLine = v->attribute->startLine;
@@ -350,7 +350,7 @@ private:
             }
         case Name_kind: {
                 NameAst* v = new  NameAst(parent());
-                v->identifier = node->v.Name.id ? new Python::Identifier(PyUnicodeObjectToQString(node->v.Name.id)) : 0;
+                v->identifier = node->v.Name.id ? new Python::Identifier(PyUnicodeObjectToQString(node->v.Name.id)) : nullptr;
                 if ( v->identifier ) {
                     v->identifier->startCol = node->col_offset; v->startCol = v->identifier->startCol;
                     v->identifier->startLine = tline(node->lineno - 1);  v->startLine = v->identifier->startLine;
@@ -398,7 +398,7 @@ private:
             Q_ASSERT(false);
         }
 
-	if ( ! result ) return 0;
+	if ( ! result ) return nullptr;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
@@ -439,18 +439,18 @@ private:
 
     Ast* visitNode(_keyword* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 KeywordAst* v = new  KeywordAst(parent());
-            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : 0;
+            v->argumentName = node->arg ? new Python::Identifier(PyUnicodeObjectToQString(node->arg)) : nullptr;
             nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->value)); nodeStack.pop();
         return v;
     }
 
 
     Ast* visitNode(_slice* node) {
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
+        Ast* result = nullptr;
         switch ( node->kind ) {
         case Slice_kind: {
                 SliceAst* v = new  SliceAst(parent());
@@ -505,9 +505,9 @@ private:
 
 
     Ast* visitNode(_stmt* node) {
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        Ast* result = 0;
+        Ast* result = nullptr;
         switch ( node->kind ) {
         case Expr_kind: {
                 ExpressionAst* v = new  ExpressionAst(parent());
@@ -517,7 +517,7 @@ private:
             }
         case FunctionDef_kind: {
                 FunctionDefinitionAst* v = new  FunctionDefinitionAst(parent());
-                v->name = node->v.FunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.FunctionDef.name)) : 0;
+                v->name = node->v.FunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.FunctionDef.name)) : nullptr;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -535,7 +535,7 @@ private:
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
         case AsyncFunctionDef_kind: {
                 FunctionDefinitionAst* v = new  FunctionDefinitionAst(parent());
-                v->name = node->v.AsyncFunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.AsyncFunctionDef.name)) : 0;
+                v->name = node->v.AsyncFunctionDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.AsyncFunctionDef.name)) : nullptr;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -554,7 +554,7 @@ private:
 #endif
         case ClassDef_kind: {
                 ClassDefinitionAst* v = new  ClassDefinitionAst(parent());
-                v->name = node->v.ClassDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ClassDef.name)) : 0;
+                v->name = node->v.ClassDef.name ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ClassDef.name)) : nullptr;
                 if ( v->name ) {
                     v->name->startCol = node->col_offset; v->startCol = v->name->startCol;
                     v->name->startLine = tline(node->lineno - 1);  v->startLine = v->name->startLine;
@@ -687,7 +687,7 @@ private:
             }
         case ImportFrom_kind: {
                 ImportFromAst* v = new  ImportFromAst(parent());
-                v->module = node->v.ImportFrom.module ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ImportFrom.module)) : 0;
+                v->module = node->v.ImportFrom.module ? new Python::Identifier(PyUnicodeObjectToQString(node->v.ImportFrom.module)) : nullptr;
                 if ( v->module ) {
                     v->module->startCol = node->col_offset; v->startCol = v->module->startCol;
                     v->module->startLine = tline(node->lineno - 1);  v->startLine = v->module->startLine;
@@ -738,7 +738,7 @@ private:
             Q_ASSERT(false);
         }
 
-	if ( ! result ) return 0;
+	if ( ! result ) return nullptr;
         if ( ! ranges_copied ) {
             result->startCol = node->col_offset;
             result->endCol = node->col_offset;
@@ -779,7 +779,7 @@ private:
 
     Ast* visitNode(_withitem* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
-        if ( ! node ) return 0;
+        if ( ! node ) return nullptr;
                 WithItemAst* v = new  WithItemAst(parent());
             nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->context_expr)); nodeStack.pop();
             nodeStack.push(v); v->optionalVars = static_cast<NameAst*>(visitNode(node->optional_vars)); nodeStack.pop();

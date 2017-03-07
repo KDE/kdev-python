@@ -43,7 +43,7 @@ QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUCont
                                                     KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
-        return 0;
+        return nullptr;
     }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix, hints);
 }
@@ -54,7 +54,7 @@ QWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUC
                                                        KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
-        return 0;
+        return nullptr;
     }
     return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix, hints);
 }

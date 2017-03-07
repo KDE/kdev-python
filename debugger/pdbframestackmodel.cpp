@@ -50,7 +50,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
     QList<QByteArray> lines = framelist.split('\n');
     QList<FrameItem> frames;
     bool parsingLocation = false;
-    FrameItem* currentFrame = 0;
+    FrameItem* currentFrame = nullptr;
     int framesCount = 0;
     foreach ( const QString& line, lines ) {
         if ( line.startsWith("-> ") ) {

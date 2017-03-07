@@ -127,7 +127,7 @@ template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifi
 {
     QList<Declaration*> existingDeclarations = existingDeclarationsForNode(name);
     
-    Declaration* dec = 0;
+    Declaration* dec = nullptr;
     reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(range, range), &dec);
     bool declarationOpened = (bool) dec;
     if ( ! declarationOpened ) {
@@ -147,7 +147,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         // This is just a sanity check, the code should never request creation of a variable
         // in such cases.
         if ( currentVariableDefinition->context != ExpressionAst::Context::Store ) {
-            return 0;
+            return nullptr;
         }
         Identifier* id = currentVariableDefinition->identifier;
         return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type, flags);
@@ -157,14 +157,14 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
     }
     else {
         qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
-        return static_cast<T*>(0);
+        return static_cast<T*>(nullptr);
     }
 }
 
 QList< Declaration* > DeclarationBuilder::existingDeclarationsForNode(Identifier* node)
 {
     return currentContext()->findDeclarations(
-        identifierForNode(node).last(), CursorInRevision::invalid(), 0,
+        identifierForNode(node).last(), CursorInRevision::invalid(), nullptr,
         (DUContext::SearchFlag) (DUContext::DontSearchInParent | DUContext::DontResolveAliases)
     );
 }
@@ -188,7 +188,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
 {
     // Search for a declaration from a previous parse pass which should be re-used
     QList<Declaration*> remainingDeclarations;
-    *ok = 0;
+    *ok = nullptr;
     foreach ( Declaration* d, declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
@@ -204,7 +204,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
         if ( d->abstractType() && mustFitType != NoTypeRequired ) {
             invalidType = ( ( d->isFunctionDeclaration() ) != ( mustFitType == FunctionDeclarationType ) );
             if ( ! invalidType ) {
-                invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != 0 ) != ( mustFitType == AliasDeclarationType ) );
+                invalidType = ( ( dynamic_cast<AliasDeclaration*>(d) != nullptr ) != ( mustFitType == AliasDeclarationType ) );
             }
         }
         if ( fitting && ! reallyEncountered && ! invalidType ) {
@@ -253,7 +253,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     }
     
     // declaration existing in a previous version of this top-context
-    Declaration* dec = 0;
+    Declaration* dec = nullptr;
     existingDeclarations = reopenFittingDeclaration<T>(existingDeclarations, kindForType(type), range, &dec);
     bool declarationOpened = (bool) dec;
     if ( flags & AbortIfReopenMismatch && previous && ! declarationOpened ) {
@@ -353,7 +353,7 @@ void DeclarationBuilder::visitExceptionHandler(ExceptionHandlerAst* node)
         // Python allows to assign the caught exception to a variable; create that variable if required.
         ExpressionVisitor v(currentContext());
         v.visitNode(node->type);
-        visitVariableDeclaration<Declaration>(node->name, 0, v.lastType());
+        visitVariableDeclaration<Declaration>(node->name, nullptr, v.lastType());
     }
     DeclarationBuilderBase::visitExceptionHandler(node);
 }
@@ -364,7 +364,7 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
         // For statements like "with open(f) as x", a new variable must be created; do this here.
         ExpressionVisitor v(currentContext());
         v.visitNode(node->contextExpression);
-        visitVariableDeclaration<Declaration>(node->optionalVars, 0, v.lastType());
+        visitVariableDeclaration<Declaration>(node->optionalVars, nullptr, v.lastType());
     }
     Python::AstDefaultVisitor::visitWithItem(node);
 }
@@ -384,19 +384,19 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     DUChainReadLocker lock(DUChain::lock());
     DUContext* currentContext = ctx;
     // TODO make this a bit faster, it wastes time
-    Declaration* lastAccessedDeclaration = 0;
+    Declaration* lastAccessedDeclaration = nullptr;
     int i = 0;
     int identifierCount = dottedNameIdentifier.length();
     foreach ( const QString& currentIdentifier, dottedNameIdentifier ) {
         Q_ASSERT(currentContext);
         i++;
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
-                                                                            CursorInRevision::invalid(), 0, DUContext::NoFiltering);
+                                                                            CursorInRevision::invalid(), nullptr, DUContext::NoFiltering);
         // break if the list of identifiers is not yet totally worked through and no
         // declaration with an internal context was found
         if ( declarations.isEmpty() || ( !declarations.last()->internalContext() && identifierCount != i ) ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Declaration not found: " << dottedNameIdentifier << "in top context" << ctx->url().toUrl().path();
-            return 0;
+            return nullptr;
         }
         else {
             lastAccessedDeclaration = declarations.last();
@@ -428,7 +428,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     QString declarationName;
     foreach ( AliasAst* name, node->names ) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
-        Identifier* declarationIdentifier = 0;
+        Identifier* declarationIdentifier = nullptr;
         declarationName.clear();
         if ( name->asName ) {
             // use either the alias ("as foo"), or the object name itself if no "as" is given
@@ -442,12 +442,12 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         // This is a bit hackish, it tries to find the specified object twice twice -- once it tries to
         // import the name from a module's __init__.py file, and once from a "real" python file
         // TODO improve this code-wise
-        ProblemPointer problem(0);
+        ProblemPointer problem(nullptr);
         QString intermediate;
         moduleName = buildModuleNameFromNode(node, name, intermediate);
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
         if ( ! success && (node->module || node->level) ) {
-            ProblemPointer problem_init(0);
+            ProblemPointer problem_init(nullptr);
             intermediate = QString("__init__");
             moduleName = buildModuleNameFromNode(node, name, intermediate);
             success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem_init);
@@ -495,7 +495,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
-        ProblemPointer problem(0);
+        ProblemPointer problem(nullptr);
         createModuleImportDeclaration(moduleName, declarationIdentifier->value, declarationIdentifier, problem);
         if ( problem ) {
             DUChainWriteLocker lock;
@@ -531,7 +531,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
     
     qCDebug(KDEV_PYTHON_DUCHAIN) << "creating declaration tree for" << nameComponents;
     
-    Declaration* lastDeclaration = 0;
+    Declaration* lastDeclaration = nullptr;
     int depth = 0;
     
     // check for already existing trees to update
@@ -547,7 +547,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         }
     }
     
-    DUContext* extendingPreviousImportCtx = 0;
+    DUContext* extendingPreviousImportCtx = nullptr;
     QStringList remainingNameComponents;
     bool injectingContext = false;
     if ( lastDeclaration && lastDeclaration->internalContext() ) {
@@ -577,7 +577,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         // Iterate over all the names, and create a declaration + sub-context for each of them
         const QString& component = remainingNameComponents.at(i);
         Identifier temporaryIdentifier(component);
-        Declaration* d = 0;
+        Declaration* d = nullptr;
         temporaryIdentifier.copyRange(declarationIdentifier);
         temporaryIdentifier.endCol = temporaryIdentifier.startCol;
         temporaryIdentifier.startCol += 1;
@@ -683,7 +683,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         // return the lowest-level element in the tree, for the caller to do stuff with
         return openedDeclarations.last();
     }
-    else return 0;
+    else return nullptr;
 }
 
 Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleName, QString declarationName,
@@ -707,7 +707,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     const IndexedString modulePath = IndexedString(moduleInfo.first);
     ReferencedTopDUContext moduleContext = DUChain::self()->chainForDocument(modulePath);
     lock.unlock();
-    Declaration* resultingDeclaration = 0;
+    Declaration* resultingDeclaration = nullptr;
     if ( ! moduleInfo.first.isValid() ) {
         // The file was not found -- this is either an error in the user's code,
         // a missing module, or a C module (.so) which is unreadable for kdevelop
@@ -720,7 +720,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         p->setDescription(i18n("Module \"%1\" not found", moduleName));
         m_missingModules.append(IndexedString(moduleName));
         problemEncountered = p;
-        return 0;
+        return nullptr;
     }
     if ( ! moduleContext ) {
         // schedule the include file for parsing, and schedule the current one for reparsing after that is done
@@ -729,12 +729,12 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
         Helper::scheduleDependency(modulePath, m_ownPriority);
         // parseDocuments() must *not* be called from a background thread!
         // KDevelop::ICore::self()->languageController()->backgroundParser()->parseDocuments();
-        return 0;
+        return nullptr;
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
         resultingDeclaration = createDeclarationTree(declarationName.split("."),
-                                                     declarationIdentifier, moduleContext, 0, range);
+                                                     declarationIdentifier, moduleContext, nullptr, range);
         auto initFile = QStringLiteral("/__init__.py");
         auto path = moduleInfo.first.path();
         if ( path.endsWith(initFile) ) {
@@ -758,7 +758,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                     Identifier id = *declarationIdentifier;
                     id.value.append(".").append(filePath.last());
                     createDeclarationTree(filePath,
-                                          &id, fileContext, 0);
+                                          &id, fileContext, nullptr);
                 }
                 else {
                     m_unresolvedImports.append(IndexedString(fileUrl));
@@ -780,7 +780,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
                 resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
-                                                             ReferencedTopDUContext(0), originalDeclaration,
+                                                             ReferencedTopDUContext(nullptr), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
             else {
@@ -1120,7 +1120,7 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
     }
     else {
         DUChainWriteLocker lock;
-        Declaration* dec = visitVariableDeclaration<Declaration>(target, 0, element.type);
+        Declaration* dec = visitVariableDeclaration<Declaration>(target, nullptr, element.type);
         if ( dec && m_lastComment && ! m_lastComment->usedAsComment ) {
             dec->setComment(m_lastComment->value);
             m_lastComment->usedAsComment = true;
@@ -1171,7 +1171,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     checkPreviousAttributes.visitNode(attrib->value);
     DeclarationPointer parentObjectDeclaration = checkPreviousAttributes.lastDeclaration();
 
-    DUContextPointer internal(0);
+    DUContextPointer internal(nullptr);
 
     if ( ! parentObjectDeclaration ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration for attribute base, aborting creation of attribute";
@@ -1836,7 +1836,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple");
         lock.unlock();
         if ( tupleType ) {
-            visitVariableDeclaration<Declaration>(node->vararg->argumentName, 0, tupleType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType.cast<AbstractType>());
             workingOnDeclaration->setVararg(atIndex);
             type->addArgument(tupleType.cast<AbstractType>(), useIndex);
         }
@@ -1849,7 +1849,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         lock.unlock();
         if ( dictType && stringType ) {
             dictType->addKeyType<Python::UnsureType>(stringType);
-            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, 0, dictType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, nullptr, dictType.cast<AbstractType>());
             type->addArgument(dictType.cast<AbstractType>());
             workingOnDeclaration->setKwarg(type->arguments().size() - 1);
         }

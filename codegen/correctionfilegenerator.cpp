@@ -68,7 +68,7 @@ void TypeCorrection::doContextMenu(ContextMenuExtension &extension, Context *con
         if ( declaration && (declaration->kind() == Declaration::Instance
                              || (declaration->kind() == Declaration::Type
                                  && declaration->abstractType()->whichType() == AbstractType::TypeFunction)) ) {
-            QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), 0);
+            QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), nullptr);
             action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
             action->setIcon(QIcon::fromTheme("code-class"));
             connect(action, &QAction::triggered, this, &TypeCorrection::executeSpecifyTypeAction);
@@ -157,7 +157,7 @@ void TypeCorrection::accepted()
 
     auto correctionFile = Helper::getLocalCorrectionFile(decl.data()->topContext()->url().toUrl());
     if ( correctionFile.isEmpty() ) {
-        KMessageBox::error(0, i18n("Sorry, cannot create hints for files which are not part of a project."));
+        KMessageBox::error(nullptr, i18n("Sorry, cannot create hints for files which are not part of a project."));
         return;
     }
     CorrectionFileGenerator generator(correctionFile.path());

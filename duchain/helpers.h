@@ -148,7 +148,7 @@ public:
      **/
     static FuncInfo functionForCalled(Declaration* called, bool isAlias=true);
 
-    static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = 0) {
+    static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = nullptr) {
         // TODO cache types! this is horribly inefficient
         const QString search = "! " + hintName + " !";
         int index = comment.indexOf(search);

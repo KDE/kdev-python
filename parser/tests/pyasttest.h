@@ -34,7 +34,7 @@ class PyAstTest : public QObject
 {
 Q_OBJECT
 public:
-    explicit PyAstTest(QObject* parent = 0);
+    explicit PyAstTest(QObject* parent = nullptr);
     void initShell();
     CodeAst::Ptr getAst(QString code);
     void testCode(QString code);

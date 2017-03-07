@@ -58,7 +58,7 @@ DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory) :
     , m_variableController(nullptr)
     , m_frameStackModel(nullptr)
     , m_workingDirectory(workingDirectory)
-    , m_nextNotifyMethod(0)
+    , m_nextNotifyMethod(nullptr)
     , m_inDebuggerData(0)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "creating debug session";
@@ -99,9 +99,9 @@ void DebugSession::start()
     m_debuggerProcess->waitForStarted();
     auto dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                       "kdevpythonsupport/debugger/", QStandardPaths::LocateDirectory);
-    InternalPdbCommand* path = new InternalPdbCommand(0, 0,
+    InternalPdbCommand* path = new InternalPdbCommand(nullptr, nullptr,
         "import sys; sys.path.append('"+dir+"')\n");
-    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "import __kdevpython_debugger_utils\n");
     addCommand(path);
     addCommand(cmd);
     updateLocation();
@@ -163,7 +163,7 @@ void DebugSession::dataAvailable()
                                                     << "  " + i18n("You can now inspect the status of the program after it exited.")
                                                     << "  " + i18n("The debugger will silently stop when the next command is triggered.")
                                                     << "*****");
-                InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "import __kdevpython_debugger_utils\n");
+                InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "import __kdevpython_debugger_utils\n");
                 addCommand(cmd);
             }
         }
@@ -235,7 +235,7 @@ void DebugSession::notifyNext()
         qCDebug(KDEV_PYTHON_DEBUGGER) << "notify called, but nothing to notify!";
     }
     m_buffer.clear();
-    m_nextNotifyMethod = 0;
+    m_nextNotifyMethod = nullptr;
     m_nextNotifyObject.clear();
 }
 
@@ -339,7 +339,7 @@ void DebugSession::runToCursor()
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
             QString temporaryBreakpointLocation = doc->url().path() + ':' + QString::number(cursor.line() + 1);
-            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(0, 0, "tbreak " + temporaryBreakpointLocation + '\n');
+            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(nullptr, nullptr, "tbreak " + temporaryBreakpointLocation + '\n');
             addCommand(temporaryBreakpointCmd);
             addSimpleInternalCommand("continue");
             updateLocation();
@@ -390,7 +390,7 @@ void DebugSession::clearObjectTable()
 void DebugSession::addSimpleUserCommand(const QString& cmd)
 {
     clearObjectTable();
-    UserPdbCommand* cmdObject = new UserPdbCommand(0, 0, cmd + '\n');
+    UserPdbCommand* cmdObject = new UserPdbCommand(nullptr, nullptr, cmd + '\n');
     Q_ASSERT(cmdObject->type() == PdbCommand::UserType);
     addCommand(cmdObject);
 }
@@ -398,7 +398,7 @@ void DebugSession::addSimpleUserCommand(const QString& cmd)
 void DebugSession::addSimpleInternalCommand(const QString& cmd)
 {
     Q_ASSERT( ! cmd.endsWith('\n') );
-    InternalPdbCommand* cmdObject = new InternalPdbCommand(0, 0, cmd + '\n');
+    InternalPdbCommand* cmdObject = new InternalPdbCommand(nullptr, nullptr, cmd + '\n');
     addCommand(cmdObject);
 }
 
@@ -406,7 +406,7 @@ void DebugSession::runImmediately(const QString& cmd)
 {
     Q_ASSERT(cmd.endsWith('\n'));
     if ( state() == ActiveState ) {
-        m_nextNotifyMethod = 0;
+        m_nextNotifyMethod = nullptr;
         m_nextNotifyObject.clear(); // TODO is this correct?
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting debugger";
         INTERRUPT_DEBUGGER;
@@ -415,7 +415,7 @@ void DebugSession::runImmediately(const QString& cmd)
         updateLocation();
     }
     else {
-        addCommand(new InternalPdbCommand(0, 0, cmd));
+        addCommand(new InternalPdbCommand(nullptr, nullptr, cmd));
     }
 }
 
@@ -474,14 +474,14 @@ void DebugSession::locationUpdateReady(QByteArray data) {
 void DebugSession::stopDebugger()
 {
     m_commandQueue.clear();
-    InternalPdbCommand* cmd = new InternalPdbCommand(0, 0, "quit\nquit\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "quit\nquit\n");
     addCommand(cmd);
     setState(StoppingState);
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
         m_debuggerProcess->kill();
     }
     m_commandQueue.clear();
-    m_nextNotifyMethod = 0;
+    m_nextNotifyMethod = nullptr;
     m_nextNotifyObject.clear();
     qCDebug(KDEV_PYTHON_DEBUGGER) << "killed debugger";
     setState(IDebugSession::EndedState);

@@ -39,7 +39,7 @@ class KDEVPYTHONDUCHAIN_EXPORT HintedTypeData : public KDevelop::TypeAliasTypeDa
 public:
     /// Constructor
     HintedTypeData()
-        : KDevelop::TypeAliasTypeData(), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
+        : KDevelop::TypeAliasTypeData(), m_createdByContext((TopDUContext*) nullptr), m_modificationRevision()
     {
     }
     /// Copy constructor. \param rhs data to copy
@@ -50,7 +50,7 @@ public:
     }
     
     HintedTypeData(const TypeAliasTypeData& rhs)
-        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext((TopDUContext*) 0), m_modificationRevision()
+        : KDevelop::TypeAliasTypeData(rhs), m_createdByContext((TopDUContext*) nullptr), m_modificationRevision()
     {
     };
     

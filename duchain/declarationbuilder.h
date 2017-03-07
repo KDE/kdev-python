@@ -117,7 +117,7 @@ protected:
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = 0, Declaration* previous=nullptr,
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = nullptr, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
 
@@ -224,7 +224,7 @@ protected:
      * @return :Declaration* the declaration created, or 0 if none was found.
      **/
     Declaration* createModuleImportDeclaration(QString dottedName, QString declarationName, Python::Identifier* declarationIdentifier,
-                                               ProblemPointer& problemEncountered, Python::Ast* rangeNode = 0);
+                                               ProblemPointer& problemEncountered, Python::Ast* rangeNode = nullptr);
     /**
      * @brief Create a tree of declarations for the specified list.
      * Give the list ["foo","bar","baz"], and you'll get a declaration "foo" containing "bar" in its internal context,
@@ -243,7 +243,7 @@ protected:
      * @return :Declaration* the top level declaration created
      **/
     Declaration* createDeclarationTree(const QStringList& nameComponents, Identifier* declarationIdentifier,
-                                       const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration = 0,
+                                       const ReferencedTopDUContext& innerCtx, Declaration* aliasDeclaration = nullptr,
                                        const RangeInRevision& range = RangeInRevision::invalid());
 
     /**

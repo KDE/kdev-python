@@ -43,7 +43,7 @@ class PyDUChainTest : public QObject
 {
     Q_OBJECT
     public:
-        explicit PyDUChainTest(QObject* parent = 0);
+        explicit PyDUChainTest(QObject* parent = nullptr);
         void initShell();
         ~PyDUChainTest() override;
 

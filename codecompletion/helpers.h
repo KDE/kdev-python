@@ -72,7 +72,7 @@ public:
     QString popExpression(Status* status);
     QString getRemainingCode();
     QString getScannedCode();
-    QString skipUntilStatus(Status requestedStatus, bool* ok, int* expressionsSkipped = 0);
+    QString skipUntilStatus(Status requestedStatus, bool* ok, int* expressionsSkipped = nullptr);
     TokenList popAll();
     void reset();
     int trailingWhitespace();

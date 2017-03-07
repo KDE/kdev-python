@@ -29,7 +29,7 @@ namespace Python
 {
 
 ParseSession::ParseSession()
-    : ast(0)
+    : ast(nullptr)
     , m_currentDocument(KDevelop::IndexedString("<invalid>"))
     , m_futureModificationRevision()
 {

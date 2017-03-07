@@ -441,7 +441,7 @@ StringFormatter::StringFormatter(const QString &string)
 
 bool StringFormatter::isInsideReplacementVariable(int cursorPosition) const
 {
-    return getReplacementVariable(cursorPosition) != NULL;
+    return getReplacementVariable(cursorPosition) != nullptr;
 }
 
 const ReplacementVariable *StringFormatter::getReplacementVariable(int cursorPosition) const
@@ -454,7 +454,7 @@ const ReplacementVariable *StringFormatter::getReplacementVariable(int cursorPos
         index++;
     }
 
-    return 0;
+    return nullptr;
 }
 
 RangeInString StringFormatter::getVariablePosition(int cursorPosition) const

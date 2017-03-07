@@ -72,8 +72,8 @@ namespace Python
 
 ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
         : KDevelop::ParseJob(url, languageSupport)
-        , m_ast(0)
-        , m_duContext(0)
+        , m_ast(nullptr)
+        , m_duContext(nullptr)
 {
     IDefinesAndIncludesManager* iface = IDefinesAndIncludesManager::manager();
     auto project = ICore::self()->projectController()->findProjectForUrl(url.toUrl());
@@ -139,7 +139,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
         }
     }
     
-    ReferencedTopDUContext toUpdate = 0;
+    ReferencedTopDUContext toUpdate = nullptr;
     {
         DUChainReadLocker lock;
         toUpdate = DUChainUtils::standardContextForUrl(document().toUrl());

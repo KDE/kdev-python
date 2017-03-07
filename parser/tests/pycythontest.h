@@ -37,7 +37,7 @@ class PyCythonTest : public QObject
 {
 Q_OBJECT
 public:
-    explicit PyCythonTest(QObject* parent = 0);
+    explicit PyCythonTest(QObject* parent = nullptr);
     void initShell();
     CodeAst::Ptr getAst(QString code, const QUrl& filename);
 

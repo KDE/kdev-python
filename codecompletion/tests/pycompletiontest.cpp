@@ -238,7 +238,7 @@ const CompletionParameters PyCompletionTest::prepareCompletion(const QString& in
 
 const QList<CompletionTreeItem*> PyCompletionTest::runCompletion(const CompletionParameters parameters)
 {
-    PythonCodeCompletionContext* context = new PythonCodeCompletionContext(parameters.contextAtCursor, parameters.snip, parameters.remaining, parameters.cursorAt, 0, 0);
+    PythonCodeCompletionContext* context = new PythonCodeCompletionContext(parameters.contextAtCursor, parameters.snip, parameters.remaining, parameters.cursorAt, 0, nullptr);
     bool abort = false;
     QList<CompletionTreeItem*> items;
     foreach ( CompletionTreeItemPointer ptr, context->completionItems(abort, true) ) {
@@ -265,7 +265,7 @@ bool PyCompletionTest::containsItemStartingWith(const QList<CompletionTreeItem*>
 {
     QModelIndex idx = fakeModel().index(0, KDevelop::CodeCompletionModel::Name);
     foreach ( const CompletionTreeItem* ptr, items ) {
-        if ( ptr->data(idx, Qt::DisplayRole, 0).toString().startsWith(itemName) ) {
+        if ( ptr->data(idx, Qt::DisplayRole, nullptr).toString().startsWith(itemName) ) {
             return true;
         }
     }
@@ -458,7 +458,7 @@ void PyCompletionTest::testAutoBrackets()
     QList< CompletionTreeItem* > items = invokeCompletionOn("class Foo:\n @property\n def myprop(self): pass\n"
                                                             "a=Foo()\n%INVOKE", "a.%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "myprop"));
-    CompletionTreeItem* item = 0;
+    CompletionTreeItem* item = nullptr;
     foreach ( CompletionTreeItem* ptr, items ) {
         if ( ptr->declaration() ) {
             if ( ptr->declaration()->identifier().toString() == "myprop" ) {

@@ -67,7 +67,7 @@ QMap<IProject*, QVector<QUrl>> Helper::cachedSearchPaths;
 QVector<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 QString Helper::documentationFile;
-DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(0);
+DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(nullptr);
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
 QMutex Helper::cacheMutex;
@@ -88,7 +88,7 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
     }
     if ( needsReschedule ) {
         bgparser->addDocument(dependency, TopDUContext::ForceUpdate, betterThanPriority - 1,
-                              0, ParseJob::FullSequentialProcessing);
+                              nullptr, ParseJob::FullSequentialProcessing);
     }
 }
 
@@ -115,7 +115,7 @@ Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed,
                                      const TopDUContext* topContext)
 {
     if ( ! accessed ) {
-        return 0;
+        return nullptr;
     }
     // if the type is unsure, search all the possibilities (but return the first match)
     auto structureTypes = Helper::filterType<StructureType>(accessed,
@@ -190,11 +190,11 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
         else {
             declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
         }
-        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, 0,
-                                                           AbstractType::Ptr(0), DUContext::DontResolveAliases);
+        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, nullptr,
+                                                           AbstractType::Ptr(nullptr), DUContext::DontResolveAliases);
         importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
     }
-    Declaration* declaration = 0;
+    Declaration* declaration = nullptr;
     if ( localDeclarations.length() ) {
         declaration = localDeclarations.last();
     }
@@ -204,7 +204,7 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
             declaration = importedLocalDeclarations.last();
             importedLocalDeclarations.pop_back();
             if ( !declaration || (declaration->context()->type() == DUContext::Class && context->type() != DUContext::Function) ) {
-                declaration = 0;
+                declaration = nullptr;
             }
             if ( importedLocalDeclarations.isEmpty() ) {
                 break;

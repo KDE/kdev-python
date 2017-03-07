@@ -46,7 +46,7 @@
 
 DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     : QDialog(parent)
-    , worker(0)
+    , worker(nullptr)
     , workingDirectory(workingDirectory)
 {
     setLayout(new QVBoxLayout);
@@ -240,7 +240,7 @@ void DocfileWizard::processScriptOutput()
 
 void DocfileWizard::processFinished(int)
 {
-    worker = 0;
+    worker = nullptr;
     runButton->setEnabled(true);
     saveButton->setEnabled(true);
 }

@@ -31,15 +31,15 @@ namespace Python
 // so we provide pseudo implementations
 // there's nothing happening here, don't bother reading the code
     
-Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(-99999), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
-Ast::Ast() :  parent(0), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(0) { }
+Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(-99999), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(nullptr) { }
+Ast::Ast() :  parent(nullptr), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(nullptr) { }
 
 ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
 {
     
 }
 
-ArgAst::ArgAst(Ast* parent): Ast(parent, Ast::ArgAstType), argumentName(0), annotation(0)
+ArgAst::ArgAst(Ast* parent): Ast(parent, Ast::ArgAstType), argumentName(nullptr), annotation(nullptr)
 {
 
 }
@@ -49,27 +49,27 @@ AssertionAst::AssertionAst(Ast* parent): StatementAst(parent, Ast::AssertionAstT
     
 }
 
-AssignmentAst::AssignmentAst(Ast* parent): StatementAst(parent, Ast::AssignmentAstType), value(0)
+AssignmentAst::AssignmentAst(Ast* parent): StatementAst(parent, Ast::AssignmentAstType), value(nullptr)
 {
     
 }
 
-AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(0), depth(0)
+AttributeAst::AttributeAst(Ast* parent): ExpressionAst(parent, Ast::AttributeAstType), value(nullptr), depth(0)
 {
     
 }
 
-AugmentedAssignmentAst::AugmentedAssignmentAst(Ast* parent): StatementAst(parent, Ast::AugmentedAssignmentAstType), value(0)
+AugmentedAssignmentAst::AugmentedAssignmentAst(Ast* parent): StatementAst(parent, Ast::AugmentedAssignmentAstType), value(nullptr)
 {
     
 }
 
-AnnotationAssignmentAst::AnnotationAssignmentAst(Ast* parent): StatementAst(parent, Ast::AnnotationAssignmentAstType), target(0), value(0), annotation(0)
+AnnotationAssignmentAst::AnnotationAssignmentAst(Ast* parent): StatementAst(parent, Ast::AnnotationAssignmentAstType), target(nullptr), value(nullptr), annotation(nullptr)
 {
 
 }
 
-BinaryOperationAst::BinaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::BinaryOperationAstType), lhs(0), rhs(0)
+BinaryOperationAst::BinaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::BinaryOperationAstType), lhs(nullptr), rhs(nullptr)
 {
 
 }
@@ -84,17 +84,17 @@ BreakAst::BreakAst(Ast* parent): StatementAst(parent, Ast::BreakAstType)
     
 }
 
-CallAst::CallAst(Ast* parent): ExpressionAst(parent, Ast::CallAstType), function(0)
+CallAst::CallAst(Ast* parent): ExpressionAst(parent, Ast::CallAstType), function(nullptr)
 {
     
 }
 
-ClassDefinitionAst::ClassDefinitionAst(Ast* parent): StatementAst(parent, Ast::ClassDefinitionAstType), name(0)
+ClassDefinitionAst::ClassDefinitionAst(Ast* parent): StatementAst(parent, Ast::ClassDefinitionAstType), name(nullptr)
 {
     
 }
 
-CodeAst::CodeAst() : Ast(nullptr, Ast::CodeAstType), name(0)
+CodeAst::CodeAst() : Ast(nullptr, Ast::CodeAstType), name(nullptr)
 {
 }
 
@@ -103,12 +103,12 @@ CodeAst::~CodeAst()
     free_ast_recursive(this);
 }
 
-CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType), leftmostElement(0)
+CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType), leftmostElement(nullptr)
 {
     
 }
 
-ComprehensionAst::ComprehensionAst(Ast* parent): Ast(parent, Ast::ComprehensionAstType), target(0), iterator(0)
+ComprehensionAst::ComprehensionAst(Ast* parent): Ast(parent, Ast::ComprehensionAstType), target(nullptr), iterator(nullptr)
 {
     
 }
@@ -128,17 +128,17 @@ DictAst::DictAst(Ast* parent): ExpressionAst(parent, Ast::DictAstType)
 
 }
 
-IndexAst::IndexAst(Ast* parent): SliceAstBase(parent, Ast::IndexAstType), value(0)
+IndexAst::IndexAst(Ast* parent): SliceAstBase(parent, Ast::IndexAstType), value(nullptr)
 {
 
 }
 
-SliceAst::SliceAst(Ast* parent): SliceAstBase(parent, Ast::SliceAstType), lower(0), upper(0), step(0)
+SliceAst::SliceAst(Ast* parent): SliceAstBase(parent, Ast::SliceAstType), lower(nullptr), upper(nullptr), step(nullptr)
 {
 
 }
 
-DictionaryComprehensionAst::DictionaryComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::DictionaryComprehensionAstType), key(0), value(0)
+DictionaryComprehensionAst::DictionaryComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::DictionaryComprehensionAstType), key(nullptr), value(nullptr)
 {
     
 }
@@ -148,17 +148,17 @@ EllipsisAst::EllipsisAst(Ast* parent): SliceAstBase(parent, Ast::EllipsisAstType
     
 }
 
-ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::ExceptionHandlerAstType), type(0), name(0)
+ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::ExceptionHandlerAstType), type(nullptr), name(nullptr)
 {
     
 }
 
-ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::ListComprehensionAstType), element(0)
+ListComprehensionAst::ListComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::ListComprehensionAstType), element(nullptr)
 {
 
 }
 
-ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(0)
+ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), value(nullptr)
 {
     
 }
@@ -173,17 +173,17 @@ ExtendedSliceAst::ExtendedSliceAst(Ast* parent): SliceAstBase(parent, Ast::Exten
     
 }
 
-ForAst::ForAst(Ast* parent): StatementAst(parent, Ast::ForAstType), target(0), iterator(0)
+ForAst::ForAst(Ast* parent): StatementAst(parent, Ast::ForAstType), target(nullptr), iterator(nullptr)
 {
     
 }
 
-FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(0), arguments(0), async(false)
+FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(nullptr), arguments(nullptr), async(false)
 {
     
 }
 
-GeneratorExpressionAst::GeneratorExpressionAst(Ast* parent): ExpressionAst(parent, Ast::GeneratorExpressionAstType), element(0)
+GeneratorExpressionAst::GeneratorExpressionAst(Ast* parent): ExpressionAst(parent, Ast::GeneratorExpressionAstType), element(nullptr)
 {
     
 }
@@ -193,17 +193,17 @@ GlobalAst::GlobalAst(Ast* parent): StatementAst(parent, Ast::GlobalAstType)
     
 }
 
-Identifier::Identifier(QString value) : Ast(0, Ast::IdentifierAstType), value(value)
+Identifier::Identifier(QString value) : Ast(nullptr, Ast::IdentifierAstType), value(value)
 {
     
 }
 
-IfAst::IfAst(Ast* parent): StatementAst(parent, Ast::IfAstType), condition(0)
+IfAst::IfAst(Ast* parent): StatementAst(parent, Ast::IfAstType), condition(nullptr)
 {
     
 }
 
-IfExpressionAst::IfExpressionAst(Ast* parent): ExpressionAst(parent, Ast::IfExpressionAstType), condition(0)
+IfExpressionAst::IfExpressionAst(Ast* parent): ExpressionAst(parent, Ast::IfExpressionAstType), condition(nullptr)
 {
     
 }
@@ -213,17 +213,17 @@ ImportAst::ImportAst(Ast* parent): StatementAst(parent, Ast::ImportAstType)
     
 }
 
-ImportFromAst::ImportFromAst(Ast* parent): StatementAst(parent, Ast::ImportFromAstType), module(0), level(0)
+ImportFromAst::ImportFromAst(Ast* parent): StatementAst(parent, Ast::ImportFromAstType), module(nullptr), level(0)
 {
     
 }
 
-KeywordAst::KeywordAst(Ast* parent): Ast(parent, Ast::KeywordAstType), argumentName(0), value(0)
+KeywordAst::KeywordAst(Ast* parent): Ast(parent, Ast::KeywordAstType), argumentName(nullptr), value(nullptr)
 {
     
 }
 
-LambdaAst::LambdaAst(Ast* parent): ExpressionAst(parent, Ast::LambdaAstType), arguments(0)
+LambdaAst::LambdaAst(Ast* parent): ExpressionAst(parent, Ast::LambdaAstType), arguments(nullptr)
 {
     
 }
@@ -233,12 +233,12 @@ ListAst::ListAst(Ast* parent): ExpressionAst(parent, Ast::ListAstType)
     
 }
 
-NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifier(0)
+NameAst::NameAst(Ast* parent): ExpressionAst(parent, Ast::NameAstType), identifier(nullptr)
 {
     
 }
 
-AwaitAst::AwaitAst(Ast* parent): ExpressionAst(parent, Ast::AwaitAstType), value(0)
+AwaitAst::AwaitAst(Ast* parent): ExpressionAst(parent, Ast::AwaitAstType), value(nullptr)
 {
 
 }
@@ -263,12 +263,12 @@ NonlocalAst::NonlocalAst(Ast* parent): StatementAst(parent, Ast::NonlocalAstType
     
 }
 
-RaiseAst::RaiseAst(Ast* parent): StatementAst(parent, Ast::RaiseAstType), type(0)
+RaiseAst::RaiseAst(Ast* parent): StatementAst(parent, Ast::RaiseAstType), type(nullptr)
 {
     
 }
 
-ReturnAst::ReturnAst(Ast* parent): StatementAst(parent, Ast::ReturnAstType), value(0)
+ReturnAst::ReturnAst(Ast* parent): StatementAst(parent, Ast::ReturnAstType), value(nullptr)
 {
     
 }
@@ -278,7 +278,7 @@ SetAst::SetAst(Ast* parent): ExpressionAst(parent, Ast::SetAstType)
     
 }
 
-SetComprehensionAst::SetComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::SetComprehensionAstType), element(0)
+SetComprehensionAst::SetComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::SetComprehensionAstType), element(nullptr)
 {
     
 }
@@ -303,7 +303,7 @@ JoinedStringAst::JoinedStringAst(Ast* parent): ExpressionAst(parent, Ast::Joined
 
 }
 
-FormattedValueAst::FormattedValueAst(Ast* parent): ExpressionAst(parent, Ast::FormattedValueAstType), value(nullptr), conversion(0), formatSpec(0)
+FormattedValueAst::FormattedValueAst(Ast* parent): ExpressionAst(parent, Ast::FormattedValueAstType), value(nullptr), conversion(0), formatSpec(nullptr)
 {
 
 }
@@ -313,7 +313,7 @@ BytesAst::BytesAst(Ast* parent): ExpressionAst(parent, Ast::BytesAstType), value
     
 }
 
-SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(0), slice(0)
+SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(nullptr), slice(nullptr)
 {
     
 }
@@ -328,7 +328,7 @@ TupleAst::TupleAst(Ast* parent): ExpressionAst(parent, Ast::TupleAstType)
     
 }
 
-UnaryOperationAst::UnaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::UnaryOperationAstType), operand(0)
+UnaryOperationAst::UnaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::UnaryOperationAstType), operand(nullptr)
 {
     
 }
@@ -338,7 +338,7 @@ TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)
 
 }
 
-WhileAst::WhileAst(Ast* parent): StatementAst(parent, Ast::WhileAstType), condition(0)
+WhileAst::WhileAst(Ast* parent): StatementAst(parent, Ast::WhileAstType), condition(nullptr)
 {
     
 }
@@ -353,12 +353,12 @@ WithItemAst::WithItemAst(Ast* parent): Ast(parent, Ast::WithItemAstType)
 
 }
 
-YieldAst::YieldAst(Ast* parent): ExpressionAst(parent, Ast::YieldAstType), value(0)
+YieldAst::YieldAst(Ast* parent): ExpressionAst(parent, Ast::YieldAstType), value(nullptr)
 {
     
 }
 
-AliasAst::AliasAst(Ast* parent): Ast(parent, Ast::AliasAstType), name(0), asName(0)
+AliasAst::AliasAst(Ast* parent): Ast(parent, Ast::AliasAstType), name(nullptr), asName(nullptr)
 {
     
 }

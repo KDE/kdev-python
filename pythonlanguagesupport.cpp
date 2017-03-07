@@ -68,7 +68,7 @@ K_PLUGIN_FACTORY_WITH_JSON( KDevPythonSupportFactory, "kdevpythonsupport.json", 
 
 namespace Python
 {
-LanguageSupport* LanguageSupport::m_self = 0;
+LanguageSupport* LanguageSupport::m_self = nullptr;
 
 KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::Context* context)
 {
@@ -127,7 +127,7 @@ LanguageSupport::~LanguageSupport()
     parseLock()->unlock();
 
     delete m_highlighting;
-    m_highlighting = 0;
+    m_highlighting = nullptr;
 }
 
 KDevelop::ParseJob *LanguageSupport::createParseJob( const IndexedString& url )

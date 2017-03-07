@@ -105,7 +105,7 @@ class CorrectionAssistant : public QDialog
     Q_OBJECT
 public:
     CorrectionAssistant(KDevelop::IndexedDeclaration declaration, CorrectionFileGenerator::HintType hintType,
-                        QWidget *parent = 0);
+                        QWidget *parent = nullptr);
 
     KDevelop::IndexedDeclaration declaration() const;
     CorrectionFileGenerator::HintType hintType() const;

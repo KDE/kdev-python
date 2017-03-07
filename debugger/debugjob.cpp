@@ -48,7 +48,7 @@ void DebugJob::start()
     setModel(pyOutputModel);
     setTitle(m_interpreter + m_scriptUrl.toLocalFile());
 
-    setModel(new KDevelop::OutputModel(0));
+    setModel(new KDevelop::OutputModel(nullptr));
 
     startOutput();
     

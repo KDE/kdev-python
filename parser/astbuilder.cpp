@@ -542,7 +542,7 @@ QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)
 namespace {
 struct PythonInitializer : private QMutexLocker {
     PythonInitializer(QMutex& pyInitLock):
-        QMutexLocker(&pyInitLock), arena(0)
+        QMutexLocker(&pyInitLock), arena(nullptr)
     {
             Py_InitializeEx(0);
             Q_ASSERT(Py_IsInitialized());

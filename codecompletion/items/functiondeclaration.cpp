@@ -84,7 +84,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             if ( index.column() == KDevelop::CodeCompletionModel::Arguments ) {
                 if (FunctionType::Ptr functionType = dec->type<FunctionType>()) {
                     QString ret;
-                    createArgumentList(dec, ret, 0, 0, false);
+                    createArgumentList(dec, ret, nullptr, 0, false);
                     return ret;
                 }
             }
@@ -110,7 +110,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                     createArgumentList(dec, ret, &highlight, atArgument(), false);
                 }
                 else {
-                    createArgumentList(dec, ret, 0, false);
+                    createArgumentList(dec, ret, nullptr, false);
                 }
                 return QVariant(highlight);
             }

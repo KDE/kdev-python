@@ -1,14 +1,3 @@
-project(pdb)
-
-include_directories(
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${KDEVPLATFORM_INCLUDE_DIR}
-    ${KDEVELOP_INCLUDE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  ${KDE4_ENABLE_EXCEPTIONS}")
-
 set(kdevpdb_PART_SRCS
     breakpointcontroller.cpp
     variable.cpp
@@ -34,7 +23,6 @@ target_link_libraries(kdevpdb
     KDev::Project    
     KDev::Util
     KF5::TextEditor
-    ${KDE4WORKSPACE_PROCESSUI_LIBS}
 )
 
 install(FILES __kdevpython_debugger_utils.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)

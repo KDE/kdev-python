@@ -1236,7 +1236,6 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
                 DUChainWriteLocker lock;
                 previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
             }
-            else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
 
             closeInjectedContext();
         }

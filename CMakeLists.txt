@@ -31,7 +31,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 # To avoid that, start looking for the newest supported version and work down.
 set(Python_ADDITIONAL_VERSIONS 3.6 3.5 3.4)
 foreach(_PYTHON_V ${Python_ADDITIONAL_VERSIONS})
-    find_package(PythonInterp ${_PYTHON_V} EXACT)
+    find_package(PythonInterp ${_PYTHON_V})
     if ( PYTHONINTERP_FOUND )
         break()
     endif()

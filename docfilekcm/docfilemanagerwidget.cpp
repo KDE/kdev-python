@@ -27,8 +27,6 @@
 #include <interfaces/icore.h>
 
 #include <QBoxLayout>
-#include <QMimeType>
-#include <QMimeDatabase>
 #include <QFileSystemModel>
 #include <QDialogButtonBox>
 #include <QTreeView>
@@ -40,12 +38,12 @@
 #include <QDebug>
 #include <QTemporaryFile>
 #include <QStandardPaths>
+#include <QDesktopServices>
 #include <QIcon>
 #include <QUrl>
 
 #include <KMessageBox>
 #include <KLocalizedString>
-#include <KRun>
 #include <KTextEditor/Document>
 
 DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
@@ -136,9 +134,9 @@ void DocfileManagerWidget::showSearchPaths()
 
 void DocfileManagerWidget::openDocfilePath()
 {
-    auto docfileDirectory = QUrl::fromLocalFile(docfilePath());
-    QMimeDatabase db;
-    KRun::runUrl(docfileDirectory, db.mimeTypeForUrl(docfileDirectory).name(), this);
+    if ( QDir(docfilePath()).exists() ) {
+        QDesktopServices::openUrl(QUrl::fromLocalFile(docfilePath()));
+    }
 }
 
 void DocfileManagerWidget::copyEditorContents()

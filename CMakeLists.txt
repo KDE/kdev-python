@@ -27,14 +27,30 @@ include(KDECMakeSettings)
 
 add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
+# CMake looks for exactly the specified version first and ignores newer versions.
+# To avoid that, start looking for the newest supported version and work down.
 set(Python_ADDITIONAL_VERSIONS 3.6 3.5 3.4)
-find_package(PythonInterp 3.4.3 REQUIRED)
+foreach(_PYTHON_V ${Python_ADDITIONAL_VERSIONS})
+    find_package(PythonInterp ${_PYTHON_V} EXACT)
+    if ( PYTHONINTERP_FOUND )
+        break()
+    endif()
+endforeach()
+# Must unset before searching for libs, otherwise these are checked before the required version...
 unset(Python_ADDITIONAL_VERSIONS)
-find_package(PythonLibs ${PYTHON_VERSION_STRING} REQUIRED EXACT) # No, we don't support mismatched versions
-configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
-if ( (NOT PYTHON_LIBRARIES) OR "${PYTHON_VERSION_MINOR}" GREATER 6 )
+
+if ( PYTHONINTERP_FOUND AND PYTHON_VERSION_STRING VERSION_GREATER "3.4.2" )
+    # Find libraries that match the found interpreter (mismatched versions not supported).
+    # This assumes libs are available for the newest Python version on the system.
+    # KDevelop should _always_ be built against the newest possible version, so notabug.
+    find_package(PythonLibs "${PYTHON_VERSION_STRING}" REQUIRED EXACT)
+endif()
+
+if ( NOT PYTHONLIBS_FOUND )
     message(FATAL_ERROR "Python >= 3.4.3 but < 3.7 with --enable-shared is required to build kdev-python")
 endif()
+
+configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
 
 find_package(Qt5 CONFIG REQUIRED Core Widgets Test)
 find_package(KF5 REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)

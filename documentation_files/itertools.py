@@ -129,18 +129,8 @@ class groupby(object):
     """ x.next() -> the next value, or raise StopIteration """
     return None
 
-class ifilter(object):
-  """ ifilter(function or None, sequence) --> ifilter object
-  
-  Return those items of sequence for which function(item) is true.
-  If function is None, return the items that are true. """
-
-  def next(self):
-    """ x.next() -> the next value, or raise StopIteration """
-    return None
-
-class ifilterfalse(object):
-  """ ifilterfalse(function or None, sequence) --> ifilterfalse object
+class filterfalse(object):
+  """ filterfalse(function or None, sequence) --> ifilterfalse object
   
   Return those items of sequence for which function(item) is false.
   If function is None, return the items that are false. """
@@ -149,21 +139,8 @@ class ifilterfalse(object):
     """ x.next() -> the next value, or raise StopIteration """
     return None
 
-class imap(object):
-  """ imap(func, *iterables) --> imap object
-  
-  Make an iterator that computes the function using arguments from
-  each of the iterables.  Like map() except that it returns
-  an iterator instead of a list and that it stops when the shortest
-  iterable is exhausted instead of filling in None for shorter
-  iterables. """
-
-  def next(self):
-    """ x.next() -> the next value, or raise StopIteration """
-    return None
-
-class islice(object):
-  """ islice(iterable, [start,] stop [, step]) --> islice object
+class slice(object):
+  """ slice(iterable, [start,] stop [, step]) --> islice object
   
   Return an iterator whose next() method returns selected values from an
   iterable.  If start is specified, will skip all preceding elements;
@@ -176,24 +153,10 @@ class islice(object):
     """ x.next() -> the next value, or raise StopIteration """
     return None
 
-class izip(object):
-  """ izip(iter1 [,iter2 [...]]) --> izip object
+class zip_longest(object):
+  """ zip_longest(iter1 [,iter2 [...]], [fillvalue=None]) --> izip_longest object
   
-  Return a izip object whose .next() method returns a tuple where
-  the i-th element comes from the i-th iterable argument.  The .next()
-  method continues until the shortest iterable in the argument sequence
-  is exhausted and then it raises StopIteration.  Works like the zip()
-  function but consumes less memory by returning an iterator instead of
-  a list. """
-
-  def next(self):
-    """ x.next() -> the next value, or raise StopIteration """
-    return None
-
-class izip_longest(object):
-  """ izip_longest(iter1 [,iter2 [...]], [fillvalue=None]) --> izip_longest object
-  
-  Return an izip_longest object whose .next() method returns a tuple where
+  Return a zip_longest object whose .next() method returns a tuple where
   the i-th element comes from the i-th iterable argument.  The .next()
   method continues until the longest iterable in the argument sequence
   is exhausted and then it raises StopIteration.  When the shorter iterables

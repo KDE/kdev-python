@@ -561,8 +561,16 @@ def id(obj):
     """Return the “identity” of an object. This is an integer (or long integer) which is guaranteed to be unique and constant for this object during its lifetime. Two objects with non-overlapping lifetimes may have the same id() value."""
     return 0
 def input(prompt = None):
-    """Equivalent to eval(raw_input(prompt))."""
-    return None
+    """
+    Read a string from standard input. The trailing newline is stripped.
+
+    The prompt string, if given, is printed to standard output without a
+    trailing newline before reading input.
+
+    If the user hits EOF (*nix: Ctrl-D, Windows: Ctrl-Z+Return), raise EOFError.
+    On *nix systems, readline is used if available.
+    """
+    return ""
 def isinstance(obj, cls):
     """Return true if the object argument is an instance of the classinfo argument, or of a (direct, indirect or virtual) subclass thereof."""
     return True
@@ -615,9 +623,6 @@ def property(fget = 0, fset = 0, fdel = 0, doc = 0):
 def range(start = 0, stop = 0, step = 0):
     """This is a versatile function to create lists containing arithmetic progressions. It is most often used in for loops. The arguments must be plain integers."""
     return [0]
-def raw_input(prompt = ""):
-    """ The function then reads a line from input, converts it to a string (stripping a trailing newline), and returns that."""
-    return ""
 def reduce(function, iterable, init = None):
     """Apply function of two arguments cumulatively to the items of iterable, from left to right, so as to reduce the iterable to a single value."""
     return None

@@ -132,6 +132,7 @@ void StyleChecking::processOutputStarted()
     size_d = m_checkerProcess.read(10);
     bool ok;
     auto size = size_d.toInt(&ok);
+    auto origSize = size;
     if ( !ok || size < 0 ) {
         addSetupErrorToContext("Got invalid size: " + size_d);
         m_mutex.unlock();
@@ -141,11 +142,13 @@ void StyleChecking::processOutputStarted()
     // read actual output
     QByteArray buf;
     QTimer t;
+    t.setSingleShot(true);
     t.start(100);
-    while ( size > 0 && t.isActive() ) {
-        auto d = m_checkerProcess.read(size);
+    while ( size > 0 && t.remainingTime() > 0 ) {
+        auto d = m_checkerProcess.read(qMin(4096, size));
         buf.append(d);
         size -= d.size();
+        qDebug() << "remaining:" << size << d.size();
     }
 
     // process it

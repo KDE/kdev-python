@@ -23,6 +23,8 @@
 #include <debugger/interfaces/idebugsession.h>
 #include "variable.h"
 
+#include <QTimer>
+
 using namespace KDevelop;
 
 namespace Python {

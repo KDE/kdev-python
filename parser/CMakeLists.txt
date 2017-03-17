@@ -9,7 +9,7 @@ set(parser_STAT_SRCS
     parserdebug.cpp
 )
 
-include_directories(kdevpythonparser ${PYTHON_INCLUDE_DIRS})
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 add_library( kdevpythonparser SHARED ${parser_STAT_SRCS} )
 

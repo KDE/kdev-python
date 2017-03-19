@@ -16,7 +16,7 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Python interpreter</string>
+        <string>Python interpreter:</string>
        </property>
       </widget>
      </item>

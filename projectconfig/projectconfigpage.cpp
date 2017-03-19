@@ -53,7 +53,7 @@ void Python::ProjectConfigPage::reset()
 
 QString Python::ProjectConfigPage::name() const
 {
-    return i18n("Python settings");
+    return i18n("Python Settings");
 }
 
 }

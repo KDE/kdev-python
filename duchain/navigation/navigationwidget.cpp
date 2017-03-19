@@ -30,13 +30,12 @@ NavigationWidget::NavigationWidget(KDevelop::DeclarationPointer declaration, KDe
                                    const QString& /* htmlPrefix */, const QString& /* htmlSuffix */, KDevelop::AbstractNavigationWidget::DisplayHints hints)
     : KDevelop::AbstractNavigationWidget()
 {
-    m_topContext = topContext;
     setDisplayHints(hints);
 
     initBrowser(400);
     auto realDeclaration = DeclarationPointer(Helper::resolveAliasDeclaration(declaration.data()));
-    m_startContext = new DeclarationNavigationContext(realDeclaration, m_topContext);
-    setContext(m_startContext);
+    auto context = new DeclarationNavigationContext(realDeclaration, topContext);
+    setContext(NavigationContextPointer(context));
 }
 
 NavigationWidget::NavigationWidget(const IncludeItem &/*includeItem*/, TopDUContextPointer /*topContext*/,

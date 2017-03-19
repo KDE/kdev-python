@@ -50,13 +50,13 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
 
 void DeclarationNavigationContext::htmlClass()
 {
-    StructureType::Ptr klass = m_declaration->abstractType().cast<StructureType>();
+    StructureType::Ptr klass = declaration()->abstractType().cast<StructureType>();
     Q_ASSERT(klass);
 
     modifyHtml() += QStringLiteral("class ");
     eventuallyMakeTypeLinks( klass.cast<AbstractType>() );
 
-    auto classDecl = dynamic_cast<ClassDeclaration*>(klass->declaration(m_topContext.data()));
+    auto classDecl = dynamic_cast<ClassDeclaration*>(klass->declaration(topContext().data()));
     if ( classDecl && classDecl->baseClassesSize() ) {
         int count = 0;
         FOREACH_FUNCTION( const BaseClassInstance& base, classDecl->baseClasses ) {
@@ -71,7 +71,7 @@ QString DeclarationNavigationContext::typeLinkOrString(const AbstractType::Ptr t
     if ( type ) {
         if ( auto idType = dynamic_cast<IdentifiedType*>(type.data()) ) {
             return getLink(type->toString(),
-                           DeclarationPointer(idType->declaration(m_topContext.data())),
+                           DeclarationPointer(idType->declaration(topContext().data())),
                            NavigationAction::NavigateDeclaration);
         }
         return type->toString().toHtmlEscaped();
@@ -85,7 +85,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
     if ( auto listType = type.cast<ListType>() ) {
         QString contentType;
         const QString containerType = getLink(listType->containerToString(),
-                                              DeclarationPointer(idType->declaration(m_topContext.data())),
+                                              DeclarationPointer(idType->declaration(topContext().data())),
                                               NavigationAction::NavigateDeclaration );
         if ( auto map = listType.cast<MapType>() ) {
             contentType.append(typeLinkOrString(map->keyType().abstractType()));
@@ -96,7 +96,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
     }
     else if (auto indexedContainer = type.cast<IndexedContainer>()) {
         const QString containerType = getLink(indexedContainer->containerToString(),
-                                              DeclarationPointer(idType->declaration(m_topContext.data())),
+                                              DeclarationPointer(idType->declaration(topContext().data())),
                                               NavigationAction::NavigateDeclaration );
         QStringList typesArray;
         for ( int i = 0; i < indexedContainer->typesCount(); i++ ) {

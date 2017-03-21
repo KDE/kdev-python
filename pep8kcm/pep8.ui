@@ -26,7 +26,7 @@
    <item>
     <widget class="QGroupBox" name="enableChecking">
      <property name="title">
-      <string>Enable style checking</string>
+      <string>Enable Style Checking</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
@@ -41,28 +41,28 @@
          <bool>false</bool>
         </property>
         <property name="placeholderText">
-         <string>comma-separated list</string>
+         <string>Comma-separated list of error codes</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Enable these errors and warnings</string>
+         <string>Enable these errors and warnings:</string>
         </property>
        </widget>
       </item>
       <item row="2" column="1">
        <widget class="QLineEdit" name="enableErrors">
         <property name="placeholderText">
-         <string>comma-separated list</string>
+         <string>Comma-separated list of error codes</string>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Maximum line length</string>
+         <string>Maximum line length:</string>
         </property>
        </widget>
       </item>
@@ -85,7 +85,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Disable these errors and warnings</string>
+         <string>Disable these errors and warnings:</string>
         </property>
        </widget>
       </item>

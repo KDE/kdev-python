@@ -26,6 +26,7 @@
 #include <QRegularExpression>
 
 #include <language/duchain/problem.h>
+#include <language/editor/documentrange.h>
 #include <interfaces/icore.h>
 #include <shell/documentcontroller.h>
 

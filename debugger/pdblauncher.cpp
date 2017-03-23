@@ -26,6 +26,7 @@
 #include <interfaces/launchconfigurationpage.h>
 #include <interfaces/ilaunchconfiguration.h>
 #include <interfaces/iplugincontroller.h>
+#include <interfaces/iruncontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/iuicontroller.h>
 

@@ -29,6 +29,7 @@
 #include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>
 #include <language/duchain/duchain.h>
+#include <language/editor/documentrange.h>
 
 #include <memory>
 

@@ -37,7 +37,7 @@ class StyleChecking : public QObject
 Q_OBJECT
 public:
     StyleChecking(QObject* parent=nullptr);
-    ~StyleChecking();
+    ~StyleChecking() override;
     void startChecker(const QString& text, const QString& select={},
                       const QString& ignore={}, const int maxLineLength=80);
 

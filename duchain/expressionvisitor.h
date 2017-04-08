@@ -57,28 +57,28 @@ public:
     /// Use this to construct the expression-visitor recursively
     ExpressionVisitor(Python::ExpressionVisitor* parent, const DUContext* overrideContext=nullptr);
 
-    virtual void visitBinaryOperation(BinaryOperationAst* node);
-    virtual void visitUnaryOperation(UnaryOperationAst* node);
-    virtual void visitBooleanOperation(BooleanOperationAst* node);
-    virtual void visitCompare(CompareAst* node);
+    void visitBinaryOperation(BinaryOperationAst* node) override;
+    void visitUnaryOperation(UnaryOperationAst* node) override;
+    void visitBooleanOperation(BooleanOperationAst* node) override;
+    void visitCompare(CompareAst* node) override;
 
-    virtual void visitString(StringAst* node);
-    virtual void visitBytes(BytesAst* node);
-    virtual void visitNumber(NumberAst* node);
-    virtual void visitName(NameAst* node);
-    virtual void visitList(ListAst* node);
-    virtual void visitDict(DictAst* node);
-    virtual void visitSet(SetAst* node);
-    virtual void visitSubscript(SubscriptAst* node);
-    virtual void visitCall(CallAst* node);
-    virtual void visitAttribute(AttributeAst* node);
-    virtual void visitTuple(TupleAst* node);
-    virtual void visitLambda(LambdaAst* node);
-    virtual void visitListComprehension(ListComprehensionAst* node);
-    virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
-    virtual void visitSetComprehension(SetComprehensionAst* node);
-    virtual void visitIfExpression(IfExpressionAst* node);
-    virtual void visitNameConstant(NameConstantAst* node);
+    void visitString(StringAst* node) override;
+    void visitBytes(BytesAst* node) override;
+    void visitNumber(NumberAst* node) override;
+    void visitName(NameAst* node) override;
+    void visitList(ListAst* node) override;
+    void visitDict(DictAst* node) override;
+    void visitSet(SetAst* node) override;
+    void visitSubscript(SubscriptAst* node) override;
+    void visitCall(CallAst* node) override;
+    void visitAttribute(AttributeAst* node) override;
+    void visitTuple(TupleAst* node) override;
+    void visitLambda(LambdaAst* node) override;
+    void visitListComprehension(ListComprehensionAst* node) override;
+    void visitDictionaryComprehension(DictionaryComprehensionAst* node) override;
+    void visitSetComprehension(SetComprehensionAst* node) override;
+    void visitIfExpression(IfExpressionAst* node) override;
+    void visitNameConstant(NameConstantAst* node) override;
 
     /**
      * @brief Checks for magic docstrings that override a call's return type.
@@ -130,7 +130,7 @@ private:
 
     void addUnknownName(const QString& name);
 
-    virtual AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type);
+    AbstractType::Ptr encounterPreprocess(AbstractType::Ptr type) override;
 
     void setLastIsAlias(bool alias) {
         m_isAlias = alias;

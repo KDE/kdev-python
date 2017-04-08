@@ -32,14 +32,14 @@ class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionModel : public KDevelop::C
 
 public:
     PythonCodeCompletionModel(QObject* parent);
-    virtual ~PythonCodeCompletionModel();
+    ~PythonCodeCompletionModel() override;
     
-    virtual KDevelop::CodeCompletionWorker* createCompletionWorker();
-    KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position);
+    KDevelop::CodeCompletionWorker* createCompletionWorker() override;
+    KTextEditor::Range completionRange(KTextEditor::View* view, const KTextEditor::Cursor &position) override;
     bool shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
-                               bool userInsertion, const KTextEditor::Cursor& position);
-    virtual bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString& currentCompletion);
-    QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position);
+                               bool userInsertion, const KTextEditor::Cursor& position) override;
+    bool shouldAbortCompletion(KTextEditor::View* view, const KTextEditor::Range& range, const QString& currentCompletion) override;
+    QString filterString(KTextEditor::View *view, const KTextEditor::Range &range, const KTextEditor::Cursor &position) override;
 
     QUrl m_currentDocument;
 };

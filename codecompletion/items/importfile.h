@@ -33,7 +33,7 @@ class ImportFileItem : public IncludeFileItemBase
 
 public:
     ImportFileItem(const KDevelop::IncludeItem& include);
-    virtual ~ImportFileItem();
+    ~ImportFileItem() override;
     
     void execute(KTextEditor::View* view, const KTextEditor::Range& word) override;
     QString moduleName;

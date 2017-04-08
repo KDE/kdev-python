@@ -81,8 +81,8 @@ public:
     void setCreatedBy(TopDUContext* context, const ModificationRevision& revision);
     /** @return the creating TopDUContext for this type hint. */
     IndexedTopDUContext createdBy() const;
-    virtual AbstractType* clone() const;
-    virtual uint hash() const;
+    AbstractType* clone() const override;
+    uint hash() const override;
 
     /**
      * @brief Checks whether this hint is still valid, and returns false if it is not
@@ -92,7 +92,7 @@ public:
      **/
     bool isValid();
 
-    virtual bool equals(const AbstractType* rhs) const;
+    bool equals(const AbstractType* rhs) const override;
     enum {
         Identity = 62
     };

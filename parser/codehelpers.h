@@ -36,7 +36,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT TrivialLazyLineFetcher : public LazyLineFetcher {
 public:
     TrivialLazyLineFetcher(QStringList lines) : m_lines(lines) { }
-    virtual QString fetchLine(int lineno) {
+    QString fetchLine(int lineno) override {
         return m_lines.at(lineno);
     };
 private:
@@ -47,7 +47,7 @@ class KDEVPYTHONPARSER_EXPORT TextDocumentLazyLineFetcher : public LazyLineFetch
 public:
     TextDocumentLazyLineFetcher(KTextEditor::Document* d) :
       m_document(d) { };
-    QString fetchLine(int lineno) {
+    QString fetchLine(int lineno) override {
         return m_document->line(lineno);
     };
 private:

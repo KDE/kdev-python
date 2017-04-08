@@ -68,20 +68,20 @@ public:
     IndexedContainer(const IndexedContainer& rhs);
     IndexedContainer(IndexedContainerData& data);
     void addEntry(AbstractType::Ptr typeToAdd);
-    virtual AbstractType* clone() const;
-    virtual uint hash() const;
+    AbstractType* clone() const override;
+    uint hash() const override;
     int typesCount() const;
     const IndexedType& typeAt(int index) const;
     void replaceType(int index, AbstractType::Ptr newType);
     AbstractType::Ptr asUnsureType() const;
-    virtual QString toString() const;
+    QString toString() const override;
     // "toString"s only the container type, not the content; used in declarationnavigationcontext to create
     // separate links for the content and container type
     // by keeping toString separate, it is possible to have a pretty type in unsure types etc. without additional
     // efforts being necessary
     QString containerToString() const;
     
-    virtual bool equals(const AbstractType* rhs) const;
+    bool equals(const AbstractType* rhs) const override;
     
     enum {
 // #warning check identity value (59)

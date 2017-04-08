@@ -52,8 +52,8 @@ public:
     /**
      * @brief Entry function called by KDevPlatform API.
      */
-    virtual ReferencedTopDUContext build(const KDevelop::IndexedString& url, Ast* node,
-                                         ReferencedTopDUContext updateContext = ReferencedTopDUContext());
+    ReferencedTopDUContext build(const KDevelop::IndexedString& url, Ast* node,
+                                         ReferencedTopDUContext updateContext = ReferencedTopDUContext()) override;
 
     /**
      * @brief Set the editor integrator.
@@ -129,40 +129,40 @@ protected:
      * @param range Range to encompass
      * @return KDevelop::TopDUContext* weak pointer to the created top context.
      */
-    TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file);
+    TopDUContext* newTopContext(const RangeInRevision& range, ParsingEnvironmentFile* file) override;
 
     /**
      * @brief Create a new context.
      * Overridden to create instances of Python's specialized DUContext.
      */
-    virtual KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range);
+    KDevelop::DUContext* newContext(const KDevelop::RangeInRevision& range) override;
 
 protected:
     // AST visitor functions
-    virtual void visitFunctionDefinition( FunctionDefinitionAst* );
-    virtual void visitClassDefinition( ClassDefinitionAst* );
-    virtual void visitCode(CodeAst* node);
-    virtual void visitListComprehension(ListComprehensionAst* node);
-    virtual void visitDictionaryComprehension(DictionaryComprehensionAst* node);
-    virtual void visitGeneratorExpression(GeneratorExpressionAst* node);
+    void visitFunctionDefinition( FunctionDefinitionAst* ) override;
+    void visitClassDefinition( ClassDefinitionAst* ) override;
+    void visitCode(CodeAst* node) override;
+    void visitListComprehension(ListComprehensionAst* node) override;
+    void visitDictionaryComprehension(DictionaryComprehensionAst* node) override;
+    void visitGeneratorExpression(GeneratorExpressionAst* node) override;
     void visitComprehensionCommon(Ast* node);
 
-    virtual void startVisiting(Ast* node);
-    virtual KDevelop::RangeInRevision editorFindRange(Ast* fromNode, Ast* toNode);
+    void startVisiting(Ast* node) override;
+    KDevelop::RangeInRevision editorFindRange(Ast* fromNode, Ast* toNode) override;
     virtual KDevelop::CursorInRevision editorFindPositionSafe(Ast* node);
     virtual KDevelop::CursorInRevision startPos(Ast* node);
-    virtual KDevelop::QualifiedIdentifier identifierForNode(Identifier* node);
+    KDevelop::QualifiedIdentifier identifierForNode(Identifier* node) override;
 
     /**
      * @brief Set @p context as the context of @p node.
      * The context is stored inside the AST itself.
      */
-    virtual void setContextOnNode(Ast* node, KDevelop::DUContext* context);
+    void setContextOnNode(Ast* node, KDevelop::DUContext* context) override;
 
     /**
      * @brief Get the context set on @p node as previously set by @ref setContextOnNode.
      */
-    virtual KDevelop::DUContext* contextFromNode(Ast* node);
+    KDevelop::DUContext* contextFromNode(Ast* node) override;
 
     /**
      * @brief Add the saved list of contexts to import to the current context, and clear it.

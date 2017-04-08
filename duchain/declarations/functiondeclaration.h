@@ -62,7 +62,7 @@ public:
     FunctionDeclaration(const KDevelop::RangeInRevision &range, KDevelop::DUContext *context);
     FunctionDeclaration(FunctionDeclarationData &data);
     FunctionDeclaration(FunctionDeclarationData &data, const KDevelop::RangeInRevision &range, KDevelop::DUContext *context);
-    ~FunctionDeclaration();
+    ~FunctionDeclaration() override;
     
     enum {
         Identity = 126

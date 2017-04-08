@@ -42,10 +42,10 @@ public:
     ParseSession* parseSession() const;
 
 protected:
-    virtual void visitName(NameAst* node);
-    virtual void visitCall(CallAst* node);
-    virtual void visitAttribute(AttributeAst* node);
-    virtual void visitSubscript(SubscriptAst* node);
+    void visitName(NameAst* node) override;
+    void visitCall(CallAst* node) override;
+    void visitAttribute(AttributeAst* node) override;
+    void visitSubscript(SubscriptAst* node) override;
 private:
     ParseSession* m_session;
     inline int& nextUseIndex()

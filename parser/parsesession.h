@@ -46,7 +46,7 @@ class KDEVPYTHONPARSER_EXPORT ParseSession : public IAstContainer
 {
 public:
     ParseSession();
-    ~ParseSession();
+    ~ParseSession() override;
 
     void setContents( const QString& contents );
     QString contents() const;

@@ -43,7 +43,7 @@ class KDEVPYTHONDUCHAIN_EXPORT DeclarationBuilder: public DeclarationBuilderBase
 {
 public:
     DeclarationBuilder(PythonEditorIntegrator* editor, int ownPriority);
-    virtual ~DeclarationBuilder();
+    ~DeclarationBuilder() override;
 
     /**
      * @brief Entry function, called by KDevPlatform.

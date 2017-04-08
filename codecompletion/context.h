@@ -93,9 +93,9 @@ public:
     /**
      * @brief The "interface method" which returns all the completion items to kdevelop.
      **/
-    virtual QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true);
+    QList< KDevelop::CompletionTreeItemPointer > completionItems(bool& abort, bool fullCompletion = true) override;
 
-    virtual QList< CompletionTreeElementPointer > ungroupedElements();
+    QList< CompletionTreeElementPointer > ungroupedElements() override;
     
     /**
      * @brief Get all possible items matching the specified dot-separated search string.

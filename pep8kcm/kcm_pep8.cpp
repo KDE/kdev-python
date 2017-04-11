@@ -59,7 +59,7 @@ void PEP8KCModule::reset()
 {
     m_ui.enableErrors->setText(configGroup.readEntry("enableErrors", QString()));
     m_ui.disableErrors->setText(configGroup.readEntry("disableErrors", pep8DefaultIgnoreErrors()));
-    m_ui.maxLineLength->setValue(configGroup.readEntry("maxLineLength", 80));
+    m_ui.maxLineLength->setValue(configGroup.readEntry("maxLineLength", 79));
     m_ui.enableChecking->setChecked(configGroup.readEntry("pep8enabled", false));
 }
 
@@ -67,7 +67,7 @@ void PEP8KCModule::defaults()
 {
     m_ui.enableErrors->setText("");
     m_ui.disableErrors->setText(pep8DefaultIgnoreErrors());
-    m_ui.maxLineLength->setValue(80);
+    m_ui.maxLineLength->setValue(79);
     m_ui.enableChecking->setChecked(false);
 }
 

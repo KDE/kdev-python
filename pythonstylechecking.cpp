@@ -109,8 +109,8 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
             }
             QString error = match.captured(4);
             KDevelop::Problem* p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
-                                                                           lineno - 1, colno + 4)));
+            p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 1, 0),
+                                                                           lineno - 1, colno)));
             p->setSource(KDevelop::IProblem::Preprocessor);
             p->setSeverity(error.startsWith('W') ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
             p->setDescription(i18n("PEP8 checker error: %1", error));

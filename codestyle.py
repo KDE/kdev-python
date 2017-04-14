@@ -38,6 +38,7 @@ while True:
             # writes directly to stdout, so catch it ...
             c.check_all()
         output = output.getvalue()
+        output = output[:2**15]
 
         stdout.write("{0:>10}".format(len(output)))
         stdout.write(output)

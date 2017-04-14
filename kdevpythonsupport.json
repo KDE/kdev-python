@@ -62,7 +62,9 @@
     "X-KDevelop-Interfaces": [
         "ILanguageSupport"
     ],
-    "X-KDevelop-Language": "Python",
+    "X-KDevelop-Languages": [
+        "Python"
+    ],
     "X-KDevelop-Mode": "NoGUI",
     "X-KDevelop-SupportedMimeTypes": [
         "text/x-python"

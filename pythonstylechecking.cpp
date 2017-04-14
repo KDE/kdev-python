@@ -110,8 +110,8 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
             }
             QString error = match.captured(4);
             KDevelop::Problem* p = new KDevelop::Problem();
-            p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 4, 0),
-                                                                           lineno - 1, colno + 4)));
+            p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 1, 0),
+                                                                           lineno - 1, colno)));
             p->setSource(KDevelop::IProblem::Preprocessor);
             p->setSeverity(error.startsWith('W') ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
             p->setDescription(i18n("PEP8 checker error: %1", error));
@@ -133,6 +133,7 @@ void StyleChecking::processOutputStarted()
     size_d = m_checkerProcess.read(10);
     bool ok;
     auto size = size_d.toInt(&ok);
+    auto origSize = size;
     if ( !ok || size < 0 ) {
         addSetupErrorToContext("Got invalid size: " + size_d);
         m_mutex.unlock();
@@ -142,11 +143,13 @@ void StyleChecking::processOutputStarted()
     // read actual output
     QByteArray buf;
     QTimer t;
+    t.setSingleShot(true);
     t.start(100);
-    while ( size > 0 && t.isActive() ) {
-        auto d = m_checkerProcess.read(size);
+    while ( size > 0 && t.remainingTime() > 0 ) {
+        auto d = m_checkerProcess.read(qMin(4096, size));
         buf.append(d);
         size -= d.size();
+        qDebug() << "remaining:" << size << d.size();
     }
 
     // process it

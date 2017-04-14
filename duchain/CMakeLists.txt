@@ -1,6 +1,7 @@
 set(duchain_SRCS
     declarations/functiondeclaration.cpp
 
+    types/nonetype.cpp
     types/hintedtype.cpp
     types/unsuretype.cpp
     types/indexedcontainer.cpp

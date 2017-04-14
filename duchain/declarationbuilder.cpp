@@ -24,6 +24,7 @@
 
 #include "types/hintedtype.h"
 #include "types/unsuretype.h"
+#include "types/nonetype.h"
 #include "types/indexedcontainer.h"
 #include "contextbuilder.h"
 #include "expressionvisitor.h"
@@ -1226,7 +1227,6 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
                 DUChainWriteLocker lock;
                 previousContext->createUse(dec->ownIndex(), editorFindRange(attrib, attrib));
             }
-            else qCWarning(KDEV_PYTHON_DUCHAIN) << "No declaration created for " << attrib->attribute << "as parent is not a class";
 
             closeInjectedContext();
         }
@@ -1526,7 +1526,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             type->setReturnType(currentType<AbstractType>());
         }
         if ( ! type->returnType() ) {
-            type->setReturnType(AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid)));
+            type->setReturnType(AbstractType::Ptr(new NoneType()));
         }
         dec->setType(type);
     }
@@ -1710,7 +1710,7 @@ void DeclarationBuilder::adjustExpressionsForTypecheck(Python::ExpressionAst* ad
 
 void DeclarationBuilder::visitReturn(ReturnAst* node)
 {
-    static auto noneType = AbstractType::Ptr(new IntegralType(IntegralType::TypeVoid));
+    static auto noneType = AbstractType::Ptr(new NoneType());
 
     if ( auto function = currentType<FunctionType>() ) {
         // Statements with no explicit value return `None`.

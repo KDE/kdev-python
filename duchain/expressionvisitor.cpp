@@ -308,6 +308,30 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
     return docstringType;
 }
 
+long integerValue(ExpressionAst* node, long wrapTo=0) {
+    bool invert = false;
+    if ( node->astType == Ast::UnaryOperationAstType ) {
+        auto unaryOp = static_cast<UnaryOperationAst*>(node);
+        if ( unaryOp->type == Ast::UnaryOperatorSub ) {
+            node = unaryOp->operand;
+            invert = true;
+        }
+    }
+    if ( node->astType == Ast::NumberAstType ) {
+        auto number = static_cast<NumberAst*>(node);
+        if ( number->isInt ) {
+            // Clamp in case of `a[-9999999:9999999]` or similar.
+            // -1 is just as out-of-range as -99999999, but doesn't cause a huge loop.
+            long upperBound = wrapTo ? wrapTo : LONG_MAX;
+            if (invert) {
+                return qBound(-1L, wrapTo - number->value, upperBound);
+            }
+            return qBound(-1L, number->value, upperBound);
+        }
+    }
+    return LONG_MIN;
+}
+
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 {
     AstDefaultVisitor::visitNode(node->value);
@@ -316,40 +340,45 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
 
     foreach (const auto& type, valueTypes) {
-        if ( (node->slice->astType != Ast::IndexAstType) &&
-             (type.cast<IndexedContainer>() || type.cast<ListType>()) ) {
+        if ( node->slice->astType == Ast::SliceAstType ) {
+            auto slice = static_cast<SliceAst*>(node->slice);
+            if ( auto tupleType = type.cast<IndexedContainer>() ) {
+                DUChainReadLocker lock;
+                auto newTuple = typeObjectForIntegralType<IndexedContainer>("tuple");
+                if ( ! newTuple ) {
+                    continue;
+                }
+                long step = slice->step ? integerValue(slice->step) : 1;
+                int len = tupleType->typesCount();
+                long lower = slice->lower ? integerValue(slice->lower, len) : ((step > 0) ? 0 : len - 1);
+                long upper = slice->upper ? integerValue(slice->upper, len) : ((step > 0) ? len : -1);
+                if ( step != LONG_MIN && lower != LONG_MIN && upper != LONG_MIN) {
+                    long ii = lower;
+                    while ( (upper - ii) * step > 0 ) {
+                        if ( 0 <= ii && ii < len ) {
+                            newTuple->addEntry(tupleType->typeAt(ii).abstractType());
+                        }
+                        ii += step;
+                    }
+                }
+                result = Helper::mergeTypes(result, newTuple);
+                continue;
+            }
+        }
+        if ( (node->slice->astType != Ast::IndexAstType) && type.cast<ListType>() ) {
             if ( type.cast<MapType>() ) {
                 continue; // Can't slice dicts.
             }
-            // Assume that slicing (e.g. foo[3:5]) a tuple/list returns the same type.
-            // TODO: we could do better for some tuple slices.
+            // Assume that slicing (e.g. foo[3:5]) a list returns the same type.
             result = Helper::mergeTypes(result, type);
         }
         else if ( const auto& indexed = type.cast<IndexedContainer>() ) {
-            IndexAst* sliceIndexAst = static_cast<IndexAst*>(node->slice);
-            NumberAst* number = nullptr;
-            bool invert = false;
-            if ( sliceIndexAst->value->astType == Ast::UnaryOperationAstType ) {
-                // might be -3
-                UnaryOperationAst* unary = static_cast<UnaryOperationAst*>(sliceIndexAst->value);
-                if ( unary->type == Ast::UnaryOperatorSub && unary->operand->astType == Ast::NumberAstType ) {
-                    number = static_cast<NumberAst*>(unary->operand);
-                    invert = true;
-                }
+            long sliceIndex = integerValue(static_cast<IndexAst*>(node->slice)->value, indexed->typesCount());
+            if ( 0 <= sliceIndex && sliceIndex < indexed->typesCount() ) {
+                result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
+                continue;
             }
-            else if ( sliceIndexAst->value->astType == Ast::NumberAstType ) {
-                number = static_cast<NumberAst*>(sliceIndexAst->value);
-            }
-            if ( number ) {
-                int sliceIndex = number->value * ( invert ? -1 : 1 );
-                if ( sliceIndex < 0 && sliceIndex + indexed->typesCount() >= 0 ) {
-                    sliceIndex += indexed->typesCount();
-                }
-                if ( sliceIndex >= 0 && sliceIndex < indexed->typesCount() ) {
-                    result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
-                    continue;
-                }
-            }
+            // Index is unknown or invalid, could be returning any of the content types.
             result = Helper::mergeTypes(result, indexed->asUnsureType());
         }
         else if ( const auto& listType = type.cast<ListType>() ) {

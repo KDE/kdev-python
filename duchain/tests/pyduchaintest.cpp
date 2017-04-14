@@ -817,7 +817,6 @@ void PyDUChainTest::testTypes()
     visitor->searchingForType = expectedType;
     visitor->visitCode(m_ast.data());
     QEXPECT_FAIL("tuple_func", "no suitable docstring hint", Continue);
-    QEXPECT_FAIL("tuple_slice", "not implemented", Continue);
     QEXPECT_FAIL("tuple_add", "not implemented", Continue);
     QEXPECT_FAIL("tuple_mul", "not implemented", Continue);
     QEXPECT_FAIL("return_builtin_iterator", "fake builtin iter()", Continue);
@@ -978,6 +977,23 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("tuple_indexaccess_neg3") << "t = 3, 4.5; checkme = t[-3]" << "unsure (int, float)";
 
     QTest::newRow("tuple_slice") << "t = 3, 'q', 4.5; checkme = t[-3: 2]" << "tuple of (int, str)";
+    QTest::newRow("tuple_slice_normal")   << "t = 1, 2.3, 'a', {}; checkme = t[1:3]"    << "tuple of (float, str)";
+    QTest::newRow("tuple_slice_defstart") << "t = 1, 2.3, 'a', {}; checkme = t[:3]"     << "tuple of (int, float, str)";
+    QTest::newRow("tuple_slice_defstop")  << "t = 1, 2.3, 'a', {}; checkme = t[1:]"     << "tuple of (float, str, dict)";
+    QTest::newRow("tuple_slice_defboth")  << "t = 1, 2.3, 'a', {}; checkme = t[:]"      << "tuple of (int, float, str, dict)";
+    QTest::newRow("tuple_slice_step")     << "t = 1, 2.3, 'a', {}; checkme = t[0:3:2]"  << "tuple of (int, str)";
+    QTest::newRow("tuple_slice_reverse")  << "t = 1, 2.3, 'a', {}; checkme = t[3:1:-1]" << "tuple of (dict, str)";
+    QTest::newRow("tuple_slice_revstart") << "t = 1, 2.3, 'a', {}; checkme = t[:1:-1]"  << "tuple of (dict, str)";
+    QTest::newRow("tuple_slice_revstop")  << "t = 1, 2.3, 'a', {}; checkme = t[2::-1]"  << "tuple of (str, float, int)";
+    QTest::newRow("tuple_slice_revstop")  << "t = 1, 2.3, 'a', {}; checkme = t[::-1]"   << "tuple of (dict, str, float, int)";
+    QTest::newRow("tuple_slice_no_elems") << "t = 1, 2.3, 'a', {}; checkme = t[1:1]"    << "tuple of ()";
+    // TODO unsure-tuples.
+    QTest::newRow("tuple_slice_not_literal") << "n = 2; t = 1, 2.3, 'a', {}; checkme = t[0:n]" << "tuple of ()";
+    // These are allowed, for whatever reason.
+    QTest::newRow("tuple_slice_past_range") << "t = 1, 2.3; checkme = t[-999999999:8888888888]" << "tuple of (int, float)";
+    QTest::newRow("tuple_slice_wrong_direction") << "t = 1, 2.3, 'a'; checkme = t[0:3:-1]" << "tuple of ()";
+    // This isn't.
+    QTest::newRow("tuple_slice_zero_step") << "t = 1, 2.3; checkme = t[::0]" << "tuple of ()";
 
     QTest::newRow("tuple_add") << "t, u = (3,), ('q', 4.5); checkme = t + u" << "tuple of (int, str, float)";
     QTest::newRow("tuple_mul") << "t = 3, 4.5; checkme = t * 2" << "tuple of (int, float, int, float)";

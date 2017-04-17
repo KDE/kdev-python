@@ -41,6 +41,6 @@ AbstractType* NoneType::clone() const {
     return new NoneType(*this);
 }
 
-QString NoneType::toString() const { return QStringLiteral("None"); };
+QString NoneType::toString() const { return QStringLiteral("NoneType"); };
 
 }

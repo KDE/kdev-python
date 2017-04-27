@@ -33,4 +33,4 @@ Comment[sk]=Vygenerovať štruktúru súborov na spustenie projektu Django
 Comment[sv]=Skapa filstruktur för att påbörja ett Django-program
 Comment[uk]=Створити початкову структуру файлів проекту Django
 Comment[x-test]=xxGenerate filestructure to start a Django projectxx
-ShowFilesAfterGeneration=%{PROJECTDIR}/urls.py
+ShowFilesAfterGeneration=urls.py

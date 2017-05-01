@@ -439,7 +439,7 @@ private:
     };
 
     int whitespaceAtEnd(const QString& line) {
-        for ( int i = 0; i <= line.size(); i++ ) {
+        for ( int i = 0; i < line.size(); i++ ) {
             if ( ! line.at(line.size() - i - 1).isSpace() ) {
                 return i;
             }

@@ -37,4 +37,4 @@ Comment[sl]=Ustvari datotečno zgradbo za začetek programa v Python-u
 Comment[sv]=Skapa filstruktur för att påbörja ett Python-program
 Comment[uk]=Створити початкову файлову структуру програми мовою Python
 Comment[x-test]=xxGenerate filestructure to start a Python applicationxx
-ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAMELC}.py
+ShowFilesAfterGeneration=%{APPNAME}.py

@@ -1,0 +1,10 @@
+# KDebugSettings data file
+# Format:
+# logname<space>description
+
+kdevelop.languages.python KDevelop plugin: Python language support
+kdevelop.languages.python.codecompletion KDevelop plugin: Python language support - codecompletion
+kdevelop.languages.python.codegen KDevelop plugin: Python language support - codegen 
+kdevelop.languages.python.debugger KDevelop plugin: Python language support - debugger
+kdevelop.languages.python.duchain KDevelop plugin: Python language support - duchain
+kdevelop.languages.python.parser KDevelop plugin: Python language support - parser

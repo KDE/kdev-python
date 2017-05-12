@@ -136,4 +136,7 @@ install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpython
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(FILES codestyle.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 
+# kdebugsettings file
+install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

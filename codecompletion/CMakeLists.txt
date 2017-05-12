@@ -3,8 +3,7 @@ set(completion_SRCS
     model.cpp
     worker.cpp
     helpers.cpp
-    codecompletiondebug.cpp
-    
+
     items/missingincludeitem.cpp
     items/declaration.cpp
     items/functiondeclaration.cpp
@@ -12,6 +11,11 @@ set(completion_SRCS
     items/importfile.cpp
     items/keyword.cpp
     items/replacementvariable.cpp
+)
+ecm_qt_declare_logging_category(completion_SRCS
+    HEADER codecompletiondebug.h
+    IDENTIFIER KDEV_PYTHON_CODECOMPLETION
+    CATEGORY_NAME "kdevelop.languages.python.codecompletion"
 )
 
 add_library(kdevpythoncompletion SHARED ${completion_SRCS})

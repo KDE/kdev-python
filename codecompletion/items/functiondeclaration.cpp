@@ -36,7 +36,7 @@
 #include "duchain/helpers.h"
 
 #include <QDebug>
-#include "../codecompletiondebug.h"
+#include <codecompletiondebug.h>
 
 using namespace KDevelop;
 using namespace KTextEditor;

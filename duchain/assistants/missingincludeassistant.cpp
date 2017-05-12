@@ -31,7 +31,7 @@
 
 #include <QDebug>
 #include <QStandardPaths>
-#include "../duchaindebug.h"
+#include <duchaindebug.h>
 
 
 #include <KLocalizedString>

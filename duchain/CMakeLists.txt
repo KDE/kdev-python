@@ -14,7 +14,6 @@ set(duchain_SRCS
     declarationbuilder.cpp
     usebuilder.cpp
     dumpchain.cpp
-    duchaindebug.cpp
 
     navigation/navigationwidget.cpp
     navigation/declarationnavigationcontext.cpp
@@ -25,6 +24,11 @@ set(duchain_SRCS
     ../docfilekcm/docfilewizard.cpp # for the docfile generation assistant widget, to be used in the problem resolver
 )
 
+ecm_qt_declare_logging_category(duchain_SRCS
+    HEADER duchaindebug.h
+    IDENTIFIER KDEV_PYTHON_DUCHAIN
+    CATEGORY_NAME "kdevelop.languages.python.duchain"
+)
 
 add_library( kdevpythonduchain SHARED ${duchain_SRCS} )
 

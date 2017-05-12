@@ -20,7 +20,7 @@
 #include "helpers.h"
 #include "indexedcontainer.h"
 
-#include "../duchaindebug.h"
+#include <duchaindebug.h>
 
 #include <language/duchain/types/typeregister.h>
 #include <language/duchain/types/typesystem.h>

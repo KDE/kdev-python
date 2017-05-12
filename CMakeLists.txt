@@ -10,7 +10,7 @@ set(KDEVPYTHON_VERSION_PATCH 40)
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}" )
 
-find_package(ECM 0.0.9 REQUIRED NO_MODULE)
+find_package (ECM "5.14.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -20,6 +20,7 @@ include(CMakePackageConfigHelpers)
 include(ECMAddTests)
 include(ECMOptionalAddSubdirectory)
 include(ECMSetupVersion)
+include(ECMQtDeclareLoggingCategory)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -85,11 +86,9 @@ add_subdirectory(docfilekcm)
 set(kdevpythonlanguagesupport_PART_SRCS
     codegen/correctionfilegenerator.cpp
     codegen/refactoring.cpp
-    codegen/codegendebug.cpp
     pythonlanguagesupport.cpp
     pythonparsejob.cpp
     pythonhighlighting.cpp
-    pythondebug.cpp
     pythonstylechecking.cpp
 
     # config pages:
@@ -98,6 +97,16 @@ set(kdevpythonlanguagesupport_PART_SRCS
     docfilekcm/kcm_docfiles.cpp
     pep8kcm/kcm_pep8.cpp
     projectconfig/projectconfigpage.cpp
+)
+ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
+    HEADER codegendebug.h
+    IDENTIFIER KDEV_PYTHON_CODEGEN
+    CATEGORY_NAME "kdevelop.languages.python.codegen"
+)
+ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
+    HEADER pythondebug.h
+    IDENTIFIER KDEV_PYTHON
+    CATEGORY_NAME "kdevelop.languages.python"
 )
 
 ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS

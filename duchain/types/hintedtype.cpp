@@ -27,7 +27,7 @@
 #include <language/duchain/parsingenvironment.h>
 
 #include <QDebug>
-#include "../duchaindebug.h"
+#include <duchaindebug.h>
 
 #include <KLocalizedString>
 

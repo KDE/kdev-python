@@ -480,6 +480,7 @@ void PyDUChainTest::testWarnNewNotCls_data()
     QTest::newRow("check_first_arg_class_self_0") << "class c():\n def test(self, masik):\n  pass" << 0;
 }
 
+// this is actually for both binary and boolean operators
 void PyDUChainTest::testBinaryOperatorsUnsure()
 {
     QFETCH(QString, code);
@@ -504,6 +505,11 @@ void PyDUChainTest::testBinaryOperatorsUnsure_data()
     QTest::newRow("check_unsure_type_1") << "class c():\n def __mul__(self, other):\n  return int();\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
     QTest::newRow("check_unsure_type_2") << "class c():\n pass;\nx = c();\nx = 3;\ny = 3;\ncheckme = x * y;" << "int";
     QTest::newRow("check_unsure_type_3") << "class c():\n pass;\nclass d():\n pass;\nx = c();\nx = d();\ny = 3;\ncheckme = x * y;" << "int";
+
+    QTest::newRow("check_unsure_type_4") << "checkme = True or False" << "bool";
+    QTest::newRow("check_unsure_type_5") << "a = 'foo'; checkme = a or 'bar';" << "str";
+    QTest::newRow("check_unsure_type_6") << "class A(): pass\nclass B(): pass;\ncheckme = A() or B() or 42;" << "unsure (A, B, int)";
+
 }
 
 

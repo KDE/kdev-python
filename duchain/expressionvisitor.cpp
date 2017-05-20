@@ -733,8 +733,15 @@ void ExpressionVisitor::visitUnaryOperation(Python::UnaryOperationAst* node)
 
 void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
 {
-    AstDefaultVisitor::visitBooleanOperation(node);
-    encounter(AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
+    ExpressionVisitor v(this);
+    AbstractType::Ptr result;
+
+    for (const auto& expr : node->values) {
+        v.visitNode(expr);
+        result = Helper::mergeTypes(result, v.lastType());
+    }
+
+    encounter(result);
 }
 
 }

@@ -70,14 +70,14 @@ namespace Python
 {
 LanguageSupport* LanguageSupport::m_self = nullptr;
 
-KDevelop::ContextMenuExtension LanguageSupport::contextMenuExtension(KDevelop::Context* context)
+ContextMenuExtension LanguageSupport::contextMenuExtension(Context* context, QWidget* parent)
 {
     ContextMenuExtension cm;
     EditorContext *ec = dynamic_cast<KDevelop::EditorContext *>(context);
 
     if (ec && ICore::self()->languageController()->languagesForUrl(ec->url()).contains(this)) {
         // It's a Python file, let's add our context menu.
-        m_refactoring->fillContextMenu(cm, context);
+        m_refactoring->fillContextMenu(cm, context, parent);
         TypeCorrection::self().doContextMenu(cm, context);
     }
     return cm;

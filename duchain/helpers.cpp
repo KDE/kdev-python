@@ -179,43 +179,45 @@ Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
 Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
                                         KDevelop::DUChainPointer<const DUContext> context)
 {
-    QList<Declaration*> declarations;
-    QList<Declaration*> localDeclarations;
-    QList<Declaration*> importedLocalDeclarations;
-    {
-        DUChainReadLocker lock(DUChain::lock());
-        if ( context.data() == context->topContext() && nodeRange.isValid() ) {
-            declarations = context->topContext()->findDeclarations(identifier, nodeRange.end);
-        }
-        else {
-            declarations = context->topContext()->findDeclarations(identifier, CursorInRevision::invalid());
-        }
-        localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, nullptr,
-                                                           AbstractType::Ptr(nullptr), DUContext::DontResolveAliases);
-        importedLocalDeclarations = context->findDeclarations(identifier.last(), nodeRange.end);
-    }
-    Declaration* declaration = nullptr;
-    if ( localDeclarations.length() ) {
-        declaration = localDeclarations.last();
-    }
-    else if ( importedLocalDeclarations.length() ) {
-        // don't use declarations from class decls, they must be referenced through "self.<foo>"
-        do {
-            declaration = importedLocalDeclarations.last();
-            importedLocalDeclarations.pop_back();
-            if ( !declaration || (declaration->context()->type() == DUContext::Class && context->type() != DUContext::Function) ) {
-                declaration = nullptr;
-            }
-            if ( importedLocalDeclarations.isEmpty() ) {
-                break;
-            }
-        } while ( ! importedLocalDeclarations.isEmpty() );
+    DUChainReadLocker lock(DUChain::lock());
+    auto localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, 0,
+                                                            AbstractType::Ptr(0), DUContext::DontResolveAliases);
+    if ( !localDeclarations.isEmpty() ) {
+        return localDeclarations.last();
     }
 
-    if ( !declaration && declarations.length() ) {
-        declaration = declarations.last();
-    }
-    return declaration;
+    QList<Declaration*> declarations;
+    const DUContext* currentContext = context.data();
+    bool findInNext = true, findBeyondUse = false;
+    do {
+        if (findInNext) {
+            CursorInRevision findUntil = findBeyondUse ? currentContext->topContext()->range().end : nodeRange.end;
+            declarations = currentContext->findDeclarations(identifier.last(), findUntil);
+
+            for (Declaration* declaration: declarations) {
+                if (declaration->context()->type() != DUContext::Class ||
+                    (currentContext->type() == DUContext::Function && declaration->context() == currentContext->parentContext())) {
+                     // Declarations from class decls must be referenced through `self.<foo>`, except
+                     //  in their local scope (handled above) or when used as default arguments for methods of the same class.
+                     // Otherwise, we're done!
+                    return declaration;
+                }
+            }
+            if (!declarations.isEmpty()) {
+                // If we found declarations but rejected all of them (i.e. didn't return), we need to keep searching.
+                findInNext = true;
+                declarations.clear();
+            }
+        }
+
+        if (!findBeyondUse && currentContext->owner() && currentContext->owner()->isFunctionDeclaration()) {
+            // Names in the body may be defined after the function definition, before the function is called.
+            // Note: only the parameter list has type DUContext::Function, so we have to do this instead.
+            findBeyondUse = findInNext = true;
+        }
+    } while ((currentContext = currentContext->parentContext()));
+
+    return nullptr;
 }
 
 QVector<DUContext*> Helper::internalContextsForClass(const StructureType::Ptr classType,

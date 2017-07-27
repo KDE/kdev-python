@@ -1191,6 +1191,23 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("vararg_constructor") << "class myclass():\n"
                                            "  def __init__(self, *arg): self.prop = arg[0]\n"
                                            "obj = myclass(3, 5); checkme = obj.prop" << "int";
+
+    QTest::newRow("declaration_order_var") << "aaa = 2\n"
+                                              "checkme = aaa" << "int";
+    QTest::newRow("declaration_order_var2") << "checkme = aaa\n"
+                                               "aaa = 2" << "mixed";
+    QTest::newRow("declaration_order_func_defarg") << "aaa = 2\n"
+                                                      "def foo(x=aaa): return x\n"
+                                                      "checkme = foo()" << "int";
+    QTest::newRow("declaration_order_func_defarg2") << "def foo(x=aaa): return x\n"
+                                                       "aaa = 2\n"
+                                                       "checkme = foo()" << "mixed";
+    QTest::newRow("declaration_order_func_body") << "aaa = 2\n"
+                                                    "def foo(): return aaa\n"
+                                                   "checkme = foo()" << "int";
+    QTest::newRow("declaration_order_func_body2") << "def foo(): return aaa\n"
+                                                     "aaa = 2\n"
+                                                     "checkme = foo()" << "int";
     QTest::newRow("global_variable") << "a = 3\n"
                                         "def f1():\n"
                                         "  global a\n"
@@ -1211,11 +1228,49 @@ void PyDUChainTest::testTypes_data()
                                         "  return a\n"
                                         "checkme = f1()\n" << "int";
 
-    QTest::newRow("top_level_vs_class_member") << "var = 3\n"
-                                                  "class myclass:\n"
-                                                  "  def __init__(self): self.var = \"str\"\n"
-                                                  "  def f1(): return var\n"
-                                                  "checkme = myclass.f1()" << "int";
+    QTest::newRow("top_level_vs_class_attr") <<
+        "var = 3\n"
+        "class MyClass:\n"
+        "    var = 'str'\n"
+        "    def f1(): return var\n"
+        "checkme = MyClass.f1()" << "int";
+    QTest::newRow("top_level_vs_instance_attr") <<
+        "var = 3\n"
+        "class MyClass:\n"
+        "    def __init__(self): self.var = 'str'\n"
+        "    def f1(): return var\n"
+        "checkme = MyClass.f1()" << "int";
+    QTest::newRow("intermediate_vs_class/instance_attrs") <<
+        "def func():\n"
+        "    aa, bb = 3, 4\n"
+        "    class Foo:\n"
+        "        aa = 'a'\n"
+        "        def __init__(self):\n"
+        "            self.bb = 'b'\n"
+        "        def foo(self):\n"
+        "            return aa, bb\n"
+        "    return Foo().foo()\n"
+        "checkme = func()" << "tuple of (int, int)";
+    QTest::newRow("top_level_vs_nested_class_attrs") <<
+        "aaa = 'foo'\n"
+        "bbb = 'bar'\n"
+        "class Foo:\n"
+        "    aaa = 1\n"
+        "    class Bar:\n"
+        "        bbb = 2\n"
+        "        def foo(self, ccc=aaa, ddd=bbb):\n" // Bar.bbb is visible here, Foo.aaa isn't.
+        "            return ccc, ddd\n"
+        "checkme = Foo().Bar().foo()\n" << "tuple of (str, int)";
+    QTest::newRow("top_level_vs_nested_instance_attrs") <<
+        "aaa = 'foo'\n"
+        "bbb = 'bar'\n"
+        "class Foo:\n"
+        "    def __init__(self): self.aaa = 1\n"
+        "    class Bar:\n"
+        "        def __init__(self): self.bbb = 1\n"
+        "        def foo(self, ccc=aaa, ddd=bbb):\n" // self.bbb is visible here, Foo().aaa isn't.
+        "            return ccc, ddd\n"
+        "checkme = Foo().Bar().foo()\n" << "tuple of (str, int)";
 }
 
 typedef QPair<Declaration*, int> pair;

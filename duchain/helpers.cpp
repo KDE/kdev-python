@@ -452,10 +452,9 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         python.start(getPythonExecutablePath(project), getpath);
         python.waitForFinished(1000);
         QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
-        auto paths = pythonpath.split("$|$");
-        paths.removeAll("");
-        
+
         if ( ! pythonpath.isEmpty() ) {
+            const auto paths = pythonpath.split("$|$", QString::SkipEmptyParts);
             foreach ( const QString& path, paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }

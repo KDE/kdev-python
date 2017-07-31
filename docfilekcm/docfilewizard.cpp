@@ -177,7 +177,7 @@ bool DocfileWizard::run()
     worker = new QProcess(this);
     QObject::connect(worker, &QProcess::readyReadStandardError, this, &DocfileWizard::processScriptOutput);
     QObject::connect(worker, &QProcess::readyReadStandardOutput, this, &DocfileWizard::processScriptOutput);
-    QObject::connect(worker, SIGNAL(finished(int)), this, SLOT(processFinished(int)));
+    QObject::connect(worker, static_cast<void(QProcess::*)(int)>(&QProcess::finished), this, &DocfileWizard::processFinished);
 
     // can never have too many slashes
     outputFile.setFileName(workingDirectory + "/" + outputFilename);

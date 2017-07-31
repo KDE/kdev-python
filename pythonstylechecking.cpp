@@ -133,7 +133,6 @@ void StyleChecking::processOutputStarted()
     size_d = m_checkerProcess.read(10);
     bool ok;
     auto size = size_d.toInt(&ok);
-    auto origSize = size;
     if ( !ok || size < 0 ) {
         addSetupErrorToContext("Got invalid size: " + size_d);
         m_mutex.unlock();

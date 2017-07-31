@@ -55,7 +55,6 @@
 #include <ktexteditor/document.h>
 
 #include <QReadLocker>
-#include <QFile>
 #include <QThread>
 #include <QCoreApplication>
 #include <QProcess>

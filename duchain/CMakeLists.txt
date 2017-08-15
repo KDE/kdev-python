@@ -50,7 +50,9 @@ install(TARGETS kdevpythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 add_subdirectory(navigation)
 
-add_subdirectory(tests)
+if (BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
 
 add_subdirectory(types)
 add_subdirectory(declarations)

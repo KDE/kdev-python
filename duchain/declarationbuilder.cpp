@@ -127,12 +127,12 @@ void DeclarationBuilder::closeDeclaration()
 template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, Ast* range, FitDeclarationType mustFitType)
 {
     QList<Declaration*> existingDeclarations = existingDeclarationsForNode(name);
-    
+
     Declaration* dec = nullptr;
     reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(range, range), &dec);
     bool declarationOpened = (bool) dec;
     if ( ! declarationOpened ) {
-        dec = openDeclaration<T>(name, range);
+        dec = openDeclaration<T>(name);
     }
     Q_ASSERT(dynamic_cast<T*>(dec));
     return static_cast<T*>(dec);
@@ -1858,7 +1858,7 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
         DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());
         if ( ! existing.empty() ) {
-            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id);
             ndec->setAliasedDeclaration(existing.first());
             closeDeclaration();
         }
@@ -1868,7 +1868,7 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
             dec->setRange(editorFindRange(id, id));
             dec->setAutoDeclaration(true);
             closeContext();
-            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id);
             ndec->setAliasedDeclaration(dec);
             closeDeclaration();
         }

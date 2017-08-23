@@ -259,9 +259,10 @@ protected:
     Declaration* findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const;
 
 private:
-    template<class T> T* openDeclaration(Identifier* name, Ast* range, DeclarationFlags flags = NoFlags)
+    template<class T> T* openDeclaration(Identifier* name, DeclarationFlags flags = NoFlags)
     {
-        T* decl = DeclarationBuilderBase::openDeclaration<T>(name, range, flags);
+        T* decl = DeclarationBuilderBase::openDeclaration<T>(KDevelop::Identifier(name->value),
+                                                             editorFindRange(name, name), flags);
         decl->setAlwaysForceDirect(true);
         return decl;
     };

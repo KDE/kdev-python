@@ -124,12 +124,12 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, Ast* range, FitDeclarationType mustFitType)
+template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, FitDeclarationType mustFitType)
 {
     QList<Declaration*> existingDeclarations = existingDeclarationsForNode(name);
 
     Declaration* dec = nullptr;
-    reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(range, range), &dec);
+    reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(name, name), &dec);
     bool declarationOpened = (bool) dec;
     if ( ! declarationOpened ) {
         dec = openDeclaration<T>(name);
@@ -573,7 +573,6 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
                 AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier,
-                                                                                        &temporaryIdentifier,
                                                                                         AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
@@ -1094,8 +1093,7 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
 {
     if ( element.isAlias ) {
         DUChainWriteLocker lock;
-        Python::Identifier* identifier = target->identifier;
-        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
+        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(target->identifier, AliasDeclarationType);
         decl->setAliasedDeclaration(element.declaration.data());
         closeDeclaration();
     }
@@ -1350,7 +1348,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
 
     DUChainWriteLocker lock;
-    ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
+    ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, NoTypeRequired);
     eventuallyAssignInternalContext();
 
     dec->setKind(KDevelop::Declaration::Type);
@@ -1443,7 +1441,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type(new FunctionType());
 
     DUChainWriteLocker lock;
-    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name,
+    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name,
                                                                                 FunctionDeclarationType);
 
     Q_ASSERT(dec->isFunctionDeclaration());
@@ -1746,7 +1744,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( currentIndex == 1 && workingOnDeclaration->isClassMethod() ) {
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
-                                                                                   arg, AliasDeclarationType);
+                                                                                   AliasDeclarationType);
             if ( ! m_currentClassTypes.isEmpty() ) {
                 auto classDecl = m_currentClassTypes.last()->declaration(topContext());
 

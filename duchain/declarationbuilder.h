@@ -207,8 +207,7 @@ protected:
      * @brief python-specific version of openDeclaration which scans for existing declarations in previous versions of
      *        this top-context in a more intelligent way.
      * Use this in normal declaratonbuilder code if you can't use visitVariableDeclaration. */
-    template<typename T> T* eventuallyReopenDeclaration(Python::Identifier* name, Python::Ast* range,
-                                                        FitDeclarationType mustFitType);
+    template<typename T> T* eventuallyReopenDeclaration(Python::Identifier* name, FitDeclarationType mustFitType);
 
     template<typename T> QList<Declaration*> reopenFittingDeclaration(QList<Declaration*> declarations,
                                                                       FitDeclarationType mustFitType,

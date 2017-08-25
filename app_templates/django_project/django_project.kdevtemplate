@@ -3,6 +3,5 @@
 Name=Django 1.11
 Category=Python
 Comment=A Django project with one application
-Comment[fr]=Un projet django contenant une application
 ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAMELC}/urls.py
- 
+

@@ -1,7 +1,19 @@
 # KDE Config File
 [General]
 Name=Django 1.11
+Name[ca]=Django 1.11
+Name[nl]=Django 1.11
+Name[pt]=Django 1.11
+Name[sv]=Django 1.11
+Name[uk]=Django 1.11
+Name[x-test]=xxDjango 1.11xx
 Category=Python
 Comment=A Django project with one application
+Comment[ca]=Un projecte de Django amb una aplicació
+Comment[nl]=Een Django-project met één toepassing
+Comment[pt]=um projecto de Django com uma aplicação
+Comment[sv]=Ett Django-projekt med ett program
+Comment[uk]=Проект Django із однією програмою
+Comment[x-test]=xxA Django project with one applicationxx
 ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAMELC}/urls.py
 

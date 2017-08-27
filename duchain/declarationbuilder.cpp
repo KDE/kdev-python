@@ -460,29 +460,9 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     }
 }
 
-void spoofNodePosition(Ast* node, const CursorInRevision& pos) {
-    // Ridiculous hack, see next comment.
-    node->startLine = node->endLine = pos.line;
-    node->startCol = node->endCol = pos.column - 1;
-    if (node->astType == Ast::TupleAstType) {
-        //  Recursion to bodge all declarations, e.g.
-        //  [x + y * z for x, (y, z) in foo]
-        foreach(auto elem, static_cast<TupleAst*>(node)->elements) {
-            spoofNodePosition(elem, pos);
-        }
-    }
-}
-
 void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitComprehension(node);
-    // make the declaration zero chars long; it must appear at the beginning of the context,
-    // because it is actually used *before* its real declaration: [foo for foo in bar]
-    // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
-    // and both other occurrences are uses of that declaration.
-    // TODO add a special case to the usebuilder to display the second occurrence as a declaration
-    spoofNodePosition(node->target, currentContext()->range().start);
-
     ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
     assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));

@@ -1341,6 +1341,7 @@ void PyDUChainTest::testProblemCount_data()
     QTest::newRow("misplaced_return_class") << "class A:\n return 25" << 1;
     QTest::newRow("correct_return") << "def foo():\n return" << 0;
     QTest::newRow("lambda_argument_outside") << "def bar():\n lambda foo: 3\n foo" << 1;
+    QTest::newRow("use_found_at_decl") << "foo = 3" << 0;
 }
 
 void PyDUChainTest::testImportDeclarations_data() {
@@ -1602,6 +1603,8 @@ void PyDUChainTest::testContainerTypes()
         QVERIFY(decls.first()->abstractType());
         QEXPECT_FAIL("dict_of_int_call", "returnContentEqualsContentOf isn't suitable", Continue);
         QEXPECT_FAIL("dict_from_tuples", "returnContentEqualsContentOf isn't suitable", Continue);
+        QEXPECT_FAIL("comprehension_shadowing_ms", "Nothing is foolproof to a sufficiently capable fool", Continue);
+        QEXPECT_FAIL("comprehension_shadowing_nest2", "See above", Continue);
         QCOMPARE(decls.first()->abstractType()->toString(), contenttype);
     }
 }
@@ -1665,6 +1668,14 @@ void PyDUChainTest::testContainerTypes_data()
                                             "sorted_list = sorted(users.items(), key=lambda kv: (-kv[1], kv[0]))\n"
                                             "checkme = [k for r,(k,v) in enumerate(sorted_list, 1)]" << "list of str" << true;
     QTest::newRow("comprehension_multiline") << "checkme = [a for\n a in \n (1, 2)]" << "list of int" << true;
+    QTest::newRow("comprehension_multistage") << "nested = (1, 2), (3, 4)\n"
+                                                 "checkme =  [foo for bar in nested for foo in bar]" << "list of int" << true;
+    QTest::newRow("comprehension_shadowing_ms") << "nested = (1, 2), (3, 4)\n"
+                                                   "checkme =  [foo for foo in nested for foo in foo]" << "list of int" << true;
+    QTest::newRow("comprehension_shadowing_nest1") << "nested = (1, 2), (3, 4)\n"
+                                                      "checkme = [foo for foo in [foo for foo in nested]]" << "list of tuple of (int, int)" << true;
+    QTest::newRow("comprehension_shadowing_nest2") << "nested = (1, 2), (3, 4)\n"
+                                                      "checkme = [[foo for foo in foo] for foo in nested]" << "list of list of int" << true;
     // From https://bugs.kde.org/show_bug.cgi?id=359912
     QTest::newRow("subscript_multi") <<
         "class Middle:\n def __getitem__(self, key):\n  return str()\n"

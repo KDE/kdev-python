@@ -73,8 +73,7 @@ void UseBuilder::useHiddenMethod(ExpressionAst* value, Declaration* function) {
 void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
-    Declaration* declaration = Helper::declarationForName(identifierForNode(node->identifier),
-                                                          editorFindRange(node, node),
+    Declaration* declaration = Helper::declarationForName(node, editorFindPositionSafe(node),
                                                           DUChainPointer<const DUContext>(context));
 
     Q_ASSERT(node->identifier);

@@ -640,19 +640,19 @@ void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
 
 void ExpressionVisitor::visitName(Python::NameAst* node)
 {
-    RangeInRevision range;
+    CursorInRevision findNameBefore;
     if ( m_scanUntilCursor.isValid() ) {
-        range = RangeInRevision(CursorInRevision(0, 0), m_scanUntilCursor);
+        findNameBefore = m_scanUntilCursor;
     }
     else if ( m_forceGlobalSearching ) {
-        range = RangeInRevision::invalid();
+        findNameBefore = CursorInRevision::invalid();
     }
     else {
-        range = RangeInRevision(0, 0, node->endLine, node->endCol);
+        findNameBefore = CursorInRevision(node->endLine, node->endCol);
     }
     DUChainReadLocker lock;
-    Declaration* d = Helper::declarationForName(QualifiedIdentifier(node->identifier->value),
-                                                range, DUChainPointer<const DUContext>(context()));
+    Declaration* d = Helper::declarationForName(node, findNameBefore,
+                                                DUChainPointer<const DUContext>(context()));
 
     if ( d ) {
         bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);

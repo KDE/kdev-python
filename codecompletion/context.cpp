@@ -645,8 +645,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
         return items;
     }
 
-    Declaration* existing = Helper::declarationForName(QualifiedIdentifier(components.first()),
-                                                       RangeInRevision(m_position, m_position),
+    Declaration* existing = Helper::declarationForName(components.first(), m_position,
                                                        DUChainPointer<const DUContext>(m_duContext.data()));
     if ( existing ) {
         // There's already a declaration for the first component; no need to suggest it

@@ -176,11 +176,12 @@ Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
     return { dynamic_cast<FunctionDeclaration*>(attr), isAlias };
 }
 
-Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
+Declaration* Helper::declarationForName(const QString& name, const CursorInRevision& location,
                                         KDevelop::DUChainPointer<const DUContext> context)
 {
     DUChainReadLocker lock(DUChain::lock());
-    auto localDeclarations = context->findLocalDeclarations(identifier.last(), nodeRange.end, 0,
+    auto identifier = KDevelop::Identifier(name);
+    auto localDeclarations = context->findLocalDeclarations(identifier, location, 0,
                                                             AbstractType::Ptr(0), DUContext::DontResolveAliases);
     if ( !localDeclarations.isEmpty() ) {
         return localDeclarations.last();
@@ -191,8 +192,8 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
     bool findInNext = true, findBeyondUse = false;
     do {
         if (findInNext) {
-            CursorInRevision findUntil = findBeyondUse ? currentContext->topContext()->range().end : nodeRange.end;
-            declarations = currentContext->findDeclarations(identifier.last(), findUntil);
+            CursorInRevision findUntil = findBeyondUse ? currentContext->topContext()->range().end : location;
+            declarations = currentContext->findDeclarations(identifier, findUntil);
 
             for (Declaration* declaration: declarations) {
                 if (declaration->context()->type() != DUContext::Class ||
@@ -218,6 +219,29 @@ Declaration* Helper::declarationForName(const QualifiedIdentifier& identifier, c
     } while ((currentContext = currentContext->parentContext()));
 
     return nullptr;
+}
+
+
+Declaration* Helper::declarationForName(const Python::NameAst* name, CursorInRevision location,
+                                        KDevelop::DUChainPointer<const DUContext> context)
+{
+    const Ast* checkNode = name;
+    while ((checkNode = checkNode->parent)) {
+        switch (checkNode->astType) {
+          default:
+            continue;
+          case Ast::ListComprehensionAstType:
+          case Ast::SetComprehensionAstType:
+          case Ast::DictionaryComprehensionAstType:
+          case Ast::GeneratorExpressionAstType:
+            // Variables in comprehensions are used before their definition. `[foo for foo in bar]`
+            auto cmpEnd = CursorInRevision(checkNode->endLine, checkNode->endCol);
+            if (cmpEnd > location) {
+                location = cmpEnd;
+            }
+        }
+    }
+    return declarationForName(name->identifier->value, location, context);
 }
 
 QVector<DUContext*> Helper::internalContextsForClass(const StructureType::Ptr classType,

@@ -212,7 +212,10 @@ public:
       **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
 
-    static Declaration* declarationForName(const QualifiedIdentifier& identifier, const RangeInRevision& nodeRange,
+    static Declaration* declarationForName(const QString& name, const CursorInRevision& location,
+                                          DUChainPointer<const DUContext> context);
+
+    static Declaration* declarationForName(const Python::NameAst* name, CursorInRevision location,
                                            DUChainPointer<const DUContext> context);
 
     static QString getPythonExecutablePath(IProject* project);

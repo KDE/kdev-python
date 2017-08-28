@@ -77,14 +77,12 @@ void UseBuilder::visitName(NameAst* node)
                                                           editorFindRange(node, node),
                                                           DUChainPointer<const DUContext>(context));
 
-    static const QStringList keywords = {"None", "True", "False"};
-
     Q_ASSERT(node->identifier);
     RangeInRevision useRange = rangeForNode(node->identifier, true);
 
     if ( declaration && declaration->range() == useRange ) return;
 
-    if ( ! declaration && ! keywords.contains(node->identifier->value) && m_errorReportingEnabled ) {
+    if ( ! declaration && m_errorReportingEnabled ) {
         if ( ! m_ignoreVariables.contains(IndexedString(node->identifier->value)) ) {
             KDevelop::Problem *p = new KDevelop::Problem();
             p->setFinalLocation(DocumentRange(currentlyParsedDocument(), useRange.castToSimpleRange())); // TODO ok?

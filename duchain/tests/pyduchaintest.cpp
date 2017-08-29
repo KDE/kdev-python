@@ -441,6 +441,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("comprehension_in_fstring") <<
         "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
 #endif
+    QTest::newRow("comprehension_in_lambda") << "lambda foo: [bar for bar in foo]";
 }
 
 void PyDUChainTest::testClassVariables()
@@ -1339,6 +1340,7 @@ void PyDUChainTest::testProblemCount_data()
     QTest::newRow("misplaced_return_value") << "return 15" << 1;
     QTest::newRow("misplaced_return_class") << "class A:\n return 25" << 1;
     QTest::newRow("correct_return") << "def foo():\n return" << 0;
+    QTest::newRow("lambda_argument_outside") << "def bar():\n lambda foo: 3\n foo" << 1;
 }
 
 void PyDUChainTest::testImportDeclarations_data() {

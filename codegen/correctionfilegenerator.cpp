@@ -466,6 +466,7 @@ QString CorrectionFileGenerator::createStructurePart(const QString &identifierSu
         break;
     case MemberFunctionType:
         params = "self";
+        // Fall through
     case FunctionType:
         code = "def function_" + identifierSuffix + "(" + params + "):";
         break;

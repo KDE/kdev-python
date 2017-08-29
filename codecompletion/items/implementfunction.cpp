@@ -79,6 +79,7 @@ QVariant ImplementFunctionCompletionItem::data(const QModelIndex& index, int rol
                 KDevelop::CodeCompletionModel::CompletionProperties p(KDevelop::CodeCompletionModel::Function);
                 return DUChainUtils::iconForProperties(p);
             }
+            // Fall through
         default: return CompletionTreeItem::data(index, role, model);
     }
 }

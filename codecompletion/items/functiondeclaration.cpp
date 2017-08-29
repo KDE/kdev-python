@@ -114,6 +114,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
                 }
                 return QVariant(highlight);
             }
+            break;
         }
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if (    m_typeHint == PythonCodeCompletionContext::IterableRequested

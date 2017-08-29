@@ -48,6 +48,10 @@ CodeHighlightingInstance::CodeHighlightingInstance(const Highlighting* highlight
 
 bool CodeHighlightingInstance::useRainbowColor(KDevelop::Declaration* dec) const
 {
+    if (dec->context()->type() == DUContext::Other) {
+        // Normal non-toplevel variable, comprehension variable or lambda parameter.
+        return true;
+    }
     if ( ! checked_blocks ) {
         checkHasBlocks(dec->topContext());
     }

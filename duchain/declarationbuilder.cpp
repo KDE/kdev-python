@@ -840,7 +840,6 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 
 void DeclarationBuilder::visitLambda(LambdaAst* node)
 {
-    Python::AstDefaultVisitor::visitLambda(node);
     DUChainWriteLocker lock;
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
@@ -854,6 +853,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     if (node->arguments->kwarg) {
         visitVariableDeclaration<Declaration>(node->arguments->kwarg->argumentName);
     }
+    visitNode(node->body);
     closeContext();
 }
 

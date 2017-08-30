@@ -3,7 +3,6 @@
   <id>org.kde.kdev-python</id>
   <extends>org.kde.kdevelop</extends>
   <name>kdev-python</name>
-  <name xml:lang="ast">kdev-python</name>
   <name xml:lang="ca">kdev-python</name>
   <name xml:lang="ca-valencia">kdev-python</name>
   <name xml:lang="cs">kdev-python</name>
@@ -12,13 +11,12 @@
   <name xml:lang="es">kdev-python</name>
   <name xml:lang="et">kdev-python</name>
   <name xml:lang="fr">kdev-python</name>
-  <name xml:lang="gl">kdev-python</name>
   <name xml:lang="it">kdev-python</name>
   <name xml:lang="nl">kdev-python</name>
   <name xml:lang="pl">kdev-python</name>
   <name xml:lang="pt">kdev-python</name>
+  <name xml:lang="pt-BR">kdev-python</name>
   <name xml:lang="sk">kdev-python</name>
-  <name xml:lang="sl">kdev-python</name>
   <name xml:lang="sv">kdev-python</name>
   <name xml:lang="tr">kdev-python</name>
   <name xml:lang="uk">kdev-python</name>
@@ -32,13 +30,12 @@
   <summary xml:lang="es">Implementación del lenguaje Python para KDevelop</summary>
   <summary xml:lang="et">KDevelopi Pythoni keele toetus</summary>
   <summary xml:lang="fr">Prise en charge du langage Python pour KDevelop</summary>
-  <summary xml:lang="gl">Compatibilidade coa linguaxe Python para KDevelop.</summary>
   <summary xml:lang="it">Supporto per il linguaggio Python in KDevelop</summary>
   <summary xml:lang="nl">Ondersteuning voor de taal Python voor KDevelop</summary>
   <summary xml:lang="pl">Obsługa języka Python dla KDevelop</summary>
   <summary xml:lang="pt">Suporte para a linguagem Python no KDevelop</summary>
+  <summary xml:lang="pt-BR">Suporte ao Python para o KDevelop</summary>
   <summary xml:lang="sk">Podpora jazyka Python pre KDevelop</summary>
-  <summary xml:lang="sl">Podpora jeziku Python za KDevelop</summary>
   <summary xml:lang="sv">Stöd för språket Python i KDevelop</summary>
   <summary xml:lang="tr">KDevelop için Python dil desteği</summary>
   <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
@@ -54,13 +51,12 @@
   <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="et">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="fr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="gl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="it">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="nl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="pl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="pt">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="pt-BR">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="sk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="sl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="sv">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="tr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

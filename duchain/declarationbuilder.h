@@ -117,7 +117,7 @@ protected:
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = nullptr, Declaration* previous=nullptr,
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
 

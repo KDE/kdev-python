@@ -150,11 +150,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         if ( currentVariableDefinition->context != ExpressionAst::Context::Store ) {
             return nullptr;
         }
-        Identifier* id = currentVariableDefinition->identifier;
-        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type, flags);
+        return visitVariableDeclaration<T>(currentVariableDefinition->identifier, previous, type, flags);
     }
     else if ( node->astType == Ast::IdentifierAstType ) {
-        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), nullptr, previous, type, flags);
+        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), previous, type, flags);
     }
     else {
         qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
@@ -227,13 +226,11 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     return remainingDeclarations;
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous,
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Declaration* previous,
                                                                      AbstractType::Ptr type, VisitVariableFlags flags)
 {
     DUChainWriteLocker lock;
-    Ast* rangeNode = originalAst ? originalAst : node;
-    RangeInRevision range = editorFindRange(rangeNode, rangeNode);
-    
+    RangeInRevision range = editorFindRange(node, node);
     // ask the correction file library if there's a user-specified type for this object
     if ( AbstractType::Ptr hint = m_correctionHelper->hintForLocal(node->value) ) {
         type = hint;
@@ -1189,7 +1186,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
         if ( isAlreadyOpen ) {
             activateAlreadyOpenedContext(internal);
             visitVariableDeclaration<ClassMemberDeclaration>(
-                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+                attrib->attribute, attributeDeclaration, element.type, AbortIfReopenMismatch
             );
             closeAlreadyOpenedContext(internal);
         }
@@ -1197,7 +1194,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
             injectContext(internal.data());
 
             Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
-                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+                attrib->attribute, attributeDeclaration, element.type, AbortIfReopenMismatch
             );
             if ( dec ) {
                 dec->setRange(RangeInRevision(internal->range().start, internal->range().start));

@@ -927,7 +927,12 @@ void PyDUChainTest::testTypes_data()
     QTest::newRow("diff_local_classattr3") << "attr=3.5\nclass c(): attr = 1\ninst=c()\ncheckme = c.attr" << "int";
 //     QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
-    
+
+    // With only one subbed value we get a FormattedValue node
+    QTest::newRow("fstring_formattedvalue") << "name = 'Jim'; checkme = f'{name}'" << "str";
+    // Otherwise a JoinedString, with FormattedValues as children.
+    QTest::newRow("fstring_joinedstring") << "name = 'Jim'; checkme = f'Hello, {name}! Your name is {name}.'" << "str";
+
     QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
     QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
     QTest::newRow("tuple_simple3") << "mytuple = 3, 5.5, \"str\", 3, \"str\"\na, b, c, d, checkme = mytuple" << "str";
@@ -1318,6 +1323,7 @@ void PyDUChainTest::testProblemCount()
     QVERIFY(ctx);
 
     DUChainReadLocker lock;
+    QEXPECT_FAIL("fstring_visit_inside", "Ranges are broken so we don't visit the expression", Continue);
     QCOMPARE(ctx->problems().size(), problemsCount);
 }
 
@@ -1342,6 +1348,7 @@ void PyDUChainTest::testProblemCount_data()
     QTest::newRow("correct_return") << "def foo():\n return" << 0;
     QTest::newRow("lambda_argument_outside") << "def bar():\n lambda foo: 3\n foo" << 1;
     QTest::newRow("use_found_at_decl") << "foo = 3" << 0;
+    QTest::newRow("fstring_visit_inside") << "checkme = f'{name}'" << 1;
 }
 
 void PyDUChainTest::testImportDeclarations_data() {

@@ -614,6 +614,19 @@ void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
+void ExpressionVisitor::visitFormattedValue(Python::FormattedValueAst* ) {
+    DUChainReadLocker lock;
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    encounter(AbstractType::Ptr::staticCast(type));
+}
+
+void ExpressionVisitor::visitJoinedString(Python::JoinedStringAst* )
+{
+    DUChainReadLocker lock;
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    encounter(AbstractType::Ptr::staticCast(type));
+}
+
 RangeInRevision nodeRange(Python::Ast* node)
 {
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);

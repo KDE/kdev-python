@@ -265,13 +265,6 @@ private:
         decl->setAlwaysForceDirect(true);
         return decl;
     };
-    template<class T> T* openDeclaration(const QualifiedIdentifier& id, const RangeInRevision& newRange,
-                                         DeclarationFlags flags = NoFlags)
-    {
-        T* decl = DeclarationBuilderBase::openDeclaration<T>(id, newRange, flags);
-        decl->setAlwaysForceDirect(true);
-        return decl;
-    };
     void closeDeclaration() override;
 
 private:

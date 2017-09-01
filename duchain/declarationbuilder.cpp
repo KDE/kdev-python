@@ -276,7 +276,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
         // If the current context is a class, then this is a class member variable.
         if ( ! dec ) {
-            dec = openDeclaration<ClassMemberDeclaration>(identifierForNode(node), range);
+            dec = openDeclaration<ClassMemberDeclaration>(node);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
@@ -289,7 +289,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         // This name did not previously appear in the user code, so a new variable is declared
         // check whether a declaration from a previous parser pass must be updated
         if ( ! dec ) {
-            dec = openDeclaration<T>(identifierForNode(node), range);
+            dec = openDeclaration<T>(node);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }

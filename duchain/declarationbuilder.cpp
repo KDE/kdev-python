@@ -124,15 +124,15 @@ void DeclarationBuilder::closeDeclaration()
     DeclarationBuilderBase::closeDeclaration();
 }
 
-template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, Ast* range, FitDeclarationType mustFitType)
+template<typename T> T* DeclarationBuilder::eventuallyReopenDeclaration(Identifier* name, FitDeclarationType mustFitType)
 {
     QList<Declaration*> existingDeclarations = existingDeclarationsForNode(name);
-    
+
     Declaration* dec = nullptr;
-    reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(range, range), &dec);
+    reopenFittingDeclaration<T>(existingDeclarations, mustFitType, editorFindRange(name, name), &dec);
     bool declarationOpened = (bool) dec;
     if ( ! declarationOpened ) {
-        dec = openDeclaration<T>(name, range);
+        dec = openDeclaration<T>(name);
     }
     Q_ASSERT(dynamic_cast<T*>(dec));
     return static_cast<T*>(dec);
@@ -150,11 +150,10 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
         if ( currentVariableDefinition->context != ExpressionAst::Context::Store ) {
             return nullptr;
         }
-        Identifier* id = currentVariableDefinition->identifier;
-        return visitVariableDeclaration<T>(id, currentVariableDefinition, previous, type, flags);
+        return visitVariableDeclaration<T>(currentVariableDefinition->identifier, previous, type, flags);
     }
     else if ( node->astType == Ast::IdentifierAstType ) {
-        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), nullptr, previous, type, flags);
+        return visitVariableDeclaration<T>(static_cast<Identifier*>(node), previous, type, flags);
     }
     else {
         qCWarning(KDEV_PYTHON_DUCHAIN) << "cannot create variable declaration for non-(name|identifier) AST, this is a programming error";
@@ -227,13 +226,11 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     return remainingDeclarations;
 }
 
-template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Ast* originalAst, Declaration* previous,
+template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier* node, Declaration* previous,
                                                                      AbstractType::Ptr type, VisitVariableFlags flags)
 {
     DUChainWriteLocker lock;
-    Ast* rangeNode = originalAst ? originalAst : node;
-    RangeInRevision range = editorFindRange(rangeNode, rangeNode);
-    
+    RangeInRevision range = editorFindRange(node, node);
     // ask the correction file library if there's a user-specified type for this object
     if ( AbstractType::Ptr hint = m_correctionHelper->hintForLocal(node->value) ) {
         type = hint;
@@ -279,7 +276,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
     if ( currentContext() && currentContext()->type() == DUContext::Class && ! haveFittingDeclaration ) {
         // If the current context is a class, then this is a class member variable.
         if ( ! dec ) {
-            dec = openDeclaration<ClassMemberDeclaration>(identifierForNode(node), range);
+            dec = openDeclaration<ClassMemberDeclaration>(node);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
@@ -292,7 +289,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         // This name did not previously appear in the user code, so a new variable is declared
         // check whether a declaration from a previous parser pass must be updated
         if ( ! dec ) {
-            dec = openDeclaration<T>(identifierForNode(node), range);
+            dec = openDeclaration<T>(node);
             Q_ASSERT(! declarationOpened);
             declarationOpened = true;
         }
@@ -460,29 +457,9 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     }
 }
 
-void spoofNodePosition(Ast* node, const CursorInRevision& pos) {
-    // Ridiculous hack, see next comment.
-    node->startLine = node->endLine = pos.line;
-    node->startCol = node->endCol = pos.column - 1;
-    if (node->astType == Ast::TupleAstType) {
-        //  Recursion to bodge all declarations, e.g.
-        //  [x + y * z for x, (y, z) in foo]
-        foreach(auto elem, static_cast<TupleAst*>(node)->elements) {
-            spoofNodePosition(elem, pos);
-        }
-    }
-}
-
 void DeclarationBuilder::visitComprehension(ComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitComprehension(node);
-    // make the declaration zero chars long; it must appear at the beginning of the context,
-    // because it is actually used *before* its real declaration: [foo for foo in bar]
-    // The DUChain doesn't like this, so for now, the declaration is at the opening bracket,
-    // and both other occurrences are uses of that declaration.
-    // TODO add a special case to the usebuilder to display the second occurrence as a declaration
-    spoofNodePosition(node->target, currentContext()->range().start);
-
     ExpressionVisitor v(currentContext());
     v.visitNode(node->iterator);
     assignToUnknown(node->target, Helper::contentOfIterable(v.lastType(), topContext()));
@@ -593,7 +570,6 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
                ) {
                 aliasDeclaration = Helper::resolveAliasDeclaration(aliasDeclaration);
                 AliasDeclaration* adecl = eventuallyReopenDeclaration<AliasDeclaration>(&temporaryIdentifier,
-                                                                                        &temporaryIdentifier,
                                                                                         AliasDeclarationType);
                 if ( adecl ) {
                     adecl->setAliasedDeclaration(aliasDeclaration);
@@ -1114,8 +1090,7 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
 {
     if ( element.isAlias ) {
         DUChainWriteLocker lock;
-        Python::Identifier* identifier = target->identifier;
-        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(identifier, target, AliasDeclarationType);
+        AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(target->identifier, AliasDeclarationType);
         decl->setAliasedDeclaration(element.declaration.data());
         closeDeclaration();
     }
@@ -1211,7 +1186,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
         if ( isAlreadyOpen ) {
             activateAlreadyOpenedContext(internal);
             visitVariableDeclaration<ClassMemberDeclaration>(
-                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+                attrib->attribute, attributeDeclaration, element.type, AbortIfReopenMismatch
             );
             closeAlreadyOpenedContext(internal);
         }
@@ -1219,7 +1194,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
             injectContext(internal.data());
 
             Declaration* dec = visitVariableDeclaration<ClassMemberDeclaration>(
-                attrib->attribute, attrib, attributeDeclaration, element.type, AbortIfReopenMismatch
+                attrib->attribute, attributeDeclaration, element.type, AbortIfReopenMismatch
             );
             if ( dec ) {
                 dec->setRange(RangeInRevision(internal->range().start, internal->range().start));
@@ -1370,7 +1345,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     StructureType::Ptr type(new StructureType());
 
     DUChainWriteLocker lock;
-    ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, node->name, NoTypeRequired);
+    ClassDeclaration* dec = eventuallyReopenDeclaration<ClassDeclaration>(node->name, NoTypeRequired);
     eventuallyAssignInternalContext();
 
     dec->setKind(KDevelop::Declaration::Type);
@@ -1463,7 +1438,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     FunctionType::Ptr type(new FunctionType());
 
     DUChainWriteLocker lock;
-    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name, node->name,
+    FunctionDeclaration* dec = eventuallyReopenDeclaration<FunctionDeclaration>(node->name,
                                                                                 FunctionDeclarationType);
 
     Q_ASSERT(dec->isFunctionDeclaration());
@@ -1766,7 +1741,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( currentIndex == 1 && workingOnDeclaration->isClassMethod() ) {
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
-                                                                                   arg, AliasDeclarationType);
+                                                                                   AliasDeclarationType);
             if ( ! m_currentClassTypes.isEmpty() ) {
                 auto classDecl = m_currentClassTypes.last()->declaration(topContext());
 
@@ -1878,7 +1853,7 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
         DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());
         if ( ! existing.empty() ) {
-            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id);
             ndec->setAliasedDeclaration(existing.first());
             closeDeclaration();
         }
@@ -1888,7 +1863,7 @@ void DeclarationBuilder::visitGlobal(GlobalAst* node)
             dec->setRange(editorFindRange(id, id));
             dec->setAutoDeclaration(true);
             closeContext();
-            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id, node);
+            AliasDeclaration* ndec = openDeclaration<AliasDeclaration>(id);
             ndec->setAliasedDeclaration(dec);
             closeDeclaration();
         }

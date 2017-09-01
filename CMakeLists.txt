@@ -42,14 +42,14 @@ endforeach()
 # Must unset before searching for libs, otherwise these are checked before the required version...
 unset(Python_ADDITIONAL_VERSIONS)
 
-if ( PYTHONINTERP_FOUND AND PYTHON_VERSION_STRING VERSION_GREATER "3.4.2" )
+if ( PYTHONINTERP_FOUND AND PYTHON_VERSION_STRING VERSION_GREATER "3.4" )
     # Find libraries that match the found interpreter (mismatched versions not supported).
     # This assumes libs are available for the newest Python version on the system.
     # KDevelop should _always_ be built against the newest possible version, so notabug.
-    find_package(PythonLibs "${PYTHON_VERSION_STRING}" REQUIRED EXACT)
+    find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED EXACT)
 endif()
 
-if ( NOT PYTHONLIBS_FOUND )
+if ( NOT PYTHONLIBS_FOUND OR PYTHONLIBS_VERSION_STRING VERSION_LESS "3.4.3" )
     message(FATAL_ERROR "Python >= 3.4.3 but < 3.7 with --enable-shared is required to build kdev-python")
 endif()
 

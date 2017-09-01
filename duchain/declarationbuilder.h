@@ -117,7 +117,7 @@ protected:
     template<typename T> T* visitVariableDeclaration(Python::Ast* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
-    template<typename T> T* visitVariableDeclaration(Identifier* node, Ast* originalAst = nullptr, Declaration* previous=nullptr,
+    template<typename T> T* visitVariableDeclaration(Identifier* node, Declaration* previous=nullptr,
                                                      AbstractType::Ptr type = AbstractType::Ptr(),
                                                      VisitVariableFlags flags=NoVisitVariableFlags);
 
@@ -207,8 +207,7 @@ protected:
      * @brief python-specific version of openDeclaration which scans for existing declarations in previous versions of
      *        this top-context in a more intelligent way.
      * Use this in normal declaratonbuilder code if you can't use visitVariableDeclaration. */
-    template<typename T> T* eventuallyReopenDeclaration(Python::Identifier* name, Python::Ast* range,
-                                                        FitDeclarationType mustFitType);
+    template<typename T> T* eventuallyReopenDeclaration(Python::Identifier* name, FitDeclarationType mustFitType);
 
     template<typename T> QList<Declaration*> reopenFittingDeclaration(QList<Declaration*> declarations,
                                                                       FitDeclarationType mustFitType,
@@ -259,16 +258,10 @@ protected:
     Declaration* findDeclarationInContext(QStringList dottedNameIdentifier, TopDUContext* ctx) const;
 
 private:
-    template<class T> T* openDeclaration(Identifier* name, Ast* range, DeclarationFlags flags = NoFlags)
+    template<class T> T* openDeclaration(Identifier* name, DeclarationFlags flags = NoFlags)
     {
-        T* decl = DeclarationBuilderBase::openDeclaration<T>(name, range, flags);
-        decl->setAlwaysForceDirect(true);
-        return decl;
-    };
-    template<class T> T* openDeclaration(const QualifiedIdentifier& id, const RangeInRevision& newRange,
-                                         DeclarationFlags flags = NoFlags)
-    {
-        T* decl = DeclarationBuilderBase::openDeclaration<T>(id, newRange, flags);
+        T* decl = DeclarationBuilderBase::openDeclaration<T>(KDevelop::Identifier(name->value),
+                                                             editorFindRange(name, name), flags);
         decl->setAlwaysForceDirect(true);
         return decl;
     };

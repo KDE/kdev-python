@@ -64,6 +64,8 @@ public:
 
     void visitString(StringAst* node) override;
     void visitBytes(BytesAst* node) override;
+    void visitFormattedValue(FormattedValueAst * node) override;
+    void visitJoinedString(JoinedStringAst* node) override;
     void visitNumber(NumberAst* node) override;
     void visitName(NameAst* node) override;
     void visitList(ListAst* node) override;

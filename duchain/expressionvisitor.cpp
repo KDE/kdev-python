@@ -614,6 +614,19 @@ void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
     encounter(AbstractType::Ptr::staticCast(type));
 }
 
+void ExpressionVisitor::visitFormattedValue(Python::FormattedValueAst* ) {
+    DUChainReadLocker lock;
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    encounter(AbstractType::Ptr::staticCast(type));
+}
+
+void ExpressionVisitor::visitJoinedString(Python::JoinedStringAst* )
+{
+    DUChainReadLocker lock;
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    encounter(AbstractType::Ptr::staticCast(type));
+}
+
 RangeInRevision nodeRange(Python::Ast* node)
 {
     return RangeInRevision(node->startLine, node->startCol, node->endLine,node->endCol);
@@ -640,19 +653,19 @@ void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
 
 void ExpressionVisitor::visitName(Python::NameAst* node)
 {
-    RangeInRevision range;
+    CursorInRevision findNameBefore;
     if ( m_scanUntilCursor.isValid() ) {
-        range = RangeInRevision(CursorInRevision(0, 0), m_scanUntilCursor);
+        findNameBefore = m_scanUntilCursor;
     }
     else if ( m_forceGlobalSearching ) {
-        range = RangeInRevision::invalid();
+        findNameBefore = CursorInRevision::invalid();
     }
     else {
-        range = RangeInRevision(0, 0, node->endLine, node->endCol);
+        findNameBefore = CursorInRevision(node->endLine, node->endCol);
     }
     DUChainReadLocker lock;
-    Declaration* d = Helper::declarationForName(QualifiedIdentifier(node->identifier->value),
-                                                range, DUChainPointer<const DUContext>(context()));
+    Declaration* d = Helper::declarationForName(node, findNameBefore,
+                                                DUChainPointer<const DUContext>(context()));
 
     if ( d ) {
         bool isAlias = dynamic_cast<AliasDeclaration*>(d) || d->isFunctionDeclaration() || dynamic_cast<ClassDeclaration*>(d);

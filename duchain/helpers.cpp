@@ -66,7 +66,7 @@ QMap<IProject*, QVector<QUrl>> Helper::cachedCustomIncludes;
 QMap<IProject*, QVector<QUrl>> Helper::cachedSearchPaths;
 QVector<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
-QString Helper::documentationFile;
+IndexedString Helper::documentationFile;
 DUChainPointer<TopDUContext> Helper::documentationFileContext = DUChainPointer<TopDUContext>(nullptr);
 QStringList Helper::correctionFileDirs;
 QString Helper::localCorrectionFileDir;
@@ -288,9 +288,11 @@ QStringList Helper::getDataDirs() {
     return Helper::dataDirs;
 }
 
-QString Helper::getDocumentationFile() {
-    if ( Helper::documentationFile.isNull() ) {
-        Helper::documentationFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py");
+KDevelop::IndexedString Helper::getDocumentationFile()
+{
+    if ( Helper::documentationFile.isEmpty() ) {
+        auto path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py");
+        Helper::documentationFile = IndexedString(path);
     }
     return Helper::documentationFile;
 }
@@ -302,7 +304,7 @@ ReferencedTopDUContext Helper::getDocumentationFileContext()
     }
     else {
         DUChainReadLocker lock;
-        auto file = IndexedString(Helper::getDocumentationFile());
+        auto file = Helper::getDocumentationFile();
         ReferencedTopDUContext ctx = ReferencedTopDUContext(DUChain::self()->chainForDocument(file));
         Helper::documentationFileContext = DUChainPointer<TopDUContext>(ctx.data());
         return ctx;

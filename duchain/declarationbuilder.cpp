@@ -844,7 +844,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         return;
     }
     // Don't do updates to pre-defined functions.
-    if ( ! v.lastDeclaration() || v.lastDeclaration()->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+    if ( ! v.lastDeclaration() || v.lastDeclaration()->topContext()->url() == Helper::getDocumentationFile() ) {
         return;
     }
     // Check for the different types of modifiers such a function can have
@@ -900,7 +900,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     if ( ! function ) {
         return;
     }
-    if ( function->topContext()->url() == IndexedString(Helper::getDocumentationFile()) ) {
+    if ( function->topContext()->url() == Helper::getDocumentationFile() ) {
         return;
     }
     // Note: within this function:

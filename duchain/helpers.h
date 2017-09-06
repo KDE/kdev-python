@@ -51,13 +51,13 @@ public:
     /** get search paths for python files **/
     static QVector<QUrl> getSearchPaths(const QUrl& workingOnDocument);
     static QStringList dataDirs;
-    static QString documentationFile;
+    static IndexedString documentationFile;
     static QStringList correctionFileDirs;
     static QString localCorrectionFileDir;
     static DUChainPointer<TopDUContext> documentationFileContext;
 
     static QStringList getDataDirs();
-    static QString getDocumentationFile();
+    static IndexedString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
 
     static QUrl getCorrectionFile(const QUrl& document);

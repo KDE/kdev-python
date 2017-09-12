@@ -395,6 +395,13 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     return {};
 }
 
+void ContextBuilder::visitLambda(LambdaAst* node)
+{
+    openContext(node, editorFindRange(node, node->body), DUContext::Other);
+    AstDefaultVisitor::visitLambda(node);
+    closeContext();
+}
+
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
 {
     auto start = node->name->range().end();

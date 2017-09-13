@@ -823,6 +823,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     foreach ( ArgAst* argument, node->arguments->arguments ) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
+    visitNodeList(node->arguments->defaultValues);
     if (node->arguments->vararg) {
         visitVariableDeclaration<Declaration>(node->arguments->vararg->argumentName);
     }

@@ -9,7 +9,6 @@
 class PythonAstTransformer {
 public:
     CodeAst* ast;
-    PythonAstTransformer(int lineOffset) : m_lineOffset(lineOffset) {};
     void run(mod_ty syntaxtree, QString moduleName) {
         ast = new CodeAst();
         ast->name = new Identifier(moduleName);
@@ -24,12 +23,11 @@ public:
             // don't touch the marker
             return -99999;
         }
-        return line + m_lineOffset;
+        return line;
     };
 private:
     QStack<Ast*> nodeStack;
-    int m_lineOffset;
-    
+
     Ast* parent() {
         return nodeStack.top();
     }

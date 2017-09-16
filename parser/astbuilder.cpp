@@ -481,65 +481,6 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     Q_UNREACHABLE();
 }
 
-QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename)
-{
-    IProject* proj = ICore::self()->projectController()->findProjectForUrl(filename);
-    // the file is not in a project, don't apply hack
-    if ( ! proj ) {
-        return QPair<QString, int>(contents, 0);
-    }
-    const QUrl headerFileUrl = QUrl::fromLocalFile(proj->path().path() + "/.kdev_python_header");
-    QFile headerFile(headerFileUrl.path());
-    QString headerFileContents;
-    if ( headerFile.exists() ) {
-        headerFile.open(QIODevice::ReadOnly);
-        headerFileContents = headerFile.readAll();
-        headerFile.close();
-        qCDebug(KDEV_PYTHON_PARSER) << "Found header file, applying hack";
-        int insertAt = 0;
-        bool endOfCommentsReached = false;
-        bool commentSignEncountered = false;
-//         bool atLineBeginning = true;
-        int lastLineBeginning = 0;
-        int newlineCount = 0;
-        int l = contents.length();
-        do {
-            if ( insertAt >= l ) {
-                qCDebug(KDEV_PYTHON_PARSER) << "File consist only of comments, not applying hack";
-                return QPair<QString, int>(contents, 0);
-            }
-            if ( contents.at(insertAt) == '#' ) {
-                commentSignEncountered = true;
-            }
-            if ( !contents.at(insertAt).isSpace() ) {
-//                 atLineBeginning = false;
-                if ( !commentSignEncountered ) {
-                    endOfCommentsReached = true;
-                }
-            }
-            if ( contents.at(insertAt) == '\n' ) {
-//                 atLineBeginning = true;
-                commentSignEncountered = false;
-                lastLineBeginning = insertAt;
-                newlineCount += 1;
-            }
-            if ( newlineCount == 2 ) {
-                endOfCommentsReached = true;
-            }
-            insertAt += 1;
-        } while ( !endOfCommentsReached );
-        qCDebug(KDEV_PYTHON_PARSER) << "Inserting contents at char" << lastLineBeginning << "of file";
-        contents = contents.left(lastLineBeginning) 
-                   + "\n" + headerFileContents + "\n#\n" 
-                   + contents.right(contents.length() - lastLineBeginning);
-        qCDebug(KDEV_PYTHON_PARSER) << contents;
-        return QPair<QString, int>(contents, - ( headerFileContents.count('\n') + 3 ));
-    }
-    else {
-        return QPair<QString, int>(contents, 0);
-    }
-}
-
 namespace {
 struct PythonInitializer : private QMutexLocker {
     PythonInitializer(QMutex& pyInitLock):
@@ -570,10 +511,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     
     contents.append('\n');
     
-    QPair<QString, int> hacked = fileHeaderHack(contents, filename);
-    contents = hacked.first;
-    int lineOffset = hacked.second;
-
     PythonInitializer pyIniter(pyInitLock);
     PyArena* arena = pyIniter.arena;
 
@@ -621,8 +558,8 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         int colno = PyLong_AsLong(colnoobj);
         
         ProblemPointer p(new Problem());
-        KTextEditor::Cursor start(lineno + lineOffset, (colno-4 > 0 ? colno-4 : 0));
-        KTextEditor::Cursor end(lineno + lineOffset, (colno+4 > 4 ? colno+4 : 4));
+        KTextEditor::Cursor start(lineno, (colno-4 > 0 ? colno-4 : 0));
+        KTextEditor::Cursor end(lineno, (colno+4 > 4 ? colno+4 : 4));
         KTextEditor::Range range(start, end);
         qCDebug(KDEV_PYTHON_PARSER) << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
@@ -751,7 +688,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     }
     qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
 
-    PythonAstTransformer t(lineOffset);
+    PythonAstTransformer t;
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
 
     RangeFixVisitor fixVisitor(contents);

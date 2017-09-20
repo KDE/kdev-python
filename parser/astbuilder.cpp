@@ -22,11 +22,6 @@
 #include "astbuilder.h"
 #include "ast.h"
 
-#include <QStringList>
-#include <QStack>
-#include <QMutexLocker>
-#include <QRegularExpression>
-#include <language/duchain/topducontext.h>
 #include <language/duchain/problem.h>
 #include <language/duchain/duchain.h>
 #include <language/editor/documentrange.h>
@@ -37,11 +32,6 @@
 #include "astdefaultvisitor.h"
 #include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
-
-#include <interfaces/icore.h>
-#include <interfaces/iprojectcontroller.h>
-#include <interfaces/iproject.h>
-#include <util/path.h>
 
 #include <QDebug>
 #include "parserdebug.h"

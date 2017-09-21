@@ -103,9 +103,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 
     PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
 
-    PyObject *exception, *value, *backtrace;
-    PyErr_Fetch(&exception, &value, &backtrace);
-
     CythonSyntaxRemover cythonSyntaxRemover;
 
     if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
@@ -117,7 +114,8 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 
     if ( ! syntaxtree ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
-        
+
+        PyObject *exception, *value, *backtrace;
         PyErr_Fetch(&exception, &value, &backtrace);
         qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
 
@@ -125,25 +123,19 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             qCWarning(KDEV_PYTHON_PARSER) << "Internal parser error: exception value is null, aborting";
             return CodeAst::Ptr();
         }
+        PyErr_NormalizeException(&exception, &value, &backtrace);
 
-        PyObject_Print(value, stderr, Py_PRINT_RAW);
-        
-        PyObject* errorMessage_str = PyTuple_GetItem(value, 0);
-        PyObject* errorDetails_tuple = PyTuple_GetItem(value, 1);
-       
-        if ( ! errorDetails_tuple ) {
-            qCWarning(KDEV_PYTHON_PARSER) << "Error retrieving error message, not displaying, and not doing anything";
+        if ( ! PyObject_IsInstance(value, PyExc_SyntaxError) ) {
+            qCWarning(KDEV_PYTHON_PARSER) << "Exception was not a SyntaxError, aborting";
             return CodeAst::Ptr();
         }
-        PyObject* linenoobj = PyTuple_GetItem(errorDetails_tuple, 1);
-        errorMessage_str = PyTuple_GetItem(value, 0);
-        errorDetails_tuple = PyTuple_GetItem(value, 1);
-        PyObject_Print(errorMessage_str, stderr, Py_PRINT_RAW);
-        
-        PyObject* colnoobj = PyTuple_GetItem(errorDetails_tuple, 2);
+        PyObject* errorMessage_str = PyObject_GetAttrString(value, "msg");
+        PyObject* linenoobj = PyObject_GetAttrString(value, "lineno");
+        PyObject* colnoobj = PyObject_GetAttrString(value, "offset");
+
         int lineno = PyLong_AsLong(linenoobj) - 1;
         int colno = PyLong_AsLong(colnoobj);
-        
+
         ProblemPointer p(new Problem());
         KTextEditor::Cursor start(lineno, (colno-4 > 0 ? colno-4 : 0));
         KTextEditor::Cursor end(lineno, (colno+4 > 4 ? colno+4 : 4));

@@ -6,6 +6,7 @@ set(parser_STAT_SRCS
     astvisitor.cpp
     astbuilder.cpp
     cythonsyntaxremover.cpp
+    rangefixvisitor.cpp
 )
 ecm_qt_declare_logging_category(parser_STAT_SRCS
     HEADER parserdebug.h
@@ -22,7 +23,6 @@ generate_export_header(kdevpythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPOR
 
 target_link_libraries(kdevpythonparser LINK_PRIVATE
     KDev::Language
-    KDev::Util
     Qt5::Core
     ${PYTHON_LIBRARIES}
 )

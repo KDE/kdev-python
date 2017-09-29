@@ -139,6 +139,7 @@ protected:
 
 protected:
     // AST visitor functions
+    void visitLambda(Python::LambdaAst * node) override;
     void visitFunctionDefinition( FunctionDefinitionAst* ) override;
     void visitClassDefinition( ClassDefinitionAst* ) override;
     void visitCode(CodeAst* node) override;

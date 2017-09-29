@@ -43,11 +43,6 @@ namespace Python
 class Ast;
 class CodeAst;
 
-
-typedef QMap<QString, QString> stringDictionary;
-
-QPair<QString, int> fileHeaderHack(QString& contents, const QUrl& filename);
-
 QString PyUnicodeObjectToQString(PyObject* obj);
 
 class KDEVPYTHONPARSER_EXPORT AstBuilder

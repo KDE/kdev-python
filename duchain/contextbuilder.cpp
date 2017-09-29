@@ -295,8 +295,7 @@ void ContextBuilder::visitClassDefinition( ClassDefinitionAst* node )
 }
 
 void ContextBuilder::visitCode(CodeAst* node) {
-    auto doc_url = Helper::getDocumentationFile();
-    IndexedString doc = IndexedString(doc_url);
+    IndexedString doc = Helper::getDocumentationFile();
     Q_ASSERT(currentlyParsedDocument().toUrl().isValid());
     if ( currentlyParsedDocument() != doc ) {
         // Search for the python built-in functions file, and dump its contents into the current file.
@@ -394,6 +393,13 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         }
     }
     return {};
+}
+
+void ContextBuilder::visitLambda(LambdaAst* node)
+{
+    openContext(node, editorFindRange(node, node->body), DUContext::Other);
+    AstDefaultVisitor::visitLambda(node);
+    closeContext();
 }
 
 RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)

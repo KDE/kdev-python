@@ -61,6 +61,10 @@ DUContext* UseBuilder::contextAtOrCurrent(const CursorInRevision& pos)
 }
 
 void UseBuilder::useHiddenMethod(ExpressionAst* value, Declaration* function) {
+    if ( !function || function->topContext() == Helper::getDocumentationFileContext() ) {
+        // Don't add a use for e.g. `list.__getitem__` in `foo[0]`, no-one cares.
+        return;
+    }
     RangeInRevision useRange;
     // TODO fixme! this does not necessarily use the opening bracket as it should
     useRange.start = CursorInRevision(value->endLine, value->endCol + 1);

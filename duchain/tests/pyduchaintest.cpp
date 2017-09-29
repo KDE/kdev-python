@@ -278,6 +278,7 @@ void PyDUChainTest::testCrashes_data() {
     QTest::newRow("func_call") << "a = xxx.func(yyy.zzz)";
     QTest::newRow("comprehension_attrib") << "a = [foo for foo in bar].baz";
     QTest::newRow("comprehension_attrib2") << "a = [foo.bar for foo in bar]";
+    QTest::newRow("lambda_cmpr_defarg") << "a = lambda foo=[b for b in (1, 2, 3)]: foo";
     QTest::newRow("attrib") << "(sep or ' ').join(xxxx.capitalize() for xxxx in ssss.split(sep))";
     QTest::newRow("attrib2") << "(sep or ' ').join(x.capitalize() for x in s.split(sep))";
     QTest::newRow("attrib3") << "known_threads = {line.strip()}";

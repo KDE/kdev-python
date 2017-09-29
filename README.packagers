@@ -14,6 +14,15 @@ Supported Python versions
 Python 2 support was dropped, and we just support the latest 2 to 3 minor
 releases of Python 3 right now.
 
+NOTE: Since we use the upstream CPython parser, compiling against an old
+ version will restrict kdev-python's syntax support to that version.
+This will cause false-positive warnings to the user and failed type-inference
+ for newer Python code. Then we get bug reports upstream for features that
+ were already implemented.
+
+Please compile against the newest supported version unless there is no other
+ possible alternative.
+
 Python fork
 -----------
 This branch, which contains the python3 version of kdev-python, does no longer

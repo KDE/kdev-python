@@ -33,8 +33,8 @@
         "Icon": "text-x-python",
         "Id": "kdevpdb",
         "License": "GPL",
-        "Name": "kdevpdb",
-        "Name[x-test]": "xxkdevpdbxx",
+        "Name": "Python Debugger (PDB) support",
+        "Name[x-test]": "xxPython Debugger (PDB) supportxx",
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

@@ -34,7 +34,6 @@
         "Id": "kdevpdb",
         "License": "GPL",
         "Name": "Python Debugger (PDB) support",
-        "Name[x-test]": "xxPython Debugger (PDB) supportxx",
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

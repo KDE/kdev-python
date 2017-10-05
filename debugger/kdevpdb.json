@@ -35,6 +35,8 @@
         "License": "GPL",
         "Name": "Python Debugger (PDB) support",
         "Name[ca]": "Implementació del depurador de Python (PDB)",
+        "Name[nl]": "Ondersteuning voor Python-debugger",
+        "Name[pt]": "Suporte para o Depurador de Python (PDB)",
         "Name[sv]": "Stöd för Python-avlusare (PDB)",
         "Name[uk]": "Підтримка засобу діагностики Python (PDB)",
         "Name[x-test]": "xxPython Debugger (PDB) supportxx",

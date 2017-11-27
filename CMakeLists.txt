@@ -24,6 +24,16 @@ include(ECMQtDeclareLoggingCategory)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 
+if(NOT CMAKE_VERSION VERSION_LESS "3.10.0")
+    # Avoids bogus warnings with CMake 3.10+
+    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
+endif()
+if(POLICY CMP0071)
+    # Avoids compat messages from CMake 3.10+, with Qt < 5.9.4
+    # See https://bugreports.qt.io/browse/QTBUG-63442
+    cmake_policy(SET CMP0071 OLD)
+endif()
+
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
 endif()

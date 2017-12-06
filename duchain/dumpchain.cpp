@@ -52,8 +52,9 @@ void DumpChain::dump( DUContext * context, bool imported )
     {
         foreach (Declaration* dec, context->localDeclarations())
         {
-            qCDebug(KDEV_PYTHON_DUCHAIN) << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()) << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << dec->uses().count() << "use(s)";
-            for( QMap<IndexedString, QList<RangeInRevision> >::const_iterator it = dec->uses().constBegin(); it != dec->uses().constEnd(); ++it )
+            const auto uses = dec->uses();
+            qCDebug(KDEV_PYTHON_DUCHAIN) << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()) << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << uses.count() << "use(s)";
+            for (auto it = uses.constBegin(); it != uses.constEnd(); ++it)
             {
                 qCDebug(KDEV_PYTHON_DUCHAIN) << QString((indent+1)*2, ' ') << "File:" << it.key().str();
                 foreach(const RangeInRevision& r, it.value())

@@ -218,7 +218,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
 
     bool isOwnContext = true;
     foreach ( DUContext* c, baseClassContexts ) {
-        QList<DeclarationDepthPair> declarations = c->allDeclarations(
+        const auto declarations = c->allDeclarations(
             CursorInRevision::invalid(), m_duContext->topContext(), false
         );
         foreach ( const DeclarationDepthPair& d, declarations ) {
@@ -266,7 +266,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     }
     Declaration* base = declarations.first();
     IndexedType baseType = base->abstractType()->indexed();
-    QList<DeclarationDepthPair> validDeclarations;
+    QVector<DeclarationDepthPair> validDeclarations;
     ClassDeclaration* current = nullptr;
     StructureType::Ptr type;
     auto decls = m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
@@ -305,7 +305,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
     ItemList resultingItems;
     DUChainReadLocker lock;
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "InheritanceCompletion";
-    QList<DeclarationDepthPair> declarations;
+    QVector<DeclarationDepthPair> declarations;
     if ( ! m_guessTypeOfExpression.isEmpty() ) {
         // The class completion is a member access
         auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
@@ -321,7 +321,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
     else {
         declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
     }
-    QList<DeclarationDepthPair> remainingDeclarations;
+    QVector<DeclarationDepthPair> remainingDeclarations;
     foreach ( const DeclarationDepthPair& d, declarations ) {
         Declaration* r = Helper::resolveAliasDeclaration(d.first);
         if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
@@ -612,7 +612,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
             return ItemList();
         }
         DUChainReadLocker lock;
-        QList<DeclarationDepthPair> declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
+        auto declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
         foreach ( const DeclarationDepthPair& d, declarations ) {
             if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
@@ -676,7 +676,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     return items;
 }
 
-QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth)
+QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToItemList(const QVector<DeclarationDepthPair>& declarations, int maxDepth)
 {
     QList<CompletionTreeItemPointer> items;
     
@@ -712,7 +712,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::declarationListToI
 
 QList< CompletionTreeItemPointer > PythonCodeCompletionContext::declarationListToItemList(QList< Declaration* > declarations)
 {
-    QList<DeclarationDepthPair> fakeItems;
+    QVector<DeclarationDepthPair> fakeItems;
+    fakeItems.reserve(declarations.size());
     foreach ( Declaration* d, declarations ) {
         fakeItems << DeclarationDepthPair(d, 0);
     }
@@ -780,10 +781,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
     }
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
     auto searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
-    QList<DeclarationDepthPair> keepDeclarations;
+    QVector<DeclarationDepthPair> keepDeclarations;
     foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
-        QList<DeclarationDepthPair> declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
+        const auto declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
                                                                                                 m_duContext->topContext(),
                                                                                                 false);
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "found" << declarations.length() << "declarations";

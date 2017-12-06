@@ -82,7 +82,8 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
     }
     m_debuggerAtFrame = framesCount - m_debuggerAtFrame - 1;
     qCDebug(KDEV_PYTHON_DEBUGGER) << "at frame:" << m_debuggerAtFrame;
-    QList<FrameItem> framesReversed;
+    QVector<FrameItem> framesReversed;
+    framesReversed.reserve(frames.length());
     for ( int i = frames.length() - 1; i >= 0; i-- ) {
         framesReversed.append(frames.at(i));
         framesReversed.last().nr = framesCount - i - 2;
@@ -94,7 +95,7 @@ void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "threads fetched" << threadsData;
     qCDebug(KDEV_PYTHON_DEBUGGER) << "Implement me: Thread debugging is not supported by pdb.";
-    QList<ThreadItem> threads;
+    QVector<ThreadItem> threads;
     ThreadItem mainThread;
     mainThread.nr = 0;
     mainThread.name = "main thread";

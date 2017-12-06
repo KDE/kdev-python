@@ -129,7 +129,7 @@ public:
      * @brief Convert the given list of declarations to a list of include-items.
      * Convenience function.
      **/
-    QList<CompletionTreeItemPointer> declarationListToItemList(QList<DeclarationDepthPair> declarations, int maxDepth = 0);
+    QList<CompletionTreeItemPointer> declarationListToItemList(const QVector<DeclarationDepthPair>& declarations, int maxDepth = 0);
     QList<CompletionTreeItemPointer> declarationListToItemList(QList<Declaration*> declarations);
     
 private:

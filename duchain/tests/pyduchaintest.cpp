@@ -1295,7 +1295,7 @@ void PyDUChainTest::testImportDeclarations() {
     foreach ( const QString& expected, expectedDecls ) {
         bool found = false;
         QString name = expected;
-        QList<pair> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
+        const auto decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
         qCDebug(KDEV_PYTHON_DUCHAIN) << "FOUND DECLARATIONS:";
         foreach ( const pair& current, decls ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
@@ -1375,7 +1375,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     ReferencedTopDUContext ctx1 = f.topContext();
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx1);
-    QList<p> decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
+    auto decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
     QList<DeclarationId> declIds;
     foreach ( p d, decls1 ) {
         declIds << d.first->id();
@@ -1389,7 +1389,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     ReferencedTopDUContext ctx2 = f.topContext();
     QVERIFY(ctx2);
     lock.lock();
-    QList<p> decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
+    auto decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
     foreach ( p d2, decls2 ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
@@ -1548,7 +1548,7 @@ void PyDUChainTest::testInheritance()
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainReadLocker lock(DUChain::lock());
-    QList<p> decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
+    auto decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
     bool found = false;
     bool classDeclFound = false;
     foreach ( const p& item, decls ) {

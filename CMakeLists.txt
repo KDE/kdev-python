@@ -58,7 +58,11 @@ configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpyth
 set(QT_MIN_VERSION "5.5.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
 set(KF5_DEP_VERSION "5.15.0")
-find_package(KF5 ${KF5_DEP_VERSION} REQUIRED I18n NewStuff ItemModels ThreadWeaver TextEditor KCMUtils)
+find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
+    I18n
+    ThreadWeaver
+    TextEditor
+)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 

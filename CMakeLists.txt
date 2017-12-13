@@ -13,16 +13,14 @@ find_package (ECM "5.14.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
-include(GenerateExportHeader)
-include(CMakePackageConfigHelpers)
-
-include(ECMAddTests)
-include(ECMOptionalAddSubdirectory)
-include(ECMSetupVersion)
-include(ECMQtDeclareLoggingCategory)
-
 include(KDEInstallDirs)
 include(KDECMakeSettings)
+
+include(GenerateExportHeader)
+
+include(ECMAddTests)
+include(ECMSetupVersion)
+include(ECMQtDeclareLoggingCategory)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")

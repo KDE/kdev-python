@@ -66,8 +66,6 @@ find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
-enable_testing()
-
 if ( NOT WIN32 )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
 endif ( NOT WIN32 )

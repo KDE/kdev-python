@@ -29,5 +29,5 @@ target_link_libraries(kdevpdb
     KF5::TextEditor
 )
 
-install(FILES __kdevpython_debugger_utils.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)
-install(FILES kdevpdb.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport/debugger)
+install(FILES __kdevpython_debugger_utils.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
+install(FILES kdevpdb.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)

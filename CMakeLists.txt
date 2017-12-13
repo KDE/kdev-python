@@ -133,9 +133,9 @@ target_link_libraries(kdevpythonlanguagesupport
 get_target_property(DEFINESANDINCLUDES_INCLUDE_DIRS KDev::DefinesAndIncludesManager INTERFACE_INCLUDE_DIRECTORIES)
 include_directories(${DEFINESANDINCLUDES_INCLUDE_DIRS})
 
-install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
-install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
-install(FILES codestyle.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
+install(DIRECTORY documentation_files DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
+install(DIRECTORY correction_files DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
+install(FILES codestyle.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
 
 # kdebugsettings file
 install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})

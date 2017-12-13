@@ -124,7 +124,6 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Util
     KF5::ThreadWeaver
     KF5::TextEditor
-    KF5::NewStuff
     kdevpythoncompletion
     kdevpythonparser
     kdevpythonduchain

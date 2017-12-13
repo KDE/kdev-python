@@ -60,7 +60,6 @@
             "KDevelop/Plugin"
         ]
     },
-    "X-KDevelop-Args": "PYTHON",
     "X-KDevelop-Interfaces": [
         "ILanguageSupport"
     ],

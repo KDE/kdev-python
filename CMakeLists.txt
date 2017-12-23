@@ -147,6 +147,8 @@ install(DIRECTORY documentation_files DESTINATION ${DATA_INSTALL_DIR}/kdevpython
 install(DIRECTORY correction_files DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 install(FILES codestyle.py DESTINATION ${DATA_INSTALL_DIR}/kdevpythonsupport)
 
+install(FILES org.kde.kdev-python.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+
 # kdebugsettings file
 install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
 

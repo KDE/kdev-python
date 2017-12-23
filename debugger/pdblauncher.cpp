@@ -34,6 +34,7 @@
 #include <KMessageBox>
 #include <KParts/MainWindow>
 #include <KConfigGroup>
+#include <QFileInfo>
 
 #include <QDebug>
 #include "debuggerdebug.h"
@@ -103,11 +104,17 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
             scriptUrl = iface->script(cfg, err);
         }
 
+        auto wd = iface->workingDirectory(cfg);
+        if( !wd.isValid() || wd.isEmpty() )
+        {
+            wd = QUrl::fromLocalFile( QFileInfo( scriptUrl.toLocalFile() ).absolutePath() );
+        }
+
         DebugJob* job = new DebugJob();
         job->m_scriptUrl = scriptUrl;
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
-        job->m_workingDirectory = iface->workingDirectory(cfg);
+        job->m_workingDirectory = wd;
         QList<KJob*> l;
         l << job;
         return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );

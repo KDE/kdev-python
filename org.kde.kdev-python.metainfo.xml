@@ -1,29 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component type="addon">
   <id>org.kde.kdev-python</id>
-  <extends>org.kde.kdevelop</extends>
-  <name>kdev-python</name>
-  <name xml:lang="ast">kdev-python</name>
-  <name xml:lang="ca">kdev-python</name>
-  <name xml:lang="ca-valencia">kdev-python</name>
-  <name xml:lang="cs">kdev-python</name>
-  <name xml:lang="de">kdev-python</name>
-  <name xml:lang="en-GB">kdev-python</name>
-  <name xml:lang="es">kdev-python</name>
-  <name xml:lang="et">kdev-python</name>
-  <name xml:lang="fr">kdev-python</name>
-  <name xml:lang="gl">kdev-python</name>
-  <name xml:lang="it">kdev-python</name>
-  <name xml:lang="nl">kdev-python</name>
-  <name xml:lang="pl">kdev-python</name>
-  <name xml:lang="pt">kdev-python</name>
-  <name xml:lang="sk">kdev-python</name>
-  <name xml:lang="sl">kdev-python</name>
-  <name xml:lang="sv">kdev-python</name>
-  <name xml:lang="tr">kdev-python</name>
-  <name xml:lang="uk">kdev-python</name>
-  <name xml:lang="x-test">xxkdev-pythonxx</name>
-  <name xml:lang="zh-CN">kdev-python</name>
+  <extends>org.kde.kdevelop.desktop</extends>
+  <name>KDevelop Python Support</name>
   <summary>Python language support for KDevelop</summary>
   <summary xml:lang="ca">Implementació del llenguatge Python al KDevelop</summary>
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python al KDevelop</summary>
@@ -44,7 +23,6 @@
   <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
   <summary xml:lang="x-test">xxPython language support for KDevelopxx</summary>
   <summary xml:lang="zh-CN">KDevelop 的 Python 语言支持</summary>
-  <url type="homepage">kdevelop.org</url>
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
@@ -66,6 +44,12 @@
   <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="x-test">xxSven Brauch &lt;mail@svenbrauch.de&gt;xx</developer_name>
   <developer_name xml:lang="zh-CN">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <project_license>GPL</project_license>
+  <project_license>GPL-2.0+</project_license>
   <metadata_license>CC0-1.0</metadata_license>
+  <url type="homepage">https://kdevelop.org</url>
+  <url type="bugtracker">https://bugs.kde.org/enter_bug.cgi?format=guided&amp;product=kdev-python</url>
+  <url type="help">https://docs.kde.org/index.php?application=kdevelop</url>
+  <url type="donation">https://www.kde.org/community/donations/?app=kdevelop</url>
+  <project_group>KDE</project_group>
+  <update_contact>mail@svenbrauch.de</update_contact>
 </component>

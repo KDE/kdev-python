@@ -71,7 +71,7 @@ find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
     ThreadWeaver
     TextEditor
 )
-find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
+find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
 if ( NOT WIN32 )

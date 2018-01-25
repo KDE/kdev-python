@@ -1341,6 +1341,7 @@ void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     visitNodeList(node->decorators);
+    visitNodeList(node->baseClasses);
     const CorrectionHelper::Recursion r(m_correctionHelper->enterClass(node->name->value));
 
     StructureType::Ptr type(new StructureType());

@@ -153,7 +153,8 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
     autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
                                "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
     using P = SourceFormatterStyle::MimeHighlightPair;
-    autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"} });
+    autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"},
+                                                          P{"text/x-python3", "Python 3"} });
     QString autopep8path = QStandardPaths::findExecutable("autopep8");
     if (autopep8path.isEmpty()) {
         // TODO: proper error handling/user notification

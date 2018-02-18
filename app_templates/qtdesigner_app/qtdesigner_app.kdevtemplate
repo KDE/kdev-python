@@ -23,6 +23,7 @@ Category=Python
 Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
 Comment[ca]=Un exemple d'aplicació que usa el Designer de Qt. Si editeu el «mainwindow.ui», regenereu el «mainwindow.py» invocant el «pyuic5».
 Comment[ca@valencia]=Un exemple d'aplicació que usa el Designer de Qt. Si editeu el «mainwindow.ui», regenereu el «mainwindow.py» invocant el «pyuic5».
+Comment[de]=Ein Beispiel-Anwendung mit Qt Designer. Wenn Sie die Datei mainwindow.ui bearbeiten, erzeugen Sie die Datei mainwindow.py mit dem Befehl pyuic5 neu.
 Comment[en_GB]=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
 Comment[es]=Un ejemplo de aplicación que usa Qt Designer. Si edita mainwindow.ui, vuelva a generar mainwindow.py llamando a pyuic5.
 Comment[et]=Näidisrakendus Qt Designeri abil. Kui redigeerid faili mainwindow.ui, regenereeri mainwindow.py, kutsudes välja pyuic5.

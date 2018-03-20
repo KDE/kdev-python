@@ -67,12 +67,14 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
         auto serverPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/codestyle.py");
         if ( serverPath.isEmpty() ) {
             qWarning() << "setup problem: codestyle.py not found";
+            m_mutex.unlock();
             return;
         }
         m_checkerProcess.start(python, {serverPath});
         m_checkerProcess.waitForStarted(30);
         if ( m_checkerProcess.state() != QProcess::Running ) {
             qWarning() << "failed to start code checker process";
+            m_mutex.unlock();
             return;
         }
     }

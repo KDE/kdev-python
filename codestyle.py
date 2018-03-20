@@ -46,3 +46,5 @@ while True:
     else:
         stderr.write("The `pycodestyle` (previously `pep8`) module is not installed.")
         stderr.flush()
+        stdout.write("{0:>10}".format(0))
+        stdout.flush()

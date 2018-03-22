@@ -61,7 +61,7 @@ if ( NOT PYTHONLIBS_FOUND OR PYTHONLIBS_VERSION_STRING VERSION_LESS "3.4.3" )
     message(FATAL_ERROR "Python >= 3.4.3 but < 3.7 with --enable-shared is required to build kdev-python")
 endif()
 
-configure_file( "${kdevpython_SOURCE_DIR}/kdevpythonversion.h.cmake" "${kdevpython_BINARY_DIR}/kdevpythonversion.h" @ONLY )
+configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
 set(QT_MIN_VERSION "5.5.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)

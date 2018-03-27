@@ -70,7 +70,7 @@ void UseBuilder::useHiddenMethod(ExpressionAst* value, Declaration* function) {
     useRange.start = CursorInRevision(value->endLine, value->endCol + 1);
     useRange.end = CursorInRevision(value->endLine, value->endCol + 2);
     if ( function && function->isFunctionDeclaration() ) {
-        UseBuilderBase::newUse(value, useRange, DeclarationPointer(function));
+        UseBuilderBase::newUse(useRange, DeclarationPointer(function));
     }
 }
 
@@ -99,7 +99,7 @@ void UseBuilder::visitName(NameAst* node)
             }
         }
     }
-    UseBuilderBase::newUse(node, useRange, DeclarationPointer(declaration));
+    UseBuilderBase::newUse(useRange, DeclarationPointer(declaration));
 }
 
 void UseBuilder::visitCall(CallAst* node)
@@ -142,7 +142,7 @@ void UseBuilder::visitAttribute(AttributeAst* node)
         ProblemPointer ptr(p);
         topContext()->addProblem(ptr);
     }
-    UseBuilderBase::newUse(node, useRange, declaration);
+    UseBuilderBase::newUse(useRange, declaration);
 }
 
 void UseBuilder::visitSubscript(SubscriptAst* node) {

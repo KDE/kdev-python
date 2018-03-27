@@ -68,6 +68,7 @@
     ],
     "X-KDevelop-Mode": "NoGUI",
     "X-KDevelop-SupportedMimeTypes": [
-        "text/x-python"
+        "text/x-python",
+        "text/x-python3"
     ]
 }

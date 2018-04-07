@@ -4,7 +4,7 @@ project(kdevpython)
 # write the plugin version to a file
 set(KDEVPYTHON_VERSION_MAJOR 5)
 set(KDEVPYTHON_VERSION_MINOR 2)
-set(KDEVPYTHON_VERSION_PATCH 1)
+set(KDEVPYTHON_VERSION_PATCH 2)
 
 # KDevplatform dependency version
 set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}" )

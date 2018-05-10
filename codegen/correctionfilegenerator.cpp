@@ -20,6 +20,7 @@
 
 #include "correctionfilegenerator.h"
 
+#include <QAction>
 #include <QTemporaryFile>
 
 #include <language/backgroundparser/backgroundparser.h>

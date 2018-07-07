@@ -181,8 +181,8 @@ Declaration* Helper::declarationForName(const QString& name, const CursorInRevis
 {
     DUChainReadLocker lock(DUChain::lock());
     auto identifier = KDevelop::Identifier(name);
-    auto localDeclarations = context->findLocalDeclarations(identifier, location, 0,
-                                                            AbstractType::Ptr(0), DUContext::DontResolveAliases);
+    auto localDeclarations = context->findLocalDeclarations(identifier, location, nullptr,
+                                                            AbstractType::Ptr(), DUContext::DontResolveAliases);
     if ( !localDeclarations.isEmpty() ) {
         return localDeclarations.last();
     }

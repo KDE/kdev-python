@@ -41,7 +41,7 @@ public:
 
         return m_next;
     };
-    void visitNode(Python::Ast* node) {
+    void visitNode(Python::Ast* node) override {
         if ( ! node ) {
             return;
         }

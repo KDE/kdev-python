@@ -26,6 +26,7 @@
 #include <debugger/framestack/framestackmodel.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
+#include <util/environmentprofilelist.h>
 
 #include "debugsession.h"
 #include "pdbframestackmodel.h"
@@ -52,12 +53,14 @@ static QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
 
 namespace Python {
 
-DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory) :
+DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory,
+    const QString& envProfileName) :
     IDebugSession()
     , m_breakpointController(nullptr)
     , m_variableController(nullptr)
     , m_frameStackModel(nullptr)
     , m_workingDirectory(workingDirectory)
+    , m_envProfileName(envProfileName)
     , m_nextNotifyMethod(nullptr)
     , m_inDebuggerData(0)
 {
@@ -91,6 +94,17 @@ void DebugSession::start()
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
     m_debuggerProcess->setWorkingDirectory(m_workingDirectory.path());
+
+    const KDevelop::EnvironmentProfileList environmentProfiles(KSharedConfig::openConfig());
+    const auto environment = environmentProfiles.variables(m_envProfileName);
+
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    for(auto i = environment.cbegin(); i != environment.cend(); i++ )
+    {
+        env.insert(i.key(), i.value());
+    }
+    m_debuggerProcess->setProcessEnvironment(env);
+
     connect(m_debuggerProcess, &QProcess::readyReadStandardOutput, this, &DebugSession::dataAvailable);
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
     connect(this, &DebugSession::debuggerReady, this, &DebugSession::checkCommandQueue);

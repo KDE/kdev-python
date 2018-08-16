@@ -38,6 +38,7 @@
 
 #include <QDebug>
 #include "debuggerdebug.h"
+#include <util/environmentprofilelist.h>
 
 
 namespace Python {
@@ -115,6 +116,18 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         job->m_workingDirectory = wd;
+
+        const KDevelop::EnvironmentProfileList environmentProfiles(KSharedConfig::openConfig());
+        QString envProfileName = iface->environmentProfileName(cfg);
+
+        if (envProfileName.isEmpty()) {
+            qCWarning(KDEV_PYTHON_DEBUGGER) << "No environment profile specified, looks like a broken "
+                                       "configuration, please check run configuration " << cfg->name() <<
+                                       ". Using default environment profile.";
+            envProfileName = environmentProfiles.defaultProfileName();
+        }
+        job->m_envProfileName = envProfileName;
+
         QList<KJob*> l;
         l << job;
         return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );

@@ -53,8 +53,10 @@ using namespace KTextEditor;
 namespace Python
 {
 
-ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
+ReferencedTopDUContext ContextBuilder::build(const IndexedString& url, Ast* node,
+                                             const ReferencedTopDUContext& updateContext_)
 {
+    ReferencedTopDUContext updateContext(updateContext_);
     if (!updateContext) {
         DUChainReadLocker lock(DUChain::lock());
         updateContext = DUChain::self()->chainForDocument(url);

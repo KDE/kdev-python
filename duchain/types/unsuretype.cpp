@@ -153,7 +153,7 @@ AbstractType::WhichType UnsureType::whichType() const
     return AbstractType::TypeUnsure;
 }
 
-void UnsureType::addType(IndexedType indexed) {
+void UnsureType::addType(const IndexedType& indexed) {
     auto type = indexed.abstractType();
     auto hinted = type.cast<HintedType>(); // XXX: do we need a read locker here?
     if ( ! hinted ) {

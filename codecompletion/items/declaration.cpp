@@ -58,7 +58,7 @@ void PythonDeclarationCompletionItem::setTypeHint(PythonCodeCompletionContext::I
     m_typeHint = type;
 }
 
-QString PythonDeclarationCompletionItem::shortenedTypeString(KDevelop::DeclarationPointer decl, int desiredTypeLength) const {
+QString PythonDeclarationCompletionItem::shortenedTypeString(const KDevelop::DeclarationPointer& decl, int desiredTypeLength) const {
     if ( !decl ) {
         return {};
     }

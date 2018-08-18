@@ -42,7 +42,8 @@ class DebugSession : public KDevelop::IDebugSession
 {
     Q_OBJECT
 public:
-    DebugSession(QStringList program, const QUrl& workingDirectory);
+    DebugSession(QStringList program, const QUrl& workingDirectory,
+                 const QString& envProfileName);
     ~DebugSession() override;
 
     IBreakpointController* breakpointController() const override;
@@ -220,6 +221,7 @@ private:
     QStringList m_program;
     QList<PdbCommand*> m_commandQueue;
     const QUrl& m_workingDirectory;
+    const QString m_envProfileName;
 private:
     /// objects to notify next
     QPointer<QObject> m_nextNotifyObject;

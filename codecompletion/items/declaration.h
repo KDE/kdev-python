@@ -32,7 +32,7 @@ public:
                                     QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext> context = QExplicitlySharedDataPointer<KDevelop::CodeCompletionContext>(), 
                                     int inheritanceDepth = 0);
     QVariant data(const QModelIndex& index, int role, const KDevelop::CodeCompletionModel* model) const override;
-    QString shortenedTypeString(KDevelop::DeclarationPointer decl, int desiredTypeLength) const override;
+    QString shortenedTypeString(const KDevelop::DeclarationPointer& decl, int desiredTypeLength) const override;
 
     void setTypeHint(PythonCodeCompletionContext::ItemTypeHint type);
     void addMatchQuality(int add);

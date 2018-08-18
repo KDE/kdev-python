@@ -39,7 +39,8 @@ void DebugJob::start()
     QStringList program;
     QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
     program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
-    m_session = new DebugSession(program, m_workingDirectory);
+    // Inject environment
+    m_session = new DebugSession(program, m_workingDirectory, m_envProfileName);
     
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);

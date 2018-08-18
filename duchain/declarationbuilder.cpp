@@ -84,8 +84,10 @@ void DeclarationBuilder::setPrebuilding(bool prebuilding)
     m_prebuilding = prebuilding;
 }
 
-ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node, ReferencedTopDUContext updateContext)
+ReferencedTopDUContext DeclarationBuilder::build(const IndexedString& url, Ast* node,
+                                                 const ReferencedTopDUContext& updateContext_)
 {
+    ReferencedTopDUContext updateContext(updateContext_);
     m_correctionHelper.reset(new CorrectionHelper(url, this));
 
     // The declaration builder needs to run twice, so it can resolve uses of e.g. functions

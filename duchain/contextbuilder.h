@@ -53,7 +53,7 @@ public:
      * @brief Entry function called by KDevPlatform API.
      */
     ReferencedTopDUContext build(const KDevelop::IndexedString& url, Ast* node,
-                                         ReferencedTopDUContext updateContext = ReferencedTopDUContext()) override;
+                                 const ReferencedTopDUContext& updateContext = ReferencedTopDUContext()) override;
 
     /**
      * @brief Set the editor integrator.

@@ -32,8 +32,8 @@ class KDEVPYTHONCOMPLETION_EXPORT PythonCodeCompletionWorker : public KDevelop::
 
 public:
     PythonCodeCompletionWorker(PythonCodeCompletionModel *parent, const QUrl& document);
-    KDevelop::CodeCompletionContext* createCompletionContext(KDevelop::DUContextPointer context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const override;
-    void updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, KDevelop::DUContextPointer context) const override;
+    KDevelop::CodeCompletionContext* createCompletionContext(const KDevelop::DUContextPointer& context, const QString& contextText, const QString& followingText, const KDevelop::CursorInRevision& position) const override;
+    void updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, const KDevelop::DUContextPointer& context) const override;
     PythonCodeCompletionModel* parent;
 };
 

@@ -43,6 +43,7 @@ public:
     QString m_interpreter;
     QStringList m_args;
     QUrl m_workingDirectory;
+    QString m_envProfileName;
 
 private slots:
     void standardOutputReceived(QStringList lines);

@@ -37,7 +37,7 @@ PythonCodeCompletionWorker::PythonCodeCompletionWorker(PythonCodeCompletionModel
 
 
 
-KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(KDevelop::DUContextPointer context,
+KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionContext(const KDevelop::DUContextPointer& context,
                                                                                      const QString& contextText,
                                                                                      const QString& followingText,
                                                                                      const KDevelop::CursorInRevision& position) const
@@ -51,7 +51,8 @@ KDevelop::CodeCompletionContext* PythonCodeCompletionWorker::createCompletionCon
     return completionContext;
 }
 
-void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view, KDevelop::DUContextPointer context) const
+void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextRange, KTextEditor::View *view,
+                                                    const KDevelop::DUContextPointer& context) const
 {
     if ( ! context ) {
         return;

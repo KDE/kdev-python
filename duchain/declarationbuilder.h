@@ -49,7 +49,7 @@ public:
      * @brief Entry function, called by KDevPlatform.
      */
     ReferencedTopDUContext build(const IndexedString& url, Ast* node,
-                                 ReferencedTopDUContext updateContext = ReferencedTopDUContext()) override;
+                                 const ReferencedTopDUContext& updateContext = ReferencedTopDUContext()) override;
 
     /**
      * @brief Set whether the current running pass is the first or the second one.

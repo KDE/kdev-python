@@ -35,7 +35,7 @@ void free_ast_recursive(CodeAst *node)
 AstDefaultVisitor::AstDefaultVisitor() { }
 AstDefaultVisitor::~AstDefaultVisitor() { }
 
-// The Ast "ends" here, those dont have child nodes
+// The Ast "ends" here, those don't have child nodes
 // note that Identifier is not a node in this Ast
 void AstDefaultVisitor::visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }

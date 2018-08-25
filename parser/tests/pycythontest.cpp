@@ -35,7 +35,7 @@
 #include <ktexteditor_version.h>
 
 #include <QDebug>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 using namespace Python;
 

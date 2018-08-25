@@ -38,8 +38,6 @@
 #include <language/duchain/declaration.h>
 #include <language/duchain/duchain.h>
 #include <language/duchain/types/alltypes.h>
-#include <language/duchain/classdeclaration.h>
-#include <language/duchain/declaration.h>
 #include <language/duchain/builders/abstracttypebuilder.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/duchainutils.h>

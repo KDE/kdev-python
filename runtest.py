@@ -115,7 +115,7 @@ class TestRunner():
             fatal_fail = re.match(r"(QFATAL|ASSERT)\s*", line)
             if fatal_fail:
                 print(self.data)
-                print(red("Fatal error occured, aborting"))
+                print(red("Fatal error occurred, aborting"))
                 return
         
         passed, failed = len(self.passed_tests), len(self.failed_tests)

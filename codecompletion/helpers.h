@@ -115,7 +115,7 @@ public:
     TokenListEntry weakPop() {
         m_internalPtr --;
         if ( m_internalPtr < 0 ) {
-            return TokenListEntry(ExpressionParser::InvalidStatus, QString::null, -1);
+            return TokenListEntry(ExpressionParser::InvalidStatus, QString(), -1);
         }
         return at(m_internalPtr);
     };

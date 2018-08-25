@@ -17,8 +17,8 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>. *
  ************************************************************************/
 
-#ifndef KCM_PY_DOCFILES_H
-#define KCM_PY_DOCFILES_H
+#ifndef PY_KCM_DOCFILES_H
+#define PY_KCM_DOCFILES_H
 
 #include <interfaces/configpage.h>
 

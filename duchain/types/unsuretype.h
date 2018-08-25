@@ -29,7 +29,6 @@
 #include <language/editor/modificationrevision.h>
 #include <language/duchain/topducontext.h>
 #include <language/duchain/types/typesystem.h>
-#include <language/duchain/types/typesystemdata.h>
 #include <language/duchain/types/typealiastype.h>
 #include <language/duchain/types/unsuretype.h>
 #include <language/duchain/types/indexedtype.h>

@@ -96,7 +96,7 @@ def parseFunction(functionNode):
         paramsStr.append('{} {}'.format(*p) if p[2] is NoDefaultValue else '{} {} = {}'.format(*p))
     descr += '%s %s(%s)' % (retType, funcFullName, ', '.join(paramsStr))
 
-    # function parameters in function defintion
+    # function parameters in function definition
     paramsStr = ['self'] if functionNode.parentNode.nodeName == 'Class' else [] # add `self` first parameter for methods
     hadDefault = False # there has been a default argument previously
     for _, argName, defaultValue in params:

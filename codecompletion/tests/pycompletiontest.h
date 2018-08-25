@@ -18,7 +18,7 @@
 #ifndef PYCOMPLETIONTEST_H
 #define PYCOMPLETIONTEST_H
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <language/editor/cursorinrevision.h>
 #include <language/codecompletion/codecompletioncontext.h>

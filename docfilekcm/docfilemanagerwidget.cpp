@@ -40,7 +40,6 @@
 #include <QStandardPaths>
 #include <QDesktopServices>
 #include <QIcon>
-#include <QUrl>
 
 #include <KMessageBox>
 #include <KLocalizedString>

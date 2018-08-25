@@ -47,7 +47,6 @@
 #include <interfaces/iprojectcontroller.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
-#include <interfaces/iprojectcontroller.h>
 #include <util/foregroundlock.h>
 #include <project/projectmodel.h>
 #include <util/path.h>

@@ -34,8 +34,8 @@
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
-#include <QtTest/QtTest>
-#include <QtWidgets/QApplication>
+#include <QtTest>
+#include <QApplication>
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/types/containertypes.h>
 #include <language/duchain/aliasdeclaration.h>

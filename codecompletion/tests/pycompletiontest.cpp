@@ -37,7 +37,7 @@
 
 #include <QDebug>
 #include <QStandardPaths>
-#include <QtTest/QTest>
+#include <QTest>
 
 using namespace KDevelop;
 

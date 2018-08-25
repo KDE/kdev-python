@@ -31,7 +31,7 @@
 #include <tests/autotestshell.h>
 #include <tests/testcore.h>
 #include <language/duchain/duchain.h>
-#include <QtTest/QtTest>
+#include <QtTest>
 #include <language/backgroundparser/backgroundparser.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <QStandardPaths>

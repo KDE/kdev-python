@@ -19,7 +19,7 @@
 #ifndef PYTHON_PARSESESSION_H
 #define PYTHON_PARSESESSION_H
 
-#include <QtCore/QString>
+#include <QString>
 
 #include "parserexport.h"
 #include <language/duchain/duchainpointer.h>

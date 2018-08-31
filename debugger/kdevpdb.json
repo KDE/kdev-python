@@ -45,6 +45,7 @@
         "Name[sv]": "Stöd för Python-avlusare (PDB)",
         "Name[uk]": "Підтримка засобу діагностики Python (PDB)",
         "Name[x-test]": "xxPython Debugger (PDB) supportxx",
+        "Name[zh_CN]": "Python 调试器 (PDB) 支持",
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

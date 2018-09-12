@@ -316,8 +316,8 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
     if (functionType && decl) {
 
         QVector<Declaration*> parameters;
-        if (DUChainUtils::getArgumentContext(dec))
-            parameters = DUChainUtils::getArgumentContext(dec)->localDeclarations();
+        if (DUChainUtils::argumentContext(dec))
+            parameters = DUChainUtils::argumentContext(dec)->localDeclarations();
 
         ret = '(';
         bool first = true;

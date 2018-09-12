@@ -175,7 +175,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
     if ( depth() != 1 || ! functionCalled ) {
         return resultingItems;
     }
-    if ( DUContext* args = DUChainUtils::getArgumentContext(functionCalled) ) {
+    if ( DUContext* args = DUChainUtils::argumentContext(functionCalled) ) {
         int normalParameters = args->localDeclarations().count() - functionCalled->defaultParametersSize();
         if ( normalParameters > m_alreadyGivenParametersCount ) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Not at default arguments yet";
@@ -234,7 +234,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
                 }
                 existingIdentifiers << identifier;
                 QStringList argumentNames;
-                DUContext* argumentsContext = DUChainUtils::getArgumentContext(funcDecl);
+                DUContext* argumentsContext = DUChainUtils::argumentContext(funcDecl);
                 if ( argumentsContext ) {
                     foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
                         argumentNames << argument->identifier().toString();
@@ -485,7 +485,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
     if ( ! decl ) {
         return resultingItems;
     }
-    DUContext* args = DUChainUtils::getArgumentContext(duContext()->owner());
+    DUContext* args = DUChainUtils::argumentContext(duContext()->owner());
     if ( ! args ) {
         return resultingItems;
     }

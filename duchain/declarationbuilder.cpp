@@ -910,7 +910,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     // - 'parameters' refers to the parameters of the function definition.
     // - 'arguments' refers to the arguments of the function call.
 
-    DUContext* parameterContext = DUChainUtils::getArgumentContext(function);
+    DUContext* parameterContext = DUChainUtils::argumentContext(function);
     FunctionType::Ptr functionType = function->type<FunctionType>();
     if ( ! parameterContext || ! functionType ) {
         return;
@@ -1511,7 +1511,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     }
 
     if ( ! dec->isStatic() ) {
-        DUContext* args = DUChainUtils::getArgumentContext(dec);
+        DUContext* args = DUChainUtils::argumentContext(dec);
         if ( args )  {
             QVector<Declaration*> parameters = args->localDeclarations();
             static IndexedString newMethodName("__new__");

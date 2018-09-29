@@ -11,7 +11,7 @@ related to packaging.
 
 Supported Python versions
 -------------------------
-Python 2 support was dropped, and we just support the latest 2 to 3 minor
+Python 2 support was dropped, and we just support the latest few minor
 releases of Python 3 right now.
 
 NOTE: Since we use the upstream CPython parser, compiling against an old

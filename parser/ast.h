@@ -368,7 +368,7 @@ class KDEVPYTHONPARSER_EXPORT WithItemAst : public Ast {
 public:
     WithItemAst(Ast* parent);
     ExpressionAst* contextExpression;
-    NameAst* optionalVars;
+    ExpressionAst* optionalVars;
 };
 
 class KDEVPYTHONPARSER_EXPORT WithAst : public StatementAst {

@@ -780,7 +780,7 @@ private:
         if ( ! node ) return nullptr;
                 WithItemAst* v = new  WithItemAst(parent());
             nodeStack.push(v); v->contextExpression = static_cast<ExpressionAst*>(visitNode(node->context_expr)); nodeStack.pop();
-            nodeStack.push(v); v->optionalVars = static_cast<NameAst*>(visitNode(node->optional_vars)); nodeStack.pop();
+            nodeStack.push(v); v->optionalVars = static_cast<ExpressionAst*>(visitNode(node->optional_vars)); nodeStack.pop();
         return v;
     }
 

@@ -362,7 +362,21 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
         // For statements like "with open(f) as x", a new variable must be created; do this here.
         ExpressionVisitor v(currentContext());
         v.visitNode(node->contextExpression);
-        visitVariableDeclaration<Declaration>(node->optionalVars, nullptr, v.lastType());
+        auto mgrType = v.lastType();
+        auto enterType = mgrType; // If we can't find __enter__(), assume it returns `self` like file objects.
+
+        static const IndexedIdentifier enterId(KDevelop::Identifier("__enter__"));
+
+        DUChainReadLocker lock;
+        if ( auto enterFunc = dynamic_cast<FunctionDeclaration*>(
+                Helper::accessAttribute(mgrType, enterId, topContext()))) {
+            if ( auto enterFuncType = enterFunc->type<FunctionType>() ) {
+                enterType = enterFuncType->returnType();
+            }
+        }
+        lock.unlock();
+        // This may be any assignable expression, e.g. `with foo() as bar[3]: ...`
+        assignToUnknown(node->optionalVars, enterType);
     }
     Python::AstDefaultVisitor::visitWithItem(node);
 }

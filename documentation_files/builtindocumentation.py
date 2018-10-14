@@ -152,6 +152,7 @@ class _io_TextIOWrapper():
     def writelines(self,sequence): return None
     def __iter__(self): return self
     def __next__(self): return ""
+    def __enter__(self): return self
     buffer = _io_TextIOWrapper() # Not quite
     closed = True
     encoding = ""

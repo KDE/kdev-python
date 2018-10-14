@@ -99,4 +99,4 @@ RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg->ArgAst,vara
 RULE_FOR _arg;KIND any;ACTIONS create|ArgAst set|argumentName~>arg set|annotation->ExpressionAst,annotation;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;
 RULE_FOR _alias;KIND any;ACTIONS create|AliasAst set|name~>name set|asName~>asname;;
-RULE_FOR _withitem;KIND any; ACTIONS create|WithItemAst set|contextExpression->ExpressionAst,context_expr set|optionalVars->NameAst,optional_vars;;
+RULE_FOR _withitem;KIND any; ACTIONS create|WithItemAst set|contextExpression->ExpressionAst,context_expr set|optionalVars->ExpressionAst,optional_vars;;

@@ -871,7 +871,25 @@ void PyDUChainTest::testTypes_data()
                                             "        return x\n"
                                             "f = Foo()\n"
                                             "checkme = f.func()" << "int";
+
     QTest::newRow("with") << "with open('foo') as f: checkme = f.read()" << "str";
+    QTest::newRow("with_list_target") << "bar = [1, 2, 3]\n"
+                                         "with open('foo') as bar[1]: checkme = bar[1].read()" << "str";
+    QTest::newRow("with_attr_target") << "bar = object()\n"
+                                         "with open('foo') as bar.zep: checkme = bar.zep.read()" << "str";
+    QTest::newRow("with_nonself_enter") <<  // From https://bugs.kde.org/show_bug.cgi?id=399534
+        "class Mgr:\n"
+        "    def __enter__(self): return 42\n"
+        "    def __exit__(self, *args): pass\n"
+        "with Mgr() as asd:\n"
+        "    checkme = asd" << "int";
+    QTest::newRow("with_tuple_target") <<
+        "class Mgr:\n"
+        "    def __enter__(self): return (42, 3.4)\n"
+        "    def __exit__(self, *args): pass\n"
+        "with Mgr() as (aa, bb):\n"
+        "    checkme = bb" << "float";
+
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
     QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";
 

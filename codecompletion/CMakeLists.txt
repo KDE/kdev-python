@@ -15,7 +15,7 @@ set(completion_SRCS
 ecm_qt_declare_logging_category(completion_SRCS
     HEADER codecompletiondebug.h
     IDENTIFIER KDEV_PYTHON_CODECOMPLETION
-    CATEGORY_NAME "kdevelop.languages.python.codecompletion"
+    CATEGORY_NAME "kdevelop.plugins.python.codecompletion"
 )
 
 add_library(kdevpythoncompletion SHARED ${completion_SRCS})

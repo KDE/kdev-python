@@ -112,12 +112,12 @@ set(kdevpythonlanguagesupport_PART_SRCS
 ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
     HEADER codegendebug.h
     IDENTIFIER KDEV_PYTHON_CODEGEN
-    CATEGORY_NAME "kdevelop.languages.python.codegen"
+    CATEGORY_NAME "kdevelop.plugins.python.codegen"
 )
 ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
     HEADER pythondebug.h
     IDENTIFIER KDEV_PYTHON
-    CATEGORY_NAME "kdevelop.languages.python"
+    CATEGORY_NAME "kdevelop.plugins.python"
 )
 
 ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS

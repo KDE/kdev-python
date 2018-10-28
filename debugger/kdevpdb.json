@@ -61,6 +61,7 @@
         "Name[ca]": "Implementació del depurador de Python (PDB)",
         "Name[cs]": "Podpora ladění pro Python (PDB)",
         "Name[de]": "Unterstützung für Python Debugger (PDB)",
+        "Name[en_GB]": "Python Debugger (PDB) support",
         "Name[es]": "Implementación del depurador Python (PDB)",
         "Name[fr]": "Prise en charge du débogueur Python (pdb)",
         "Name[it]": "Supporto al debugger di Python (PDB)",

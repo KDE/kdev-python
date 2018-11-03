@@ -39,5 +39,5 @@ Comment[sv]=Ett Django-projekt med ett program
 Comment[tr]=Uygulama ile birlikte bir Django projesi
 Comment[uk]=Проект Django із однією програмою
 Comment[x-test]=xxA Django project with one applicationxx
-Comment[zh_CN]=有一个应用的 Django 项目
+Comment[zh_CN]=有一个应用的 Django 工程
 ShowFilesAfterGeneration=%{PROJECTDIR}/%{APPNAMELC}/urls.py

@@ -20,6 +20,7 @@
   <name xml:lang="sv">KDevelop Python-stöd</name>
   <name xml:lang="uk">Підтримка Python у KDevelop</name>
   <name xml:lang="x-test">xxKDevelop Python Supportxx</name>
+  <name xml:lang="zh-TW">KDevelop Python 支援</name>
   <summary>Python language support for KDevelop</summary>
   <summary xml:lang="ca">Implementació del llenguatge Python al KDevelop</summary>
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python al KDevelop</summary>
@@ -40,6 +41,7 @@
   <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
   <summary xml:lang="x-test">xxPython language support for KDevelopxx</summary>
   <summary xml:lang="zh-CN">KDevelop 的 Python 语言支持</summary>
+  <summary xml:lang="zh-TW">KDevelop 的 Python 語言支援</summary>
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
@@ -61,6 +63,7 @@
   <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="x-test">xxSven Brauch &lt;mail@svenbrauch.de&gt;xx</developer_name>
   <developer_name xml:lang="zh-CN">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="zh-TW">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <project_license>GPL-2.0+</project_license>
   <metadata_license>CC0-1.0</metadata_license>
   <url type="homepage">https://kdevelop.org</url>

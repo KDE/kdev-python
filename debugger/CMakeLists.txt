@@ -11,7 +11,7 @@ set(kdevpdb_PART_SRCS
 ecm_qt_declare_logging_category(kdevpdb_PART_SRCS
     HEADER debuggerdebug.h
     IDENTIFIER KDEV_PYTHON_DEBUGGER
-    CATEGORY_NAME "kdevelop.languages.python.debugger"
+    CATEGORY_NAME "kdevelop.plugins.python.debugger"
 )
 
 kdevplatform_add_plugin(kdevpdb JSON kdevpdb.json SOURCES ${kdevpdb_PART_SRCS})

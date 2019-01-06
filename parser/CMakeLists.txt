@@ -11,7 +11,7 @@ set(parser_STAT_SRCS
 ecm_qt_declare_logging_category(parser_STAT_SRCS
     HEADER parserdebug.h
     IDENTIFIER KDEV_PYTHON_PARSER
-    CATEGORY_NAME "kdevelop.languages.python.parser"
+    CATEGORY_NAME "kdevelop.plugins.python.parser"
 )
 
 include_directories(${PYTHON_INCLUDE_DIRS})

@@ -2,9 +2,9 @@
 # Format:
 # logname<space>description
 
-kdevelop.languages.python KDevelop plugin: Python language support
-kdevelop.languages.python.codecompletion KDevelop plugin: Python language support - codecompletion
-kdevelop.languages.python.codegen KDevelop plugin: Python language support - codegen 
-kdevelop.languages.python.debugger KDevelop plugin: Python language support - debugger
-kdevelop.languages.python.duchain KDevelop plugin: Python language support - duchain
-kdevelop.languages.python.parser KDevelop plugin: Python language support - parser
+kdevelop.plugins.python KDevelop plugin: Python language support
+kdevelop.plugins.python.codecompletion KDevelop plugin: Python language support - codecompletion
+kdevelop.plugins.python.codegen KDevelop plugin: Python language support - codegen 
+kdevelop.plugins.python.debugger KDevelop plugin: Python language support - debugger
+kdevelop.plugins.python.duchain KDevelop plugin: Python language support - duchain
+kdevelop.plugins.python.parser KDevelop plugin: Python language support - parser

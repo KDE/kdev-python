@@ -528,12 +528,6 @@ def enumerate(sequence, start = 0):
 def eval(expression, glob = None, loc = None):
     """The expression argument is parsed and evaluated as a Python expression (technically speaking, a condition list) using the globals and locals dictionaries as global and local namespace."""
     return None
-def execfile(filename, glob = None, loc = None):
-    """This function is similar to the exec statement, but parses a file instead of a string. It is different from the import statement in that it does not use the module administration — it reads the file unconditionally and does not create a new module. """
-    return None
-def file(filename, mode = None, bufsize = None):
-    """Constructor function for the file type, described further in section File Objects."""
-    return _io_TextIOWrapper()
 def filter(function, iterable):
     """Construct a list from those elements of iterable for which function returns true. iterable may be either a sequence, a container which supports iteration, or an iterator. If iterable is a string or a tuple, the result also has that type; otherwise it is always a list. If function is None, the identity function is assumed, that is, all elements of iterable that are false are removed."""
     return []

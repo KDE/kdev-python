@@ -27,7 +27,7 @@ set(duchain_SRCS
 ecm_qt_declare_logging_category(duchain_SRCS
     HEADER duchaindebug.h
     IDENTIFIER KDEV_PYTHON_DUCHAIN
-    CATEGORY_NAME "kdevelop.languages.python.duchain"
+    CATEGORY_NAME "kdevelop.plugins.python.duchain"
 )
 
 add_library( kdevpythonduchain SHARED ${duchain_SRCS} )

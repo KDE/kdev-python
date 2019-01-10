@@ -1345,6 +1345,8 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 }
 
 void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node) {
+    AstDefaultVisitor::visitAnnotationAssignment(node);
+
     ExpressionVisitor v(currentContext());
     v.visitNode(node->target);
     v.visitNode(node->value);

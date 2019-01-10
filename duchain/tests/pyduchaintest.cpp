@@ -443,6 +443,10 @@ void PyDUChainTest::testCrashes_data() {
         "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
 #endif
     QTest::newRow("comprehension_in_lambda") << "lambda foo: [bar for bar in foo]";
+    QTest::newRow("comprehension_in_annassign_1") << "foo: int = [x for x in (42,)][0]";
+    QTest::newRow("comprehension_in_annassign_2") << "foo: [t for t in (int,)][0] = 42";
+    QTest::newRow("lambda_in_annassign_1") << "foo: int = (lambda: 42)()";
+    QTest::newRow("lambda_in_annassign_2") << "foo: (lambda: int)() = 42";
     QTest::newRow("definition_in_baseclass_1") << "class Foo(lambda x: 1): pass";
     QTest::newRow("definition_in_baseclass_2") << "class Foo([x for x in (1, 2)]): pass";
 }

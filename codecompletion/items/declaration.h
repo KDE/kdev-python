@@ -44,7 +44,7 @@ public:
 
     QWidget* createExpandingWidget(const CodeCompletionModel* /*model*/) const override
     {
-        return new Python::NavigationWidget(m_declaration, {}, {}, {}, KDevelop::AbstractNavigationWidget::EmbeddableWidget);
+        return new Python::NavigationWidget(m_declaration, {}, KDevelop::AbstractNavigationWidget::EmbeddableWidget);
     }
 
 protected:

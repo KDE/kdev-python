@@ -39,24 +39,22 @@ REGISTER_DUCHAIN_ITEM_WITH_DATA(PythonNormalDUContext, DUContextData);
 
 template<>
 QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
-                                                    const QString& htmlPrefix, const QString& htmlSuffix,
                                                     KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
         return nullptr;
     }
-    return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix, hints);
+    return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), hints);
 }
 
 template<>
 QWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
-                                                       const QString& htmlPrefix, const QString& htmlSuffix,
                                                        KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
         return nullptr;
     }
-    return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), htmlPrefix, htmlSuffix, hints);
+    return new NavigationWidget(DeclarationPointer(decl), TopDUContextPointer(topContext), hints);
 }
 
 }

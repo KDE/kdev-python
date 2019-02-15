@@ -38,7 +38,7 @@ REGISTER_DUCHAIN_ITEM_WITH_DATA(PythonTopDUContext, TopDUContextData);
 REGISTER_DUCHAIN_ITEM_WITH_DATA(PythonNormalDUContext, DUContextData);
 
 template<>
-QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
+KDevelop::AbstractNavigationWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
                                                     KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";
@@ -48,7 +48,7 @@ QWidget* PythonTopDUContext::createNavigationWidget(Declaration* decl, TopDUCont
 }
 
 template<>
-QWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
+KDevelop::AbstractNavigationWidget* PythonNormalDUContext::createNavigationWidget(Declaration* decl, TopDUContext* topContext,
                                                        KDevelop::AbstractNavigationWidget::DisplayHints hints) const {
     if ( ! decl ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "no declaration, not returning navigationwidget";

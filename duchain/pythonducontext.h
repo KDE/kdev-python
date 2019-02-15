@@ -24,8 +24,6 @@
 #include <language/duchain/ducontext.h>
 #include <language/editor/modificationrevision.h>
 
-class QWidget;
-
 namespace KDevelop
 {
     class Declaration;
@@ -58,10 +56,10 @@ public:
     PythonDUContext(const Param1& p1, const Param2& p2) : BaseContext(p1, p2) {
         static_cast<KDevelop::DUChainBase*>(this)->d_func_dynamic()->setClassId(this);
     }
-    
-    QWidget* createNavigationWidget(KDevelop::Declaration* decl, KDevelop::TopDUContext* topContext, 
+
+    KDevelop::AbstractNavigationWidget* createNavigationWidget(KDevelop::Declaration* decl, KDevelop::TopDUContext* topContext,
                                             KDevelop::AbstractNavigationWidget::DisplayHints hints) const override;
-    
+
     enum {
         Identity = IdentityT
     };

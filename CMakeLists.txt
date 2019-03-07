@@ -1,13 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
-project(kdevpython)
-
-# write the plugin version to a file
-set(KDEVPYTHON_VERSION_MAJOR 5)
-set(KDEVPYTHON_VERSION_MINOR 3)
-set(KDEVPYTHON_VERSION_PATCH 40)
+project(kdevpython VERSION 5.3.40)
 
 # KDevplatform dependency version
-set( KDEVPLATFORM_VERSION "${KDEVPYTHON_VERSION_MAJOR}.${KDEVPYTHON_VERSION_MINOR}" )
+set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
 find_package (ECM "5.14.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})

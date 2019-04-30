@@ -12,6 +12,7 @@
   <name xml:lang="fr">Prise en charge de Python pour KDevelop</name>
   <name xml:lang="gl">Compatibilidade con Python para KDevelop</name>
   <name xml:lang="it">Supporto Python per KDevelop</name>
+  <name xml:lang="ko">KDevelop Python 지원</name>
   <name xml:lang="nl">Python ondersteuning in KDevelop</name>
   <name xml:lang="pl">Obsługa Pythona w KDevelop</name>
   <name xml:lang="pt">Suporte para Python do KDevelop</name>
@@ -32,6 +33,7 @@
   <summary xml:lang="fr">Prise en charge du langage Python pour KDevelop</summary>
   <summary xml:lang="gl">Compatibilidade coa linguaxe Python para KDevelop</summary>
   <summary xml:lang="it">Supporto per il linguaggio Python in KDevelop</summary>
+  <summary xml:lang="ko">KDevelop을 위한 Python 언어 지원</summary>
   <summary xml:lang="nl">Ondersteuning voor de taal Python voor KDevelop</summary>
   <summary xml:lang="pl">Obsługa języka Python dla KDevelop</summary>
   <summary xml:lang="pt">Suporte para a linguagem Python no KDevelop</summary>
@@ -54,6 +56,7 @@
   <developer_name xml:lang="fr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="gl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="it">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="ko">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="nl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="pl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="pt">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

@@ -144,6 +144,10 @@ install(FILES codestyle.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
 install(FILES org.kde.kdev-python.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 # kdebugsettings file
-install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+if (ECM_VERSION VERSION_GREATER "5.58.0")
+    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR})
+else()
+    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

@@ -78,4 +78,8 @@
   <url type="donation">https://www.kde.org/community/donations/?app=kdevelop</url>
   <project_group>KDE</project_group>
   <update_contact>mail@svenbrauch.de</update_contact>
+  <categories>
+    <category>Development</category>
+  </categories>
+  <icon type="stock">kdevelop</icon>
 </component>

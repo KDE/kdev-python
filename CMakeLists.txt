@@ -4,7 +4,7 @@ project(kdevpython VERSION 5.4.40)
 # KDevplatform dependency version
 set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-find_package (ECM "5.14.0" REQUIRED NO_MODULE)
+find_package (ECM "5.28.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -17,10 +17,6 @@ include(ECMAddTests)
 include(ECMSetupVersion)
 include(ECMQtDeclareLoggingCategory)
 
-if(NOT CMAKE_VERSION VERSION_LESS "3.10.0")
-    # Avoids bogus warnings with CMake 3.10+
-    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
-endif()
 if(POLICY CMP0071)
     # Avoids compat messages from CMake 3.10+, with Qt < 5.9.4
     # See https://bugreports.qt.io/browse/QTBUG-63442
@@ -58,9 +54,9 @@ endif()
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-set(QT_MIN_VERSION "5.5.0")
+set(QT_MIN_VERSION "5.7.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-set(KF5_DEP_VERSION "5.15.0")
+set(KF5_DEP_VERSION "5.28.0")
 find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
     I18n
     ThreadWeaver
@@ -68,6 +64,11 @@ find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
 )
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
+
+if(NOT CMAKE_VERSION VERSION_LESS "3.10.0" AND KF5_VERSION VERSION_LESS "5.42.0")
+    # Avoids bogus warnings with CMake 3.10+, KF5.42+ has workaround
+    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
+endif()
 
 if ( NOT WIN32 )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
@@ -144,10 +145,16 @@ install(FILES codestyle.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
 install(FILES org.kde.kdev-python.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 # kdebugsettings file
+# kdebugsettings >= 18.12 supports/pushes for some newer, not backward-compatible format.
+# For ECM >= 5.59 we install categories files to new location, which is only supported by
+# newer kdebugsettings also supporting the new content format, so we use that as base.
 if (ECM_VERSION VERSION_GREATER "5.58.0")
-    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR})
+    install(FILES kdevpythonsupport-newformat.categories RENAME kdevpythonsupport.categories
+        DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
+    )
 else()
-    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+    install(FILES kdevpythonsupport-oldformat.categories RENAME kdevpythonsupport.categories
+        DESTINATION ${KDE_INSTALL_CONFDIR})
 endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

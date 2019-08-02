@@ -44,9 +44,6 @@ using namespace KDevelop;
 QTEST_MAIN(Python::PyCompletionTest)
 
 Q_DECLARE_METATYPE(QList<Python::RangeInString>)
-#if KTEXTEDITOR_VERSION < QT_VERSION_CHECK(5, 10, 0)
-Q_DECLARE_METATYPE(KTextEditor::Range)
-#endif
 
 static int testId = 0;
 static QString basepath = "/tmp/__kdevpythoncompletiontest.dir/";

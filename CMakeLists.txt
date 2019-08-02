@@ -4,7 +4,7 @@ project(kdevpython VERSION 5.3.80)
 # KDevplatform dependency version
 set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-find_package (ECM "5.14.0" REQUIRED NO_MODULE)
+find_package (ECM "5.28.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
@@ -58,9 +58,9 @@ endif()
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-set(QT_MIN_VERSION "5.5.0")
+set(QT_MIN_VERSION "5.7.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-set(KF5_DEP_VERSION "5.15.0")
+set(KF5_DEP_VERSION "5.28.0")
 find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
     I18n
     ThreadWeaver

@@ -17,10 +17,6 @@ include(ECMAddTests)
 include(ECMSetupVersion)
 include(ECMQtDeclareLoggingCategory)
 
-if(NOT CMAKE_VERSION VERSION_LESS "3.10.0")
-    # Avoids bogus warnings with CMake 3.10+
-    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
-endif()
 if(POLICY CMP0071)
     # Avoids compat messages from CMake 3.10+, with Qt < 5.9.4
     # See https://bugreports.qt.io/browse/QTBUG-63442
@@ -68,6 +64,11 @@ find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
 )
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
+
+if(NOT CMAKE_VERSION VERSION_LESS "3.10.0" AND KF5_VERSION VERSION_LESS "5.42.0")
+    # Avoids bogus warnings with CMake 3.10+, KF5.42+ has workaround
+    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
+endif()
 
 if ( NOT WIN32 )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")

@@ -145,10 +145,16 @@ install(FILES codestyle.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
 install(FILES org.kde.kdev-python.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 # kdebugsettings file
+# kdebugsettings >= 18.12 supports/pushes for some newer, not backward-compatible format.
+# For ECM >= 5.59 we install categories files to new location, which is only supported by
+# newer kdebugsettings also supporting the new content format, so we use that as base.
 if (ECM_VERSION VERSION_GREATER "5.58.0")
-    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR})
+    install(FILES kdevpythonsupport-newformat.categories RENAME kdevpythonsupport.categories
+        DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
+    )
 else()
-    install(FILES kdevpythonsupport.categories DESTINATION ${KDE_INSTALL_CONFDIR})
+    install(FILES kdevpythonsupport-oldformat.categories RENAME kdevpythonsupport.categories
+        DESTINATION ${KDE_INSTALL_CONFDIR})
 endif()
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

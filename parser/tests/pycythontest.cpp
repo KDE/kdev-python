@@ -39,10 +39,6 @@
 
 using namespace Python;
 
-#if KTEXTEDITOR_VERSION < QT_VERSION_CHECK(5, 10, 0)
-Q_DECLARE_METATYPE(KTextEditor::Range)
-#endif
-
 QTEST_MAIN(PyCythonTest)
 
 PyCythonTest::PyCythonTest(QObject* parent): QObject(parent)

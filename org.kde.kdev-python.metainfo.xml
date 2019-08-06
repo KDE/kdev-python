@@ -83,4 +83,9 @@
     <category>IDE</category>
   </categories>
   <update_contact>mail@svenbrauch.de</update_contact>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://cdn.kde.org/screenshots/kdev-python/kdev-python.png</image>
+    </screenshot>
+  </screenshots>
 </component>

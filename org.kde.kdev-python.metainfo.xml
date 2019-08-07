@@ -46,6 +46,11 @@
   <summary xml:lang="x-test">xxPython language support for KDevelopxx</summary>
   <summary xml:lang="zh-CN">KDevelop 的 Python 语言支持</summary>
   <summary xml:lang="zh-TW">KDevelop 的 Python 語言支援</summary>
+  <description>
+    <p>Adds Python support to KDevelop.  Integration with code
+    highlighting, code completion, build system support, documentation
+    integration, debugging to KDevelop.</p>
+  </description>
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

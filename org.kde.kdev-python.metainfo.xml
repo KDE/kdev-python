@@ -47,7 +47,7 @@
   <summary xml:lang="zh-CN">KDevelop 的 Python 语言支持</summary>
   <summary xml:lang="zh-TW">KDevelop 的 Python 語言支援</summary>
   <description>
-    <p>Adds Python support to KDevelop.  Includes integration with code
+    <p>Adds Python support to KDevelop.  Includes adding integration with code
     highlighting, code completion, build system support, documentation
     linking and debugging support.</p>
     <p xml:lang="ca">Afegeix suport de Python al KDevelop. Integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, integració de la documentació i depuració al KDevelop.</p>

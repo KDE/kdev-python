@@ -50,6 +50,9 @@
     <p>Adds Python support to KDevelop.  Includes adding integration with code
     highlighting, code completion, build system support, documentation
     linking and debugging support.</p>
+    <p xml:lang="ca">Afegeix suport de Python al KDevelop. Afegeix els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços a la documentació i suport per a la depuració.</p>
+    <p xml:lang="uk">Додає підтримку Python до KDevelop. Включено інтеграцію із засобами підсвічування коду, автоматичне доповнення коду, підтримку систем збирання, інтеграцію посилань на документацію та засобів діагностики.</p>
+    <p xml:lang="x-test">xxAdds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.xx</p>
   </description>
   <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

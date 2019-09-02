@@ -7,9 +7,9 @@ set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 find_package (ECM "5.28.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
-include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEInstallDirs)
 include(KDECMakeSettings)
+include(KDECompilerSettings NO_POLICY_SCOPE)
 
 include(GenerateExportHeader)
 

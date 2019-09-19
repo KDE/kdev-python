@@ -49,6 +49,7 @@ public:
     void visitAssignment(AssignmentAst* node) override;
     void visitAugmentedAssignment(AugmentedAssignmentAst* node) override;
     void visitAnnotationAssignment(AnnotationAssignmentAst* node) override;
+    void visitAssignmentExpression(AssignmentExpressionAst* node) override;
     void visitFor(ForAst* node) override;
     void visitWhile(WhileAst* node) override;
     void visitIf(IfAst* node) override;
@@ -122,6 +123,7 @@ public:
     void visitAssignment(AssignmentAst* node) override { AstDefaultVisitor::visitAssignment(node); delete node; }
     void visitAugmentedAssignment(AugmentedAssignmentAst* node) override { AstDefaultVisitor::visitAugmentedAssignment(node); delete node; }
     void visitAnnotationAssignment(AnnotationAssignmentAst* node) override { AstDefaultVisitor::visitAnnotationAssignment(node); delete node; }
+    void visitAssignmentExpression(AssignmentExpressionAst* node) override { AstDefaultVisitor::visitAssignmentExpression(node); delete node; }
     void visitFor(ForAst* node) override { AstDefaultVisitor::visitFor(node); delete node; }
     void visitWhile(WhileAst* node) override { AstDefaultVisitor::visitWhile(node); delete node; }
     void visitIf(IfAst* node) override { AstDefaultVisitor::visitIf(node); delete node; }

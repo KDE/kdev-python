@@ -61,6 +61,7 @@ public:
     virtual void visitAssignment(AssignmentAst* node) { Q_UNUSED(node); };
     virtual void visitAugmentedAssignment(AugmentedAssignmentAst* node) { Q_UNUSED(node); };
     virtual void visitAnnotationAssignment(AnnotationAssignmentAst* node) { Q_UNUSED(node); };
+    virtual void visitAssignmentExpression(AssignmentExpressionAst* node) { Q_UNUSED(node); };
     virtual void visitFor(ForAst* node) { Q_UNUSED(node); };
     virtual void visitWhile(WhileAst* node) { Q_UNUSED(node); };
     virtual void visitIf(IfAst* node) { Q_UNUSED(node); };

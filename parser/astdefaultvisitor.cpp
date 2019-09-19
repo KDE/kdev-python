@@ -292,6 +292,12 @@ void AstDefaultVisitor::visitAnnotationAssignment(AnnotationAssignmentAst* node)
     visitNode(node->value);
 }
 
+void AstDefaultVisitor::visitAssignmentExpression(AssignmentExpressionAst* node)
+{
+    visitNode(node->target);
+    visitNode(node->value);
+}
+
 void AstDefaultVisitor::visitBinaryOperation(BinaryOperationAst* node)
 {
     visitNode(node->lhs);

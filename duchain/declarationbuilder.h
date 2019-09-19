@@ -90,6 +90,7 @@ protected:
     void visitFunctionDefinition(FunctionDefinitionAst* node) override;
     void visitAssignment(AssignmentAst* node) override;
     void visitAnnotationAssignment(AnnotationAssignmentAst* node) override;
+    void visitAssignmentExpression(AssignmentExpressionAst* node) override;
     void visitFor(ForAst* node) override;
     void visitImport(ImportAst* node) override;
     void visitImportFrom(ImportFromAst* node) override;

@@ -131,6 +131,7 @@ public:
         SliceAstType,
         EllipsisAstType,
         IndexAstType,
+        AssignmentExpressionAstType,
         LastExpressionType, // keep this at the end of the expr ast list
 
         CodeAstType,
@@ -457,6 +458,13 @@ public:
     ExpressionAst* value; // WARNING this is not set in most cases!
 };
 
+class KDEVPYTHONPARSER_EXPORT AssignmentExpressionAst : public ExpressionAst {
+public:
+    AssignmentExpressionAst(Ast* parent);
+    ExpressionAst* target;
+    ExpressionAst* value;
+};
+
 class KDEVPYTHONPARSER_EXPORT AwaitAst : public ExpressionAst {
 public:
     AwaitAst(Ast* parent);
@@ -743,6 +751,7 @@ public:
     ArgumentsAst(Ast* parent);
     QList<ArgAst*> arguments;
     QList<ArgAst*> kwonlyargs;
+    QList<ArgAst*> posonlyargs;
     QList<ExpressionAst*> defaultValues;
     ArgAst* vararg;
     ArgAst* kwarg;

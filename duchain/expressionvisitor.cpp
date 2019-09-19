@@ -757,5 +757,9 @@ void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
     encounter(result);
 }
 
+void ExpressionVisitor::visitAssignmentExpression(Python::AssignmentExpressionAst* node) {
+    visitNode(node->value);
+}
+
 }
 

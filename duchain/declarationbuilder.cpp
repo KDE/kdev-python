@@ -1354,6 +1354,14 @@ void DeclarationBuilder::visitAnnotationAssignment(AnnotationAssignmentAst* node
     assignToUnknown(node->target, assignType);
 }
 
+void DeclarationBuilder::visitAssignmentExpression(AssignmentExpressionAst* node) {
+    AstDefaultVisitor::visitAssignmentExpression(node);
+
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->value);
+    assignToUnknown(node->target, v.lastType());
+}
+
 void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
 {
     visitNodeList(node->decorators);
@@ -1745,7 +1753,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int parametersCount = node->arguments.length();
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
     int currentIndex = 0;
-    foreach ( ArgAst* arg, node->arguments + node->kwonlyargs ) {
+    foreach ( ArgAst* arg, node->posonlyargs + node->arguments + node->kwonlyargs ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
         currentIndex += 1;

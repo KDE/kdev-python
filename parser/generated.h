@@ -76,12 +76,23 @@ private:
     Ast* visitNode(_arguments* node) {
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         if ( ! node ) return nullptr;
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
                 ArgumentsAst* v = new  ArgumentsAst(parent());
             nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
             nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
             nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
             nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
             nodeStack.push(v); v->kwonlyargs = visitNodeList<_arg, ArgAst>(node->kwonlyargs); nodeStack.pop();
+#endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+                ArgumentsAst* v = new  ArgumentsAst(parent());
+            nodeStack.push(v); v->vararg = static_cast<ArgAst*>(visitNode(node->vararg)); nodeStack.pop();
+            nodeStack.push(v); v->kwarg = static_cast<ArgAst*>(visitNode(node->kwarg)); nodeStack.pop();
+            nodeStack.push(v); v->arguments = visitNodeList<_arg, ArgAst>(node->args); nodeStack.pop();
+            nodeStack.push(v); v->defaultValues = visitNodeList<_expr, ExpressionAst>(node->defaults); nodeStack.pop();
+            nodeStack.push(v); v->kwonlyargs = visitNodeList<_arg, ArgAst>(node->kwonlyargs); nodeStack.pop();
+            nodeStack.push(v); v->posonlyargs = visitNodeList<_arg, ArgAst>(node->posonlyargs); nodeStack.pop();
+#endif
         return v;
     }
 
@@ -280,18 +291,22 @@ private:
                 break;
             }
 #endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         case Num_kind: {
                 NumberAst* v = new  NumberAst(parent());
  v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);
                 result = v;
                 break;
             }
+#endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         case Str_kind: {
                 StringAst* v = new  StringAst(parent());
                 v->value = PyUnicodeObjectToQString(node->v.Str.s);
                 result = v;
                 break;
             }
+#endif
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         case JoinedStr_kind: {
                 JoinedStringAst* v = new  JoinedStringAst(parent());
@@ -310,12 +325,14 @@ private:
                 break;
             }
 #endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         case Bytes_kind: {
                 BytesAst* v = new  BytesAst(parent());
                 v->value = PyUnicodeObjectToQString(node->v.Bytes.s);
                 result = v;
                 break;
             }
+#endif
         case Attribute_kind: {
                 AttributeAst* v = new  AttributeAst(parent());
                 v->attribute = node->v.Attribute.attr ? new Python::Identifier(PyUnicodeObjectToQString(node->v.Attribute.attr)) : nullptr;
@@ -374,23 +391,42 @@ private:
                 result = v;
                 break;
             }
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         case Ellipsis_kind: {
                 EllipsisAst* v = new  EllipsisAst(parent());
                 result = v;
                 break;
             }
+#endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         case NameConstant_kind: {
                 NameConstantAst* v = new  NameConstantAst(parent());
                 v->value = node->v.NameConstant.value == Py_None ? NameConstantAst::None : node->v.NameConstant.value == Py_False ? NameConstantAst::False : NameConstantAst::True;
                 result = v;
                 break;
             }
+#endif
         case YieldFrom_kind: {
                 YieldFromAst* v = new  YieldFromAst(parent());
                 nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.YieldFrom.value)); nodeStack.pop();
                 result = v;
                 break;
             }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+        case Constant_kind: {
+PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstantAst* v = new NameConstantAst(parent());    v->value = NameConstantAst::None;    result = v;}else if (value == Py_True) {    NameConstantAst* v = new  NameConstantAst(parent());    v->value = NameConstantAst::True;    result = v;}else if (value == Py_False) {    NameConstantAst* v = new  NameConstantAst(parent());    v->value = NameConstantAst::False;    result = v;}else if (value->ob_type == &PyLong_Type) {    NumberAst* v = new NumberAst(parent());    v->isInt = true;    v->value = PyLong_AsLong(value);    result = v;}else if (value->ob_type == &PyFloat_Type || value->ob_type == &PyComplex_Type) {    result = new NumberAst(parent());}else if (value->ob_type == &PyUnicode_Type) {    StringAst* v = new StringAst(parent());    v->value = PyUnicodeObjectToQString(value);    result = v;}else if (value->ob_type == &PyBytes_Type) {    result = new BytesAst(parent());}else if (value->ob_type == &PyEllipsis_Type) {    result = new EllipsisAst(parent());}else {    qWarning() << "Unhandled constant type: " << value->ob_type->tp_name;    Q_ASSERT(false);};
+                break;
+            }
+#endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+        case NamedExpr_kind: {
+                AssignmentExpressionAst* v = new  AssignmentExpressionAst(parent());
+                nodeStack.push(v); v->target = static_cast<ExpressionAst*>(visitNode(node->v.NamedExpr.target)); nodeStack.pop();
+                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.NamedExpr.value)); nodeStack.pop();
+                result = v;
+                break;
+            }
+#endif
         default:
             qWarning() << "Unsupported _expr AST type: " << node->kind;
             Q_ASSERT(false);

@@ -101,7 +101,13 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     PythonInitializer pyIniter(pyInitLock);
     PyArena* arena = pyIniter.arena;
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+    PyCompilerFlags flags;
+    flags.cf_flags = PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE | PyCF_ONLY_AST;
+    flags.cf_feature_version = 7;
+#else
     PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
+#endif
 
     CythonSyntaxRemover cythonSyntaxRemover;
 

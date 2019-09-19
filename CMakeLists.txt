@@ -31,7 +31,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 # CMake looks for exactly the specified version first and ignores newer versions.
 # To avoid that, start looking for the newest supported version and work down.
-set(Python_ADDITIONAL_VERSIONS 3.7 3.6 3.5 3.4)
+set(Python_ADDITIONAL_VERSIONS 3.8 3.7 3.6 3.5 3.4)
 foreach(_PYTHON_V ${Python_ADDITIONAL_VERSIONS})
     find_package(PythonInterp ${_PYTHON_V})
     if ( PYTHONINTERP_FOUND )
@@ -49,7 +49,7 @@ if ( PYTHONINTERP_FOUND AND PYTHON_VERSION_STRING VERSION_GREATER "3.4" )
 endif()
 
 if ( NOT PYTHONLIBS_FOUND OR PYTHONLIBS_VERSION_STRING VERSION_LESS "3.4.3" )
-    message(FATAL_ERROR "Python >= 3.4.3 but < 3.8 with --enable-shared is required to build kdev-python")
+    message(FATAL_ERROR "Python >= 3.4.3 but < 3.9 with --enable-shared is required to build kdev-python")
 endif()
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)

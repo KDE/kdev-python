@@ -47,6 +47,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::AssignmentAstType:                            this->visitAssignment(static_cast<AssignmentAst*>(node)); break;
         case Ast::AugmentedAssignmentAstType:                   this->visitAugmentedAssignment(static_cast<AugmentedAssignmentAst*>(node)); break;
         case Ast::AnnotationAssignmentAstType:                  this->visitAnnotationAssignment(static_cast<AnnotationAssignmentAst*>(node)); break;
+        case Ast::AssignmentExpressionAstType:                  this->visitAssignmentExpression(static_cast<AssignmentExpressionAst*>(node)); break;
         case Ast::ForAstType:                                   this->visitFor(static_cast<ForAst*>(node)); break;
         case Ast::WhileAstType:                                 this->visitWhile(static_cast<WhileAst*>(node)); break;
         case Ast::IfAstType:                                    this->visitIf(static_cast<IfAst*>(node)); break;

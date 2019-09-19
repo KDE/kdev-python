@@ -238,6 +238,11 @@ void PyAstTest::testExpressions_data()
         "       **{ext: self.res_extension for ext in self._rc_extensions + self._mc_extensions},\n"
     "}";
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+    QTest::newRow("assignment_expr_1") << "a = (b := 10)";
+    QTest::newRow("assignment_expr_2") << "a = [q for z in (1, 2, 3) if (q := 2*z)]";
+    QTest::newRow("positional_params") << "def foo(a, b, /, c, d, *, e): pass";
+#endif
 }
 
 void PyAstTest::testCorrectedFuncRanges()

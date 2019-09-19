@@ -838,6 +838,7 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("init_class_no_decl", "aliasing info lost", Continue);
     QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
     QEXPECT_FAIL("property_setter", "very basic property support", Continue);
+    QEXPECT_FAIL("assignment_expr_context", "not implemented", Continue);
     QCOMPARE(visitor->found, true);
 }
 
@@ -1302,6 +1303,21 @@ void PyDUChainTest::testTypes_data()
         "        def foo(self, ccc=aaa, ddd=bbb):\n" // self.bbb is visible here, Foo().aaa isn't.
         "            return ccc, ddd\n"
         "checkme = Foo().Bar().foo()\n" << "tuple of (str, int)";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+    QTest::newRow("assignment_expr_while") <<
+        "file = open('foo.txt')\n"
+        "while q := file.readline():\n"
+        "    checkme = q\n" << "str";
+    QTest::newRow("assignment_expr_comprehension") <<
+        "checkme = [z for q in (1, 2, 3) if (z := q % 2)]" << "list of int";
+    QTest::newRow("assignment_expr_context") <<
+        "a = [z for q in (1, 2, 3) if (z := q % 2)]\n"
+        "checkme = z" << "int";
+    QTest::newRow("positional_params") <<
+    "def foo(a, b, /, c, d):\n"
+    "    return a, b, c, d\n"
+    "checkme = foo(10, 'x', 2.3, d='y')\n" << "tuple of (int, str, float, str)";
+#endif
 }
 
 typedef QPair<Declaration*, int> pair;
@@ -1780,6 +1796,9 @@ void PyDUChainTest::testVariableCreation_data()
                                                                                 << QStringList{"int", "int", "float"};
     QTest::newRow("for_loop_tuple") << "for a in 1, 2: pass" << QStringList{"a"} << QStringList{"int"};
     QTest::newRow("for_loop_dict") << "for a in {'foo': 1}: pass" << QStringList{"a"} << QStringList{"str"};
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
+    QTest::newRow("assignment_expr") << "a = (b := 10)" << QStringList{"a", "b"} << QStringList{"int", "int"};
+#endif
 }
 
 void PyDUChainTest::testCleanupMultiplePasses()

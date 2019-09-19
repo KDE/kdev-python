@@ -81,6 +81,7 @@ public:
     void visitSetComprehension(SetComprehensionAst* node) override;
     void visitIfExpression(IfExpressionAst* node) override;
     void visitNameConstant(NameConstantAst* node) override;
+    void visitAssignmentExpression(AssignmentExpressionAst* node) override;
 
     /**
      * @brief Checks for magic docstrings that override a call's return type.

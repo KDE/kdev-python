@@ -73,20 +73,62 @@ if (node->v.Call.kwargs) {
     v->keywords.append(kwargs);
     nodeStack.pop();
 };;
-RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;CODE v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);;
-RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;;
+RULE_FOR _expr;KIND Num_kind;ACTIONS create|NumberAst;BEFORE 3.8;CODE v->isInt = PyLong_Check(node->v.Num.n); v->value = PyLong_AsLong(node->v.Num.n);;
+RULE_FOR _expr;KIND Str_kind;ACTIONS create|StringAst set|value$>s;BEFORE 3.8;;
 RULE_FOR _expr;KIND JoinedStr_kind;ACTIONS create|JoinedStringAst set|values=>ExpressionAst,values;SINCE 3.6;;
 RULE_FOR _expr;KIND FormattedValue_kind;ACTIONS create|FormattedValueAst set|value->ExpressionAst,value set|conversion:>conversion set|formatSpec->ExpressionAst,format_spec;SINCE 3.6;;
-RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;;
+RULE_FOR _expr;KIND Bytes_kind;ACTIONS create|BytesAst set|value$>s;BEFORE 3.8;;
 RULE_FOR _expr;KIND Attribute_kind;ACTIONS create|AttributeAst set|attribute~>attr set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Subscript_kind;ACTIONS create|SubscriptAst set|value->ExpressionAst,value set|slice->SliceAst,slice set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Starred_kind;ACTIONS create|StarredAst set|value->ExpressionAst,value set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Name_kind;ACTIONS create|NameAst set|identifier~>id set|context*>Context,ctx;;
 RULE_FOR _expr;KIND List_kind;ACTIONS create|ListAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
 RULE_FOR _expr;KIND Tuple_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,elts set|context*>Context,ctx;;
-RULE_FOR _expr;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;;
-RULE_FOR _expr;KIND NameConstant_kind;ACTIONS create|NameConstantAst set|value_>value;;
+RULE_FOR _expr;KIND Ellipsis_kind;ACTIONS create|EllipsisAst;BEFORE 3.8;;
+RULE_FOR _expr;KIND NameConstant_kind;ACTIONS create|NameConstantAst set|value_>value;BEFORE 3.8;;
 RULE_FOR _expr;KIND YieldFrom_kind;ACTIONS create|YieldFromAst set|value->ExpressionAst,value;;
+RULE_FOR _expr;KIND Constant_kind;ACTIONS;SINCE 3.8;CODE
+PyObject *value = node->v.Constant.value;
+if (value == Py_None) {
+    NameConstantAst* v = new NameConstantAst(parent());
+    v->value = NameConstantAst::None;
+    result = v;
+}
+else if (value == Py_True) {
+    NameConstantAst* v = new  NameConstantAst(parent());
+    v->value = NameConstantAst::True;
+    result = v;
+}
+else if (value == Py_False) {
+    NameConstantAst* v = new  NameConstantAst(parent());
+    v->value = NameConstantAst::False;
+    result = v;
+}
+else if (value->ob_type == &PyLong_Type) {
+    NumberAst* v = new NumberAst(parent());
+    v->isInt = true;
+    v->value = PyLong_AsLong(value);
+    result = v;
+}
+else if (value->ob_type == &PyFloat_Type || value->ob_type == &PyComplex_Type) {
+    result = new NumberAst(parent());
+}
+else if (value->ob_type == &PyUnicode_Type) {
+    StringAst* v = new StringAst(parent());
+    v->value = PyUnicodeObjectToQString(value);
+    result = v;
+}
+else if (value->ob_type == &PyBytes_Type) {
+    result = new BytesAst(parent());
+}
+else if (value->ob_type == &PyEllipsis_Type) {
+    result = new EllipsisAst(parent());
+}
+else {
+    qWarning() << "Unhandled constant type: " << value->ob_type->tp_name;
+    Q_ASSERT(false);
+};;
+RULE_FOR _expr;KIND NamedExpr_kind;ACTIONS create|AssignmentExpressionAst set|target->ExpressionAst,target set|value->ExpressionAst,value;SINCE 3.8;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
 RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;
@@ -95,7 +137,8 @@ RULE_FOR _slice;KIND Index_kind;ACTIONS create|IndexAst set|value->ExpressionAst
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;
 RULE_FOR _excepthandler;KIND ExceptHandler_kind;ACTIONS create|ExceptionHandlerAst set|type->ExpressionAst,type set|name~>name set|body=>Ast,body;;
-RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg->ArgAst,vararg set|kwarg->ArgAst,kwarg set|arguments=>ArgAst,args set|defaultValues=>ExpressionAst,defaults set|kwonlyargs=>ArgAst,kwonlyargs;;
+RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg->ArgAst,vararg set|kwarg->ArgAst,kwarg set|arguments=>ArgAst,args set|defaultValues=>ExpressionAst,defaults set|kwonlyargs=>ArgAst,kwonlyargs;BEFORE 3.8;;
+RULE_FOR _arguments;KIND any;ACTIONS create|ArgumentsAst set|vararg->ArgAst,vararg set|kwarg->ArgAst,kwarg set|arguments=>ArgAst,args set|defaultValues=>ExpressionAst,defaults set|kwonlyargs=>ArgAst,kwonlyargs set|posonlyargs=>ArgAst,posonlyargs;SINCE 3.8;;
 RULE_FOR _arg;KIND any;ACTIONS create|ArgAst set|argumentName~>arg set|annotation->ExpressionAst,annotation;;
 RULE_FOR _keyword;KIND any;ACTIONS create|KeywordAst set|argumentName~>arg set|value->ExpressionAst,value;;
 RULE_FOR _alias;KIND any;ACTIONS create|AliasAst set|name~>name set|asName~>asname;;

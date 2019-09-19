@@ -163,6 +163,11 @@ ExpressionAst::ExpressionAst(Ast* parent, AstType type): Ast(parent, type), valu
     
 }
 
+AssignmentExpressionAst::AssignmentExpressionAst(Ast* parent): ExpressionAst(parent, Ast::AssignmentExpressionAstType), value(nullptr)
+{
+
+}
+
 YieldFromAst::YieldFromAst(Ast* parent) : ExpressionAst(parent, Ast::YieldFromAstType)
 {
 
@@ -248,7 +253,7 @@ NameConstantAst::NameConstantAst(Ast* parent): ExpressionAst(parent, Ast::NameCo
 
 }
 
-NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0)
+NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0), isInt(false)
 {
     
 }

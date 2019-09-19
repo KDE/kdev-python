@@ -9,7 +9,7 @@
 
 import sys
 
-contents = open('python36.sdef').read().replace("\n", "").split(';;')
+contents = open('python38.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {
@@ -45,7 +45,6 @@ simple_func_structure = '''
 
 switch_line = '''        case %{KIND}: {
 %{ACTIONS}
-                result = v;
                 break;
             }'''
 
@@ -139,6 +138,7 @@ for rule in contents:
         results[rule_for] = list()
     
     current_actions = list()
+    created_v = False
     for action in actions:
         command = action.split('|')[0]
         try:
@@ -204,14 +204,17 @@ for rule in contents:
         elif command == 'create':
             astType = arguments
             current_actions.append(create_ast_line.replace('%{AST_TYPE}', astType))
-    
+            created_v = True
+
     if code:
         current_actions.append(code);
-    
+
     current_actions = "\n".join(current_actions)
     if kind == 'any':
         current_stmt = current_actions
     else:
+        if created_v:
+            current_actions += "\n                result = v;"
         current_stmt = switch_line.replace('%{KIND}', kind).replace('%{ACTIONS}', current_actions)
     if before_version:
         version_cpp_if = ("#if PYTHON_VERSION < QT_VERSION_CHECK(%d, %d, 0)\n"

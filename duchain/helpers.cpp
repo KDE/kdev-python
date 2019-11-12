@@ -43,10 +43,7 @@
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
 #include <interfaces/idocumentcontroller.h>
-#include <interfaces/ipartcontroller.h>
 #include <util/path.h>
-
-#include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
 #include <KConfigGroup>
@@ -95,7 +92,7 @@ void Helper::scheduleDependency(const IndexedString& dependency, int betterThanP
 IndexedDeclaration Helper::declarationUnderCursor(bool allowUse)
 {
     KDevelop::IDocument* doc = ICore::self()->documentController()->activeDocument();
-    const auto view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView();
+    const auto view = ICore::self()->documentController()->activeTextDocumentView();
     if ( doc && doc->textDocument() && view ) {
         DUChainReadLocker lock;
         const auto cursor = view->cursorPosition();

@@ -23,7 +23,6 @@
 #include <language/duchain/types/functiontype.h>
 #include <language/duchain/aliasdeclaration.h>
 #include <language/duchain/types/containertypes.h>
-#include <shell/partcontroller.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>

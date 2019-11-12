@@ -21,8 +21,7 @@
 #include <language/duchain/duchainutils.h>
 #include <interfaces/icore.h>
 #include <interfaces/isession.h>
-
-#include <shell/partcontroller.h>
+#include <interfaces/idocumentcontroller.h>
 
 #include <KTextEditor/View>
 #include <KTextEditor/Document>
@@ -49,7 +48,7 @@ void ImplementFunctionCompletionItem::execute(KTextEditor::View* view, const KTe
     // 4 spaces is indentation for python. everyone does it like this. you must, too.
     // TODO use kate settings
     document->insertLine(word.start().line() + 1, m_previousIndent + "    ");
-    if ( View* view = static_cast<KDevelop::PartController*>(ICore::self()->partController())->activeView() ) {
+    if ( View* view = ICore::self()->documentController()->activeTextDocumentView() ) {
         view->setCursorPosition(Cursor(word.end().line() + 1, m_previousIndent.length() + 4));
     }
 }

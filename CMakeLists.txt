@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-project(kdevpython VERSION 5.4.40)
+project(kdevpython VERSION 5.5.40)
 
 # KDevplatform dependency version
 set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")

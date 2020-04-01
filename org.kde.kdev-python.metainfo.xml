@@ -52,6 +52,7 @@
     linking and debugging support.</p>
     <p xml:lang="ca">Afegeix suport de Python al KDevelop. Afegeix els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços a la documentació i suport per a la depuració.</p>
     <p xml:lang="ca-valencia">Afig suport de Python al KDevelop. Afig els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços a la documentació i suport per a la depuració.</p>
+    <p xml:lang="en-GB">Adds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.</p>
     <p xml:lang="es">Implementa el uso de Python en KDevelop. Incluye resaltado de código, terminación automática de código, uso de sistemas de compilación, enlaces de documentación y depuración.</p>
     <p xml:lang="fr">Ajoute la prise en charge de Python à KDevelop. Les fonctionnalités incluent la coloration syntaxique, le complètement du code, la prise en charge du système de compilation, les liens avec la documentation et la prise en charge du débogage.</p>
     <p xml:lang="gl">Engade compatibilidade con Python a KDevelop. Inclúe engadir integración con KDevelop para realce de código, completado de código, compatibilidade co sistema de construción, ligazóns á documentación e funcionalidade de depuración.</p>

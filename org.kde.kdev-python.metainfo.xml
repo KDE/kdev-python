@@ -18,6 +18,7 @@
   <name xml:lang="pl">Obsługa Pythona w KDevelop</name>
   <name xml:lang="pt">Suporte para Python do KDevelop</name>
   <name xml:lang="pt-BR">Suporte a Python no KDevelop</name>
+  <name xml:lang="ru">Поддержка Python для KDevelop</name>
   <name xml:lang="sk">Podpora jazyka Python pre KDevelop</name>
   <name xml:lang="sv">KDevelop Python-stöd</name>
   <name xml:lang="uk">Підтримка Python у KDevelop</name>
@@ -39,6 +40,7 @@
   <summary xml:lang="pl">Obsługa języka Python dla KDevelop</summary>
   <summary xml:lang="pt">Suporte para a linguagem Python no KDevelop</summary>
   <summary xml:lang="pt-BR">Suporte ao Python para o KDevelop</summary>
+  <summary xml:lang="ru">Поддержка языка программирования Python для KDevelop</summary>
   <summary xml:lang="sk">Podpora jazyka Python pre KDevelop</summary>
   <summary xml:lang="sv">Stöd för språket Python i KDevelop</summary>
   <summary xml:lang="tr">KDevelop için Python dil desteği</summary>

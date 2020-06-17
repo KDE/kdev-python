@@ -26,7 +26,6 @@
                 "Name[sv]": "Sven Brauch",
                 "Name[tr]": "Sven Brauch",
                 "Name[uk]": "Sven Brauch",
-                "Name[x-test]": "xxSven Brauchxx",
                 "Name[zh_CN]": "Sven Brauch",
                 "Name[zh_TW]": "Sven Brauch"
             }
@@ -55,7 +54,6 @@
         "Description[sv]": "Stöd för språket Python",
         "Description[tr]": "Python Dil Desteği",
         "Description[uk]": "Підтримка мови програмування Python",
-        "Description[x-test]": "xxPython Language Supportxx",
         "Description[zh_CN]": "Python 语言支持",
         "Description[zh_TW]": "Python 語言支援",
         "Icon": "text-x-python",
@@ -83,7 +81,6 @@
         "Name[sv]": "Python-stöd",
         "Name[tr]": "Python Desteği",
         "Name[uk]": "Підтримка Python",
-        "Name[x-test]": "xxPython Supportxx",
         "Name[zh_CN]": "Python 支持",
         "Name[zh_TW]": "Python 支援",
         "ServiceTypes": [

@@ -66,6 +66,7 @@
     <p xml:lang="pt">Adiciona o suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para a depuração.</p>
     <p xml:lang="pt-BR">Adiciona suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para depuração.</p>
     <p xml:lang="sk">Pridá podporu Pythonu do KDevelopu. Zahŕňa pridanie integrácie so zvýrazňovaním kódu, ukončovanie kódu, podpora systému zostavení, linkovanie dokumentácie a podporu ladenia.</p>
+    <p xml:lang="sl">Programu KDevelop doda podporo za Python. Vključuje dodatek integracije z označevanjem kode, dokončanje kode, gradnje podpore sistema, povezovanje dokumentacije in podporo za odpravljanje napak</p>
     <p xml:lang="sv">Lägger till stöd för Python i KDevelop. Inkluderar tillägg av integrering med kodfärgläggning, kodkomplettering, byggsystemstöd, dokumentationslänkning och avlusningsstöd.</p>
     <p xml:lang="uk">Додає підтримку Python до KDevelop. Включено інтеграцію із засобами підсвічування коду, автоматичне доповнення коду, підтримку систем збирання, інтеграцію посилань на документацію та засобів діагностики.</p>
     <p xml:lang="x-test">xxAdds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.xx</p>

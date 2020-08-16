@@ -50,7 +50,7 @@ public:
         for (auto it = m_deletedRanges.begin();
              it !=  m_deletedRanges.end();
              it++) {
-            qSort(it.value().begin(),  it.value().end());
+            std::sort(it.value().begin(),  it.value().end());
         }
     }
 

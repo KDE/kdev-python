@@ -244,16 +244,6 @@ public:
 class KDEVPYTHONPARSER_EXPORT Identifier : public Ast {
 public:
     Identifier(QString value);
-    Identifier operator=(const Identifier& other) {
-        value = other.value;
-        startCol = other.startCol;
-        endCol = other.endCol;
-        startLine = other.startLine;
-        endLine = other.endLine;
-        parent = other.parent;
-        hasUsefulRangeInformation = other.hasUsefulRangeInformation;
-        return *this;
-    };
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };

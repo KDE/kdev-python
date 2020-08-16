@@ -55,6 +55,12 @@
 #include "kdevpythonversion.h"
 #include "expressionvisitor.h"
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+#define SkipEmptyParts Qt::SkipEmptyParts
+#else
+#define SkipEmptyParts QString::SkipEmptyParts
+#endif
+
 using namespace KDevelop;
 
 namespace Python {
@@ -320,8 +326,8 @@ static QString _relativePath(const QString &base_dir, const QString &path)
    if (_base_dir[_base_dir.length()-1] != QLatin1Char('/'))
       _base_dir.append(QLatin1Char('/') );
 
-   const QStringList list1 = _base_dir.split(QLatin1Char('/'), QString::SkipEmptyParts);
-   const QStringList list2 = _path.split(QLatin1Char('/'), QString::SkipEmptyParts);
+   const QStringList list1 = _base_dir.split(QLatin1Char('/'), SkipEmptyParts);
+   const QStringList list2 = _path.split(QLatin1Char('/'), SkipEmptyParts);
 
    // Find where they meet
    int level = 0;
@@ -477,7 +483,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
 
         if ( ! pythonpath.isEmpty() ) {
-            const auto paths = pythonpath.split("$|$", QString::SkipEmptyParts);
+            const auto paths = pythonpath.split("$|$", SkipEmptyParts);
             foreach ( const QString& path, paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }

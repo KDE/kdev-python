@@ -37,6 +37,7 @@ class KDEVPYTHONPARSER_NO_EXPORT RangeFixVisitor : public AstDefaultVisitor {
 public:
     RangeFixVisitor(const QString& contents) : lines(contents.split('\n')) {};
     void visitNode(Ast* node) override;
+    void visitCode(Python::CodeAst* node) override;
     void visitFunctionDefinition(FunctionDefinitionAst* node) override;
     void visitClassDefinition(ClassDefinitionAst* node) override;
     void visitAttribute(AttributeAst* node) override;

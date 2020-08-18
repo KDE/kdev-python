@@ -55,7 +55,6 @@ namespace Python {
     class ExceptionHandlerAst;
     class AliasAst;
     class ComprehensionAst;
-    class SliceAstBase;
     class SliceAst;
 }
 
@@ -102,7 +101,6 @@ public:
         NameConstantAstType,
         CallAstType,
         AttributeAstType,
-        ExtendedSliceAstType,
         DictionaryComprehensionAstType,
         BooleanOperationAstType,
         BinaryOperationAstType,
@@ -127,10 +125,8 @@ public:
         TupleAstType,
         YieldFromAstType,
         ComprehensionAstType,
-
         SliceAstType,
         EllipsisAstType,
-        IndexAstType,
         AssignmentExpressionAstType,
         LastExpressionType, // keep this at the end of the expr ast list
 
@@ -681,7 +677,7 @@ class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {
 public:
     SubscriptAst(Ast* parent);
     ExpressionAst* value;
-    SliceAstBase* slice;
+    ExpressionAst* slice;
     ExpressionAst::Context context;
 };
 
@@ -706,18 +702,12 @@ public:
     ExpressionAst::Context context;
 };
 
-/** Slice classes **/
-class KDEVPYTHONPARSER_EXPORT SliceAstBase : public Ast {
-public:
-    SliceAstBase(Ast* parent, AstType type);
-};
-
-class KDEVPYTHONPARSER_EXPORT EllipsisAst : public SliceAstBase {
+class KDEVPYTHONPARSER_EXPORT EllipsisAst : public ExpressionAst {
 public:
     EllipsisAst(Ast* parent);
 };
 
-class KDEVPYTHONPARSER_EXPORT SliceAst : public SliceAstBase {
+class KDEVPYTHONPARSER_EXPORT SliceAst : public ExpressionAst {
 public:
     SliceAst(Ast* parent);
     ExpressionAst* lower;
@@ -725,17 +715,6 @@ public:
     ExpressionAst* step;
 };
 
-class KDEVPYTHONPARSER_EXPORT ExtendedSliceAst : public SliceAstBase {
-public:
-    ExtendedSliceAst(Ast* parent);
-    QList<SliceAst*> dims;
-};
-
-class KDEVPYTHONPARSER_EXPORT IndexAst : public SliceAstBase {
-public:
-    IndexAst(Ast* parent);
-    ExpressionAst* value;
-};
 
 /** Independent classes **/
 

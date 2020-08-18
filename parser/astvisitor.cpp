@@ -90,8 +90,6 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::TupleAstType:                                 this->visitTuple(static_cast<TupleAst*>(node)); break;
         case Ast::EllipsisAstType:                              this->visitEllipsis(static_cast<EllipsisAst*>(node)); break;
         case Ast::SliceAstType:                                 this->visitSlice(static_cast<SliceAst*>(node)); break;
-        case Ast::ExtendedSliceAstType:                         this->visitExtendedSlice(static_cast<ExtendedSliceAst*>(node)); break;
-        case Ast::IndexAstType:                                 this->visitIndex(static_cast<IndexAst*>(node)); break;
         case Ast::ArgumentsAstType:                             this->visitArguments(static_cast<ArgumentsAst*>(node)); break;
         case Ast::KeywordAstType:                               this->visitKeyword(static_cast<KeywordAst*>(node)); break;
         case Ast::ArgAstType:                                   this->visitArg(static_cast<ArgAst*>(node)); break;

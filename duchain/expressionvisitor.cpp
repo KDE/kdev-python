@@ -365,7 +365,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                 continue;
             }
         }
-        if ( (node->slice->astType != Ast::IndexAstType) && type.cast<ListType>() ) {
+        if ( (node->slice->astType == Ast::SliceAstType) && type.cast<ListType>() ) {
             if ( type.cast<MapType>() ) {
                 continue; // Can't slice dicts.
             }
@@ -373,7 +373,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             result = Helper::mergeTypes(result, type);
         }
         else if ( const auto& indexed = type.cast<IndexedContainer>() ) {
-            long sliceIndex = integerValue(static_cast<IndexAst*>(node->slice)->value, indexed->typesCount());
+            long sliceIndex = integerValue(node->slice, indexed->typesCount());
             if ( 0 <= sliceIndex && sliceIndex < indexed->typesCount() ) {
                 result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
                 continue;

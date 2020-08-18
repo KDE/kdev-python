@@ -313,6 +313,8 @@ for index, lines in sorted(results.items()):
         func = func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines).replace('%{APPENDIX}', appendix)
     else:
         func = simple_func_structure.replace('%{RULE_FOR}', index).replace('%{SWITCH_LINES}', current_switch_lines)
+    if index == '_slice':
+        func = "#if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)\n" + func + "\n#endif\n"
     print(func)
 
 print('''};

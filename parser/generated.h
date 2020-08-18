@@ -427,6 +427,16 @@ PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstant
                 break;
             }
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 9, 0)
+        case Slice_kind: {
+                SliceAst* v = new  SliceAst(parent());
+                nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
+                nodeStack.push(v); v->upper = static_cast<ExpressionAst*>(visitNode(node->v.Slice.upper)); nodeStack.pop();
+                nodeStack.push(v); v->step = static_cast<ExpressionAst*>(visitNode(node->v.Slice.step)); nodeStack.pop();
+                result = v;
+                break;
+            }
+#endif
         default:
             qWarning() << "Unsupported _expr AST type: " << node->kind;
             Q_ASSERT(false);
@@ -480,12 +490,14 @@ PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstant
         return v;
     }
 
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)
 
     Ast* visitNode(_slice* node) {
         if ( ! node ) return nullptr;
         bool ranges_copied = false; Q_UNUSED(ranges_copied);
         Ast* result = nullptr;
         switch ( node->kind ) {
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)
         case Slice_kind: {
                 SliceAst* v = new  SliceAst(parent());
                 nodeStack.push(v); v->lower = static_cast<ExpressionAst*>(visitNode(node->v.Slice.lower)); nodeStack.pop();
@@ -494,18 +506,21 @@ PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstant
                 result = v;
                 break;
             }
+#endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)
         case ExtSlice_kind: {
-                ExtendedSliceAst* v = new  ExtendedSliceAst(parent());
-                nodeStack.push(v); v->dims = visitNodeList<_slice, SliceAst>(node->v.ExtSlice.dims); nodeStack.pop();
+                TupleAst* v = new  TupleAst(parent());
+                nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.ExtSlice.dims); nodeStack.pop();
                 result = v;
                 break;
             }
+#endif
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)
         case Index_kind: {
-                IndexAst* v = new  IndexAst(parent());
-                nodeStack.push(v); v->value = static_cast<ExpressionAst*>(visitNode(node->v.Index.value)); nodeStack.pop();
-                result = v;
+ return visitNode(node->v.Index.value);
                 break;
             }
+#endif
         default:
             qWarning() << "Unsupported _slice AST type: " << node->kind;
             Q_ASSERT(false);
@@ -536,6 +551,8 @@ PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstant
         }
         return result;
     }
+
+#endif
 
 
     Ast* visitNode(_stmt* node) {

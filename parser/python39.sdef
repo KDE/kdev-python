@@ -129,10 +129,11 @@ else {
     Q_ASSERT(false);
 };;
 RULE_FOR _expr;KIND NamedExpr_kind;ACTIONS create|AssignmentExpressionAst set|target->ExpressionAst,target set|value->ExpressionAst,value;SINCE 3.8;;
+RULE_FOR _expr;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;SINCE 3.9;;
 
-RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;;
-RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|ExtendedSliceAst set|dims=>SliceAst,dims;;
-RULE_FOR _slice;KIND Index_kind;ACTIONS create|IndexAst set|value->ExpressionAst,value;;
+RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;BEFORE 3.9;;
+RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,dims;BEFORE 3.9;;
+RULE_FOR _slice;KIND Index_kind;ACTIONS;BEFORE 3.9;CODE return visitNode(node->v.Index.value);;
 
 
 RULE_FOR _comprehension;KIND any;ACTIONS create|ComprehensionAst set|target->ExpressionAst,target set|iterator->ExpressionAst,iter set|conditions=>ExpressionAst,ifs;;

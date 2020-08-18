@@ -1139,9 +1139,9 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     }
     auto map = MapType::Ptr::dynamicCast(list);
     if ( map ) {
-        if ( subscript->slice && subscript->slice->astType == Ast::IndexAstType ) {
+        if ( subscript->slice && subscript->slice->astType != Ast::SliceAstType) {
             ExpressionVisitor keyVisitor(currentContext());
-            keyVisitor.visitNode(static_cast<IndexAst*>(subscript->slice)->value);
+            keyVisitor.visitNode(subscript->slice);
             AbstractType::Ptr key = keyVisitor.lastType();
             if ( key ) {
                 map->addKeyType<Python::UnsureType>(key);

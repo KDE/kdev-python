@@ -106,8 +106,6 @@ public:
     virtual void visitTuple(TupleAst* node) { Q_UNUSED(node); };
     virtual void visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); };
     virtual void visitSlice(SliceAst* node) { Q_UNUSED(node); };
-    virtual void visitExtendedSlice(ExtendedSliceAst* node) { Q_UNUSED(node); };
-    virtual void visitIndex(IndexAst* node) { Q_UNUSED(node); };
     virtual void visitArguments(ArgumentsAst* node) { Q_UNUSED(node); };
     virtual void visitKeyword(KeywordAst* node) { Q_UNUSED(node); };
     virtual void visitArg(ArgAst* node) { Q_UNUSED(node); };

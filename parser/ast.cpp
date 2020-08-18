@@ -128,12 +128,7 @@ DictAst::DictAst(Ast* parent): ExpressionAst(parent, Ast::DictAstType)
 
 }
 
-IndexAst::IndexAst(Ast* parent): SliceAstBase(parent, Ast::IndexAstType), value(nullptr)
-{
-
-}
-
-SliceAst::SliceAst(Ast* parent): SliceAstBase(parent, Ast::SliceAstType), lower(nullptr), upper(nullptr), step(nullptr)
+SliceAst::SliceAst(Ast* parent): ExpressionAst(parent, Ast::SliceAstType), lower(nullptr), upper(nullptr), step(nullptr)
 {
 
 }
@@ -143,7 +138,7 @@ DictionaryComprehensionAst::DictionaryComprehensionAst(Ast* parent): ExpressionA
     
 }
 
-EllipsisAst::EllipsisAst(Ast* parent): SliceAstBase(parent, Ast::EllipsisAstType)
+EllipsisAst::EllipsisAst(Ast* parent): ExpressionAst(parent, Ast::EllipsisAstType)
 {
     
 }
@@ -171,11 +166,6 @@ AssignmentExpressionAst::AssignmentExpressionAst(Ast* parent): ExpressionAst(par
 YieldFromAst::YieldFromAst(Ast* parent) : ExpressionAst(parent, Ast::YieldFromAstType)
 {
 
-}
-
-ExtendedSliceAst::ExtendedSliceAst(Ast* parent): SliceAstBase(parent, Ast::ExtendedSliceAstType)
-{
-    
 }
 
 ForAst::ForAst(Ast* parent): StatementAst(parent, Ast::ForAstType), target(nullptr), iterator(nullptr)
@@ -284,11 +274,6 @@ SetAst::SetAst(Ast* parent): ExpressionAst(parent, Ast::SetAstType)
 }
 
 SetComprehensionAst::SetComprehensionAst(Ast* parent): ExpressionAst(parent, Ast::SetComprehensionAstType), element(nullptr)
-{
-    
-}
-
-SliceAstBase::SliceAstBase(Ast* parent, AstType type): Ast(parent, type)
 {
     
 }

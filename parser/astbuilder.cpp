@@ -61,10 +61,8 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
             return QString::fromUtf16(PyUnicode_2BYTE_DATA(str), length);
         case PyUnicode_4BYTE_KIND:
             return QString::fromUcs4(PyUnicode_4BYTE_DATA(str), length);
-        case PyUnicode_WCHAR_KIND:
-            qWarning("PyUnicode_KIND(%p) returned PyUnicode_WCHAR_KIND, this should not happen!", (void*)str);
-            return QString::fromWCharArray(PyUnicode_AS_UNICODE(str), length);
     }
+    qCritical("PyUnicode_KIND(%p) returned an unexpected value, this should not happen!", (void*)str);
     Q_UNREACHABLE();
 }
 

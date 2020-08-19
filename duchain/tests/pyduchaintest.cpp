@@ -438,15 +438,15 @@ void PyDUChainTest::testCrashes_data() {
         "      \"\"\"! returnContentEqualsContentOf ! -3\"\"\"\n"
         "e = Evil()\n"
         "z = [e.aa(1), e.bb(2), e.cc(3)]";
+    QTest::newRow("comprehension_in_lambda") << "lambda foo: [bar for bar in foo]";
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("comprehension_in_fstring") <<
         "def crash(): return f'expr={ {x: y for x, y in [(1, 2), ]}}'";
-#endif
-    QTest::newRow("comprehension_in_lambda") << "lambda foo: [bar for bar in foo]";
     QTest::newRow("comprehension_in_annassign_1") << "foo: int = [x for x in (42,)][0]";
     QTest::newRow("comprehension_in_annassign_2") << "foo: [t for t in (int,)][0] = 42";
     QTest::newRow("lambda_in_annassign_1") << "foo: int = (lambda: 42)()";
     QTest::newRow("lambda_in_annassign_2") << "foo: (lambda: int)() = 42";
+#endif
     QTest::newRow("definition_in_baseclass_1") << "class Foo(lambda x: 1): pass";
     QTest::newRow("definition_in_baseclass_2") << "class Foo([x for x in (1, 2)]): pass";
 }
@@ -954,10 +954,12 @@ void PyDUChainTest::testTypes_data()
 //     QTest::newRow("class_method_self") << "class c:\n def func(checkme, arg, arg2):\n  pass\n" << "c";
 //    QTest::newRow("funccall_dict") << "def foo(): return foo; checkme = foo();" << (uint) IntegralType::TypeFunction;
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     // With only one subbed value we get a FormattedValue node
     QTest::newRow("fstring_formattedvalue") << "name = 'Jim'; checkme = f'{name}'" << "str";
     // Otherwise a JoinedString, with FormattedValues as children.
     QTest::newRow("fstring_joinedstring") << "name = 'Jim'; checkme = f'Hello, {name}! Your name is {name}.'" << "str";
+#endif
 
     QTest::newRow("tuple_simple") << "mytuple = 3, 5.5\ncheckme, foobar = mytuple" << "int";
     QTest::newRow("tuple_simple2") << "mytuple = 3, 5.5\nfoobar, checkme = mytuple" << "float";
@@ -1389,7 +1391,9 @@ void PyDUChainTest::testProblemCount_data()
     QTest::newRow("correct_return") << "def foo():\n return" << 0;
     QTest::newRow("lambda_argument_outside") << "def bar():\n lambda foo: 3\n foo" << 1;
     QTest::newRow("use_found_at_decl") << "foo = 3" << 0;
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("fstring_visit_inside") << "checkme = f'{name}'" << 1;
+#endif
 }
 
 void PyDUChainTest::testImportDeclarations_data() {

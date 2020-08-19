@@ -70,6 +70,11 @@ void RangeFixVisitor::visitNode(Ast* node) {
     }
 };
 
+void RangeFixVisitor::visitCode(CodeAst* node) {
+    node->startLine = node->startCol = 0;
+    AstDefaultVisitor::visitCode(node);
+}
+
 void RangeFixVisitor::visitFunctionDefinition(FunctionDefinitionAst* node) {
     cutDefinitionPreamble(node->name, node->async ? "asyncdef" : "def");
     AstDefaultVisitor::visitFunctionDefinition(node);

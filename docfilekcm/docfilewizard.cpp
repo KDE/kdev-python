@@ -177,7 +177,7 @@ bool DocfileWizard::run()
     worker = new QProcess(this);
     QObject::connect(worker, &QProcess::readyReadStandardError, this, &DocfileWizard::processScriptOutput);
     QObject::connect(worker, &QProcess::readyReadStandardOutput, this, &DocfileWizard::processScriptOutput);
-    QObject::connect(worker, static_cast<void(QProcess::*)(int)>(&QProcess::finished), this, &DocfileWizard::processFinished);
+    QObject::connect(worker, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DocfileWizard::processFinished);
 
     // can never have too many slashes
     outputFile.setFileName(workingDirectory + "/" + outputFilename);
@@ -238,7 +238,7 @@ void DocfileWizard::processScriptOutput()
     scrollbar->setValue(scrollbar->maximum());
 }
 
-void DocfileWizard::processFinished(int)
+void DocfileWizard::processFinished(int, QProcess::ExitStatus)
 {
     worker = nullptr;
     runButton->setEnabled(true);

@@ -93,8 +93,6 @@ public:
     void visitTuple(TupleAst* node) override;
     void visitEllipsis(EllipsisAst* node) override;
     void visitSlice(SliceAst* node) override;
-    void visitExtendedSlice(ExtendedSliceAst* node) override;
-    void visitIndex(IndexAst* node) override;
     void visitArguments(ArgumentsAst* node) override;
     void visitArg(ArgAst* node) override;
     void visitKeyword(KeywordAst* node) override;
@@ -167,8 +165,6 @@ public:
     void visitTuple(TupleAst* node) override { AstDefaultVisitor::visitTuple(node); delete node; }
     void visitEllipsis(EllipsisAst* node) override { AstDefaultVisitor::visitEllipsis(node); delete node; }
     void visitSlice(SliceAst* node) override { AstDefaultVisitor::visitSlice(node); delete node; }
-    void visitExtendedSlice(ExtendedSliceAst* node) override { AstDefaultVisitor::visitExtendedSlice(node); delete node; }
-    void visitIndex(IndexAst* node) override { AstDefaultVisitor::visitIndex(node); delete node; }
     void visitArguments(ArgumentsAst* node) override { AstDefaultVisitor::visitArguments(node); delete node; }
     void visitArg(ArgAst* node) override { AstDefaultVisitor::visitArg(node); delete node; }
     void visitKeyword(KeywordAst* node) override { AstDefaultVisitor::visitKeyword(node); delete node; }

@@ -534,7 +534,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
     if ( v->unknownNames().size() >= 2 ) {
         // we only take the first two, and only two. It gets too much items otherwise.
         QStringList combinations;
-        auto names = v->unknownNames().toList();
+        auto names = v->unknownNames().values();
         combinations << names.at(0) + ", " + names.at(1);
         combinations << names.at(1) + ", " + names.at(0);
         foreach ( const QString& c, combinations ) {

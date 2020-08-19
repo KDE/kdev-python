@@ -113,11 +113,6 @@ void AstDefaultVisitor::visitDelete(DeleteAst* node)
     visitNodeList(node->targets);
 }
 
-void AstDefaultVisitor::visitExtendedSlice(ExtendedSliceAst* node)
-{
-    visitNodeList(node->dims);
-}
-
 void AstDefaultVisitor::visitFor(ForAst* node)
 {
     visitNode(node->target);
@@ -155,11 +150,6 @@ void AstDefaultVisitor::visitImportFrom(ImportFromAst* node)
 {
     visitNodeList(node->names);
     visitIdentifier(node->module);
-}
-
-void AstDefaultVisitor::visitIndex(IndexAst* node)
-{
-    visitNode(node->value);
 }
 
 void AstDefaultVisitor::visitLambda(LambdaAst* node)

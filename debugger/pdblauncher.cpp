@@ -80,7 +80,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         
         // check the interpreter
         QProcess p;
-        p.setReadChannelMode(QProcess::MergedChannels);
+        p.setProcessChannelMode(QProcess::MergedChannels);
         p.start(interpreter, QStringList() << "--version");
         p.waitForFinished(500);
         QByteArray version = p.readAll();

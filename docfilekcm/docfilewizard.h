@@ -62,7 +62,7 @@ public slots:
     bool run();
     void updateOutputFilename(const QString& newModuleName);
     void processScriptOutput();
-    void processFinished(int);
+    void processFinished(int, QProcess::ExitStatus);
     void saveAndClose();
 };
 

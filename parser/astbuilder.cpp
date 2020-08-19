@@ -61,10 +61,8 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
             return QString::fromUtf16(PyUnicode_2BYTE_DATA(str), length);
         case PyUnicode_4BYTE_KIND:
             return QString::fromUcs4(PyUnicode_4BYTE_DATA(str), length);
-        case PyUnicode_WCHAR_KIND:
-            qWarning("PyUnicode_KIND(%p) returned PyUnicode_WCHAR_KIND, this should not happen!", (void*)str);
-            return QString::fromWCharArray(PyUnicode_AS_UNICODE(str), length);
     }
+    qCritical("PyUnicode_KIND(%p) returned an unexpected value, this should not happen!", (void*)str);
     Q_UNREACHABLE();
 }
 
@@ -104,7 +102,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
     PyCompilerFlags flags;
     flags.cf_flags = PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE | PyCF_ONLY_AST;
-    flags.cf_feature_version = 7;
+    flags.cf_feature_version = PYTHON_VERSION_MINOR;
 #else
     PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
 #endif

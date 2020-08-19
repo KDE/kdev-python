@@ -1319,6 +1319,7 @@ void PyDUChainTest::testTypes_data()
     "def foo(a, b, /, c, d):\n"
     "    return a, b, c, d\n"
     "checkme = foo(10, 'x', 2.3, d='y')\n" << "tuple of (int, str, float, str)";
+    QTest::newRow("fstring_self_documenting") << "checkme = f'{expr=}'" << "str";
 #endif
 }
 

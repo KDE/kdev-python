@@ -104,7 +104,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
     PyCompilerFlags flags;
     flags.cf_flags = PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE | PyCF_ONLY_AST;
-    flags.cf_feature_version = 7;
+    flags.cf_feature_version = PYTHON_VERSION_MINOR;
 #else
     PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
 #endif

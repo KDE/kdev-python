@@ -114,6 +114,16 @@
     <category>IDE</category>
   </categories>
   <releases>
+    <release version="5.6.0" date="2020-09-07">
+      <url>https://www.kdevelop.org/news/kdevelop-560-released</url>
+      <artifacts>
+        <artifact type="source">
+          <location>https://download.kde.org/stable/kdevelop/5.6.0/src/kdev-python-5.6.0.tar.xz</location>
+          <checksum type="sha256">cb7163c1b72390c647bb9c0892abc84007699d447f303b4652cdd9cdb0036d52</checksum>
+          <size type="download">1069480</size>
+        </artifact>
+      </artifacts>
+    </release>
     <release version="5.5.2" date="2020-06-02"/>
     <release version="5.5.1" date="2020-05-05"/>
     <release version="5.5.0" date="2020-02-02"/>

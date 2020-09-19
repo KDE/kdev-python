@@ -9,7 +9,7 @@
 
 import sys
 
-contents = open('python38.sdef').read().replace("\n", "").split(';;')
+contents = open('python39.sdef').read().replace("\n", "").split(';;')
 
 func_structure = '''
     Ast* visitNode(%{RULE_FOR}* node) {

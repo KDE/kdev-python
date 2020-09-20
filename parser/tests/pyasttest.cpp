@@ -152,6 +152,17 @@ void PyAstTest::testStatements_data()
     QTest::newRow("continue") << "while True: continue";
     QTest::newRow("pass") << "pass";
     QTest::newRow("nonlocal") << "nonlocal x";
+    QTest::newRow("delete") << "del x";
+    QTest::newRow("augassign_plus") << "a += b";
+    QTest::newRow("augassign_minus") << "a -= b";
+    QTest::newRow("augassign_mul") << "a *= b";
+    QTest::newRow("augassign_div") << "a /= b";
+    QTest::newRow("augassign_or") << "a &= b";
+    QTest::newRow("augassign_and") << "a |= b";
+    QTest::newRow("augassign_xor") << "a ^= b";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
+    QTest::newRow("augassign_matmul") << "a @= b";
+#endif
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("varannotation1") << "primes: List[int] = []";
     QTest::newRow("varannotation2") << "captain: str  # Note: no initial value!";
@@ -171,6 +182,7 @@ void PyAstTest::testSlices_data()
     QTest::newRow("slice2") << "x[2:3]";
     QTest::newRow("slice3") << "x[::]";
     QTest::newRow("slice4") << "x[1:2:3]";
+    QTest::newRow("slice_ellipsis") << "myList[1:2, ..., 0]";
 }
 
 void PyAstTest::testOther()
@@ -224,6 +236,11 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("None") << "None";
     QTest::newRow("False") << "False";
     QTest::newRow("True") << "True";
+    QTest::newRow("Set") << "{1, 2, 3}";
+    QTest::newRow("SetComp") << "{1 for x in [1, 2, 3]}";
+    QTest::newRow("ExtSlice") << "A[1:3,3:5]";
+    QTest::newRow("FString") << "f\"hi {a.b}\"";
+    QTest::newRow("Formatted") << "'%s %s' % ('one', 'two')";
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("async_generator") << "async def foo(): result = [i async for i in aiter() if i % 2]";
@@ -237,6 +254,9 @@ void PyAstTest::testExpressions_data()
         "       **{ext: self.obj_extension for ext in self.src_extensions},\n"
         "       **{ext: self.res_extension for ext in self._rc_extensions + self._mc_extensions},\n"
     "}";
+    QTest::newRow("async_for") << "[i async for i in foo()]";
+    QTest::newRow("async_for_stmt") << "async for x in y: pass";
+    QTest::newRow("async_with_stmt") << "async with x as y: pass";
 #endif
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
     QTest::newRow("assignment_expr_1") << "a = (b := 10)";

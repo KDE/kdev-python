@@ -62,6 +62,7 @@
     <p xml:lang="it">Aggiunge il supporto a Python in KDevelop. Include l'integrazione con l'evidenziazione del codice, il completamente del codice, il supporto per il sistema di compilazione, il collegamento con la documentazione ed il supporto per il debugging.</p>
     <p xml:lang="ko">KDevelop에 Python 지원을 추가합니다. 코드 구문 강조, 자동 완성, 빌드 시스템 지원, 문서 링크 및 디버그 지원 통합이 들어 있습니다.</p>
     <p xml:lang="nl">Voegt ondersteuning voor Python toe aan KDevelop. Omvat toevoegen van integratie met accentuering van code, aanvullen van code, ondersteuning van bouwsysteem en koppelingen naar documentatie en ondersteuning van debuggen.</p>
+    <p xml:lang="pl">Dodaje obsługę Pythona do KDevelop. Zawiera podświetlanie kodu, uzupełnianie kodu, obsługę systemu budowania, dowiązywanie dokumentacji oraz możliwość badania kodu.</p>
     <p xml:lang="pt">Adiciona o suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para a depuração.</p>
     <p xml:lang="pt-BR">Adiciona suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para depuração.</p>
     <p xml:lang="sv">Lägger till stöd för Python i KDevelop. Inkluderar tillägg av integrering med kodfärgläggning, kodkomplettering, byggsystemstöd, dokumentationslänkning och avlusningsstöd.</p>

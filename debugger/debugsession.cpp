@@ -494,10 +494,22 @@ void DebugSession::stopDebugger()
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
         m_debuggerProcess->kill();
     }
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "stopped debugger";
+    finalizeState();
+}
+
+void DebugSession::killDebuggerNow()
+{
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "killing debugger now";
+    m_debuggerProcess->kill();
+    finalizeState();
+}
+
+void DebugSession::finalizeState()
+{
     m_commandQueue.clear();
     m_nextNotifyMethod = nullptr;
     m_nextNotifyObject.clear();
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "killed debugger";
     setState(IDebugSession::EndedState);
 }
 

@@ -133,6 +133,11 @@ public:
      * it'll just kill it.
      **/
     void stopDebugger() override;
+
+    /**
+     * @brief Kill the debugger process synchronously
+     **/
+    void killDebuggerNow() override;
     
     /**
      * @brief Gives the debugger state.
@@ -250,6 +255,11 @@ private:
      * @brief Clear the data accumulated in m_buffer.
      **/
     void clearOutputBuffer();
+
+    /**
+     * @brief Clean up and switch to EndedState after stopping/killing the debugger
+     **/
+    void finalizeState();
     
     /// stores whether the data currently received comes from the debugger
     /// or the debuggee.

@@ -4,6 +4,9 @@ project(kdevpython VERSION 5.6.40)
 # KDevplatform dependency version
 set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED YES)
+
 find_package (ECM "5.28.0" REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 

@@ -73,7 +73,7 @@ ReferencedTopDUContext DUChainBench::parse(const QString& code)
 {
     TestFile* testfile = new TestFile(code + "\n", "py", nullptr, testDir.absolutePath().append("/"));
     createdFiles << testfile;
-    testfile->parse((TopDUContext::Features) (TopDUContext::ForceUpdate | TopDUContext::AST) );
+    testfile->parse(TopDUContext::ForceUpdate | TopDUContext::AST);
     testfile->waitForParsed(2000);
 
     if ( testfile->isReady() ) {

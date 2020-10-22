@@ -196,8 +196,9 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
             // this prevents infinite loops in case something goes wrong (optimally, shouldn't reach here if
             // the document was already rescheduled, but there's many cases where this might still happen)
             if ( ! ( minimumFeatures() & Rescheduled ) && dependencyInQueue ) {
+                constexpr TopDUContext::Features features{TopDUContext::ForceUpdate};
                 KDevelop::ICore::self()->languageController()->backgroundParser()->addDocument(document(),
-                                     static_cast<TopDUContext::Features>(TopDUContext::ForceUpdate | Rescheduled), parsePriority(),
+                                     static_cast<TopDUContext::Features>(features | Rescheduled), parsePriority(),
                                      nullptr, ParseJob::FullSequentialProcessing);
             }
         }

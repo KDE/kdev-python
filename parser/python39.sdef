@@ -132,7 +132,8 @@ RULE_FOR _expr;KIND NamedExpr_kind;ACTIONS create|AssignmentExpressionAst set|ta
 RULE_FOR _expr;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;SINCE 3.9;;
 
 RULE_FOR _slice;KIND Slice_kind;ACTIONS create|SliceAst set|lower->ExpressionAst,lower set|upper->ExpressionAst,upper set|step->ExpressionAst,step;BEFORE 3.9;;
-RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|TupleAst set|elements=>ExpressionAst,dims;BEFORE 3.9;;
+RULE_FOR _slice;KIND ExtSlice_kind;ACTIONS create|TupleAst;BEFORE 3.9;CODE
+                nodeStack.push(v); v->elements = visitNodeList<_slice, ExpressionAst>(node->v.ExtSlice.dims); nodeStack.pop();;
 RULE_FOR _slice;KIND Index_kind;ACTIONS;BEFORE 3.9;CODE return visitNode(node->v.Index.value);;
 
 

@@ -255,6 +255,7 @@ void PyDUChainTest::testCrashes() {
 void PyDUChainTest::testCrashes_data() {
     QTest::addColumn<QString>("code");
     
+    QTest::newRow("composite_slice") << "A = M[1:3, 3]";
     QTest::newRow("unicode_char") << "a = \"í\"";
     QTest::newRow("unicode escape char") << "print(\"\\xe9\")";
     QTest::newRow("augassign") << "a = 3\na += 5";

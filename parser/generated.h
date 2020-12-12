@@ -510,7 +510,7 @@ PyObject *value = node->v.Constant.value;if (value == Py_None) {    NameConstant
 #if PYTHON_VERSION < QT_VERSION_CHECK(3, 9, 0)
         case ExtSlice_kind: {
                 TupleAst* v = new  TupleAst(parent());
-                nodeStack.push(v); v->elements = visitNodeList<_expr, ExpressionAst>(node->v.ExtSlice.dims); nodeStack.pop();
+                nodeStack.push(v); v->elements = visitNodeList<_slice, ExpressionAst>(node->v.ExtSlice.dims); nodeStack.pop();
                 result = v;
                 break;
             }

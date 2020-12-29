@@ -68,6 +68,7 @@
         "Name[en_GB]": "Python Debugger (PDB) support",
         "Name[es]": "Implementación del depurador Python (PDB)",
         "Name[et]": "Pythoni siluri (PDB) toetus",
+        "Name[fi]": "Python-virheenpaikannustuki (PDB)",
         "Name[fr]": "Prise en charge du débogueur Python (pdb)",
         "Name[gl]": "Compatibilidade co depurador de Python (PDB)",
         "Name[it]": "Supporto al debugger di Python (PDB)",

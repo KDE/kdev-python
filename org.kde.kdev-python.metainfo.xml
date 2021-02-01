@@ -119,6 +119,7 @@
     <category>IDE</category>
   </categories>
   <releases>
+    <release version="5.6.2" date="2021-02-01"/>
     <release version="5.6.1" date="2020-12-08"/>
     <release version="5.6.0" date="2020-09-07">
       <url>https://www.kdevelop.org/news/kdevelop-560-released</url>

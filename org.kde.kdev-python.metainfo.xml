@@ -22,6 +22,7 @@
   <name xml:lang="pt-BR">Suporte a Python no KDevelop</name>
   <name xml:lang="ru">Поддержка Python для KDevelop</name>
   <name xml:lang="sk">Podpora jazyka Python pre KDevelop</name>
+  <name xml:lang="sl">Podpora Pythonu za KDevelop</name>
   <name xml:lang="sv">KDevelop Python-stöd</name>
   <name xml:lang="uk">Підтримка Python у KDevelop</name>
   <name xml:lang="x-test">xxKDevelop Python Supportxx</name>
@@ -46,6 +47,7 @@
   <summary xml:lang="pt-BR">Suporte ao Python para o KDevelop</summary>
   <summary xml:lang="ru">Поддержка языка программирования Python для KDevelop</summary>
   <summary xml:lang="sk">Podpora jazyka Python pre KDevelop</summary>
+  <summary xml:lang="sl">Podpora jeziku Python za KDevelop</summary>
   <summary xml:lang="sv">Stöd för språket Python i KDevelop</summary>
   <summary xml:lang="tr">KDevelop için Python dil desteği</summary>
   <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
@@ -73,6 +75,7 @@
     <p xml:lang="pt">Adiciona o suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para a depuração.</p>
     <p xml:lang="pt-BR">Adiciona suporte para Python ao KDevelop. Inclui a adição da integração com o realce de código, completação de código, suporte para sistemas de compilação, referências à documentação e suporte para depuração.</p>
     <p xml:lang="sk">Pridá podporu Pythonu do KDevelopu. Zahŕňa pridanie integrácie so zvýrazňovaním kódu, ukončovanie kódu, podpora systému zostavení, linkovanie dokumentácie a podporu ladenia.</p>
+    <p xml:lang="sl">Programu KDevelop doda podporo za Python. Vključuje dodatek integracije z označevanjem kode, dokončanje kode, gradnje podpore sistema, povezovanje dokumentacije in podporo za odpravljanje napak</p>
     <p xml:lang="sv">Lägger till stöd för Python i KDevelop. Inkluderar tillägg av integrering med kodfärgläggning, kodkomplettering, byggsystemstöd, dokumentationslänkning och avlusningsstöd.</p>
     <p xml:lang="uk">Додає підтримку Python до KDevelop. Включено інтеграцію із засобами підсвічування коду, автоматичне доповнення коду, підтримку систем збирання, інтеграцію посилань на документацію та засобів діагностики.</p>
     <p xml:lang="x-test">xxAdds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.xx</p>
@@ -96,6 +99,7 @@
   <developer_name xml:lang="pt">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="pt-BR">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="sk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="sl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="sv">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="tr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

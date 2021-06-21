@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.16)
 project(kdevpython VERSION 5.6.40)
 
 # KDevplatform dependency version
@@ -6,8 +6,10 @@ set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
+set(QT_MIN_VERSION "5.15.0")
+set(KF5_DEP_VERSION "5.78.0")
 
-find_package (ECM "5.28.0" REQUIRED NO_MODULE)
+find_package (ECM ${KF5_DEP_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -19,12 +21,6 @@ include(GenerateExportHeader)
 include(ECMAddTests)
 include(ECMSetupVersion)
 include(ECMQtDeclareLoggingCategory)
-
-if(POLICY CMP0071)
-    # Avoids compat messages from CMake 3.10+, with Qt < 5.9.4
-    # See https://bugreports.qt.io/browse/QTBUG-63442
-    cmake_policy(SET CMP0071 OLD)
-endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wdocumentation")
@@ -57,9 +53,7 @@ endif()
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-set(QT_MIN_VERSION "5.7.0")
 find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-set(KF5_DEP_VERSION "5.28.0")
 find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
     I18n
     ThreadWeaver

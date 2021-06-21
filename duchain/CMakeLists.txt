@@ -28,6 +28,8 @@ ecm_qt_declare_logging_category(duchain_SRCS
     HEADER duchaindebug.h
     IDENTIFIER KDEV_PYTHON_DUCHAIN
     CATEGORY_NAME "kdevelop.plugins.python.duchain"
+    DESCRIPTION "KDevelop plugin: Python language support - duchain"
+    EXPORT KDEVPYTHON
 )
 
 add_library( kdevpythonduchain SHARED ${duchain_SRCS} )

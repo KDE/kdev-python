@@ -16,6 +16,8 @@ ecm_qt_declare_logging_category(completion_SRCS
     HEADER codecompletiondebug.h
     IDENTIFIER KDEV_PYTHON_CODECOMPLETION
     CATEGORY_NAME "kdevelop.plugins.python.codecompletion"
+    DESCRIPTION "KDevelop plugin: Python language support - codecompletion"
+    EXPORT KDEVPYTHON
 )
 
 add_library(kdevpythoncompletion SHARED ${completion_SRCS})

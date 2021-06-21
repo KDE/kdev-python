@@ -106,11 +106,15 @@ ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
     HEADER codegendebug.h
     IDENTIFIER KDEV_PYTHON_CODEGEN
     CATEGORY_NAME "kdevelop.plugins.python.codegen"
+    DESCRIPTION "KDevelop plugin: Python language support - codegen"
+    EXPORT KDEVPYTHON
 )
 ecm_qt_declare_logging_category(kdevpythonlanguagesupport_PART_SRCS
     HEADER pythondebug.h
     IDENTIFIER KDEV_PYTHON
     CATEGORY_NAME "kdevelop.plugins.python"
+    DESCRIPTION "KDevelop plugin: Python language support"
+    EXPORT KDEVPYTHON
 )
 
 ki18n_wrap_ui(kdevpythonlanguagesupport_PART_SRCS
@@ -142,17 +146,11 @@ install(FILES codestyle.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport)
 install(FILES org.kde.kdev-python.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 # kdebugsettings file
-# kdebugsettings >= 18.12 supports/pushes for some newer, not backward-compatible format.
-# For ECM >= 5.59 we install categories files to new location, which is only supported by
-# newer kdebugsettings also supporting the new content format, so we use that as base.
-if (ECM_VERSION VERSION_GREATER "5.58.0")
-    install(FILES kdevpythonsupport-newformat.categories RENAME kdevpythonsupport.categories
-        DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
-    )
-else()
-    install(FILES kdevpythonsupport-oldformat.categories RENAME kdevpythonsupport.categories
-        DESTINATION ${KDE_INSTALL_CONFDIR})
-endif()
+ecm_qt_install_logging_categories(
+    EXPORT KDEVPYTHON
+    FILE kdevpythonsupport.categories
+    DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
+)
 
 ki18n_install(po)
 

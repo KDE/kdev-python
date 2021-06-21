@@ -12,6 +12,8 @@ ecm_qt_declare_logging_category(parser_STAT_SRCS
     HEADER parserdebug.h
     IDENTIFIER KDEV_PYTHON_PARSER
     CATEGORY_NAME "kdevelop.plugins.python.parser"
+    DESCRIPTION "KDevelop plugin: Python language support - parser"
+    EXPORT KDEVPYTHON
 )
 
 include_directories(${PYTHON_INCLUDE_DIRS})

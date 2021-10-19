@@ -192,7 +192,6 @@ public:
       *
       * @param decl the declaration to resolve
       * @return :Declaration* decl if not an alias declaration, decl->aliasedDeclaration().data otherwise
-      * DUChain must be read locked
       **/
     static Declaration* resolveAliasDeclaration(Declaration* decl);
 

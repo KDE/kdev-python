@@ -114,6 +114,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
             return;
         }
         if ( auto classType = v.lastType().cast<StructureType>() ) {
+            DUChainReadLocker lock;
             declaration = classType->declaration(topContext());
         }
     }

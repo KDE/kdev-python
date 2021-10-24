@@ -150,6 +150,7 @@ SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
     SourceFormatterStyle autopep8("autopep8");
     autopep8.setCaption("autopep8");
     autopep8.setDescription(i18n("Format source with the autopep8 formatter."));
+    autopep8.setUsePreview(true);
     autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
                                "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
     using P = SourceFormatterStyle::MimeHighlightPair;

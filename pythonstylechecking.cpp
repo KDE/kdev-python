@@ -130,6 +130,21 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
 
 void StyleChecking::processOutputStarted()
 {
+    if (m_mutex.try_lock()) {
+        // The m_mutex (which is *not* recursive) was not locked!!
+        // This probably means there is some problem with the
+        // checker server, which is sending us more data than
+        // we expected (or consumed). The only way we can deal
+        // with this situation is to kill the server and start it
+        // again, when needed
+        if ( m_checkerProcess.state() == QProcess::Running ) {
+            m_checkerProcess.terminate();
+            m_checkerProcess.waitForFinished(100);
+        }
+        m_mutex.unlock();
+        return;
+    }
+
     // read output size
     QByteArray size_d;
     size_d = m_checkerProcess.read(10);

@@ -1,5 +1,5 @@
-# Copyright 2014 Sven Brauch <svenbrauch@gmail.com>
-# License: GPL v2+
+# SPDX-FileCopyrightText: 2014 Sven Brauch <svenbrauch@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 pyqt=($(ls /usr/share/sip/PyQt5))
 element_count=${#pyqt[@]}

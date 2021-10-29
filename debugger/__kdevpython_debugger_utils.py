@@ -1,7 +1,7 @@
 # This file is imported from within the debugger
 
-# Copyright 2014 Sven Brauch
-# License: GPL v2+
+# SPDX-FileCopyrightText: 2014 Sven Brauch <svenbrauch@gmail.com>
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 from kdevpdb import kdevOutputFormatter
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright 2014 by Sven Brauch
-# License: GPL v2+
+# SPDX-FileCopyrightText: 2014 Sven Brauch
+# SPDX-License-Identifier: GPL-2.0-or-later
 
 import sys
 import subprocess

@@ -1,6 +1,7 @@
 #!/usr/bin/env python2.7
 # This file is part of KDevelop
-# Copyright 2011 by Victor Varvariuc <victor.varvariuc@gmail.com>, Sven Brauch <svenbrauch@googlemail.com>
+# SPDX-FileCopyrightText: 2011 Victor Varvariuc <victor.varvariuc@gmail.com>
+# SPDX-FileCopyrightText: 2011 Sven Brauch <svenbrauch@googlemail.com>
 
 import sys
 from xml.dom import minidom

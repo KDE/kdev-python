@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # This file is part of KDevelop
-# Copyright 2011 by Victor Varvariuc <victor.varvariuc@gmail.com>, Sven Brauch <svenbrauch@googlemail.com>
+# SPDX-FileCopyrightText: 2011 Victor Varvariuc <victor.varvariuc@gmail.com>
+# SPDX-FileCopyrightText: 2011 Sven Brauch <svenbrauch@googlemail.com>
 
 import os, sys, subprocess
 from xml.dom import minidom, NotFoundErr

@@ -23,7 +23,6 @@
 #include "parserdebug.h"
 
 using namespace KDevelop;
-extern grammar _PyParser_Grammar;
 
 namespace Python
 {
@@ -60,13 +59,13 @@ struct PythonInitializer : private QMutexLocker {
             Py_InitializeEx(0);
             Q_ASSERT(Py_IsInitialized());
 
-            arena = PyArena_New();
+            arena = _PyArena_New();
             Q_ASSERT(arena); // out of memory
     }
     ~PythonInitializer()
     {
         if (arena)
-            PyArena_Free(arena);
+            _PyArena_Free(arena);
         if (Py_IsInitialized())
             Py_Finalize();
     }
@@ -100,7 +99,8 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         contents = cythonSyntaxRemover.stripCythonSyntax(contents);
     }
 
-    mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
+    std::unique_ptr<PyObject> placeholderFilename(PyUnicode_FromString("<kdev-editor-contents>"));
+    mod_ty syntaxtree = _PyParser_ASTFromString(contents.toUtf8().data(), placeholderFilename.get(), Py_file_input, &flags, arena);
 
     if ( ! syntaxtree ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
@@ -207,7 +207,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             }
         }
 
-        syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
+        syntaxtree = _PyParser_ASTFromString(contents.toUtf8(), placeholderFilename.get(), Py_file_input, &flags, arena);
         // 3rd try: discard everything after the last non-empty line, but only until the next block start
         currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
         errline = qMax(0, qMin(indents.length()-1, errline));
@@ -249,7 +249,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                 if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
             }
             qCDebug(KDEV_PYTHON_PARSER) << "This is what is left: " << contents;
-            syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
+            syntaxtree = _PyParser_ASTFromString(contents.toUtf8(), placeholderFilename.get(), Py_file_input, &flags, arena);
         }
         if ( ! syntaxtree ) {
             return CodeAst::Ptr(); // everything fails, so we abort.

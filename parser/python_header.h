@@ -8,6 +8,8 @@
 #undef _POSIX_C_SOURCE
 #undef _XOPEN_SOURCE
 
+#define Py_BUILD_CORE
+
 // remove interfering qt macro
 #undef slots
 
@@ -17,20 +19,18 @@
 #ifndef _WIN32
 #include "pyconfig.h"
 #endif
-#include "node.h"
 
 #include "Python.h"
 
-#include "Python-ast.h"
+#include <internal/pycore_ast.h>
 #include "ast.h"
 
-#include "graminit.h"
-#include "grammar.h"
-#include "parsetok.h"
+#include <internal/pycore_ast_state.h>
+#include <internal/pycore_parser.h>
 
-#include "unicodeobject.h"
+#include <unicodeobject.h>
 
-#include "object.h"
+#include <object.h>
 
 // remove evil macros from headers which pollute the namespace (grr!)
 #undef test

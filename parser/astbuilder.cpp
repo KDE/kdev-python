@@ -21,6 +21,8 @@
 #include "astfromxml.h"
 
 #include <QDebug>
+#include <QTemporaryFile>
+#include <QProcess>
 #include "parserdebug.h"
 
 using namespace KDevelop;
@@ -53,6 +55,7 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
 }
 
 namespace {
+
 struct PythonInitializer : private QMutexLocker {
     PythonInitializer(QMutex& pyInitLock):
         QMutexLocker(&pyInitLock), arena(nullptr)
@@ -72,6 +75,27 @@ struct PythonInitializer : private QMutexLocker {
     }
     PyArena* arena;
 };
+
+Python::CodeAst* __testing_AstFromString(QString const& string) {
+    QTemporaryFile f;
+    f.open();
+    f.write(string.toUtf8());
+    qDebug() << "written:" << string;
+    f.close();
+    QProcess p;
+    p.setProgram("/usr/bin/env");
+    p.setArguments({"python", "../parser/ast2xml.py", f.fileName()});
+    p.start();
+    p.waitForFinished(5000);
+    auto const xml = p.readAllStandardOutput();
+    auto const error = p.readAllStandardError();
+    if (!error.isEmpty()) {
+        qWarning() << "error running parser:" << QString::fromUtf8(error);
+    }
+    qDebug() << "using xml:" << xml;
+    return astFromXml(xml);
+}
+
 }
 
 CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
@@ -79,25 +103,8 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     qCDebug(KDEV_PYTHON_PARSER) << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
     contents.append('\n');
-    auto xml = R"(<?xml version="1.0"?>
-    <Module>
-    <body>
-    <Assign col_offset="0" lineno="2">
-    <targets>
-    <Name id="a" col_offset="0" lineno="2"/>
-    </targets>
-    <value>
-    <Constant value="2" col_offset="4" lineno="2" constant_type="float"/>
-    </value>
-    </Assign>
-    </body>
-    <type_ignores/>
-    </Module>
-    )";
 
-    qDebug() << "using xml:" << xml;
-
-    auto* ast = astFromXml(xml);
+    auto* ast = __testing_AstFromString(contents);
     ast->name = new Identifier(filename.fileName());
 
 #if 0

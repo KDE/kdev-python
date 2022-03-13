@@ -190,9 +190,32 @@ struct NodeReader<CodeAst> : public BaseNodeReader<CodeAst>
     }
 };
 
+template<>
+struct NodeReader<ConstantAst> : public BaseNodeReader<ConstantAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Attributes = enum { value, constant_type };
+    static auto constexpr AttributeNames = {"value", "constant_type"};
+
+    void readAttribute(AttributeTag<value>, QStringRef const& value) {
+        result->value = value.toString();
+    }
+
+    void readAttribute(AttributeTag<constant_type>, QStringRef const& value) {
+        if (value == "float") {
+            result->value = std::get<QString>(result->value).toFloat();
+        }
+        else if (value == "int") {
+            result->value = std::get<QString>(result->value).toInt();
+        }
+    }
+};
+
 /////////////////////////////////////
 
 QMap<QString, Ast::AstType> astTypes = {
+    {QStringLiteral("Constant"), Ast::ConstantAstType},
     {QStringLiteral("Module"), Ast::CodeAstType},
     {QStringLiteral("Assign"), Ast::AssignmentAstType},
     {QStringLiteral("Name"), Ast::NameAstType}
@@ -229,6 +252,8 @@ Ast* getSingleElement(Ast* parent, Stream& s)
             return NodeReader<AssignmentAst>(parent).read(s);
         case Ast::CodeAstType:
             return NodeReader<CodeAst>(parent).read(s);
+        case Ast::ConstantAstType:
+            return NodeReader<ConstantAst>(parent).read(s);
     };
 
     qWarning() << "Invalid AST type encountered:" << astType << "name" << name.toString();

@@ -638,6 +638,20 @@ void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
     }
 }
 
+void ExpressionVisitor::visitConstant(ConstantAst* node)
+{
+    DUChainReadLocker lock;
+    if (std::holds_alternative<int>(node->value)) {
+        return encounter(typeObjectForIntegralType<StructureType>("int"));
+    }
+    else if (std::holds_alternative<QString>(node->value)) {
+        return encounter(typeObjectForIntegralType<StructureType>("str"));
+    }
+    else if (std::holds_alternative<float>(node->value)) {
+        return encounter(typeObjectForIntegralType<StructureType>("float"));
+    }
+}
+
 void ExpressionVisitor::visitName(Python::NameAst* node)
 {
     CursorInRevision findNameBefore;

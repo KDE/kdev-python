@@ -96,6 +96,11 @@ CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType),
     
 }
 
+ConstantAst::ConstantAst(Ast* parent) : ExpressionAst(parent, Ast::ConstantAstType), value(QString())
+{
+
+}
+
 ComprehensionAst::ComprehensionAst(Ast* parent): Ast(parent, Ast::ComprehensionAstType), target(nullptr), iterator(nullptr)
 {
     

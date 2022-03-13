@@ -87,7 +87,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     <Name id="a" col_offset="0" lineno="2"/>
     </targets>
     <value>
-    <Name id="b" col_offset="4" lineno="2"/>
+    <Constant value="2" col_offset="4" lineno="2" constant_type="float"/>
     </value>
     </Assign>
     </body>

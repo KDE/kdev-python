@@ -71,6 +71,7 @@ public:
     void visitYieldFrom(YieldFromAst* node) override;
     void visitName(NameAst* node) override;
     void visitNameConstant(NameConstantAst* node) override;
+    void visitConstant(ConstantAst* node) override;
     void visitCall(CallAst* node) override;
     void visitAttribute(AttributeAst* node) override;
     void visitSubscript(SubscriptAst* node) override;
@@ -143,6 +144,7 @@ public:
     void visitYieldFrom(YieldFromAst* node) override { AstDefaultVisitor::visitYieldFrom(node); delete node; }
     void visitName(NameAst* node) override { AstDefaultVisitor::visitName(node); delete node; }
     void visitNameConstant(NameConstantAst* node) override { AstDefaultVisitor::visitNameConstant(node); delete node; }
+    void visitConstant(ConstantAst* node) override { AstDefaultVisitor::visitConstant(node); delete node; }
     void visitCall(CallAst* node) override { AstDefaultVisitor::visitCall(node); delete node; }
     void visitAttribute(AttributeAst* node) override { AstDefaultVisitor::visitAttribute(node); delete node; }
     void visitSubscript(SubscriptAst* node) override { AstDefaultVisitor::visitSubscript(node); delete node; }

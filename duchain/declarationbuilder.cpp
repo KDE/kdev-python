@@ -131,13 +131,6 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Ast* node, 
 {
     if ( node->astType == Ast::NameAstType ) {
         NameAst* currentVariableDefinition = static_cast<NameAst*>(node);
-        // those contexts can invoke a variable declaration
-        // this prevents "bar" from being declared in something like "foo = bar"
-        // This is just a sanity check, the code should never request creation of a variable
-        // in such cases.
-        if ( currentVariableDefinition->context != ExpressionAst::Context::Store ) {
-            return nullptr;
-        }
         return visitVariableDeclaration<T>(currentVariableDefinition->identifier, previous, type, flags);
     }
     else if ( node->astType == Ast::IdentifierAstType ) {

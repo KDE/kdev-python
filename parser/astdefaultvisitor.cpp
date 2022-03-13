@@ -33,6 +33,7 @@ void AstDefaultVisitor::visitNumber(NumberAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
+void AstDefaultVisitor::visitConstant(ConstantAst* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
 //TODO: Fix range/context/??? bugs, then re-enable this.

@@ -69,6 +69,7 @@ public:
     void visitSetComprehension(SetComprehensionAst* node) override;
     void visitIfExpression(IfExpressionAst* node) override;
     void visitNameConstant(NameConstantAst* node) override;
+    void visitConstant(ConstantAst* node) override;
     void visitAssignmentExpression(AssignmentExpressionAst* node) override;
 
     /**

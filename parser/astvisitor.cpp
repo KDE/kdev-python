@@ -68,6 +68,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::YieldAstType:                                 this->visitYield(static_cast<YieldAst*>(node)); break;
         case Ast::NameAstType:                                  this->visitName(static_cast<NameAst*>(node)); break;
         case Ast::NameConstantAstType:                          this->visitNameConstant(static_cast<NameConstantAst*>(node)); break;
+        case Ast::ConstantAstType:                              this->visitConstant(static_cast<ConstantAst*>(node)); break;
         case Ast::CallAstType:                                  this->visitCall(static_cast<CallAst*>(node)); break;
         case Ast::AttributeAstType:                             this->visitAttribute(static_cast<AttributeAst*>(node)); break;
         case Ast::SubscriptAstType:                             this->visitSubscript(static_cast<SubscriptAst*>(node)); break;

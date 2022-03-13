@@ -85,6 +85,7 @@ public:
         AwaitAstType,
         NameAstType,
         NameConstantAstType,
+        ConstantAstType,
         CallAstType,
         AttributeAstType,
         DictionaryComprehensionAstType,
@@ -572,6 +573,12 @@ class KDEVPYTHONPARSER_EXPORT ReprAst : public ExpressionAst {
 public:
     ReprAst(Ast* parent);
     ExpressionAst* value;
+};
+
+class KDEVPYTHONPARSER_EXPORT ConstantAst : public ExpressionAst {
+public:
+    ConstantAst(Ast* parent);
+    std::variant<int, float, QString> value;
 };
 
 class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {

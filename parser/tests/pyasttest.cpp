@@ -112,6 +112,7 @@ void PyAstTest::testStatements()
 void PyAstTest::testStatements_data()
 {
     QTest::addColumn<QString>("code");
+    QTest::newRow("assign_name") << "a = b";
     QTest::newRow("assign_int") << "a = 3";
     QTest::newRow("funcdef") << "def myfun(): pass";
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)

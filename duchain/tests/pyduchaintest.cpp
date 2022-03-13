@@ -627,6 +627,7 @@ void PyDUChainTest::testSimple_data()
     QTest::addColumn<int>("decls");
     QTest::addColumn<int>("uses");
     
+    QTest::newRow("assign_name") << "a = b;" << 1 << 0;
     QTest::newRow("assign") << "b = 2;" << 1 << 0;
     QTest::newRow("assign_str") << "b = 'hola';" << 1 << 0;
     QTest::newRow("op") << "a = 3; b = a+2;" << 2 << 1;

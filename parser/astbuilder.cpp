@@ -18,6 +18,7 @@
 #include "astdefaultvisitor.h"
 #include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
+#include "astfromxml.h"
 
 #include <QDebug>
 #include "parserdebug.h"
@@ -77,31 +78,29 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
     qCDebug(KDEV_PYTHON_PARSER) << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
     
-    Py_NoSiteFlag = 1;
-    
     contents.append('\n');
-    
-    PythonInitializer pyIniter(pyInitLock);
-    PyArena* arena = pyIniter.arena;
+    auto xml = R"(<?xml version="1.0"?>
+    <Module>
+    <body>
+    <Assign col_offset="0" lineno="2">
+    <targets>
+    <Name id="a" col_offset="0" lineno="2"/>
+    </targets>
+    <value>
+    <Name id="b" col_offset="4" lineno="2"/>
+    </value>
+    </Assign>
+    </body>
+    <type_ignores/>
+    </Module>
+    )";
 
-#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
-    PyCompilerFlags flags;
-    flags.cf_flags = PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE | PyCF_ONLY_AST;
-    flags.cf_feature_version = PYTHON_VERSION_MINOR;
-#else
-    PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
-#endif
+    qDebug() << "using xml:" << xml;
 
-    CythonSyntaxRemover cythonSyntaxRemover;
+    auto* ast = astFromXml(xml);
+    ast->name = new Identifier(filename.fileName());
 
-    if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
-        qCDebug(KDEV_PYTHON_PARSER) << filename.fileName() << "is probably Cython file.";
-        contents = cythonSyntaxRemover.stripCythonSyntax(contents);
-    }
-
-    std::unique_ptr<PyObject> placeholderFilename(PyUnicode_FromString("<kdev-editor-contents>"));
-    mod_ty syntaxtree = _PyParser_ASTFromString(contents.toUtf8().data(), placeholderFilename.get(), Py_file_input, &flags, arena);
-
+#if 0
     if ( ! syntaxtree ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
 
@@ -255,17 +254,12 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
-    qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
-
-    PythonAstTransformer t;
-    t.run(syntaxtree, filename.fileName().replace(".py", ""));
+#endif
 
     RangeFixVisitor fixVisitor(contents);
-    fixVisitor.visitNode(t.ast);
+    fixVisitor.visitNode(ast);
 
-    cythonSyntaxRemover.fixAstRanges(t.ast);
-
-    return CodeAst::Ptr(t.ast);
+    return CodeAst::Ptr(ast);
 }
 
 }

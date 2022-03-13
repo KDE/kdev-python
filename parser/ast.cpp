@@ -80,6 +80,8 @@ ClassDefinitionAst::ClassDefinitionAst(Ast* parent): StatementAst(parent, Ast::C
     
 }
 
+CodeAst::CodeAst(Ast*) : CodeAst() {};
+
 CodeAst::CodeAst() : Ast(nullptr, Ast::CodeAstType), name(nullptr)
 {
 }

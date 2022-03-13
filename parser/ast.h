@@ -244,6 +244,7 @@ public:
 // this replaces ModuleAst
 class KDEVPYTHONPARSER_EXPORT CodeAst : public Ast {
 public:
+    CodeAst(Ast* parent); // just for compatibility, should never have a parent
     CodeAst();
     ~CodeAst();
     typedef QSharedPointer<CodeAst> Ptr;

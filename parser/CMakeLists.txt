@@ -7,6 +7,7 @@ set(parser_STAT_SRCS
     astbuilder.cpp
     cythonsyntaxremover.cpp
     rangefixvisitor.cpp
+    astfromxml.cpp
 )
 ecm_qt_declare_logging_category(parser_STAT_SRCS
     HEADER parserdebug.h

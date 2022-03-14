@@ -60,7 +60,6 @@ struct NodeReadHelper {
     template<int N>
     void readSingleChild(QStringRef const& childName, Stream& s) {
         auto const nameMatches = childName == *(r->ChildNames.begin() + N);
-        qDebug() << "checking child name:" << nameMatches << childName << *(r->ChildNames.begin() + N) << N;
         if (nameMatches) {
             r->readChild(ChildTag<N>{}, s);
         }
@@ -74,12 +73,16 @@ struct NodeReadHelper {
 
     void readChildren(Stream& s) {
         if constexpr (ChildCount > 0) {
-            qDebug() << " >> starting read list";
+            auto const name = s.name();
+            qDebug() << " >> starting read of child attribute list for " << name;
             while (s.readNextStartElement()) {
-                qDebug() << "read node attribute child:" << s.name();
+                auto childName = s.name();
+                qDebug() << "read child attribute of" << name << ":" << s.name();
                 readSingleChild<ChildCount - 1>(s.name(), s);
+                qDebug() << "done reading child attribute of" << name << ":" << childName;
+                qDebug() << "last read" << s.name() << "isEndTag" << (s.tokenType() == QXmlStreamReader::EndElement);
             }
-            qDebug() << " << finished read list:" << s.name();
+            qDebug() << " << finished read list:" << name << "read end:" << s.tokenType() << s.name();
         }
     };
 
@@ -91,14 +94,17 @@ template<typename Derived>
 void doReadNode(Derived* r, Stream& s)
 {
     using ThisReader = NodeReadHelper<
-    typename Derived::Attributes, Derived::AttributeNames.size(),
-    typename Derived::Children, Derived::ChildNames.size(),
-    Derived
+        typename Derived::Attributes, Derived::AttributeNames.size(),
+        typename Derived::Children, Derived::ChildNames.size(),
+        Derived
     >;
 
+    auto const name = s.name();
+    qDebug() << " ------- Deserializing:" << name;
     ThisReader reader(r, r->AttributeNames, r->ChildNames);
     reader.readAttributes(s);
     reader.readChildren(s);
+    qDebug() << " ++++++++ Done:" << name;
 }
 
 template<typename AstT>
@@ -117,6 +123,10 @@ struct BaseNodeReader
     static constexpr StringList ChildNames = {};
     static constexpr StringList AttributeNames = {};
 
+    BaseNodeReader(Ast* parent) {
+        result = new AstT(parent);
+    }
+
     AstT* read(Stream& s) {
         using Derived = NodeReader<AstT>;
         auto* derivedInstance = static_cast<Derived*>(this);
@@ -133,8 +143,4 @@ struct BaseNodeReader
     }
 
     AstT* result;
-
-    BaseNodeReader(Ast* parent) {
-        result = new AstT(parent);
-    }
 };

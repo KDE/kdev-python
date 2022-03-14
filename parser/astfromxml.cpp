@@ -19,15 +19,13 @@ struct ToEndElement {
 Ast* getSingleElement(Ast* parent, Stream& s)
 {
     auto ok = s.readNextStartElement();
-    qDebug() << "read element:" << s.name() << "at end" << s.atEnd() << "error" << s.errorString();
+    qDebug() << "read element:" << s.name() << "at end" << s.atEnd() << "error" << s.errorString()  << "ok" << ok;
     if (!ok) {
         return nullptr;
     }
 
     auto const& name = s.name();
     auto const astType = astTypeFromString(name.toString());
-
-    ToEndElement toEnd(s);
 
     auto* ast = readTyped(parent, astType, s);
     if (ast)
@@ -51,6 +49,8 @@ void singleFromXml(Ast* parent, AstT*& ret, Stream& s)
 {
     auto* ast = getSingleElement(parent, s);
     ret = static_cast<AstT*>(ast);
+    [[maybe_unused]] auto end = s.readNextStartElement();
+    Q_ASSERT(!end && s.tokenType() == QXmlStreamReader::EndElement);
 }
 
 CodeAst* Python::astFromXml(QString const& data)

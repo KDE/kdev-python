@@ -56,6 +56,34 @@ struct NodeReader<ArgumentsAst> : public BaseNodeReader<ArgumentsAst>
 };
 
 template<>
+struct NodeReader<ArgAst> : public BaseNodeReader<ArgAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { annotation };
+    static auto constexpr ChildNames = {"annotation"};
+
+    using Attributes = enum { argumentName };
+    static auto constexpr AttributeNames = {"arg"};
+
+    READ_CHILD_IMPL(annotation)
+
+    void readAttribute(AttributeTag<argumentName>, QStringRef const& value) {
+        result->argumentName = new Identifier(value.toString());
+    }
+
+    ~NodeReader() {
+        result->argumentName->rangeFrom(result);
+    };
+};
+
+template<>
+struct NodeReader<PassAst> : public BaseNodeReader<PassAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+};
+
+template<>
 struct NodeReader<ReturnAst> : public BaseNodeReader<ReturnAst>
 {
     using BaseNodeReader::BaseNodeReader;

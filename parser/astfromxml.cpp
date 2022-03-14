@@ -12,7 +12,7 @@ Ast::AstType astTypeFromString(QString const& name)
 
 struct ToEndElement {
     ToEndElement(Stream& s) : s(s) {};
-    ~ToEndElement() { while (s.readNext() != QXmlStreamReader::EndElement) {} }
+    ~ToEndElement() { while (!s.atEnd() && s.readNext() != QXmlStreamReader::EndElement) {} }
     Stream& s;
 };
 

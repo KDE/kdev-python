@@ -227,6 +227,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT Identifier : public Ast {
 public:
     Identifier(QString value);
+    Identifier(QString value, Ast* rangeNode);
     bool operator==(const Identifier& rhs) const {
         return value == rhs.value;
     };
@@ -239,6 +240,10 @@ public:
     operator QString() const {
         return value;
     };
+    void rangeFrom(Ast* other) {
+        copyRange(other);
+        setEndColumn();
+    }
     QString value;
 };
 
@@ -251,6 +256,7 @@ public:
     typedef QSharedPointer<CodeAst> Ptr;
     QList<Ast*> body;
     Identifier* name; // module name
+    QList<Ast*> type_ignores;
 };
 
 /** Statement classes **/
@@ -715,6 +721,7 @@ public:
     QList<ArgAst*> arguments;
     QList<ArgAst*> kwonlyargs;
     QList<ArgAst*> posonlyargs;
+    QList<ExpressionAst*> kw_defaults;
     QList<ExpressionAst*> defaultValues;
     ArgAst* vararg;
     ArgAst* kwarg;

@@ -3,6 +3,11 @@
 #include "nodereader.h"
 #include "fromxml_fwd.h"
 
+#define READ_CHILD_IMPL(name) \
+    void readChild(ChildTag<name>, Stream& s) { singleFromXml(result, result->name, s); }
+#define READ_CHILD_LIST_IMPL(name) \
+    void readChild(ChildTag<name>, Stream& s) { listFromXml(result, result->name, s); }
+
 template<>
 struct NodeReader<FunctionDefinitionAst> : public BaseNodeReader<FunctionDefinitionAst>
 {
@@ -12,27 +17,52 @@ struct NodeReader<FunctionDefinitionAst> : public BaseNodeReader<FunctionDefinit
     static auto constexpr AttributeNames = {"name"};
 
     using Children = enum { arguments, decorators, body, returns };
-    static auto constexpr ChildNames = {"arguments", "decorators", "body", "returns"};
+    static auto constexpr ChildNames = {"args", "decorator_list", "body", "returns"};
 
     void readAttribute(AttributeTag<name>, QStringRef const& value) {
         result->name = new Identifier(value.toString());
     }
 
-    void readChild(ChildTag<arguments>, Stream& s) {
-        singleFromXml(result, result->arguments, s);
-    }
+    READ_CHILD_IMPL(arguments)
+    READ_CHILD_IMPL(returns)
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(decorators)
 
-    void readChild(ChildTag<decorators>, Stream& s) {
-        listFromXml(result, result->decorators, s);
+    ~NodeReader() {
+        result->name->rangeFrom(result);
     }
+};
 
-    void readChild(ChildTag<body>, Stream& s) {
-        listFromXml(result, result->body, s);
-    }
+template<>
+struct NodeReader<ArgumentsAst> : public BaseNodeReader<ArgumentsAst>
+{
+    using BaseNodeReader::BaseNodeReader;
 
-    void readChild(ChildTag<returns>, Stream& s) {
-        singleFromXml(result, result->returns, s);
-    }
+    using Children = enum {
+        arguments, kwonlyargs, posonlyargs, defaultValues, vararg, kwarg, kw_defaults
+    };
+    static auto constexpr ChildNames = {
+        "args", "kwonlyargs", "posonlyargs", "defaults", "vararg", "kwarg", "kw_defaults"
+    };
+
+    READ_CHILD_LIST_IMPL(arguments)
+    READ_CHILD_LIST_IMPL(kwonlyargs)
+    READ_CHILD_LIST_IMPL(posonlyargs)
+    READ_CHILD_LIST_IMPL(defaultValues)
+    READ_CHILD_LIST_IMPL(kw_defaults)
+    READ_CHILD_IMPL(vararg)
+    READ_CHILD_IMPL(kwarg)
+};
+
+template<>
+struct NodeReader<ReturnAst> : public BaseNodeReader<ReturnAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { value };
+    static auto constexpr ChildNames = {"value"};
+
+    READ_CHILD_IMPL(value);
 };
 
 template<>
@@ -46,6 +76,10 @@ struct NodeReader<NameAst> : public BaseNodeReader<NameAst>
     void readAttribute(AttributeTag<identifier>, QStringRef const& value) {
         result->identifier = new Identifier(value.toString());
     }
+
+    ~NodeReader() {
+        result->identifier->rangeFrom(result);
+    }
 };
 
 template<>
@@ -56,13 +90,8 @@ struct NodeReader<AssignmentAst> : public BaseNodeReader<AssignmentAst>
     using Children = enum { targets, value };
     static auto constexpr ChildNames = {"targets", "value"};
 
-    void readChild(ChildTag<targets>, Stream& s) {
-        listFromXml(result, result->targets, s);
-    }
-
-    void readChild(ChildTag<value>, Stream& s) {
-        singleFromXml(result, result->value, s);
-    }
+    READ_CHILD_LIST_IMPL(targets)
+    READ_CHILD_IMPL(value)
 };
 
 template<>
@@ -70,12 +99,11 @@ struct NodeReader<CodeAst> : public BaseNodeReader<CodeAst>
 {
     using BaseNodeReader::BaseNodeReader;
 
-    using Children = enum { body };
-    static auto constexpr ChildNames = {"body"};
+    using Children = enum { body, type_ignores };
+    static auto constexpr ChildNames = {"body", "type_ignores"};
 
-    void readChild(ChildTag<body>, Stream& s) {
-        listFromXml(result, result->body, s);
-    }
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(type_ignores)
 };
 
 template<>

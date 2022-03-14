@@ -44,6 +44,7 @@ with open(sys.argv[1], "r") as fp:
     text = fp.read()
 
 m = ast.parse(text)
+m = ast.fix_missing_locations(m)
 
 f = BytesIO()
 with etree.xmlfile(f) as xf:

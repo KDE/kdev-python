@@ -345,6 +345,7 @@ void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
 {
     visitNodeList(node->arguments);
     visitNodeList(node->defaultValues);
+    visitNodeList(node->kw_defaults);
 }
 
 }

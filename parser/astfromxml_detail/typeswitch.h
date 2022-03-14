@@ -128,6 +128,7 @@ Ast* readTyped(Ast* parent, Python::Ast::AstType astType, Stream& s) {
         case Ast::AliasAstType:
             return NodeReader<AliasAst>(parent).read(s);
         case Ast::LastStatementType:
+        case Ast::StatementAstType:
         case Ast::ExpressionAstType:
         case Ast::LastExpressionType:
         case Ast::IdentifierAstType:

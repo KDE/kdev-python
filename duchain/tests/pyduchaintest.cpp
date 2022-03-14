@@ -632,7 +632,7 @@ void PyDUChainTest::testSimple_data()
     QTest::newRow("assign_str") << "b = 'hola';" << 1 << 0;
     QTest::newRow("op") << "a = 3; b = a+2;" << 2 << 1;
     QTest::newRow("bool") << "a = True" << 1 << 0;
-    QTest::newRow("op") << "a = True and True;" << 1 << 0;
+    QTest::newRow("op2") << "a = True and True;" << 1 << 0;
     QTest::newRow("fndef") << "def f(): return 0" << 1 << 0;
 }
 

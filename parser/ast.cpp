@@ -20,7 +20,7 @@ namespace Python
 Ast::Ast( Ast* parent, Ast::AstType type ) : parent(parent), astType( type ), startCol(0), startLine(-99999), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(nullptr) { }
 Ast::Ast() :  parent(nullptr), startCol(0), startLine(-5), endCol(0), endLine(0), hasUsefulRangeInformation(false), context(nullptr) { }
 
-ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType)
+ArgumentsAst::ArgumentsAst(Ast* parent): Ast(parent, Ast::ArgumentsAstType), vararg(nullptr), kwarg(nullptr)
 {
     
 }
@@ -166,7 +166,7 @@ ForAst::ForAst(Ast* parent): StatementAst(parent, Ast::ForAstType), target(nullp
     
 }
 
-FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(nullptr), arguments(nullptr), async(false)
+FunctionDefinitionAst::FunctionDefinitionAst(Ast* parent): StatementAst(parent, Ast::FunctionDefinitionAstType), name(nullptr), arguments(nullptr), returns(nullptr), async(false)
 {
     
 }
@@ -183,7 +183,7 @@ GlobalAst::GlobalAst(Ast* parent): StatementAst(parent, Ast::GlobalAstType)
 
 Identifier::Identifier(QString value) : Ast(nullptr, Ast::IdentifierAstType), value(value)
 {
-    
+
 }
 
 IfAst::IfAst(Ast* parent): StatementAst(parent, Ast::IfAstType), condition(nullptr)

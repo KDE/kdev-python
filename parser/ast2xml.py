@@ -6,7 +6,7 @@ from io import BytesIO
 
 import sys
 
-plain_types = (type(0), type(""), type(0.0), type(False), type(None))
+plain_types = (type(0), type(""), type(b""), type(0.0), type(False), type(None))
 list_type = type([])
 
 class ASTSerializer(ast.NodeVisitor):
@@ -16,17 +16,29 @@ class ASTSerializer(ast.NodeVisitor):
     def generic_visit(self, node):
         name = type(node).__name__
         attrs = {k: getattr(node, k) for k in node._fields} if hasattr(node, "_fields") else dict()
+        if hasattr(node, "col_offset"):
+            attrs["col_offset"] = node.col_offset
+            attrs["lineno"] = node.lineno
+        if name == "Constant":
+            attrs["constant_type"] = type(node.value).__name__
         plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types}
-        other_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types}
+        non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types}
         with xf.element(name, **plain_attrs) as elem:
-            for attrName, attrValue in other_attrs.items():
-                with xf.element(attrName):
-                    if type(attrValue) == list_type:
-                        for node in attrValue:
-                            self.generic_visit(node)
-                    else:
-                        self.generic_visit(attrValue)
-
+            for attr, attr_val in non_plain_attrs.items():
+                if attr == "ctx":
+                    continue
+                if type(attr_val) == list_type:
+                    with xf.element(attr) as list_name_elem:
+                        for entry in attr_val:
+                            self.generic_visit(entry)
+                elif attr_val is None:
+                    pass
+                elif issubclass(type(attr_val), ast.AST) or type(attr_val).__name__ == "ellipsis":
+                    with xf.element(attr) as name_elem:
+                        self.generic_visit(attr_val)
+                else:
+                    print(attr, attr_val, type(attr_val))
+                    assert False
 
 with open(sys.argv[1], "r") as fp:
     text = fp.read()

@@ -2,6 +2,7 @@
 
 #include "nodereader.h"
 #include "fromxml_fwd.h"
+#include "operators.h"
 
 #define READ_CHILD_IMPL(name) \
     void readChild(ChildTag<name>, Stream& s) { singleFromXml(result, result->name, s); }
@@ -104,6 +105,25 @@ struct NodeReader<CodeAst> : public BaseNodeReader<CodeAst>
 
     READ_CHILD_LIST_IMPL(body)
     READ_CHILD_LIST_IMPL(type_ignores)
+};
+
+template<>
+struct NodeReader<BinaryOperationAst> : public BaseNodeReader<BinaryOperationAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { lhs, rhs };
+    static auto constexpr ChildNames = {"left", "right"};
+
+    using Attributes = enum { op };
+    static auto constexpr AttributeNames = {"op"};
+
+    READ_CHILD_IMPL(lhs)
+    READ_CHILD_IMPL(rhs)
+
+    void readAttribute(AttributeTag<op>, QStringRef const& value) {
+        result->type = operatorType(value);
+    }
 };
 
 template<>

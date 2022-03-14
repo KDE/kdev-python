@@ -7,7 +7,7 @@ using namespace Python;
 QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("AsyncFunctionDef"), Ast::FunctionDefinitionAstType},
     {QStringLiteral("FunctionDef"), Ast::FunctionDefinitionAstType},
-    {QStringLiteral("Assignment"), Ast::AssignmentAstType},
+    {QStringLiteral("Assign"), Ast::AssignmentAstType},
     {QStringLiteral("Pass"), Ast::PassAstType},
     {QStringLiteral("Nonlocal"), Ast::NonlocalAstType},
     {QStringLiteral("arguments"), Ast::ArgumentsAstType},
@@ -39,7 +39,7 @@ QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("Attribute"), Ast::AttributeAstType},
     {QStringLiteral("DictionaryComprehension"), Ast::DictionaryComprehensionAstType},
     {QStringLiteral("BooleanOperation"), Ast::BooleanOperationAstType},
-    {QStringLiteral("BinaryOperation"), Ast::BinaryOperationAstType},
+    {QStringLiteral("BinOp"), Ast::BinaryOperationAstType},
     {QStringLiteral("UnaryOperation"), Ast::UnaryOperationAstType},
     {QStringLiteral("Lambda"), Ast::LambdaAstType},
     {QStringLiteral("IfExpression"), Ast::IfExpressionAstType},

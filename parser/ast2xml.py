@@ -21,6 +21,8 @@ class ASTSerializer(ast.NodeVisitor):
             attrs["lineno"] = node.lineno
         if name == "Constant":
             attrs["constant_type"] = type(node.value).__name__
+        if name == "BinOp":
+            attrs["op"] = type(node.op).__name__
         plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types}
         non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types}
         with xf.element(name, **plain_attrs) as elem:

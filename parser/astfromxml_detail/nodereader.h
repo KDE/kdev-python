@@ -14,8 +14,16 @@ using StringList = std::initializer_list<const char*>;
 template<int Attr> using AttributeTag = std::integral_constant<int, Attr>;
 template<int Child> using ChildTag = std::integral_constant<int, Child>;
 
-enum global_attributes {col_offset = -1, lineno = -2, last_global_attribute = lineno};
-StringList global_attribute_names = {"col_offset", "lineno"};
+enum global_attributes {
+    col_offset = -1, lineno = -2,
+    end_col_offset = -3, end_lineno = -4,
+    last_global_attribute = end_lineno
+};
+StringList constexpr global_attribute_names = {
+    "col_offset", "lineno",
+    "end_col_offset", "end_lineno",
+};
+static_assert(global_attribute_names.size() == -last_global_attribute);
 
 template<typename Attributes, int AttributeCount, typename Children, int ChildCount, typename Reader>
 struct NodeReadHelper {
@@ -35,8 +43,10 @@ struct NodeReadHelper {
             }
         }
         else {
+            qDebug() << "check:" << attributeName << *(global_attribute_names.begin() - (N+1));
             if (attributeName == *(global_attribute_names.begin() - (N+1))) {
                 r->readGlobalAttribute(AttributeTag<N>{}, attributeValue);
+                qDebug() << "read global:" << attributeName << attributeValue;
                 return;
             }
         }
@@ -140,6 +150,14 @@ struct BaseNodeReader
 
     void readGlobalAttribute(AttributeTag<lineno>, QStringRef const& value) {
         result->startLine = value.toInt() - 1;
+    }
+
+    void readGlobalAttribute(AttributeTag<end_col_offset>, QStringRef const& value) {
+        result->endCol = value.toInt();
+    }
+
+    void readGlobalAttribute(AttributeTag<end_lineno>, QStringRef const& value) {
+        result->endLine = value.toInt() - 1;
     }
 
     AstT* result;

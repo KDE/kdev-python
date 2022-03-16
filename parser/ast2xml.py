@@ -19,6 +19,8 @@ class ASTSerializer(ast.NodeVisitor):
         if hasattr(node, "col_offset"):
             attrs["col_offset"] = node.col_offset
             attrs["lineno"] = node.lineno
+            attrs["end_col_offset"] = node.end_col_offset
+            attrs["end_lineno"] = node.end_lineno
         if name == "Constant":
             attrs["constant_type"] = type(node.value).__name__
         if name == "BinOp":

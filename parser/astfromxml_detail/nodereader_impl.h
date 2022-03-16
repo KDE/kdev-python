@@ -74,6 +74,7 @@ struct NodeReader<ArgAst> : public BaseNodeReader<ArgAst>
 
     ~NodeReader() {
         result->argumentName->rangeFrom(result);
+        result->copyRange(result->argumentName);
     };
 };
 

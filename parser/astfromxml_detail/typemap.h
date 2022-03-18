@@ -39,7 +39,7 @@ QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("Call"), Ast::CallAstType},
     {QStringLiteral("Attribute"), Ast::AttributeAstType},
     {QStringLiteral("DictionaryComprehension"), Ast::DictionaryComprehensionAstType},
-    {QStringLiteral("BooleanOperation"), Ast::BooleanOperationAstType},
+    {QStringLiteral("BoolOp"), Ast::BooleanOperationAstType},
     {QStringLiteral("BinOp"), Ast::BinaryOperationAstType},
     {QStringLiteral("UnaryOperation"), Ast::UnaryOperationAstType},
     {QStringLiteral("Lambda"), Ast::LambdaAstType},

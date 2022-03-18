@@ -268,10 +268,21 @@ struct NodeReader<SliceAst> : public BaseNodeReader<SliceAst>
 {
     using BaseNodeReader::BaseNodeReader;
 
-    using Children = enum { lower, upper, step};
+    using Children = enum { lower, upper, step };
     static auto constexpr ChildNames = { "lower", "upper", "step" };
 
     READ_CHILD_IMPL(lower)
     READ_CHILD_IMPL(upper)
     READ_CHILD_IMPL(step)
+};
+
+template<>
+struct NodeReader<BooleanOperationAst> : public BaseNodeReader<BooleanOperationAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { values };
+    static auto constexpr ChildNames = { "values" };
+
+    READ_CHILD_LIST_IMPL(values)
 };

@@ -67,5 +67,5 @@ QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("AssignmentExpression"), Ast::AssignmentExpressionAstType},
     {QStringLiteral("Module"), Ast::CodeAstType},
     {QStringLiteral("ExceptionHandler"), Ast::ExceptionHandlerAstType},
-    {QStringLiteral("Alias"), Ast::AliasAstType},
+    {QStringLiteral("alias"), Ast::AliasAstType},
 };

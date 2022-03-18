@@ -26,7 +26,9 @@ public:
     void visitCode(Python::CodeAst* node) override;
     void visitFunctionDefinition(FunctionDefinitionAst* node) override;
     void visitClassDefinition(ClassDefinitionAst* node) override;
+#if 0
     void visitAttribute(AttributeAst* node) override;
+#endif
     void visitImport(ImportAst* node) override;
     void visitExceptionHandler(ExceptionHandlerAst* node) override;
     void visitString(Python::StringAst* node) override;

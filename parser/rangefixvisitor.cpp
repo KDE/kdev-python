@@ -71,6 +71,7 @@ void RangeFixVisitor::visitClassDefinition(ClassDefinitionAst* node) {
     AstDefaultVisitor::visitClassDefinition(node);
 };
 
+#if 0
 void RangeFixVisitor::visitAttribute(AttributeAst* node) {
     // Work around the weird way to count columns in Python's AST module.
 
@@ -147,6 +148,7 @@ void RangeFixVisitor::visitAttribute(AttributeAst* node) {
 
     AstDefaultVisitor::visitAttribute(node);
 };
+#endif
 
 // alias for imports (import foo as bar, baz as bang)
 // no strings, brackets, or whatever are allowed here, so the "parser"
@@ -241,6 +243,7 @@ void RangeFixVisitor::cutDefinitionPreamble(Ast* fixNode, const QString& defKeyw
 
     // cut away decorators
     while ( currentLine < lines.size() ) {
+        qDebug() << "line" << currentLine << lines.size() << defKeyword << fixNode->astType;
         if ( lines.at(currentLine).trimmed().remove(' ').remove('\t').startsWith(defKeyword) ) {
             // it's not a decorator, so stop skipping lines.
             break;

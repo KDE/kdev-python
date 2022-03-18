@@ -43,10 +43,9 @@ struct NodeReadHelper {
             }
         }
         else {
-            qDebug() << "check:" << attributeName << *(global_attribute_names.begin() - (N+1));
             if (attributeName == *(global_attribute_names.begin() - (N+1))) {
+                qDebug() << "read global attribute:" << attributeName << attributeValue;
                 r->readGlobalAttribute(AttributeTag<N>{}, attributeValue);
-                qDebug() << "read global:" << attributeName << attributeValue;
                 return;
             }
         }
@@ -58,12 +57,9 @@ struct NodeReadHelper {
     }
 
     void readAttributes(Stream& s) {
-        if constexpr (AttributeCount > 0) {
-            auto const& attributes = s.attributes();
-            for (auto const& attr: attributes) {
-                qDebug() << "read attribute:" << attr.name() << attr.value();
-                tryReadAttributes<AttributeCount - 1>(attr.name(), attr.value());
-            }
+        auto const& attributes = s.attributes();
+        for (auto const& attr: attributes) {
+            tryReadAttributes<AttributeCount - 1>(attr.name(), attr.value());
         }
     }
 
@@ -153,14 +149,17 @@ struct BaseNodeReader
     }
 
     void readGlobalAttribute(AttributeTag<lineno>, QStringRef const& value) {
+        // minus one because our lines are zero-indexed
         result->startLine = value.toInt() - 1;
     }
 
     void readGlobalAttribute(AttributeTag<end_col_offset>, QStringRef const& value) {
-        result->endCol = value.toInt();
+        // minus one because our ranges are [a:b] but Python's are [a:b)
+        result->endCol = value.toInt() - 1;
     }
 
     void readGlobalAttribute(AttributeTag<end_lineno>, QStringRef const& value) {
+        // minus one because our lines are zero-indexed
         result->endLine = value.toInt() - 1;
     }
 

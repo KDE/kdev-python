@@ -286,3 +286,70 @@ struct NodeReader<BooleanOperationAst> : public BaseNodeReader<BooleanOperationA
 
     READ_CHILD_LIST_IMPL(values)
 };
+
+template<>
+struct NodeReader<AttributeAst> : public BaseNodeReader<AttributeAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Attributes = enum { attribute };
+    static auto constexpr AttributeNames = { "attr" };
+
+    using Children = enum { value };
+    static auto constexpr ChildNames = { "value" };
+
+    READ_CHILD_IMPL(value)
+
+    void readAttribute(AttributeTag<value>, QStringRef const& value) {
+        result->attribute = new Identifier(value.toString());
+    }
+
+    ~NodeReader() {
+        if (!result->attribute) {
+            return;
+        }
+        result->attribute->copyRange(result);
+        result->attribute->startCol = result->endCol - result->attribute->value.length() + 1;
+        result->attribute->startLine = result->attribute->endLine;
+        result->copyRange(result->attribute);
+    }
+};
+
+template<>
+struct NodeReader<ImportAst> : public BaseNodeReader<ImportAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { names };
+    static auto constexpr ChildNames = { "names" };
+
+    READ_CHILD_LIST_IMPL(names)
+};
+
+template<>
+struct NodeReader<AliasAst> : public BaseNodeReader<AliasAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Attributes = enum { name, asName };
+    static auto constexpr AttributeNames = { "name", "asname" };
+
+    void readAttribute(AttributeTag<name>, QStringRef const& value) {
+        result->name = new Identifier(value.toString());
+    }
+
+    void readAttribute(AttributeTag<asName>, QStringRef const& value) {
+        if (value != "None") {
+            result->asName = new Identifier(value.toString());
+        }
+    }
+
+    ~NodeReader() {
+        if (result->name) {
+            result->name->copyRange(result);
+        }
+        if (result->asName) {
+            result->asName->copyRange(result);
+        }
+    }
+};

@@ -37,7 +37,9 @@ class ASTSerializer(ast.NodeVisitor):
                             self.generic_visit(entry)
                 elif attr_val is None:
                     pass
-                elif issubclass(type(attr_val), ast.AST) or type(attr_val).__name__ == "ellipsis":
+                elif type(attr_val).__name__ == "ellipsis":
+                    pass
+                elif issubclass(type(attr_val), ast.AST):
                     with xf.element(attr) as name_elem:
                         self.generic_visit(attr_val)
                 else:

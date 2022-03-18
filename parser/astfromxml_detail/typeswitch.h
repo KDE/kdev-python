@@ -127,9 +127,10 @@ Ast* readTyped(Ast* parent, Python::Ast::AstType astType, Stream& s) {
             return NodeReader<ExceptionHandlerAst>(parent).read(s);
         case Ast::AliasAstType:
             return NodeReader<AliasAst>(parent).read(s);
+        case Ast::ExpressionAstType:
+            return NodeReader<ExpressionAst>(parent).read(s);
         case Ast::LastStatementType:
         case Ast::StatementAstType:
-        case Ast::ExpressionAstType:
         case Ast::LastExpressionType:
         case Ast::IdentifierAstType:
         case Ast::LastAstType:

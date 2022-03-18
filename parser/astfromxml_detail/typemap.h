@@ -5,6 +5,7 @@
 using namespace Python;
 
 QMap<QString, Ast::AstType> astTypes = {
+    {QStringLiteral("Expr"), Ast::ExpressionAstType},
     {QStringLiteral("AsyncFunctionDef"), Ast::FunctionDefinitionAstType},
     {QStringLiteral("FunctionDef"), Ast::FunctionDefinitionAstType},
     {QStringLiteral("Assign"), Ast::AssignmentAstType},
@@ -13,7 +14,7 @@ QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("arguments"), Ast::ArgumentsAstType},
     {QStringLiteral("arg"), Ast::ArgAstType},
     {QStringLiteral("Keyword"), Ast::KeywordAstType},
-    {QStringLiteral("ClassDefinition"), Ast::ClassDefinitionAstType},
+    {QStringLiteral("ClassDef"), Ast::ClassDefinitionAstType},
     {QStringLiteral("Return"), Ast::ReturnAstType},
     {QStringLiteral("Delete"), Ast::DeleteAstType},
     {QStringLiteral("For"), Ast::ForAstType},

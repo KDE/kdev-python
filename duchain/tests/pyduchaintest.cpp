@@ -634,6 +634,7 @@ void PyDUChainTest::testSimple_data()
     QTest::newRow("bool") << "a = True" << 1 << 0;
     QTest::newRow("op2") << "a = True and True;" << 1 << 0;
     QTest::newRow("fndef") << "def f(): return 0" << 1 << 0;
+    QTest::newRow("classdef") << "def foo(x): pass" << 1 << 0;
 }
 
 class AttributeRangeTestVisitor : public AstDefaultVisitor {

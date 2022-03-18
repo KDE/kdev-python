@@ -94,6 +94,10 @@ struct NodeReadHelper {
             }
             qDebug() << " << finished read list:" << name << "read end:" << s.tokenType() << s.name();
         }
+        else {
+            qDebug() << " ** " << s.name() << "has no children, skipping it.";
+            s.readNextStartElement();
+        }
     };
 
     Reader* r;

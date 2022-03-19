@@ -27,3 +27,7 @@ Ast::OperatorTypes operatorType(QStringRef const& name) {
 
     return Ast::OperatorInvalid;
 }
+
+Ast::ComparisonOperatorTypes comparisonOperatorType(QStringRef const& name) {
+    return Ast::ComparisonOperatorEquals; // FIXME
+}

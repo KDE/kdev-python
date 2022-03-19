@@ -258,6 +258,17 @@ struct NodeReader<TupleAst> : public BaseNodeReader<TupleAst>
 };
 
 template<>
+struct NodeReader<SetAst> : public BaseNodeReader<SetAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { elements };
+    static auto constexpr ChildNames = { "elts" };
+
+    READ_CHILD_LIST_IMPL(elements)
+};
+
+template<>
 struct NodeReader<SubscriptAst> : public BaseNodeReader<SubscriptAst>
 {
     using BaseNodeReader::BaseNodeReader;
@@ -333,6 +344,28 @@ struct NodeReader<ImportAst> : public BaseNodeReader<ImportAst>
 };
 
 template<>
+struct NodeReader<ImportFromAst> : public BaseNodeReader<ImportFromAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { names };
+    static auto constexpr ChildNames = { "names" };
+
+    using Attributes = enum { level, module };
+    static auto constexpr AttributeNames = { "name", "module" };
+
+    READ_CHILD_LIST_IMPL(names)
+
+    void readAttribute(AttributeTag<module>, QStringRef const& value) {
+        result->module = new Identifier(value.toString());
+    };
+
+    void readAttribute(AttributeTag<level>, QStringRef const& value) {
+        result->level = value.toInt();
+    }
+};
+
+template<>
 struct NodeReader<AliasAst> : public BaseNodeReader<AliasAst>
 {
     using BaseNodeReader::BaseNodeReader;
@@ -358,4 +391,319 @@ struct NodeReader<AliasAst> : public BaseNodeReader<AliasAst>
             result->asName->copyRange(result);
         }
     }
+};
+
+template<>
+struct NodeReader<ListComprehensionAst> : public BaseNodeReader<ListComprehensionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { element, generators };
+    static auto constexpr ChildNames = { "elt", "generators" };
+
+    READ_CHILD_IMPL(element)
+    READ_CHILD_LIST_IMPL(generators)
+};
+
+template<>
+struct NodeReader<SetComprehensionAst> : public BaseNodeReader<SetComprehensionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { element, generators };
+    static auto constexpr ChildNames = { "elt", "generators" };
+
+    READ_CHILD_IMPL(element)
+    READ_CHILD_LIST_IMPL(generators)
+};
+
+template<>
+struct NodeReader<DictionaryComprehensionAst> : public BaseNodeReader<DictionaryComprehensionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { key, value, generators };
+    static auto constexpr ChildNames = { "key", "value", "generators" };
+
+    READ_CHILD_IMPL(key)
+    READ_CHILD_IMPL(value)
+    READ_CHILD_LIST_IMPL(generators)
+};
+
+template<>
+struct NodeReader<ComprehensionAst> : public BaseNodeReader<ComprehensionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { target, iterator, conditions };
+    static auto constexpr ChildNames = { "target", "iter", "ifs" };
+
+    READ_CHILD_IMPL(target)
+    READ_CHILD_IMPL(iterator)
+    READ_CHILD_LIST_IMPL(conditions)
+};
+
+template<>
+struct NodeReader<UnaryOperationAst> : public BaseNodeReader<UnaryOperationAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { operand };
+    static auto constexpr ChildNames = { "operand" };
+
+    using Attributes = enum { op };
+    static auto constexpr AttributeNames = {"op"};
+
+    READ_CHILD_IMPL(operand)
+
+    void readAttribute(AttributeTag<op>, QStringRef const& /*value*/) {
+        result->type = Ast::UnaryOperatorAdd; // FIXME
+    }
+};
+
+template<>
+struct NodeReader<LambdaAst> : public BaseNodeReader<LambdaAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { arguments, body };
+    static auto constexpr ChildNames = { "args", "body" };
+
+    READ_CHILD_IMPL(arguments)
+    READ_CHILD_IMPL(body)
+};
+
+template<>
+struct NodeReader<JoinedStringAst> : public BaseNodeReader<JoinedStringAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { values };
+    static auto constexpr ChildNames = { "values" };
+
+    READ_CHILD_LIST_IMPL(values)
+};
+
+template<>
+struct NodeReader<AugmentedAssignmentAst> : public BaseNodeReader<AugmentedAssignmentAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { target, value };
+    static auto constexpr ChildNames = { "target", "value" };
+
+    using Attributes = enum { op };
+    static auto constexpr AttributeNames = {"op"};
+
+    READ_CHILD_IMPL(target)
+    READ_CHILD_IMPL(value)
+
+    void readAttribute(AttributeTag<op>, QStringRef const& value) {
+        result->op = operatorType(value);
+    }
+};
+
+template<>
+struct NodeReader<DeleteAst> : public BaseNodeReader<DeleteAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { targets };
+    static auto constexpr ChildNames = { "targets" };
+
+    READ_CHILD_LIST_IMPL(targets)
+};
+
+template<>
+struct NodeReader<ForAst> : public BaseNodeReader<ForAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { target, iterator, body, orelse };
+    static auto constexpr ChildNames = { "target", "iter", "body", "orelse" };
+
+    READ_CHILD_IMPL(target)
+    READ_CHILD_IMPL(iterator)
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(orelse)
+};
+
+template<>
+struct NodeReader<WhileAst> : public BaseNodeReader<WhileAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { condition, body, orelse };
+    static auto constexpr ChildNames = { "test", "body", "orelse" };
+
+    READ_CHILD_IMPL(condition)
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(orelse)
+};
+
+template<>
+struct NodeReader<IfAst> : public BaseNodeReader<IfAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { condition, body, orelse };
+    static auto constexpr ChildNames = { "test", "body", "orelse" };
+
+    READ_CHILD_IMPL(condition)
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(orelse)
+};
+
+template<>
+struct NodeReader<WithAst> : public BaseNodeReader<WithAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { body, items };
+    static auto constexpr ChildNames = { "items", "body" };
+
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(items)
+};
+
+template<>
+struct NodeReader<WithItemAst> : public BaseNodeReader<WithItemAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { contextExpression, optionalVars };
+    static auto constexpr ChildNames = { "context_expr", "optional_vars" };
+
+    READ_CHILD_IMPL(contextExpression)
+    READ_CHILD_IMPL(optionalVars)
+};
+
+template<>
+struct NodeReader<CompareAst> : public BaseNodeReader<CompareAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { leftmostElement, operators, comparands };
+    static auto constexpr ChildNames = { "left", "ops", "comparators" };
+
+    READ_CHILD_IMPL(leftmostElement)
+    READ_CHILD_LIST_IMPL(comparands)
+
+    void readChild(ChildTag<operators>, Stream& s) {
+        while (s.readNextStartElement()) {
+            result->operators << comparisonOperatorType(s.name());
+            s.readNext();
+        }
+    }
+};
+
+template<>
+struct NodeReader<GeneratorExpressionAst> : public BaseNodeReader<GeneratorExpressionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { element, generators };
+    static auto constexpr ChildNames = { "elt", "generators" };
+
+    READ_CHILD_IMPL(element)
+    READ_CHILD_LIST_IMPL(generators)
+};
+
+template<>
+struct NodeReader<RaiseAst> : public BaseNodeReader<RaiseAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { type };
+    static auto constexpr ChildNames = { "exc" };
+
+    READ_CHILD_IMPL(type)
+};
+
+template<>
+struct NodeReader<KeywordAst> : public BaseNodeReader<KeywordAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { value };
+    static auto constexpr ChildNames = { "value" };
+
+    using Attributes = enum { argumentName };
+    static auto constexpr AttributeNames = { "arg" };
+
+    READ_CHILD_IMPL(value)
+    READ_IDENTIFIER_IMPL(argumentName)
+};
+
+template<>
+struct NodeReader<StarredAst> : public BaseNodeReader<StarredAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { value };
+    static auto constexpr ChildNames = { "value" };
+
+    READ_CHILD_IMPL(value)
+};
+
+template<>
+struct NodeReader<TryAst> : public BaseNodeReader<TryAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { body, handlers, orelse, finally };
+    static auto constexpr ChildNames = { "body", "handlers", "orelse", "finalbody" };
+
+    READ_CHILD_LIST_IMPL(body)
+    READ_CHILD_LIST_IMPL(handlers)
+    READ_CHILD_LIST_IMPL(orelse)
+    READ_CHILD_LIST_IMPL(finally)
+};
+
+template<>
+struct NodeReader<ExceptionHandlerAst> : public BaseNodeReader<ExceptionHandlerAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Attributes = enum { name };
+    static auto constexpr AttributeNames = { "name" };
+
+    using Children = enum { type, body };
+    static auto constexpr ChildNames = { "type", "body" };
+
+    READ_CHILD_IMPL(type)
+    READ_CHILD_LIST_IMPL(body)
+    READ_IDENTIFIER_IMPL(name)
+};
+
+template<>
+struct NodeReader<FormattedValueAst> : public BaseNodeReader<FormattedValueAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { value, formatSpec };
+    static auto constexpr ChildNames = { "value", "format_spec" };
+
+    using Attributes = enum { conversion };
+    static auto constexpr AttributeNames = { "conversion" };
+
+    READ_CHILD_IMPL(value)
+    READ_CHILD_IMPL(formatSpec)
+
+    void readAttribute(AttributeTag<conversion>, QStringRef const& value) {
+        result->conversion = value.toInt();
+    }
+};
+
+template<>
+struct NodeReader<AnnotationAssignmentAst> : public BaseNodeReader<AnnotationAssignmentAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { target, value, annotation };
+    static auto constexpr ChildNames = { "target", "annotation", "value" };
+
+    READ_CHILD_IMPL(target)
+    READ_CHILD_IMPL(value)
+    READ_CHILD_IMPL(annotation)
 };

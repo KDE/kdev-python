@@ -14,6 +14,8 @@ class ASTSerializer(ast.NodeVisitor):
         self.xf = xf
 
     def generic_visit(self, node):
+        if node is None:
+            return
         name = type(node).__name__
         attrs = {k: getattr(node, k) for k in node._fields} if hasattr(node, "_fields") else dict()
         if hasattr(node, "col_offset"):
@@ -26,6 +28,8 @@ class ASTSerializer(ast.NodeVisitor):
         if name == "BinOp":
             attrs["op"] = type(node.op).__name__
         if name == "BoolOp":
+            attrs["op"] = type(node.op).__name__
+        if name == "UnaryOp":
             attrs["op"] = type(node.op).__name__
         plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types}
         non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types}

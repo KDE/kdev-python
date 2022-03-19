@@ -35,7 +35,7 @@ QMap<QString, Ast::AstType> astTypes = {
     {QStringLiteral("Global"), Ast::GlobalAstType},
     {QStringLiteral("Break"), Ast::BreakAstType},
     {QStringLiteral("Continue"), Ast::ContinueAstType},
-    {QStringLiteral("Assertion"), Ast::AssertionAstType},
+    {QStringLiteral("Assert"), Ast::AssertionAstType},
     {QStringLiteral("AugAssign"), Ast::AugmentedAssignmentAstType},
     {QStringLiteral("AnnAssign"), Ast::AnnotationAssignmentAstType},
     {QStringLiteral("Await"), Ast::AwaitAstType},

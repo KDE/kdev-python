@@ -30,7 +30,7 @@ ArgAst::ArgAst(Ast* parent): Ast(parent, Ast::ArgAstType), argumentName(nullptr)
 
 }
 
-AssertionAst::AssertionAst(Ast* parent): StatementAst(parent, Ast::AssertionAstType) 
+AssertionAst::AssertionAst(Ast* parent): StatementAst(parent, Ast::AssertionAstType), condition(nullptr), message(nullptr)
 {
     
 }

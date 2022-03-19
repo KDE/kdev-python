@@ -707,3 +707,43 @@ struct NodeReader<AnnotationAssignmentAst> : public BaseNodeReader<AnnotationAss
     READ_CHILD_IMPL(value)
     READ_CHILD_IMPL(annotation)
 };
+
+template<>
+struct NodeReader<AssertionAst> : public BaseNodeReader<AssertionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { condition, message };
+    static auto constexpr ChildNames = { "test", "msg" };
+
+    READ_CHILD_IMPL(condition)
+    READ_CHILD_IMPL(message)
+};
+
+template<>
+struct NodeReader<BreakAst> : public BaseNodeReader<BreakAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+};
+
+template<>
+struct NodeReader<ContinueAst> : public BaseNodeReader<ContinueAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+};
+
+template<>
+struct NodeReader<NonlocalAst> : public BaseNodeReader<NonlocalAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { names };
+    static auto constexpr ChildNames = { "names" };
+
+    void readChild(ChildTag<names>, Stream& s) {
+        while (s.readNextStartElement()) {
+            result->names << s.name().toString(); // FIXME this isn't serialized properly
+            s.readNext();
+        }
+    }
+};

@@ -91,6 +91,7 @@ Python::CodeAst* __testing_AstFromString(QString const& string) {
     auto const error = p.readAllStandardError();
     if (!error.isEmpty()) {
         qWarning() << "error running parser:" << QString::fromUtf8(error);
+        return nullptr;
     }
     qDebug() << "using xml:" << xml;
     return astFromXml(xml);
@@ -105,6 +106,9 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     contents.append('\n');
 
     auto* ast = __testing_AstFromString(contents);
+    if (!ast)
+        return nullptr;
+
     ast->name = new Identifier(filename.fileName());
 
 #if 0

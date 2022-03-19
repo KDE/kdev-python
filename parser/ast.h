@@ -421,7 +421,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT NonlocalAst : public StatementAst {
 public:
     NonlocalAst(Ast* parent);
-    QList<QString> names;
+    QList<Identifier*> names;
 };
 
 

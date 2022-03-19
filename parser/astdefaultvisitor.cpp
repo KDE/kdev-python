@@ -25,7 +25,6 @@ AstDefaultVisitor::~AstDefaultVisitor() { }
 // note that Identifier is not a node in this Ast
 void AstDefaultVisitor::visitNameConstant(NameConstantAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitPass(PassAst* node) { Q_UNUSED(node); }
-void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBreak(BreakAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitContinue(ContinueAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitEllipsis(EllipsisAst* node) { Q_UNUSED(node); }
@@ -34,6 +33,10 @@ void AstDefaultVisitor::visitString(StringAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitConstant(ConstantAst* node) { Q_UNUSED(node); }
+
+void AstDefaultVisitor::visitNonlocal(NonlocalAst* node) {
+    visitNodeList(node->names);
+}
 
 void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
 //TODO: Fix range/context/??? bugs, then re-enable this.

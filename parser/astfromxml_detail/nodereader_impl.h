@@ -555,6 +555,19 @@ struct NodeReader<IfAst> : public BaseNodeReader<IfAst>
 };
 
 template<>
+struct NodeReader<IfExpressionAst> : public BaseNodeReader<IfExpressionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { condition, body, orelse };
+    static auto constexpr ChildNames = { "test", "body", "orelse" };
+
+    READ_CHILD_IMPL(condition)
+    READ_CHILD_IMPL(body)
+    READ_CHILD_IMPL(orelse)
+};
+
+template<>
 struct NodeReader<WithAst> : public BaseNodeReader<WithAst>
 {
     using BaseNodeReader::BaseNodeReader;
@@ -742,8 +755,47 @@ struct NodeReader<NonlocalAst> : public BaseNodeReader<NonlocalAst>
 
     void readChild(ChildTag<names>, Stream& s) {
         while (s.readNextStartElement()) {
-            result->names << s.name().toString(); // FIXME this isn't serialized properly
+            result->names << new Identifier(s.name().toString()); // FIXME this isn't serialized properly
             s.readNext();
         }
     }
+};
+
+template<>
+struct NodeReader<GlobalAst> : public BaseNodeReader<GlobalAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { names };
+    static auto constexpr ChildNames = { "names" };
+
+    void readChild(ChildTag<names>, Stream& s) {
+        while (s.readNextStartElement()) {
+            result->names << new Identifier(s.name().toString()); // FIXME this isn't serialized properly
+            s.readNext();
+        }
+    }
+};
+
+template<>
+struct NodeReader<YieldAst> : public BaseNodeReader<YieldAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { value };
+    static auto constexpr ChildNames = { "value" };
+
+    READ_CHILD_IMPL(value)
+};
+
+template<>
+struct NodeReader<AssignmentExpressionAst> : public BaseNodeReader<AssignmentExpressionAst>
+{
+    using BaseNodeReader::BaseNodeReader;
+
+    using Children = enum { target, value };
+    static auto constexpr ChildNames = { "target", "value" };
+
+    READ_CHILD_IMPL(target)
+    READ_CHILD_IMPL(value)
 };

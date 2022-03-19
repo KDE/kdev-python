@@ -1,7 +1,7 @@
 /*
     SPDX-FileCopyrightText: 2007 Piyush verma <piyush.verma@gmail.com>
     SPDX-FileCopyrightText: 2007 Andreas Pakulat <apaku@gmx.de>
-    SPDX-FileCopyrightText: 2010-2016 Sven Brauch <svenbrauch@googlemail.com>
+    SPDX-FileCopyrightText: 2010-2022 Sven Brauch <svenbrauch@googlemail.com>
     SPDX-FileCopyrightText: 2016 Francis Herne <mail@flherne.uk>
 
     SPDX-License-Identifier: GPL-2.0-or-later

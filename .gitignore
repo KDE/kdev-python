@@ -1,6 +1,7 @@
 *~
 .svn/*
 build/*
+build-*/*
 .kdev_include_paths
 *.swp
 *.pyc

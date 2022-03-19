@@ -1850,10 +1850,8 @@ void DeclarationBuilder::visitString(StringAst* node) {
 
 void DeclarationBuilder::visitConstant(ConstantAst* node) {
     if ( std::holds_alternative<QString>(node->value) ) {
-        qDebug() << "visiting string constant" << node->parent->astType;
         if ( node->parent && node->parent->astType == Ast::ExpressionAstType ) {
             m_lastComment = std::get<QString>(node->value);
-            qDebug() << "setting last comment" << m_lastComment;
         }
     }
     DeclarationBuilderBase::visitConstant(node);

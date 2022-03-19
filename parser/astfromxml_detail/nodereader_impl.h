@@ -19,7 +19,8 @@
         result->name = new Identifier(value.toString()); \
     } \
     ~NodeReader() { \
-        result->name->rangeFrom(result); \
+        if (result->name) \
+            result->name->rangeFrom(result); \
     }
 #define IGNORE_CHILD(name) \
     void readChild(ChildTag<name>, Stream& s) { [[maybe_unused]] Ast* r; singleFromXml(result, r, s); }
@@ -178,6 +179,9 @@ struct NodeReader<ConstantAst> : public BaseNodeReader<ConstantAst>
         else if (value == "int") {
             result->value = std::get<QString>(result->value).toInt();
         }
+        else if (value == "bytes") {
+            result->value = std::get<QString>(result->value).toUtf8();
+        }
     }
 };
 
@@ -298,10 +302,17 @@ struct NodeReader<BooleanOperationAst> : public BaseNodeReader<BooleanOperationA
 {
     using BaseNodeReader::BaseNodeReader;
 
+    using Attributes = enum { op };
+    static auto constexpr AttributeNames = { "op" };
+
     using Children = enum { values };
     static auto constexpr ChildNames = { "values" };
 
     READ_CHILD_LIST_IMPL(values)
+
+    void readAttribute(AttributeTag<op>, QStringRef const& value) {
+        result->type = booleanOperatorType(value);
+    }
 };
 
 template<>
@@ -456,8 +467,8 @@ struct NodeReader<UnaryOperationAst> : public BaseNodeReader<UnaryOperationAst>
 
     READ_CHILD_IMPL(operand)
 
-    void readAttribute(AttributeTag<op>, QStringRef const& /*value*/) {
-        result->type = Ast::UnaryOperatorAdd; // FIXME
+    void readAttribute(AttributeTag<op>, QStringRef const& value) {
+        result->type = unaryOperatorType(value);
     }
 };
 

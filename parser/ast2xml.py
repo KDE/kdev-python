@@ -31,8 +31,8 @@ class ASTSerializer(ast.NodeVisitor):
             attrs["op"] = type(node.op).__name__
         if name == "UnaryOp":
             attrs["op"] = type(node.op).__name__
-        plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types}
-        non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types}
+        plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types and v is not None}
+        non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types and v is not None}
         with xf.element(name, **plain_attrs) as elem:
             for attr, attr_val in non_plain_attrs.items():
                 if attr == "ctx":

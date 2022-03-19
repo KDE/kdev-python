@@ -304,19 +304,26 @@ long integerValue(ExpressionAst* node, long wrapTo=0) {
             invert = true;
         }
     }
+    auto value = LONG_MIN;
     if ( node->astType == Ast::NumberAstType ) {
         auto number = static_cast<NumberAst*>(node);
         if ( number->isInt ) {
-            // Clamp in case of `a[-9999999:9999999]` or similar.
-            // -1 is just as out-of-range as -99999999, but doesn't cause a huge loop.
-            long upperBound = wrapTo ? wrapTo : LONG_MAX;
-            if (invert) {
-                return qBound(-1L, wrapTo - number->value, upperBound);
-            }
-            return qBound(-1L, number->value, upperBound);
+            value = number->value;
         }
     }
-    return LONG_MIN;
+    if ( node->astType == Ast::ConstantAstType ) {
+        if (auto* intValue = std::get_if<int>(&static_cast<ConstantAst*>(node)->value)) {
+            value = *intValue;
+        }
+    }
+
+    // Clamp in case of `a[-9999999:9999999]` or similar.
+    // -1 is just as out-of-range as -99999999, but doesn't cause a huge loop.
+    long upperBound = wrapTo ? wrapTo : LONG_MAX;
+    if ( invert ) {
+        return qBound(-1L, wrapTo - value, upperBound);
+    }
+    return qBound(-1L, value, upperBound);
 }
 
 void ExpressionVisitor::visitSubscript(SubscriptAst* node)
@@ -650,6 +657,10 @@ void ExpressionVisitor::visitConstant(ConstantAst* node)
     else if (std::holds_alternative<float>(node->value)) {
         return encounter(typeObjectForIntegralType<StructureType>("float"));
     }
+    else if (std::holds_alternative<QByteArray>(node->value)) {
+        return encounter(typeObjectForIntegralType<StructureType>("bytes"));
+    }
+    encounterUnknown();
 }
 
 void ExpressionVisitor::visitName(Python::NameAst* node)

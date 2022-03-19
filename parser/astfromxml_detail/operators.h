@@ -29,5 +29,32 @@ Ast::OperatorTypes operatorType(QStringRef const& name) {
 }
 
 Ast::ComparisonOperatorTypes comparisonOperatorType(QStringRef const& name) {
-    return Ast::ComparisonOperatorEquals; // FIXME
+    if (name == "Eq") return Ast::ComparisonOperatorEquals;
+    if (name == "NotEq") return Ast::ComparisonOperatorNotEquals;
+    if (name == "Lt") return Ast::ComparisonOperatorLessThan;
+    if (name == "LtE") return Ast::ComparisonOperatorLessThanEqual;
+    if (name == "Gt") return Ast::ComparisonOperatorGreaterThan;
+    if (name == "GtE") return Ast::ComparisonOperatorGreaterThanEqual;
+    if (name == "Is") return Ast::ComparisonOperatorIs;
+    if (name == "IsNot") return Ast::ComparisonOperatorIsNot;
+    if (name == "In") return Ast::ComparisonOperatorIn;
+    if (name == "NotIn") return Ast::ComparisonOperatorNotIn;
+
+    return Ast::ComparisonOperatorInvalid;
+}
+
+Ast::UnaryOperatorTypes unaryOperatorType(QStringRef const& name) {
+    if (name == "Invert") return Ast::UnaryOperatorInvert;
+    if (name == "Not") return Ast::UnaryOperatorNot;
+    if (name == "UAdd") return Ast::UnaryOperatorAdd;
+    if (name == "USub") return Ast::UnaryOperatorSub;
+
+    return Ast::UnaryOperatorInvalid;
+}
+
+Ast::BooleanOperationTypes booleanOperatorType(QStringRef const& name) {
+    if (name == "And") return Ast::BooleanAnd;
+    if (name == "Or") return Ast::BooleanOr;
+
+    return Ast::BooleanInvalidOperation;
 }

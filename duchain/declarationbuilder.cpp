@@ -1093,9 +1093,9 @@ void DeclarationBuilder::assignToName(NameAst* target, const DeclarationBuilder:
     else {
         DUChainWriteLocker lock;
         Declaration* dec = visitVariableDeclaration<Declaration>(target, nullptr, element.type);
-        if ( dec && m_lastComment && ! m_lastComment->usedAsComment ) {
-            dec->setComment(m_lastComment->value);
-            m_lastComment->usedAsComment = true;
+        if ( dec && !m_lastComment.isEmpty() ) {
+            dec->setComment(m_lastComment);
+            m_lastComment.clear();
         }
         /** DEBUG **/
         if ( element.type && dec ) {
@@ -1584,12 +1584,15 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 QString DeclarationBuilder::getDocstring(QList< Python::Ast* > body) const
 {
     if ( ! body.isEmpty() && body.first()->astType == Ast::ExpressionAstType 
-            && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::StringAstType )
+            && static_cast<ExpressionAst*>(body.first())->value->astType == Ast::ConstantAstType )
     {
         // If the first statement in a function/class body is a string, then that is the docstring.
-        StringAst* docstring = static_cast<StringAst*>(static_cast<ExpressionAst*>(body.first())->value);
+        ConstantAst* docstring = static_cast<ConstantAst*>(static_cast<ExpressionAst*>(body.first())->value);
         docstring->usedAsComment = true;
-        return docstring->value.trimmed();
+        if (auto* string = std::get_if<QString>(&docstring->value)) {
+            qDebug() << "setting function docstring:" << *string;
+            return string->trimmed();
+        }
     }
     return QString();
 }
@@ -1840,15 +1843,26 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
 void DeclarationBuilder::visitString(StringAst* node) {
     if ( node->parent && node->parent->astType == Ast::ExpressionAstType ) {
-        m_lastComment = node;
+        m_lastComment = node->value;
     }
     DeclarationBuilderBase::visitString(node);
+}
+
+void DeclarationBuilder::visitConstant(ConstantAst* node) {
+    if ( std::holds_alternative<QString>(node->value) ) {
+        qDebug() << "visiting string constant" << node->parent->astType;
+        if ( node->parent && node->parent->astType == Ast::ExpressionAstType ) {
+            m_lastComment = std::get<QString>(node->value);
+            qDebug() << "setting last comment" << m_lastComment;
+        }
+    }
+    DeclarationBuilderBase::visitConstant(node);
 }
 
 void DeclarationBuilder::visitNode(Ast* node) {
     DeclarationBuilderBase::visitNode(node);
     if ( node && node->astType >= Ast::StatementAstType && node->astType <= Ast::LastStatementType) {
-        m_lastComment = nullptr;
+        m_lastComment.clear();
     }
 }
 

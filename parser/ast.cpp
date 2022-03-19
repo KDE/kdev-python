@@ -96,7 +96,7 @@ CompareAst::CompareAst(Ast* parent): ExpressionAst(parent, Ast::CompareAstType),
     
 }
 
-ConstantAst::ConstantAst(Ast* parent) : ExpressionAst(parent, Ast::ConstantAstType), value(QString())
+ConstantAst::ConstantAst(Ast* parent) : ExpressionAst(parent, Ast::ConstantAstType), value(QString()), usedAsComment(false)
 {
 
 }

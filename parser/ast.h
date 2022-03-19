@@ -1,11 +1,10 @@
 /*
     SPDX-FileCopyrightText: 2007 Andreas Pakulat <apaku@gmx.de>
     SPDX-FileCopyrightText: 2012 Patrick Spendrin <ps_ml@gmx.de>
+    SPDX-FileCopyrightText: 2009-2022 Sven Brauch <mail@svenbrauch.de>
 
     SPDX-License-Identifier: LGPL-2.0-or-later
 */
-
-// The Python 3.4 Language Reference was used as basis for this AST
 
 #ifndef PYTHON_AST_H
 #define PYTHON_AST_H
@@ -585,6 +584,7 @@ class KDEVPYTHONPARSER_EXPORT ConstantAst : public ExpressionAst {
 public:
     ConstantAst(Ast* parent);
     std::variant<int, float, QString> value;
+    bool usedAsComment;
 };
 
 class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {

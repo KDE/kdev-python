@@ -96,6 +96,7 @@ protected:
     void visitIf(IfAst* node) override;
     void visitString(StringAst* node) override;
     void visitNode(Ast* node) override;
+    void visitConstant(ConstantAst* node) override;
 
 protected:
     enum VisitVariableFlags {
@@ -265,7 +266,7 @@ private:
     // missing modules, for not reporting them as unknown variables
     QVector<IndexedString> m_missingModules;
 
-    StringAst* m_lastComment = nullptr;
+    QString m_lastComment;
 };
 
 }

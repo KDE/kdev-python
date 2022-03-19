@@ -243,7 +243,6 @@ void RangeFixVisitor::cutDefinitionPreamble(Ast* fixNode, const QString& defKeyw
 
     // cut away decorators
     while ( currentLine < lines.size() ) {
-        qDebug() << "line" << currentLine << lines.size() << defKeyword << fixNode->astType;
         if ( lines.at(currentLine).trimmed().remove(' ').remove('\t').startsWith(defKeyword) ) {
             // it's not a decorator, so stop skipping lines.
             break;

@@ -559,11 +559,12 @@ void ExpressionVisitor::visitDict(DictAst* node)
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<MapType>("dict");
     lock.unlock();
+
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
     if ( type ) {
-        Q_ASSERT(node->keys.length() == node->values.length());
-        for ( int ii = 0; ii < node->values.length(); ++ii ) {
+        Q_ASSERT(node->keys.length() <= node->values.length());
+        for ( int ii = 0; ii < node->keys.length(); ++ii ) {
             contentVisitor.visitNode(node->values.at(ii));
             if ( node->keys.at(ii) ) {
                 type->addContentType<Python::UnsureType>(contentVisitor.lastType());
@@ -574,6 +575,16 @@ void ExpressionVisitor::visitDict(DictAst* node)
                 // Key is null for `{**foo}`
                 type->addContentType<Python::UnsureType>(unpackedType->contentType().abstractType());
                 type->addKeyType<Python::UnsureType>(unpackedType->keyType().abstractType());
+            }
+        }
+
+        // Now, deal with a = {3:5, **b} the **b part(s)
+        for (int valueIndex = node->keys.length(); valueIndex < node->values.length(); valueIndex++) {
+            ExpressionVisitor starredVisitor(this);
+            starredVisitor.visitNode(node->values.at(valueIndex));
+            if ( auto map = starredVisitor.lastType().cast<MapType>() ) {
+                type->addKeyType<Python::UnsureType>(map->keyType().abstractType());
+                type->addContentType<Python::UnsureType>(map->contentType().abstractType());
             }
         }
     }

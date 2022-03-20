@@ -1681,6 +1681,7 @@ void PyDUChainTest::testContainerTypes_data()
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
     QTest::newRow("set_from_unpacked") << "foo = [1.3]\ncheckme = {1, *foo, 3}" << "unsure (int, float)" << false;
     QTest::newRow("dict_from_unpacked") << "checkme = {**{'a': 1}}" << "dict of str : int" << true;
+    QTest::newRow("dict_from_unpacked_multi") << "checkme = {**{'a': 1}, **{'b': 1.5}}" << "dict of str : unsure (int, float)" << true;
     QTest::newRow("dict_from_varied") << "checkme = {**{'a': 1}, 1: 1.5}" <<
                                          "dict of unsure (str, int) : unsure (int, float)" << true;
 #endif

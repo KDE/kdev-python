@@ -182,6 +182,9 @@ struct NodeReader<ConstantAst> : public BaseNodeReader<ConstantAst>
         else if (value == "bytes") {
             result->value = std::get<QString>(result->value).toUtf8();
         }
+        else if (value == "bool") {
+            result->value = std::get<QString>(result->value) == "True" ? true : false;
+        }
     }
 };
 

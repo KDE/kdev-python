@@ -584,7 +584,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT ConstantAst : public ExpressionAst {
 public:
     ConstantAst(Ast* parent);
-    std::variant<int, float, QString, QByteArray> value;
+    std::variant<int, float, QString, QByteArray, bool> value;
     bool usedAsComment;
 };
 

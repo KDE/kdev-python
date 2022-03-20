@@ -68,7 +68,6 @@ public:
     void visitDictionaryComprehension(DictionaryComprehensionAst* node) override;
     void visitSetComprehension(SetComprehensionAst* node) override;
     void visitIfExpression(IfExpressionAst* node) override;
-    void visitNameConstant(NameConstantAst* node) override;
     void visitConstant(ConstantAst* node) override;
     void visitAssignmentExpression(AssignmentExpressionAst* node) override;
 
@@ -136,7 +135,6 @@ private:
     /// used by code completion to detect unknown NameAst elements in expressions
     bool m_reportUnknownNames = false;
     CursorInRevision m_scanUntilCursor = CursorInRevision::invalid();
-    static QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> m_defaultTypes;
     QSet<QString> m_unknownNames;
 };
 

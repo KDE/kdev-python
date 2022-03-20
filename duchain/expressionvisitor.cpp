@@ -38,7 +38,7 @@ using namespace KTextEditor;
 
 namespace Python {
 
-QHash<NameConstantAst::NameConstantTypes, KDevelop::AbstractType::Ptr> ExpressionVisitor::m_defaultTypes;
+static KDevelop::AbstractType::Ptr booleanType;
 
 AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type)
 {
@@ -48,10 +48,8 @@ AbstractType::Ptr ExpressionVisitor::encounterPreprocess(AbstractType::Ptr type)
 ExpressionVisitor::ExpressionVisitor(const DUContext* ctx)
     : DynamicLanguageExpressionVisitor(ctx)
 {
-    if ( m_defaultTypes.isEmpty() ) {
-        m_defaultTypes.insert(NameConstantAst::True, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        m_defaultTypes.insert(NameConstantAst::False, AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean)));
-        m_defaultTypes.insert(NameConstantAst::None, AbstractType::Ptr(new NoneType()));
+    if ( !booleanType ) {
+        booleanType = AbstractType::Ptr(new IntegralType(IntegralType::TypeBoolean));
     }
     Q_ASSERT(context());
     Q_ASSERT(context()->topContext());
@@ -636,15 +634,6 @@ void ExpressionVisitor::addUnknownName(const QString& name)
     }
 }
 
-void ExpressionVisitor::visitNameConstant(NameConstantAst* node)
-{
-    // handles "True", "False", "None"
-    auto defId = m_defaultTypes.constFind(node->value);
-    if ( defId != m_defaultTypes.constEnd() ) {
-        return encounter(*defId);
-    }
-}
-
 void ExpressionVisitor::visitConstant(ConstantAst* node)
 {
     DUChainReadLocker lock;
@@ -659,6 +648,9 @@ void ExpressionVisitor::visitConstant(ConstantAst* node)
     }
     else if (std::holds_alternative<QByteArray>(node->value)) {
         return encounter(typeObjectForIntegralType<StructureType>("bytes"));
+    }
+    else if (std::holds_alternative<bool>(node->value)) {
+        return encounter(booleanType);
     }
     encounterUnknown();
 }

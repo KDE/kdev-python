@@ -13,7 +13,8 @@
 // remove interfering qt macro
 #undef slots
 
-#include <language/duchain/duchainlock.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "pyport.h"
 #ifndef _WIN32
@@ -21,12 +22,6 @@
 #endif
 
 #include "Python.h"
-
-#include <internal/pycore_ast.h>
-#include "ast.h"
-
-#include <internal/pycore_ast_state.h>
-#include <internal/pycore_parser.h>
 
 #include <unicodeobject.h>
 

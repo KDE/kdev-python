@@ -8,6 +8,8 @@ set(parser_STAT_SRCS
     cythonsyntaxremover.cpp
     rangefixvisitor.cpp
     astfromxml.cpp
+    pythonrun.cpp
+    resources.qrc
 )
 ecm_qt_declare_logging_category(parser_STAT_SRCS
     HEADER parserdebug.h

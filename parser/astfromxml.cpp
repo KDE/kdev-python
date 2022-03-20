@@ -26,6 +26,8 @@ Ast* getSingleElement(Ast* parent, Stream& s)
 {
     auto ok = s.readNextStartElement();
     qDebug() << "read element:" << s.name() << "at end" << s.atEnd() << "error" << s.errorString()  << "ok" << ok;
+    if (s.name() == "vararg")
+        Q_ASSERT(false);
     if (!ok) {
         return nullptr;
     }
@@ -38,6 +40,7 @@ Ast* getSingleElement(Ast* parent, Stream& s)
         return ast;
 
     qWarning() << "Invalid AST type encountered:" << astType << "name" << name.toString();
+    Q_ASSERT(false);
     return nullptr;
 }
 
@@ -56,6 +59,7 @@ void singleFromXml(Ast* parent, AstT*& ret, Stream& s)
     auto* ast = getSingleElement(parent, s);
     ret = static_cast<AstT*>(ast);
     [[maybe_unused]] auto end = s.readNextStartElement();
+    qDebug() << "expecting end:" << end << s.name();
     Q_ASSERT(!end && s.tokenType() == QXmlStreamReader::EndElement);
 }
 

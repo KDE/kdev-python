@@ -14,11 +14,11 @@
 
 #include <memory>
 
-#include "python_header.h"
 #include "astdefaultvisitor.h"
 #include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
 #include "astfromxml.h"
+#include "pythonrun.h"
 
 #include <QDebug>
 #include <QTemporaryFile>
@@ -29,112 +29,24 @@ using namespace KDevelop;
 
 namespace Python
 {
-#include "generated.h"
-
-QMutex AstBuilder::pyInitLock;
-
-QString PyUnicodeObjectToQString(PyObject* obj) {
-    auto pyObjectCleanup = [](PyObject* o) { if (o) Py_DECREF(o); };
-    const auto strOwner = std::unique_ptr<PyObject, decltype(pyObjectCleanup)>(PyObject_Str(obj), pyObjectCleanup);
-    const auto str = strOwner.get();
-    if (PyUnicode_READY(str) < 0) {
-        qWarning("PyUnicode_READY(%p) returned false!", (void*)str);
-        return QString();
-    }
-    const auto length = PyUnicode_GET_LENGTH(str);
-    switch(PyUnicode_KIND(str)) {
-        case PyUnicode_1BYTE_KIND:
-            return QString::fromLatin1((const char*)PyUnicode_1BYTE_DATA(str), length);
-        case PyUnicode_2BYTE_KIND:
-            return QString::fromUtf16(PyUnicode_2BYTE_DATA(str), length);
-        case PyUnicode_4BYTE_KIND:
-            return QString::fromUcs4(PyUnicode_4BYTE_DATA(str), length);
-    }
-    qCritical("PyUnicode_KIND(%p) returned an unexpected value, this should not happen!", (void*)str);
-    Q_UNREACHABLE();
-}
-
-namespace {
-
-struct PythonInitializer : private QMutexLocker {
-    PythonInitializer(QMutex& pyInitLock):
-        QMutexLocker(&pyInitLock), arena(nullptr)
-    {
-            Py_InitializeEx(0);
-            Q_ASSERT(Py_IsInitialized());
-
-            arena = _PyArena_New();
-            Q_ASSERT(arena); // out of memory
-    }
-    ~PythonInitializer()
-    {
-        if (arena)
-            _PyArena_Free(arena);
-        if (Py_IsInitialized())
-            Py_Finalize();
-    }
-    PyArena* arena;
-};
-
-Python::CodeAst* __testing_AstFromString(QString const& string) {
-    QTemporaryFile f;
-    f.open();
-    f.write(string.toUtf8());
-    qDebug() << "written:" << string;
-    f.close();
-    QProcess p;
-    p.setProgram("/usr/bin/env");
-    p.setArguments({"python", "../parser/ast2xml.py", f.fileName()});
-    p.start();
-    p.waitForFinished(5000);
-    auto const xml = p.readAllStandardOutput();
-    auto const error = p.readAllStandardError();
-    if (!error.isEmpty()) {
-        qWarning() << "error running parser:" << QString::fromUtf8(error);
-        return nullptr;
-    }
-    qDebug() << "using xml:" << xml;
-    return astFromXml(xml);
-}
-
-}
 
 CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
     qCDebug(KDEV_PYTHON_PARSER) << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
-    
+
     contents.append('\n');
 
-    auto* ast = __testing_AstFromString(contents);
-    if (!ast)
+    auto result = parsePythonCode(contents.toUtf8());
+    if (!result) {
+        qCWarning(KDEV_PYTHON_PARSER) << "Internal error while parsing python code";
         return nullptr;
+    }
 
-    ast->name = new Identifier(filename.fileName());
-
-#if 0
-    if ( ! syntaxtree ) {
+    if ( result->error ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
 
-        PyObject *exception, *value, *backtrace;
-        PyErr_Fetch(&exception, &value, &backtrace);
-        qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
-
-        if ( ! value ) {
-            qCWarning(KDEV_PYTHON_PARSER) << "Internal parser error: exception value is null, aborting";
-            return CodeAst::Ptr();
-        }
-        PyErr_NormalizeException(&exception, &value, &backtrace);
-
-        if ( ! PyObject_IsInstance(value, PyExc_SyntaxError) ) {
-            qCWarning(KDEV_PYTHON_PARSER) << "Exception was not a SyntaxError, aborting";
-            return CodeAst::Ptr();
-        }
-        PyObject* errorMessage_str = PyObject_GetAttrString(value, "msg");
-        PyObject* linenoobj = PyObject_GetAttrString(value, "lineno");
-        PyObject* colnoobj = PyObject_GetAttrString(value, "offset");
-
-        int lineno = PyLong_AsLong(linenoobj) - 1;
-        int colno = PyLong_AsLong(colnoobj);
+        int lineno = result->error->line;
+        int colno = result->error->column;
 
         ProblemPointer p(new Problem());
         KTextEditor::Cursor start(lineno, (colno-4 > 0 ? colno-4 : 0));
@@ -143,7 +55,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         qCDebug(KDEV_PYTHON_PARSER) << "Problem range: " << range;
         DocumentRange location(IndexedString(filename.path()), range);
         p->setFinalLocation(location);
-        p->setDescription(PyUnicodeObjectToQString(errorMessage_str));
+        p->setDescription(result->error->message);
         p->setSource(IProblem::Parser);
         m_problems.append(p);
         
@@ -217,11 +129,11 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             }
         }
 
-        syntaxtree = _PyParser_ASTFromString(contents.toUtf8(), placeholderFilename.get(), Py_file_input, &flags, arena);
+        result = parsePythonCode(contents.toUtf8());
         // 3rd try: discard everything after the last non-empty line, but only until the next block start
         currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
         errline = qMax(0, qMin(indents.length()-1, errline));
-        if ( ! syntaxtree ) {
+        if ( result->error ) {
             qCWarning(KDEV_PYTHON_PARSER) << "Discarding parts of the code to be parsed because of previous errors";
             qCDebug(KDEV_PYTHON_PARSER) << indents;
             int indentAtError = indents.at(errline);
@@ -259,13 +171,17 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                 if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
             }
             qCDebug(KDEV_PYTHON_PARSER) << "This is what is left: " << contents;
-            syntaxtree = _PyParser_ASTFromString(contents.toUtf8(), placeholderFilename.get(), Py_file_input, &flags, arena);
+            result = parsePythonCode(contents.toUtf8());
         }
-        if ( ! syntaxtree ) {
+        if ( result->error ) {
             return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
-#endif
+
+    auto ast = astFromXml(result->xmlOut);
+    if (!ast) {
+        qCWarning(KDEV_PYTHON_PARSER) << "Internal error while deserializing parser results";
+    }
 
     RangeFixVisitor fixVisitor(contents);
     fixVisitor.visitNode(ast);

@@ -33,12 +33,12 @@ class ASTSerializer(ast.NodeVisitor):
             attrs["op"] = type(node.op).__name__
         plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types and v is not None}
         non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types and v is not None}
-        with xf.element(name, **plain_attrs) as elem:
+        with self.xf.element(name, **plain_attrs) as elem:
             for attr, attr_val in non_plain_attrs.items():
                 if attr == "ctx":
                     continue
                 if type(attr_val) == list_type:
-                    with xf.element(attr) as list_name_elem:
+                    with self.xf.element(attr) as list_name_elem:
                         for entry in attr_val:
                             self.generic_visit(entry)
                 elif attr_val is None:
@@ -46,20 +46,35 @@ class ASTSerializer(ast.NodeVisitor):
                 elif type(attr_val).__name__ == "ellipsis":
                     pass
                 elif issubclass(type(attr_val), ast.AST):
-                    with xf.element(attr) as name_elem:
+                    with self.xf.element(attr) as name_elem:
                         self.generic_visit(attr_val)
                 else:
                     print(attr, attr_val, type(attr_val))
                     assert False
 
-with open(sys.argv[1], "r") as fp:
-    text = fp.read()
+def doParse(code):
+    try:
+        m = ast.parse(code)
+        m = ast.fix_missing_locations(m)
+    except SyntaxError as syntaxError:
+        return f"""SyntaxError
+{syntaxError.filename}
+{syntaxError.lineno}
+{syntaxError.offset}
+{syntaxError.msg}
+"""
+    except Exception as err:
+        return f"InternalError: {str(err)}"
 
-m = ast.parse(text)
-m = ast.fix_missing_locations(m)
+    f = BytesIO()
+    with etree.xmlfile(f) as xf:
+        v = ASTSerializer(xf)
+        v.visit(m)
 
-f = BytesIO()
-with etree.xmlfile(f) as xf:
-    v = ASTSerializer(xf)
-    v.visit(m)
-print(f.getvalue().decode('utf-8'))
+    return f.getvalue().decode('utf-8')
+
+if __name__ == "__main__":
+    with open(sys.argv[1], "r") as fp:
+        text = fp.read()
+
+    print(doParse(text))

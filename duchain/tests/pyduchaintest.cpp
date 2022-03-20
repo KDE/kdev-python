@@ -836,7 +836,7 @@ void PyDUChainTest::testTypes_data()
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("annotate_decl") << "checkme: int" << "int";
-    QTest::newRow("annotate_assign") << "checkme: int = 3.5" << "unsure (float, int)";
+    QTest::newRow("annotate_assign") << "checkme: int = 3.5" << "unsure (int, float)";
 #endif
     QTest::newRow("listtype") << "checkme = []" << "list";
     QTest::newRow("listtype_func") << "checkme = list()" << "list";

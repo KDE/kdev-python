@@ -45,7 +45,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     if ( result->error ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
 
-        int lineno = result->error->line;
+        int lineno = result->error->line - 1;
         int colno = result->error->column;
 
         ProblemPointer p(new Problem());

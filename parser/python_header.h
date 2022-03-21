@@ -10,6 +10,8 @@
 
 #define Py_BUILD_CORE
 
+#include <stdbool.h>
+
 // remove interfering qt macro
 #undef slots
 

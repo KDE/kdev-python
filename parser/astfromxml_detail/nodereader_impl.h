@@ -173,17 +173,18 @@ struct NodeReader<ConstantAst> : public BaseNodeReader<ConstantAst>
     }
 
     void readAttribute(AttributeTag<constant_type>, QStringRef const& value) {
+        auto data = std::get<QString>(result->value);
         if (value == "float") {
-            result->value = std::get<QString>(result->value).toFloat();
+            result->value = data.toFloat();
         }
         else if (value == "int") {
-            result->value = std::get<QString>(result->value).toInt();
+            result->value = data.toInt();
         }
         else if (value == "bytes") {
-            result->value = QByteArray::fromBase64(std::get<QString>(result->value).toUtf8());
+            result->value = QByteArray::fromBase64(data.toUtf8());
         }
         else if (value == "str") {
-            result->value = QString::fromUtf8(QByteArray::fromBase64(std::get<QString>(result->value).toUtf8())); // phew
+            result->value = QString::fromUtf8(QByteArray::fromBase64(data.toUtf8())); // phew
         }
         else if (value == "bool") {
             result->value = std::get<QString>(result->value) == "True" ? true : false;

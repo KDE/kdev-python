@@ -61,9 +61,9 @@ class ASTSerializer(ast.NodeVisitor):
         if name == "Constant":
             attrs["constant_type"] = type(node.value).__name__
             if type(node.value) == str:
-                attrs["value"] = base64.b64encode(attrs["value"].encode("utf-8"))
+                attrs["value"] = base64.b64encode(attrs["value"].encode("utf-8")).decode("ascii")
             if type(node.value) == bytes:
-                attrs["value"] = base64.b64encode(attrs["value"])
+                attrs["value"] = base64.b64encode(attrs["value"]).decode("ascii")
         if name == "BinOp":
             attrs["op"] = type(node.op).__name__
         if name == "BoolOp":

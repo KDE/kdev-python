@@ -4,6 +4,7 @@
 
 #include <QStringList>
 #include <QFile>
+#include <QMutex>
 
 namespace {
 
@@ -53,8 +54,10 @@ public:
     }
 
     ~ParserModule() {
-        Py_DECREF(m_func);
-        Py_DECREF(m_module);
+        if (isInitialized()) {
+            Py_DECREF(m_func);
+            Py_DECREF(m_module);
+        }
         Py_Finalize();
     }
 
@@ -63,6 +66,8 @@ public:
     }
 
     std::optional<ParseResult> parse(QByteArray const& in) {
+        QMutexLocker lock(&m_lock);
+
         if (!isInitialized()) {
             qCWarning(KDEV_PYTHON_PARSER) << "Failed to initialize";
             return std::nullopt;
@@ -99,6 +104,7 @@ public:
 
     PyObject* m_module = nullptr;
     PyObject* m_func = nullptr;
+    QMutex m_lock;
 };
 
 }

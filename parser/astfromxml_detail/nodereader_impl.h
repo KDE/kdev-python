@@ -180,7 +180,10 @@ struct NodeReader<ConstantAst> : public BaseNodeReader<ConstantAst>
             result->value = std::get<QString>(result->value).toInt();
         }
         else if (value == "bytes") {
-            result->value = std::get<QString>(result->value).toUtf8();
+            result->value = QByteArray::fromBase64(std::get<QString>(result->value).toUtf8());
+        }
+        else if (value == "str") {
+            result->value = QString::fromUtf8(QByteArray::fromBase64(std::get<QString>(result->value).toUtf8())); // phew
         }
         else if (value == "bool") {
             result->value = std::get<QString>(result->value) == "True" ? true : false;

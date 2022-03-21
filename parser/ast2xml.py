@@ -1,13 +1,48 @@
 #!/usr/bin/env python
 
 import ast
-from lxml import etree
 from io import BytesIO
+import base64
 
 import sys
 
 plain_types = (type(0), type(""), type(b""), type(0.0), type(False), type(None))
 list_type = type([])
+
+class XmlElement:
+    def __init__(self, buf, name, attrs):
+        self.buf = buf
+        self.name = name
+        self.attrs = attrs
+
+    def writestr(self, s):
+        self.buf.write(s.encode("utf-8"))
+
+    def __enter__(self):
+        self.writestr(f'<{self.name}')
+        for k, v in self.attrs.items():
+            self.writestr(f' {k}="{v}"')
+        self.writestr('>')
+        return self
+
+    def __exit__(self, type, value, tb):
+        self.writestr(f"</{self.name}>")
+
+
+class XmlStreamWriter:
+    def __init__(self, f):
+        self.buf = f
+        self.buf.write(b'<?xml version="1.0"?>')
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        pass
+
+    def element(self, name, attrs=dict()):
+        return XmlElement(self.buf, name, attrs)
+
 
 class ASTSerializer(ast.NodeVisitor):
     def __init__(self, xf):
@@ -25,6 +60,10 @@ class ASTSerializer(ast.NodeVisitor):
             attrs["end_lineno"] = node.end_lineno
         if name == "Constant":
             attrs["constant_type"] = type(node.value).__name__
+            if type(node.value) == str:
+                attrs["value"] = base64.b64encode(attrs["value"].encode("utf-8"))
+            if type(node.value) == bytes:
+                attrs["value"] = base64.b64encode(attrs["value"])
         if name == "BinOp":
             attrs["op"] = type(node.op).__name__
         if name == "BoolOp":
@@ -33,7 +72,7 @@ class ASTSerializer(ast.NodeVisitor):
             attrs["op"] = type(node.op).__name__
         plain_attrs = {k: str(v) for k, v in attrs.items() if type(v) in plain_types and v is not None}
         non_plain_attrs = {k: v for k, v in attrs.items() if type(v) not in plain_types and v is not None}
-        with self.xf.element(name, **plain_attrs) as elem:
+        with self.xf.element(name, plain_attrs) as elem:
             for attr, attr_val in non_plain_attrs.items():
                 if attr == "ctx":
                     continue
@@ -64,10 +103,14 @@ def doParse(code):
 {syntaxError.msg}
 """
     except Exception as err:
-        return f"InternalError: {str(err)}"
+        import traceback
+        print(traceback.format_exc())
+        return f"InternalError: {str(err)}, {type(err)}"
 
     f = BytesIO()
-    with etree.xmlfile(f) as xf:
+    #from lxml import etree
+    #with etree.xmlfile(f) as xf:
+    with XmlStreamWriter(f) as xf:
         v = ASTSerializer(xf)
         v.visit(m)
 

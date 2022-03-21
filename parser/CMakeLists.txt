@@ -32,6 +32,10 @@ target_link_libraries(kdevpythonparser LINK_PRIVATE
     ${PYTHON_LIBRARIES}
 )
 
+if (UNIX)
+    target_link_libraries(kdevpythonparser LINK_PRIVATE dl)
+endif()
+
 install(TARGETS kdevpythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 if (BUILD_TESTING)

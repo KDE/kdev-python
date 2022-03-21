@@ -2,9 +2,16 @@
 #include "python_header.h"
 #include "parserdebug.h"
 
+#include "kdevpythonversion.h"
+
 #include <QStringList>
 #include <QFile>
 #include <QMutex>
+#include <QLibrary>
+
+#ifdef Q_OS_UNIX
+#include <dlfcn.h>
+#endif
 
 namespace {
 
@@ -33,9 +40,28 @@ std::optional<ParseError> parseErrorFromString(QByteArray const& data) {
     return ret;
 }
 
+QString pythonLibraryName() {
+    return QString::fromUtf8(PYTHON_LIBRARY).section('/', -1, -1);
+}
+
 class ParserModule {
 public:
     ParserModule() {
+#ifdef Q_OS_UNIX
+        // We are usually (outside of unit tests) loaded as a plugin. KPluginLoader
+        // loads plugins with RTLD_LOCAL (through QLibrary, but effectively it does).
+        // This means libraries our plugin links against are also loaded into the main process
+        // with RTLD_LOCAL. Thus, the symbols from libpython are *not* in the global symbol
+        // table of the process we're running in. If Python itself loads a plugin -- which easily
+        // happens for anything that "import"s a C module -- that will fail, since this plugin
+        // will not be able to find the symbols from libpython.
+        // Thus, we re-open the library here (usign RTLD_NOLOAD) to change the symbol
+        // visibility to global scope.
+        auto* lib = dlopen(pythonLibraryName().toUtf8().data(), RTLD_LAZY | RTLD_NOLOAD | RTLD_GLOBAL);
+        if (!lib)
+            qCWarning(KDEV_PYTHON_PARSER) << "Error loading libpython:" << dlerror();
+#endif
+
         Py_Initialize();
 
         m_module = PyModule_New("parser");
@@ -46,6 +72,8 @@ public:
         auto const& code = codeFile.readAll();
         auto* ret = PyRun_String(code.data(), Py_file_input, localVars, localVars);
         if (!ret) {
+            qCWarning(KDEV_PYTHON_PARSER) << "Failed to run code" << code;
+            PyErr_Print();
             return;
         }
         Py_DECREF(ret);

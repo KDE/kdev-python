@@ -25,7 +25,6 @@ struct ToEndElement {
 Ast* getSingleElement(Ast* parent, Stream& s)
 {
     auto ok = s.readNextStartElement();
-    qDebug() << "read element:" << s.name() << "at end" << s.atEnd() << "error" << s.errorString()  << "ok" << ok;
     if (s.name() == "vararg")
         Q_ASSERT(false);
     if (!ok) {
@@ -50,7 +49,6 @@ void listFromXml(Ast* parent, QList<AstT*>& ret, Stream& s)
     while (auto* ast = getSingleElement(parent, s)) {
         ret.push_back(static_cast<AstT*>(ast));
     }
-    qDebug() << "read:" << ret.size() << "list items";
 }
 
 template<typename AstT>
@@ -59,7 +57,6 @@ void singleFromXml(Ast* parent, AstT*& ret, Stream& s)
     auto* ast = getSingleElement(parent, s);
     ret = static_cast<AstT*>(ast);
     [[maybe_unused]] auto end = s.readNextStartElement();
-    qDebug() << "expecting end:" << end << s.name();
     Q_ASSERT(!end && s.tokenType() == QXmlStreamReader::EndElement);
 }
 

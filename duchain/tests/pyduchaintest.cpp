@@ -728,7 +728,6 @@ void PyDUChainTest::testRanges()
         visitor->searchingForRange = r;
         visitor->searchingForIdentifier = identifier;
         visitor->visitCode(m_ast.data());
-        QEXPECT_FAIL("attr_dot_name_hash", "Insufficiently magic hack", Continue);
         QCOMPARE(visitor->found, true);
         delete visitor;
     }

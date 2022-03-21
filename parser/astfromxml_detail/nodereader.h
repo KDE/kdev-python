@@ -50,7 +50,6 @@ struct NodeReadHelper {
         }
         else {
             if (attributeName == *(global_attribute_names.begin() - (N+1))) {
-                qDebug() << "read global attribute:" << attributeName << attributeValue;
                 r->readGlobalAttribute(AttributeTag<N>{}, attributeValue);
                 return;
             }
@@ -86,18 +85,12 @@ struct NodeReadHelper {
     void readChildren(Stream& s) {
         if constexpr (ChildCount > 0) {
             auto const name = s.name();
-            qDebug() << " >> starting read of child attribute list for " << name;
             while (s.readNextStartElement()) {
                 auto childName = s.name();
-                qDebug() << "read child attribute of" << name << ":" << s.name();
                 readSingleChild<ChildCount - 1>(s.name(), s);
-                qDebug() << "done reading child attribute of" << name << ":" << childName;
-                qDebug() << "last read" << s.name() << "isEndTag" << (s.tokenType() == QXmlStreamReader::EndElement);
             }
-            qDebug() << " << finished read list:" << name << "read end:" << s.tokenType() << s.name();
         }
         else {
-            qDebug() << " ** " << s.name() << "has no children, skipping it.";
             s.readNextStartElement();
         }
     };
@@ -116,11 +109,9 @@ void doReadNode(Derived* r, Stream& s)
     >;
 
     auto const name = s.name();
-    qDebug() << " ------- Deserializing:" << name;
     ThisReader reader(r, r->AttributeNames, r->ChildNames);
     reader.readAttributes(s);
     reader.readChildren(s);
-    qDebug() << " ++++++++ Done:" << name;
 }
 
 template<typename AstT>

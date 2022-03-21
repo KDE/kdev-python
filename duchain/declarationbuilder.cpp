@@ -1590,7 +1590,6 @@ QString DeclarationBuilder::getDocstring(QList< Python::Ast* > body) const
         ConstantAst* docstring = static_cast<ConstantAst*>(static_cast<ExpressionAst*>(body.first())->value);
         docstring->usedAsComment = true;
         if (auto* string = std::get_if<QString>(&docstring->value)) {
-            qDebug() << "setting function docstring:" << *string;
             return string->trimmed();
         }
     }

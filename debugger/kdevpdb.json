@@ -35,7 +35,7 @@
         ],
         "Category": "Debugging",
         "Description": "This plugin provides a frontend for PDB",
-        "Description[ca@valencia]": "Este connector proveeix d'un frontal per al PDB",
+        "Description[ca@valencia]": "Este conector proveeix d'un frontal per al PDB",
         "Description[ca]": "Aquest connector proveeix d'un frontal per al PDB",
         "Description[cs]": "Tento modul poskytuje rozhraní pro PDB",
         "Description[de]": "Dieses Modul stellt eine Oberfläche für PDB zur Verfügung.",

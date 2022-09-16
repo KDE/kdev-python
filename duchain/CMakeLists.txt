@@ -47,7 +47,7 @@ target_link_libraries( kdevpythonduchain LINK_PRIVATE
     kdevpythonparser
 )
 
-install(TARGETS kdevpythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonduchain DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_subdirectory(navigation)

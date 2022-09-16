@@ -29,7 +29,7 @@ target_link_libraries(kdevpythonparser LINK_PRIVATE
     ${PYTHON_LIBRARIES}
 )
 
-install(TARGETS kdevpythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonparser DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 if (BUILD_TESTING)
     add_subdirectory(tests)

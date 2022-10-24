@@ -5,6 +5,7 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
+    asttransformer.cpp
     cythonsyntaxremover.cpp
     rangefixvisitor.cpp
 )

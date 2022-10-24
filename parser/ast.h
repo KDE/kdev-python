@@ -319,6 +319,7 @@ public:
     ExpressionAst* iterator;
     QList<Ast*> body;
     QList<Ast*> orelse;
+    bool async;
 };
 
 class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst {
@@ -349,6 +350,7 @@ public:
     WithAst(Ast* parent);
     QList<Ast*> body;
     QList<WithItemAst*> items;
+    bool async;
 };
 
 class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {

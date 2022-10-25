@@ -374,9 +374,9 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
                 v->type = Ast::UnaryOperatorInvalid;
             else if (PyObject_IsInstance(node, grammar.ast_Not))
                 v->type = Ast::UnaryOperatorNot;
-            else if (PyObject_IsInstance(node, grammar.ast_Add))
+            else if (PyObject_IsInstance(node, grammar.ast_UAdd))
                 v->type = Ast::UnaryOperatorAdd;
-            else if (PyObject_IsInstance(node, grammar.ast_Sub))
+            else if (PyObject_IsInstance(node, grammar.ast_USub))
                 v->type = Ast::UnaryOperatorSub;
             else
                 v->type = Ast::UnaryOperatorInvalid;
@@ -668,7 +668,7 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
             v->identifier->startCol = getattr<int>(node, "col_offset");
             v->identifier->startLine = tline(getattr<int>(node, "lineno"));
             v->identifier->endCol = v->identifier->startCol + id.size() - 1;
-            v->identifier->endLine = v->identifier->endLine;
+            v->identifier->endLine = v->identifier->startLine;
             v->startCol = v->identifier->startCol;
             v->startLine = v->identifier->startLine;
             v->endCol = v->identifier->endCol;

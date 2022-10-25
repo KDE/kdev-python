@@ -603,7 +603,7 @@ NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), va
 QString NumberAst::dump() const
 {
     if (isInt)
-        return "Number()";
+        return QString::fromLatin1("Number(%1)").arg(value);
     else
         return "Float()";
 }
@@ -739,6 +739,14 @@ QString TupleAst::dump() const
 UnaryOperationAst::UnaryOperationAst(Ast* parent): ExpressionAst(parent, Ast::UnaryOperationAstType), operand(nullptr)
 {
     
+}
+
+QString UnaryOperationAst::dump() const {
+    QString r;
+    r.append("Unary(");
+    dumpNode(r, "value=", operand);
+    r.append(")");
+    return r;
 }
 
 TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)

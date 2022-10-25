@@ -546,6 +546,8 @@ public:
     UnaryOperationAst(Ast* parent);
     Ast::UnaryOperatorTypes type;
     ExpressionAst* operand;
+
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT LambdaAst : public ExpressionAst {

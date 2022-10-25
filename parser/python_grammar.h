@@ -148,6 +148,9 @@ public:
     // withitem
     PyObject* ast_withitem;
 
+    // slice
+    PyObject* ast_slice;
+
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
     // match_case
     PyObject* ast_match_case;
@@ -295,6 +298,7 @@ public:
         Py_GRAMMAR_GET(mod, keyword);
         Py_GRAMMAR_GET(mod, alias);
         Py_GRAMMAR_GET(mod, withitem);
+        Py_GRAMMAR_GET(mod, slice);
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
         Py_GRAMMAR_GET(mod, match_case);
@@ -437,6 +441,7 @@ public:
         Py_XDECREF(ast_keyword);
         Py_XDECREF(ast_alias);
         Py_XDECREF(ast_withitem);
+        Py_XDECREF(ast_slice);
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
         Py_XDECREF(ast_match_case);

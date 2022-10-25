@@ -52,17 +52,6 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     Q_UNREACHABLE();
 }
 
-class PyObjectRef {
-public:
-    PyObjectRef(PyObject* py_obj): obj(py_obj) {}
-    PyObject* get() {return obj;}
-    ~PyObjectRef() {
-        Py_XDECREF(obj);
-        obj = nullptr;
-    }
-    PyObject* obj = nullptr;
-};
-
 struct PythonParser : private QMutexLocker
 {
     PyObject* m_parser_mod = nullptr;
@@ -87,14 +76,14 @@ struct PythonParser : private QMutexLocker
         QString supportDir = parserFile.absoluteDir().path();
         Q_ASSERT(supportDir.size());
         PyObjectRef sys = PyImport_ImportModule("sys");
-        if (!sys.get()) return;
-        PyObjectRef path = PyObject_GetAttrString(sys.get(), "path");
-        if (!path.get()) return;
-        PyObjectRef append = PyObject_GetAttrString(path.get(), "append");
-        if (!append.get()) return;
+        if (!sys) return;
+        PyObjectRef path = PyObject_GetAttrString(sys, "path");
+        if (!path) return;
+        PyObjectRef append = PyObject_GetAttrString(path, "append");
+        if (!append) return;
         PyObjectRef arg = PyUnicode_FromString(supportDir.toUtf8().data());
-        if (!arg.get()) return;
-        PyObjectRef r = PyObject_CallOneArg(append.get(), arg.get());
+        if (!arg) return;
+        PyObjectRef r = PyObject_CallOneArg(append, arg);
     }
 
     // Call parser function and return the python ast.Module.

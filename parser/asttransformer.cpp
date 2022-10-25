@@ -8,7 +8,7 @@ template <>
 QString AstTransformer::getattr(PyObject *obj, const char *attr) const
 {
     PyObject *v = PyObject_GetAttrString(obj, attr);
-    // qDebug() << "getattr<str>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr;;
+    // qDebug() << "getattr<str>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr << "v=" << PyUnicodeObjectToQString(PyObject_Str(v));
     Q_ASSERT(v); // attr missing
     if (PyUnicode_Check(v))
         return PyUnicodeObjectToQString(v);
@@ -20,7 +20,7 @@ template <>
 bool AstTransformer::getattr(PyObject *obj, const char *attr) const
 {
     PyObject *v = PyObject_GetAttrString(obj, attr);
-    // qDebug() << "getattr<bool>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr;;
+    // qDebug() << "getattr<bool>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr;
     Q_ASSERT(v); // attr missing
     bool r = PyObject_IsTrue(v) == 1;
     Py_XDECREF(v);
@@ -32,7 +32,7 @@ int AstTransformer::getattr(PyObject *obj, const char *attr) const
 {
     int result;
     PyObject *v = PyObject_GetAttrString(obj, attr);
-    // qDebug() << "getattr<int>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr;;
+    // qDebug() << "getattr<int>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr << "v=" << PyUnicodeObjectToQString(PyObject_Str(v));
     Q_ASSERT(v); // attr missing
     if (PyLong_Check(v)) {
         result = PyLong_AsLong(v);
@@ -42,6 +42,7 @@ int AstTransformer::getattr(PyObject *obj, const char *attr) const
     Py_XDECREF(v);
     return result;
 }
+
 
 template <>
 PyObject* AstTransformer::getattr(PyObject *obj, const char *attr) const
@@ -53,10 +54,18 @@ PyObject* AstTransformer::getattr(PyObject *obj, const char *attr) const
 }
 
 template <>
+PyObjectRef AstTransformer::getattr(PyObject *obj, const char *attr) const
+{
+    return getattr<PyObject*>(obj, attr);
+}
+
+template <>
 ExpressionAst::Context AstTransformer::getattr(PyObject *obj, const char *attr) const
 {
     ExpressionAst::Context result;
     PyObject *v = PyObject_GetAttrString(obj, attr);
+    // qDebug() << "getattr<expr:ctx>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr<< "ctx: " << PyUnicodeObjectToQString(PyObject_Str(v));
+    Q_ASSERT(v); // attr missing
     if (PyObject_IsInstance(v, grammar.ast_Load))
         result = ExpressionAst::Context::Load;
     else if (PyObject_IsInstance(v, grammar.ast_Store))
@@ -74,6 +83,8 @@ Ast::OperatorTypes  AstTransformer::getattr(PyObject *obj, const char *attr) con
 {
     Ast::OperatorTypes result;
     PyObject *op = PyObject_GetAttrString(obj, attr);
+    // qDebug() << "getattr<expr:ctx>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr<< "op: " << PyUnicodeObjectToQString(PyObject_Str(op));
+    Q_ASSERT(op); // attr missing
     if (PyObject_IsInstance(op, grammar.ast_Add))
         result = Ast::OperatorAdd;
     else if (PyObject_IsInstance(op, grammar.ast_BitAnd))
@@ -113,9 +124,8 @@ Ast* AstTransformer::visitModuleNode(PyObject* node, Ast* parent)
     CodeAst* ast = new CodeAst();
     {
         // qDebug() << "Visit module: " << PyUnicodeObjectToQString(PyObject_Str(node));
-        PyObject* body = getattr<PyObject*>(node, "body");
+        PyObjectRef body = getattr<PyObjectRef>(node, "body");
         ast->body = visitNodeList<Ast>(body, ast);
-        Py_DECREF(body);
     }
     return ast;
 }
@@ -160,6 +170,8 @@ Ast* AstTransformer::visitNode(PyObject* node, Ast* parent)
         return visitWithItemNode(node, parent);
     if (PyObject_IsInstance(node, grammar.ast_excepthandler))
         return visitExceptHandlerNode(node, parent);
+    if (PyObject_IsInstance(node, grammar.ast_slice))
+        return visitSliceNode(node, parent);
     if (PyObject_IsInstance(node, grammar.ast_mod))
         return visitModuleNode(node, parent);
     qWarning() << "Unsupported AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
@@ -201,9 +213,8 @@ Ast* AstTransformer::visitArgNode(PyObject* node, Ast* parent)
         v->argumentName = nullptr;
     }
     {
-        PyObject* annotation = getattr<PyObject*>(node, "annotation");
+        PyObjectRef annotation = getattr<PyObjectRef>(node, "annotation");
         v->annotation = static_cast<ExpressionAst*>(visitExprNode(annotation, v));
-        Py_DECREF(annotation);
     }
     return v;
 }
@@ -215,42 +226,36 @@ Ast* AstTransformer::visitArgumentsNode(PyObject* node, Ast* parent)
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_arguments));
     ArgumentsAst* v = new  ArgumentsAst(parent);
     {
-        PyObject *vararg = getattr<PyObject*>(node, "vararg");
+        PyObjectRef vararg = getattr<PyObjectRef>(node, "vararg");
         v->vararg = static_cast<ArgAst*>(visitArgNode(vararg, v));
-        Py_DECREF(vararg);
     }
     {
-        PyObject *kwarg = getattr<PyObject*>(node, "kwarg");
+        PyObjectRef kwarg = getattr<PyObjectRef>(node, "kwarg");
         v->kwarg = static_cast<ArgAst*>(visitArgNode(kwarg, v));
-        Py_DECREF(kwarg);
     }
     {
-        PyObject *args = getattr<PyObject*>(node, "args");
+        PyObjectRef args = getattr<PyObjectRef>(node, "args");
         v->arguments = visitNodeList<ArgAst>(args, v);
-        Py_DECREF(args);
     }
 
     {
-        PyObject *defaults = getattr<PyObject*>(node, "defaults");
+        PyObjectRef defaults = getattr<PyObjectRef>(node, "defaults");
         v->defaultValues = visitNodeList<ExpressionAst>(defaults, v);
-        Py_DECREF(defaults);
     }
 
     {
-        PyObject *kwonlyargs = getattr<PyObject*>(node, "kwonlyargs");
+        PyObjectRef kwonlyargs = getattr<PyObjectRef>(node, "kwonlyargs");
         v->kwonlyargs = visitNodeList<ArgAst>(kwonlyargs, v);
-        Py_DECREF(kwonlyargs);
     }
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
     {
-        PyObject *posonlyargs = getattr<PyObject*>(node, "posonlyargs");
+        PyObjectRef posonlyargs = getattr<PyObjectRef>(node, "posonlyargs");
         v->posonlyargs = visitNodeList<ArgAst>(posonlyargs, v);
-        Py_DECREF(posonlyargs);
     }
 
     // TODO: kw_defaults?
     //{
-    //    PyObject *kw_defaults = getattr<PyObject*>(node, "kw_defaults");
+    //    PyObject *kw_defaults = getattr<PyObjectRef>(node, "kw_defaults");
     //    v->kw_defaults = visitNodeList<ArgAst>(kw_defaults, v);
     //    Py_DECREF(kw_defaults);
     //}
@@ -265,19 +270,16 @@ Ast* AstTransformer::visitComprehensionNode(PyObject* node, Ast* parent) {
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_comprehension));
     ComprehensionAst* v = new  ComprehensionAst(parent);
     {
-        PyObject* target = getattr<PyObject*>(node, "target");
+        PyObjectRef target = getattr<PyObjectRef>(node, "target");
         v->target = static_cast<ExpressionAst*>(visitExprNode(target, v));
-        Py_DECREF(target);
     }
     {
-        PyObject* iter = getattr<PyObject*>(node, "iter");
+        PyObjectRef iter = getattr<PyObjectRef>(node, "iter");
         v->iterator = static_cast<ExpressionAst*>(visitExprNode(iter, v));
-        Py_DECREF(iter);
     }
     {
-        PyObject* ifs = getattr<PyObject*>(node, "ifs");
+        PyObjectRef ifs = getattr<PyObjectRef>(node, "ifs");
         v->conditions = visitNodeList<ExpressionAst>(ifs, v);
-        Py_DECREF(ifs);
     }
     return v;
 }
@@ -289,9 +291,8 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_excepthandler));
     ExceptionHandlerAst* v = new  ExceptionHandlerAst(parent);
     {
-        PyObject* type = getattr<PyObject*>(node, "type");
+        PyObjectRef type = getattr<PyObjectRef>(node, "type");
         v->type = static_cast<ExpressionAst*>(visitExprNode(type, v));
-        Py_DECREF(type);
     }
 
     QString name = getattr<QString>(node, "name");
@@ -312,11 +313,10 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
     }
 
     {
-        PyObject* body = getattr<PyObject*>(node, "body");
+        PyObjectRef body = getattr<PyObjectRef>(node, "body");
         v->body = visitNodeList<Ast>(body, v);
-        Py_DECREF(body);
     }
-
+/*
     //TODO: WHat is this??
     Ast* result = v;
     // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
@@ -341,7 +341,7 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         r->endCol = r->identifier->endCol;
         r->startLine = r->identifier->startLine;
         r->endLine = r->identifier->endLine;
-    }
+    }*/
     return v;
 }
 
@@ -357,28 +357,25 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     if (PyObject_IsInstance(node, grammar.ast_Await)) {
         AwaitAst* v = new  AwaitAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
-            v->value = static_cast<ExpressionAst*>(visitNode(value, v));
-            Py_DECREF(value);
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
+            v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_BoolOp)) {
         BooleanOperationAst* v = new  BooleanOperationAst(parent);
         {
-            PyObject* op = getattr<PyObject*>(node, "op");
+            PyObjectRef op = getattr<PyObjectRef>(node, "op");
             if (PyObject_IsInstance(op, grammar.ast_And))
                 v->type = Ast::BooleanAnd;
             else if (PyObject_IsInstance(op, grammar.ast_Or))
                 v->type = Ast::BooleanOr;
             else
                 v->type = Ast::BooleanInvalidOperation;
-            Py_DECREF(op);
         }
         {
-            PyObject* values = getattr<PyObject*>(node, "values");
+            PyObjectRef values = getattr<PyObjectRef>(node, "values");
             v->values = visitNodeList<ExpressionAst>(values, v);
-            Py_DECREF(values);
         }
         result = v;
     }
@@ -386,21 +383,19 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
         BinaryOperationAst* v = new  BinaryOperationAst(parent);
         v->type = getattr<Ast::OperatorTypes>(node, "op");
         {
-            PyObject *left = getattr<PyObject*>(node, "left");
-            v->lhs = static_cast<ExpressionAst*>(visitNode(left, v));
-            Py_DECREF(left);
+            PyObjectRef left = getattr<PyObjectRef>(node, "left");
+            v->lhs = static_cast<ExpressionAst*>(visitExprNode(left, v));
         }
         {
-            PyObject *right = getattr<PyObject*>(node, "right");
+            PyObjectRef right = getattr<PyObjectRef>(node, "right");
             v->rhs = static_cast<ExpressionAst*>(visitExprNode(right, v));
-            Py_DECREF(right);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_UnaryOp)) {
         UnaryOperationAst* v = new  UnaryOperationAst(parent);
         {
-            PyObject *op = getattr<PyObject*>(node, "op");
+            PyObjectRef op = getattr<PyObjectRef>(node, "op");
             if (PyObject_IsInstance(node, grammar.ast_Invert))
                 v->type = Ast::UnaryOperatorInvalid;
             else if (PyObject_IsInstance(node, grammar.ast_Not))
@@ -411,129 +406,110 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
                 v->type = Ast::UnaryOperatorSub;
             else
                 v->type = Ast::UnaryOperatorInvalid;
-            Py_DECREF(op);
         }
         {
-            PyObject *operand = getattr<PyObject*>(node, "operand");
+            PyObjectRef operand = getattr<PyObjectRef>(node, "operand");
             v->operand = static_cast<ExpressionAst*>(visitExprNode(operand, v));
-            Py_DECREF(operand);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Lambda)) {
         LambdaAst* v = new  LambdaAst(parent);
         {
-            PyObject* args = getattr<PyObject*>(node, "args");
+            PyObjectRef args = getattr<PyObjectRef>(node, "args");
             v->arguments = static_cast<ArgumentsAst*>(visitArgumentsNode(args, v));
-            Py_DECREF(args);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = static_cast<ExpressionAst*>(visitExprNode(body, v));
-            Py_DECREF(body);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_IfExp)) {
         IfExpressionAst* v = new  IfExpressionAst(parent);
         {
-            PyObject* test = getattr<PyObject*>(node, "test");
+            PyObjectRef test = getattr<PyObjectRef>(node, "test");
             v->condition = static_cast<ExpressionAst*>(visitExprNode(test, v));
-            Py_DECREF(test);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = static_cast<ExpressionAst*>(visitExprNode(body, v));
-            Py_DECREF(body);
         }
         {
-            PyObject* orelse = getattr<PyObject*>(node, "orelse");
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
             v->orelse = static_cast<ExpressionAst*>(visitExprNode(orelse, v));
-            Py_DECREF(orelse);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Dict)) {
         DictAst* v = new  DictAst(parent);
         {
-            PyObject* keys = getattr<PyObject*>(node, "keys");
+            PyObjectRef keys = getattr<PyObjectRef>(node, "keys");
             v->keys = visitNodeList<ExpressionAst>(keys, v);
-            Py_DECREF(keys);
         }
         {
-            PyObject* values = getattr<PyObject*>(node, "values");
+            PyObjectRef values = getattr<PyObjectRef>(node, "values");
             v->values = visitNodeList<ExpressionAst>(values, v);
-            Py_DECREF(values);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Set)) {
         SetAst* v = new  SetAst(parent);
         {
-            PyObject* elts = getattr<PyObject*>(node, "elts");
+            PyObjectRef elts = getattr<PyObjectRef>(node, "elts");
             v->elements = visitNodeList<ExpressionAst>(elts, v);
-            Py_DECREF(elts);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_ListComp)) {
         ListComprehensionAst* v = new  ListComprehensionAst(parent);
         {
-            PyObject* elt = getattr<PyObject*>(node, "elt");
+            PyObjectRef elt = getattr<PyObjectRef>(node, "elt");
             v->element = static_cast<ExpressionAst*>(visitExprNode(elt, v));
-            Py_DECREF(elt);
         }
         {
-            PyObject* generators = getattr<PyObject*>(node, "generators");
+            PyObjectRef generators = getattr<PyObjectRef>(node, "generators");
             v->generators = visitNodeList<ComprehensionAst>(generators, v);
-            Py_DECREF(generators);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_SetComp)) {
         SetComprehensionAst* v = new  SetComprehensionAst(parent);
         {
-            PyObject* elt = getattr<PyObject*>(node, "elt");
+            PyObjectRef elt = getattr<PyObjectRef>(node, "elt");
             v->element = static_cast<ExpressionAst*>(visitExprNode(elt, v));
-            Py_DECREF(elt);
         }
         {
-            PyObject* generators = getattr<PyObject*>(node, "generators");
+            PyObjectRef generators = getattr<PyObjectRef>(node, "generators");
             v->generators = visitNodeList<ComprehensionAst>(generators, v);
-            Py_DECREF(generators);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_DictComp)) {
         DictionaryComprehensionAst* v = new  DictionaryComprehensionAst(parent);
         {
-            PyObject* key = getattr<PyObject*>(node, "key");
+            PyObjectRef key = getattr<PyObjectRef>(node, "key");
             v->key = static_cast<ExpressionAst*>(visitExprNode(key, v));
-            Py_DECREF(key);
         }
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
-            v->value = static_cast<ExpressionAst*>(visitNode(value, v));
-            Py_DECREF(value);
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
+            v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
         }
         {
-            PyObject* generators = getattr<PyObject*>(node, "generators");
+            PyObjectRef generators = getattr<PyObjectRef>(node, "generators");
             v->generators = visitNodeList<ComprehensionAst>(generators, v);
-            Py_DECREF(generators);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_GeneratorExp)) {
         GeneratorExpressionAst* v = new  GeneratorExpressionAst(parent);
         {
-            PyObject* elt = getattr<PyObject*>(node, "elt");
+            PyObjectRef elt = getattr<PyObjectRef>(node, "elt");
             v->element = static_cast<ExpressionAst*>(visitExprNode(elt, v));
-            Py_DECREF(elt);
         }
         {
-            PyObject* generators = getattr<PyObject*>(node, "generators");
+            PyObjectRef generators = getattr<PyObjectRef>(node, "generators");
             v->generators = visitNodeList<ComprehensionAst>(generators, v);
-            Py_DECREF(generators);
 
         }
         result = v;
@@ -541,18 +517,16 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Yield)) {
         YieldAst* v = new  YieldAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Compare)) {
         CompareAst* v = new  CompareAst(parent);
         {
-            PyObject* left = getattr<PyObject*>(node, "left");
+            PyObjectRef left = getattr<PyObjectRef>(node, "left");
             v->leftmostElement = static_cast<ExpressionAst*>(visitExprNode(left, v));
-            Py_DECREF(left);
         }
 
         {
@@ -589,28 +563,24 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
         }
 
         {
-            PyObject* comparators = getattr<PyObject*>(node, "comparators");
+            PyObjectRef comparators = getattr<PyObjectRef>(node, "comparators");
             v->comparands = visitNodeList<ExpressionAst>(comparators, v);
-            Py_DECREF(comparators);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Call)) {
         CallAst* v = new  CallAst(parent);
         {
-            PyObject* func = getattr<PyObject*>(node, "func");
-            v->function = static_cast<ExpressionAst*>(visitNode(func, v));
-            Py_DECREF(func);
+            PyObjectRef func = getattr<PyObjectRef>(node, "func");
+            v->function = static_cast<ExpressionAst*>(visitExprNode(func, v));
         }
         {
-            PyObject* args = getattr<PyObject*>(node, "args");
+            PyObjectRef args = getattr<PyObjectRef>(node, "args");
             v->arguments = visitNodeList<ExpressionAst>(args, v);
-            Py_DECREF(args);
         }
         {
-            PyObject* keywords = getattr<PyObject*>(node, "keywords");
+            PyObjectRef keywords = getattr<PyObjectRef>(node, "keywords");
             v->keywords = visitNodeList<KeywordAst>(keywords, v);
-            Py_DECREF(keywords);
         }
 #if PYTHON_VERSION < QT_VERSION_CHECK(3, 5, 0)
         /* Convert 3.4 unpacked-args AST to match the new format from 3.5+ */
@@ -622,10 +592,9 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Num)) {
         NumberAst* v = new  NumberAst(parent);
         {
-            PyObject* n = getattr<PyObject*>(node, "n");
+            PyObjectRef n = getattr<PyObjectRef>(node, "n");
             v->isInt = PyLong_Check(n);
             v->value = PyLong_AsLong(n);
-            Py_DECREF(n);
         }
         result = v;
     }
@@ -641,9 +610,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_JoinedStr)) {
         JoinedStringAst* v = new  JoinedStringAst(parent);
         {
-            PyObject* values = getattr<PyObject*>(node, "values");
+            PyObjectRef values = getattr<PyObjectRef>(node, "values");
             v->values = visitNodeList<ExpressionAst>(values, v);
-            Py_DECREF(values);
         }
         result = v;
     }
@@ -652,16 +620,14 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_FormattedValue)) {
         FormattedValueAst* v = new  FormattedValueAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
 
         }
         v->conversion = getattr<int>(node, "conversion");
         {
-            PyObject* format_spec = getattr<PyObject*>(node, "format_spec");
+            PyObjectRef format_spec = getattr<PyObjectRef>(node, "format_spec");
             v->formatSpec = static_cast<ExpressionAst*>(visitExprNode(format_spec, v));
-            Py_DECREF(format_spec);
         }
         result = v;
     }
@@ -692,9 +658,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
             v->attribute = nullptr;
         }
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         v->context = getattr<ExpressionAst::Context>(node, "ctx");
         result = v;
@@ -702,14 +667,12 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Subscript)) {
         SubscriptAst* v = new  SubscriptAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         {
-            PyObject* slice = getattr<PyObject*>(node, "slice");
+            PyObjectRef slice = getattr<PyObjectRef>(node, "slice");
             v->slice = static_cast<SliceAst*>(visitNode(slice, v));
-            Py_DECREF(slice);
         }
         v->context = getattr<ExpressionAst::Context>(node, "ctx");
         result = v;
@@ -717,9 +680,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Starred)) {
         StarredAst* v = new  StarredAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
-            v->value = static_cast<ExpressionAst*>(visitNode(value, v));
-            Py_DECREF(value);
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
+            v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
         }
         v->context = getattr<ExpressionAst::Context>(node, "ctx");
         result = v;
@@ -747,9 +709,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_List)) {
         ListAst* v = new  ListAst(parent);
         {
-            PyObject* elts = getattr<PyObject*>(node, "elts");
+            PyObjectRef elts = getattr<PyObjectRef>(node, "elts");
             v->elements = visitNodeList<ExpressionAst>(elts, v);
-            Py_DECREF(elts);
         }
         v->context = getattr<ExpressionAst::Context>(node, "ctx");
         result = v;
@@ -757,9 +718,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Tuple)) {
         TupleAst* v = new  TupleAst(parent);
         {
-            PyObject* elts = getattr<PyObject*>(node, "elts");
+            PyObjectRef elts = getattr<PyObjectRef>(node, "elts");
             v->elements = visitNodeList<ExpressionAst>(elts, v);
-            Py_DECREF(elts);
         }
         v->context = getattr<ExpressionAst::Context>(node, "ctx");
         result = v;
@@ -774,14 +734,13 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_NameConstant)) {
         NameConstantAst* v = new NameConstantAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             if (value == Py_None)
                 v->value = NameConstantAst::None;
             else if (value == Py_false)
                 v->value = NameConstantAst::False;
             else
                 v->value = NameConstantAst::True;
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -789,9 +748,8 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_YieldFrom)) {
         YieldFromAst* v = new  YieldFromAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -841,14 +799,12 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_NamedExpr)) {
         AssignmentExpressionAst* v = new  AssignmentExpressionAst(parent);
         {
-            PyObject* target = getattr<PyObject*>(node, "target");
+            PyObjectRef target = getattr<PyObjectRef>(node, "target");
             v->target = static_cast<ExpressionAst*>(visitExprNode(target, v));
-            Py_DECREF(target);
         }
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -857,19 +813,16 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     else if (PyObject_IsInstance(node, grammar.ast_Slice)) {
         SliceAst* v = new  SliceAst(parent);
         {
-            PyObject* lower = getattr<PyObject*>(node, "lower");
+            PyObjectRef lower = getattr<PyObjectRef>(node, "lower");
             v->lower = static_cast<ExpressionAst*>(visitExprNode(lower, v));
-            Py_DECREF(lower);
         }
         {
-            PyObject* upper = getattr<PyObject*>(node, "upper");
+            PyObjectRef upper = getattr<PyObjectRef>(node, "upper");
             v->upper = static_cast<ExpressionAst*>(visitExprNode(upper, v));
-            Py_DECREF(upper);
         }
         {
-            PyObject* step = getattr<PyObject*>(node, "step");
+            PyObjectRef step = getattr<PyObjectRef>(node, "step");
             v->step = static_cast<ExpressionAst*>(visitExprNode(step, v));
-            Py_DECREF(step);
         }
         result = v;
     }
@@ -892,53 +845,51 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     }
 
     // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    if ( result->hasUsefulRangeInformation ) {
-        Ast* parent = result->parent;
-        while ( parent ) {
-            if ( parent->endLine < result->endLine ) {
-                parent->endLine = result->endLine;
-                parent->endCol = result->endCol;
-            }
-            if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                parent->startLine = result->startLine;
-                parent->startCol = result->startCol;
-            }
-            parent = parent->parent;
-        }
-    }
-
-    if ( result && result->astType == Ast::NameAstType ) {
-        NameAst* r = static_cast<NameAst*>(result);
-        r->startCol = r->identifier->startCol;
-        r->endCol = r->identifier->endCol;
-        r->startLine = r->identifier->startLine;
-        r->endLine = r->identifier->endLine;
-    }
+    // if ( result->hasUsefulRangeInformation ) {
+    //     Ast* parent = result->parent;
+    //     while ( parent ) {
+    //         if ( parent->endLine < result->endLine ) {
+    //             parent->endLine = result->endLine;
+    //             parent->endCol = result->endCol;
+    //         }
+    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+    //             parent->startLine = result->startLine;
+    //             parent->startCol = result->startCol;
+    //         }
+    //         parent = parent->parent;
+    //     }
+    // }
+    //
+    // if ( result && result->astType == Ast::NameAstType ) {
+    //     NameAst* r = static_cast<NameAst*>(result);
+    //     r->startCol = r->identifier->startCol;
+    //     r->endCol = r->identifier->endCol;
+    //     r->startLine = r->identifier->startLine;
+    //     r->endLine = r->identifier->endLine;
+    // }
     return result;
 }
 
 
 Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent) {
     if ( ! node || node == Py_None ) return nullptr;
-    // Q_ASSERT(PyObject_IsInstance(node, grammar.ast_slice));
+    // qDebug() << "visit slice: " << PyUnicodeObjectToQString(PyObject_Str(node));
+    Q_ASSERT(PyObject_IsInstance(node, grammar.ast_slice));
     Ast* result = nullptr;
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 9, 0)
     if (PyObject_IsInstance(node, grammar.ast_Slice)) {
         SliceAst* v = new  SliceAst(parent);
         {
-            PyObject* lower = getattr<PyObject*>(node, "lower");
+            PyObjectRef lower = getattr<PyObjectRef>(node, "lower");
             v->lower = static_cast<ExpressionAst*>(visitExprNode(lower, v));
-            Py_DECREF(lower);
         }
         {
-            PyObject* upper = getattr<PyObject*>(node, "upper");
+            PyObjectRef upper = getattr<PyObjectRef>(node, "upper");
             v->upper = static_cast<ExpressionAst*>(visitExprNode(upper, v));
-            Py_DECREF(upper);
         }
         {
-            PyObject* step = getattr<PyObject*>(node, "step");
+            PyObjectRef step = getattr<PyObjectRef>(node, "step");
             v->step = static_cast<ExpressionAst*>(visitExprNode(step, v));
-            Py_DECREF(step);
         }
         result = v;
     }
@@ -947,14 +898,13 @@ Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent) {
     if (PyObject_IsInstance(node, grammar.ast_ExtSlice)) {
         TupleAst* v = new  TupleAst(parent);
         {
-            PyObject* dims = getattr<PyObject*>(node, "dims");
+            PyObjectRef dims = getattr<PyObjectRef>(node, "dims");
             v->elements = visitNodeList<ExpressionAst>(dims, parent);
-            Py_DECREF(dims);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Index)) {
-        PyObject* value = getattr<PyObject*>(node, "value");
+        PyObjectRef value = getattr<PyObjectRef>(node, "value");
         return visitNode(value, parent);
     }
 #endif
@@ -964,28 +914,28 @@ Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent) {
     }
 
     // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    if ( result->hasUsefulRangeInformation ) {
-        Ast* parent = result->parent;
-        while ( parent ) {
-            if ( parent->endLine < result->endLine ) {
-                parent->endLine = result->endLine;
-                parent->endCol = result->endCol;
-            }
-            if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                parent->startLine = result->startLine;
-                parent->startCol = result->startCol;
-            }
-            parent = parent->parent;
-        }
-    }
-
-    if ( result && result->astType == Ast::NameAstType ) {
-        NameAst* r = static_cast<NameAst*>(result);
-        r->startCol = r->identifier->startCol;
-        r->endCol = r->identifier->endCol;
-        r->startLine = r->identifier->startLine;
-        r->endLine = r->identifier->endLine;
-    }
+    // if ( result->hasUsefulRangeInformation ) {
+    //     Ast* parent = result->parent;
+    //     while ( parent ) {
+    //         if ( parent->endLine < result->endLine ) {
+    //             parent->endLine = result->endLine;
+    //             parent->endCol = result->endCol;
+    //         }
+    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+    //             parent->startLine = result->startLine;
+    //             parent->startCol = result->startCol;
+    //         }
+    //         parent = parent->parent;
+    //     }
+    // }
+    //
+    // if ( result && result->astType == Ast::NameAstType ) {
+    //     NameAst* r = static_cast<NameAst*>(result);
+    //     r->startCol = r->identifier->startCol;
+    //     r->endCol = r->identifier->endCol;
+    //     r->startLine = r->identifier->startLine;
+    //     r->endLine = r->identifier->endLine;
+    // }
     return result;
 }
 
@@ -998,9 +948,8 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     if (PyObject_IsInstance(node, grammar.ast_Expr)) {
         ExpressionAst* v = new  ExpressionAst(parent);
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -1029,24 +978,20 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
         }
 
         {
-            PyObject* args = getattr<PyObject*>(node, "args");
+            PyObjectRef args = getattr<PyObjectRef>(node, "args");
             v->arguments = static_cast<ArgumentsAst*>(visitArgumentsNode(args, v));
-            Py_DECREF(args);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* decorator_list = getattr<PyObject*>(node, "decorator_list");
+            PyObjectRef decorator_list = getattr<PyObjectRef>(node, "decorator_list");
             v->decorators = visitNodeList<ExpressionAst>(decorator_list, v);
-            Py_DECREF(decorator_list);
         }
         {
-            PyObject* returns = getattr<PyObject*>(node, "returns");
+            PyObjectRef returns = getattr<PyObjectRef>(node, "returns");
             v->returns = static_cast<ExpressionAst*>(visitExprNode(returns, v));
-            Py_DECREF(returns);
         }
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         v->async = PyObject_IsInstance(node, grammar.ast_AsyncFunctionDef);
@@ -1074,62 +1019,53 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
         }
 
         {
-            PyObject* bases = getattr<PyObject*>(node, "bases");
+            PyObjectRef bases = getattr<PyObjectRef>(node, "bases");
             v->baseClasses = visitNodeList<ExpressionAst>(bases, v);
-            Py_DECREF(bases);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* decorator_list = getattr<PyObject*>(node, "decorator_list");
+            PyObjectRef decorator_list = getattr<PyObjectRef>(node, "decorator_list");
             v->decorators = visitNodeList<ExpressionAst>(decorator_list, v);
-            Py_DECREF(decorator_list);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Return)) {
         ReturnAst* v = new  ReturnAst(parent);
-        PyObject* value = getattr<PyObject*>(node, "value");
+        PyObjectRef value = getattr<PyObjectRef>(node, "value");
         v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-        Py_DECREF(value);
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Delete)) {
         DeleteAst* v = new  DeleteAst(parent);
-        PyObject* targets = getattr<PyObject*>(node, "targets");
+        PyObjectRef targets = getattr<PyObjectRef>(node, "targets");
         v->targets = visitNodeList<ExpressionAst>(targets, v);
-        Py_DECREF(targets);
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Assign)) {
         AssignmentAst* v = new  AssignmentAst(parent);
         {
-            PyObject* targets = getattr<PyObject*>(node, "targets");
+            PyObjectRef targets = getattr<PyObjectRef>(node, "targets");
             v->targets = visitNodeList<ExpressionAst>(targets, v);
-            Py_DECREF(targets);
         }
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_AugAssign)) {
         AugmentedAssignmentAst* v = new  AugmentedAssignmentAst(parent);
         {
-            PyObject* target = getattr<PyObject*>(node, "target");
+            PyObjectRef target = getattr<PyObjectRef>(node, "target");
             v->target = static_cast<ExpressionAst*>(visitExprNode(target, v));
-            Py_DECREF(target);
         }
         v->op = getattr<Ast::OperatorTypes>(node, "op");
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -1137,19 +1073,16 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     else if (PyObject_IsInstance(node, grammar.ast_AnnAssign)) {
         AnnotationAssignmentAst* v = new  AnnotationAssignmentAst(parent);
         {
-            PyObject* target = getattr<PyObject*>(node, "target");
+            PyObjectRef target = getattr<PyObjectRef>(node, "target");
             v->target = static_cast<ExpressionAst*>(visitExprNode(target, v));
-            Py_DECREF(target);
         }
         {
-            PyObject* annotation = getattr<PyObject*>(node, "annotation");
+            PyObjectRef annotation = getattr<PyObjectRef>(node, "annotation");
             v->annotation = static_cast<ExpressionAst*>(visitExprNode(annotation, v));
-            Py_DECREF(annotation);
         }
         {
-            PyObject* value = getattr<PyObject*>(node, "value");
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
             v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-            Py_DECREF(value);
         }
         result = v;
     }
@@ -1161,24 +1094,20 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     ) {
         ForAst* v = new  ForAst(parent);
         {
-            PyObject* target = getattr<PyObject*>(node, "target");
+            PyObjectRef target = getattr<PyObjectRef>(node, "target");
             v->target = static_cast<ExpressionAst*>(visitExprNode(target, v));
-            Py_DECREF(target);
         }
         {
-            PyObject* iter = getattr<PyObject*>(node, "iter");
+            PyObjectRef iter = getattr<PyObjectRef>(node, "iter");
             v->iterator = static_cast<ExpressionAst*>(visitExprNode(iter, v));
-            Py_DECREF(iter);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* orelse = getattr<PyObject*>(node, "orelse");
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
             v->orelse = visitNodeList<Ast>(orelse, v);
-            Py_DECREF(orelse);
         }
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
         v->async = PyObject_IsInstance(node, grammar.ast_AsyncFor);
@@ -1188,38 +1117,32 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     else if (PyObject_IsInstance(node, grammar.ast_While)) {
         WhileAst* v = new  WhileAst(parent);
         {
-            PyObject* test = getattr<PyObject*>(node, "test");
+            PyObjectRef test = getattr<PyObjectRef>(node, "test");
             v->condition = static_cast<ExpressionAst*>(visitExprNode(test, v));
-            Py_DECREF(test);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* orelse = getattr<PyObject*>(node, "orelse");
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
             v->orelse = visitNodeList<Ast>(orelse, v);
-            Py_DECREF(orelse);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_If)) {
         IfAst* v = new  IfAst(parent);
         {
-            PyObject* test = getattr<PyObject*>(node, "test");
+            PyObjectRef test = getattr<PyObjectRef>(node, "test");
             v->condition = static_cast<ExpressionAst*>(visitExprNode(test, v));
-            Py_DECREF(test);
         }
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* orelse = getattr<PyObject*>(node, "orelse");
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
             v->orelse = visitNodeList<Ast>(orelse, v);
-            Py_DECREF(orelse);
         }
         result = v;
     }
@@ -1230,14 +1153,12 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     ) {
             WithAst* v = new  WithAst(parent);
             {
-                PyObject* body = getattr<PyObject*>(node, "body");
+                PyObjectRef body = getattr<PyObjectRef>(node, "body");
                 v->body = visitNodeList<Ast>(body, v);
-                Py_DECREF(body);
             }
             {
-                PyObject* items = getattr<PyObject*>(node, "items");
+                PyObjectRef items = getattr<PyObjectRef>(node, "items");
                 v->items = visitNodeList<WithItemAst>(items, v);
-                Py_DECREF(items);
             }
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 5, 0)
             v->async = PyObject_IsInstance(node, grammar.ast_AsyncWith);
@@ -1248,57 +1169,49 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     else if (PyObject_IsInstance(node, grammar.ast_Raise)) {
         RaiseAst* v = new  RaiseAst(parent);
         {
-            PyObject* exc = getattr<PyObject*>(node, "exc");
+            PyObjectRef exc = getattr<PyObjectRef>(node, "exc");
             v->type = static_cast<ExpressionAst*>(visitExprNode(exc, v));
-            Py_DECREF(exc);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Try)) {
         TryAst* v = new  TryAst(parent);
         {
-            PyObject* body = getattr<PyObject*>(node, "body");
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
             v->body = visitNodeList<Ast>(body, v);
-            Py_DECREF(body);
         }
         {
-            PyObject* handlers = getattr<PyObject*>(node, "handlers");
+            PyObjectRef handlers = getattr<PyObjectRef>(node, "handlers");
             v->handlers = visitNodeList<ExceptionHandlerAst>(handlers, v);
-            Py_DECREF(handlers);
 
         }
         {
-            PyObject* orelse = getattr<PyObject*>(node, "orelse");
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
             v->orelse = visitNodeList<Ast>(orelse, v);
-            Py_DECREF(orelse);
         }
         {
-            PyObject* finalbody = getattr<PyObject*>(node, "finalbody");
+            PyObjectRef finalbody = getattr<PyObjectRef>(node, "finalbody");
             v->finally = visitNodeList<Ast>(finalbody, v);
-            Py_DECREF(finalbody);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Assert)) {
         AssertionAst* v = new  AssertionAst(parent);
         {
-            PyObject* test = getattr<PyObject*>(node, "test");
+            PyObjectRef test = getattr<PyObjectRef>(node, "test");
             v->condition = static_cast<ExpressionAst*>(visitExprNode(test, v));
-            Py_DECREF(test);
         }
         {
-            PyObject* msg = getattr<PyObject*>(node, "msg");
+            PyObjectRef msg = getattr<PyObjectRef>(node, "msg");
             v->message = static_cast<ExpressionAst*>(visitExprNode(msg, v));
-            Py_DECREF(msg);
         }
         result = v;
     }
     else if (PyObject_IsInstance(node, grammar.ast_Import)) {
         ImportAst* v = new  ImportAst(parent);
         {
-            PyObject* names = getattr<PyObject*>(node, "names");
+            PyObjectRef names = getattr<PyObjectRef>(node, "names");
             v->names = visitNodeList<AliasAst>(names, v);
-            Py_DECREF(names);
         }
         result = v;
     }
@@ -1321,9 +1234,8 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
             v->module = nullptr;
         }
         {
-            PyObject* names = getattr<PyObject*>(node, "names");
+            PyObjectRef names = getattr<PyObjectRef>(node, "names");
             v->names = visitNodeList<AliasAst>(names, v);
-            Py_DECREF(names);
         }
         v->level = getattr<int>(node, "level");
         result = v;
@@ -1338,6 +1250,7 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
                     ));
             v->names.append(id);
         }
+        Py_DECREF(names);
 
         result = v;
     }
@@ -1375,28 +1288,28 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     }
 
     // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    if ( result->hasUsefulRangeInformation ) {
-        Ast* parent = result->parent;
-        while ( parent ) {
-            if ( parent->endLine < result->endLine ) {
-                parent->endLine = result->endLine;
-                parent->endCol = result->endCol;
-            }
-            if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                parent->startLine = result->startLine;
-                parent->startCol = result->startCol;
-            }
-            parent = parent->parent;
-        }
-    }
-
-    if ( result && result->astType == Ast::NameAstType ) {
-        NameAst* r = static_cast<NameAst*>(result);
-        r->startCol = r->identifier->startCol;
-        r->endCol = r->identifier->endCol;
-        r->startLine = r->identifier->startLine;
-        r->endLine = r->identifier->endLine;
-    }
+    // if ( result->hasUsefulRangeInformation ) {
+    //     Ast* parent = result->parent;
+    //     while ( parent ) {
+    //         if ( parent->endLine < result->endLine ) {
+    //             parent->endLine = result->endLine;
+    //             parent->endCol = result->endCol;
+    //         }
+    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+    //             parent->startLine = result->startLine;
+    //             parent->startCol = result->startCol;
+    //         }
+    //         parent = parent->parent;
+    //     }
+    // }
+    //
+    // if ( result && result->astType == Ast::NameAstType ) {
+    //     NameAst* r = static_cast<NameAst*>(result);
+    //     r->startCol = r->identifier->startCol;
+    //     r->endCol = r->identifier->endCol;
+    //     r->startLine = r->identifier->startLine;
+    //     r->endLine = r->identifier->endLine;
+    // }
     return result;
 }
 
@@ -1409,9 +1322,8 @@ Ast* AstTransformer::visitKeywordNode(PyObject* node, Ast* parent)
     QString arg = getattr<QString>(node, "arg");
     v->argumentName = arg.size() ? new Python::Identifier(arg) : nullptr;
     {
-        PyObject* value = getattr<PyObject*>(node, "value");
+        PyObjectRef value = getattr<PyObjectRef>(node, "value");
         v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
-        Py_DECREF(value);
     }
     return v;
 }
@@ -1423,14 +1335,12 @@ Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent) {
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_withitem));
     WithItemAst* v = new  WithItemAst(parent);
     {
-        PyObject* context_expr = getattr<PyObject*>(node, "context_expr");
+        PyObjectRef context_expr = getattr<PyObjectRef>(node, "context_expr");
         v->contextExpression = static_cast<ExpressionAst*>(visitExprNode(context_expr, v));
-        Py_DECREF(context_expr);
     }
     {
-        PyObject* optional_vars = getattr<PyObject*>(node, "optional_vars");
+        PyObjectRef optional_vars = getattr<PyObjectRef>(node, "optional_vars");
         v->optionalVars = static_cast<ExpressionAst*>(visitExprNode(optional_vars, v));
-        Py_DECREF(optional_vars);
     }
     return v;
 }

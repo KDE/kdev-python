@@ -5,6 +5,20 @@
 namespace Python
 {
 
+class PyObjectRef {
+public:
+    PyObjectRef(PyObject* py_obj): obj(py_obj) {}
+    operator PyObject*() const {
+        return obj;
+    }
+    ~PyObjectRef() {
+        Py_XDECREF(obj);
+        obj = nullptr;
+    }
+    PyObject* obj = nullptr;
+};
+
+
 class AstTransformer {
 public:
     CodeAst* ast;

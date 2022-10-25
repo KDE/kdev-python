@@ -11,7 +11,6 @@
 #include "ast.h"
 #include "parserexport.h"
 
-#include <QMutex>
 #include <QUrl>
 #include "astdefaultvisitor.h"
 

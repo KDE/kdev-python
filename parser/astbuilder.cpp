@@ -20,7 +20,6 @@
 #include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
 
-#include <QStandardPaths>
 #include <QDebug>
 #include "parserdebug.h"
 
@@ -61,29 +60,10 @@ struct PythonParser : private QMutexLocker
     {
         Py_InitializeEx(0);
         Q_ASSERT(Py_IsInitialized());
-        //addSupportDirToSysPath();
-        // Import the parse function. This intentially a separate module
-        // to allow other parsers to be hooked in without needing to re-compile.
         m_parser_mod = PyImport_ImportModule("ast");
         Q_ASSERT(m_parser_mod); // parser import error
         m_parse_func = PyObject_GetAttrString(m_parser_mod, "parse");
         Q_ASSERT(m_parse_func); // parser function renamed?
-    }
-
-    void addSupportDirToSysPath() const
-    {
-        QFileInfo parserFile = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/kdevparser.py");
-        QString supportDir = parserFile.absoluteDir().path();
-        Q_ASSERT(supportDir.size());
-        PyObjectRef sys = PyImport_ImportModule("sys");
-        if (!sys) return;
-        PyObjectRef path = PyObject_GetAttrString(sys, "path");
-        if (!path) return;
-        PyObjectRef append = PyObject_GetAttrString(path, "append");
-        if (!append) return;
-        PyObjectRef arg = PyUnicode_FromString(supportDir.toUtf8().data());
-        if (!arg) return;
-        PyObjectRef r = PyObject_CallOneArg(append, arg);
     }
 
     // Call parser function and return the python ast.Module.

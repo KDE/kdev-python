@@ -172,6 +172,7 @@ public:
 
     Ast(Ast* parent, AstType type);
     Ast();
+    virtual ~Ast() {};
     Ast* parent = nullptr;
     AstType astType;
 
@@ -213,6 +214,22 @@ public:
         return false;
     }
 
+    virtual QString dump() const
+    {
+        QString r = "Ast(astType=";
+        r.append(astType);
+        r.append(", startLine=");
+        r.append(startLine);
+        r.append(", startCol=");
+        r.append(startCol);
+        r.append(", endCol=");
+        r.append(endCol);
+        r.append(", endLine=");
+        r.append(endLine);
+        r.append(")");
+        return r;
+    };
+
     int startCol;
     int startLine;
     int endCol;
@@ -239,6 +256,8 @@ public:
         return value;
     };
     QString value;
+
+    QString dump() const override;
 };
 
 // this replaces ModuleAst
@@ -249,6 +268,8 @@ public:
     typedef QSharedPointer<CodeAst> Ptr;
     QList<Ast*> body;
     Identifier* name; // module name
+    QString dump() const override;
+
 };
 
 /** Statement classes **/
@@ -266,6 +287,7 @@ public:
     QList<Ast*> body;
     ExpressionAst* returns;
     bool async;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ClassDefinitionAst : public StatementAst {
@@ -275,18 +297,21 @@ public:
     QList<ExpressionAst*> baseClasses;
     QList<Ast*> body;
     QList<ExpressionAst*> decorators;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ReturnAst : public StatementAst {
 public:
     ReturnAst(Ast* parent);
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT DeleteAst : public StatementAst {
 public:
     DeleteAst(Ast* parent);
     QList<ExpressionAst*> targets;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AssignmentAst : public StatementAst {
@@ -294,6 +319,7 @@ public:
     AssignmentAst(Ast* parent);
     QList<ExpressionAst*> targets;
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AugmentedAssignmentAst : public StatementAst {
@@ -302,6 +328,7 @@ public:
     ExpressionAst* target;
     Ast::OperatorTypes op;
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AnnotationAssignmentAst : public StatementAst {
@@ -310,6 +337,7 @@ public:
     ExpressionAst* target;
     ExpressionAst* value;
     ExpressionAst* annotation;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ForAst : public StatementAst {
@@ -320,6 +348,7 @@ public:
     QList<Ast*> body;
     QList<Ast*> orelse;
     bool async;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT WhileAst : public StatementAst {
@@ -328,6 +357,7 @@ public:
     ExpressionAst* condition;
     QList<Ast*> body;
     QList<Ast*> orelse;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT IfAst : public StatementAst {
@@ -336,6 +366,7 @@ public:
     ExpressionAst* condition;
     QList<Ast*> body;
     QList<Ast*> orelse;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT WithItemAst : public Ast {
@@ -351,6 +382,7 @@ public:
     QList<Ast*> body;
     QList<WithItemAst*> items;
     bool async;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT RaiseAst : public StatementAst {
@@ -358,6 +390,7 @@ public:
     RaiseAst(Ast* parent);
     ExpressionAst* type;
     // TODO check what the other things in the grammar actually are and add them
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT TryAst : public StatementAst {
@@ -367,6 +400,7 @@ public:
     QList<ExceptionHandlerAst*> handlers;
     QList<Ast*> orelse;
     QList<Ast*> finally;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AssertionAst : public StatementAst {
@@ -374,12 +408,14 @@ public:
     AssertionAst(Ast* parent);
     ExpressionAst* condition;
     ExpressionAst* message;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst {
 public:
     ImportAst(Ast* parent);
     QList<AliasAst*> names;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ImportFromAst : public StatementAst {
@@ -388,12 +424,14 @@ public:
     Identifier* module;
     QList<AliasAst*> names;
     int level;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT GlobalAst : public StatementAst {
 public:
     GlobalAst(Ast* parent);
     QList<Identifier*> names;
+    QString dump() const override;
 };
 
 // TODO what's stmt::Expr(expr value) in the grammar and what do we need it for?
@@ -401,21 +439,25 @@ public:
 class KDEVPYTHONPARSER_EXPORT BreakAst : public StatementAst {
 public:
     BreakAst(Ast* parent);
+    QString dump() const override { return "Break()"; }
 };
 
 class KDEVPYTHONPARSER_EXPORT ContinueAst : public StatementAst {
 public:
     ContinueAst(Ast* parent);
+    QString dump() const override { return "Continue()"; }
 };
 
 class KDEVPYTHONPARSER_EXPORT PassAst : public StatementAst {
 public:
     PassAst(Ast* parent);
+    QString dump() const override { return "Pass()"; }
 };
 
 class KDEVPYTHONPARSER_EXPORT NonlocalAst : public StatementAst {
 public:
     NonlocalAst(Ast* parent);
+    QString dump() const override { return "Nonlocal()"; }
 };
 
 
@@ -437,18 +479,21 @@ public:
     AssignmentExpressionAst(Ast* parent);
     ExpressionAst* target;
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AwaitAst : public ExpressionAst {
 public:
     AwaitAst(Ast* parent);
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT YieldFromAst : public ExpressionAst {
 public:
     YieldFromAst(Ast* parent);
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT BooleanOperationAst : public ExpressionAst {
@@ -516,6 +561,7 @@ public:
     ExpressionAst* condition;
     ExpressionAst* body;
     ExpressionAst* orelse;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT DictAst : public ExpressionAst {
@@ -523,12 +569,14 @@ public:
     DictAst(Ast* parent);
     QList<ExpressionAst*> keys; // WARNING: Can contain null elements: `{**other}`
     QList<ExpressionAst*> values;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT SetAst : public ExpressionAst {
 public:
     SetAst(Ast* parent);
     QList<ExpressionAst*> elements;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ListComprehensionAst : public ExpressionAst {
@@ -580,6 +628,7 @@ public:
     NumberAst(Ast* parent);
     long value; // only used for ints
     bool isInt; // otherwise it's a float
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT StringAst : public ExpressionAst {
@@ -587,6 +636,7 @@ public:
     StringAst(Ast* parent);
     QString value;
     bool usedAsComment;
+    QString dump() const override { return "Str('" + value + "')"; }
 };
 
 class KDEVPYTHONPARSER_EXPORT JoinedStringAst : public ExpressionAst {
@@ -613,6 +663,7 @@ class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
 public:
     YieldAst(Ast* parent);
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT NameAst : public ExpressionAst {
@@ -620,6 +671,7 @@ public:
     NameAst(Ast* parent);
     Identifier* identifier;
     ExpressionAst::Context context;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ExpressionAst {
@@ -632,6 +684,7 @@ public:
         Invalid // should not happen
     };
     NameConstantTypes value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT CallAst : public ExpressionAst {
@@ -640,6 +693,7 @@ public:
     ExpressionAst* function;
     QList<ExpressionAst*> arguments;
     QList<KeywordAst*> keywords;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT AttributeAst : public ExpressionAst {
@@ -649,6 +703,7 @@ public:
     Identifier* attribute;
     ExpressionAst::Context context;
     int depth;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT SubscriptAst : public ExpressionAst {
@@ -657,6 +712,7 @@ public:
     ExpressionAst* value;
     ExpressionAst* slice;
     ExpressionAst::Context context;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT StarredAst : public ExpressionAst {
@@ -664,6 +720,7 @@ public:
     StarredAst(Ast* parent);
     ExpressionAst* value;
     ExpressionAst::Context context;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ListAst : public ExpressionAst {
@@ -671,6 +728,7 @@ public:
     ListAst(Ast* parent);
     QList<ExpressionAst*> elements;
     ExpressionAst::Context context;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT TupleAst : public ExpressionAst {
@@ -678,11 +736,13 @@ public:
     TupleAst(Ast* parent);
     QList<ExpressionAst*> elements;
     ExpressionAst::Context context;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT EllipsisAst : public ExpressionAst {
 public:
     EllipsisAst(Ast* parent);
+    QString dump() const override { return "Ellipsis()"; }
 };
 
 class KDEVPYTHONPARSER_EXPORT SliceAst : public ExpressionAst {
@@ -691,6 +751,7 @@ public:
     ExpressionAst* lower;
     ExpressionAst* upper;
     ExpressionAst* step;
+    QString dump() const override;
 };
 
 
@@ -701,6 +762,7 @@ public:
     ArgAst(Ast* parent);
     Identifier* argumentName;
     ExpressionAst* annotation;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ArgumentsAst : public Ast {
@@ -712,6 +774,7 @@ public:
     QList<ExpressionAst*> defaultValues;
     ArgAst* vararg;
     ArgAst* kwarg;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT KeywordAst : public Ast {
@@ -719,6 +782,7 @@ public:
     KeywordAst(Ast* parent);
     Identifier* argumentName;
     ExpressionAst* value;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT ComprehensionAst : public Ast {
@@ -742,6 +806,7 @@ public:
     AliasAst(Ast* parent);
     Identifier* name;
     Identifier* asName;
+    QString dump() const override;
 };
 
 }

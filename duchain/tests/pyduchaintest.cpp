@@ -823,6 +823,8 @@ void PyDUChainTest::testTypes()
     QEXPECT_FAIL("property_wrong", "visitCall uses declaration if no type", Continue);
     QEXPECT_FAIL("property_setter", "very basic property support", Continue);
     QEXPECT_FAIL("assignment_expr_context", "not implemented", Continue);
+    if (!visitor->found)
+        qDebug() << m_ast->dump();
     QCOMPARE(visitor->found, true);
 }
 

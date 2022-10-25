@@ -59,6 +59,7 @@ public:
     Ast* visitWithItemNode(PyObject* node, Ast* parent);
     Ast* visitSliceNode(PyObject* node, Ast* parent);
 
+    void updateRanges(PyObject* node, Ast* result, bool ranges_copied);
 };
 
 } // namespace Python

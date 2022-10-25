@@ -294,7 +294,7 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         PyObjectRef type = getattr<PyObjectRef>(node, "type");
         v->type = static_cast<ExpressionAst*>(visitExprNode(type, v));
     }
-
+    bool ranges_copied = false;
     QString name = getattr<QString>(node, "name");
     if (name.size())
     {
@@ -308,6 +308,7 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         v->startLine = v->name->startLine;
         v->endCol = v->name->endCol;
         v->endLine = v->name->endLine;
+        ranges_copied = true;
     } else {
         v->name = nullptr;
     }
@@ -316,32 +317,7 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         PyObjectRef body = getattr<PyObjectRef>(node, "body");
         v->body = visitNodeList<Ast>(body, v);
     }
-/*
-    //TODO: WHat is this??
-    Ast* result = v;
-    // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    if ( result->hasUsefulRangeInformation ) {
-        Ast* parent = v->parent;
-        while ( parent ) {
-            if ( parent->endLine < v->endLine ) {
-                parent->endLine = v->endLine;
-                parent->endCol = v->endCol;
-            }
-            if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-                parent->startLine = v->startLine;
-                parent->startCol = v->startCol;
-            }
-            parent = parent->parent;
-        }
-    }
-
-    if ( v && v->astType == Ast::NameAstType ) {
-        NameAst* r = static_cast<NameAst*>(result);
-        r->startCol = r->identifier->startCol;
-        r->endCol = r->identifier->endCol;
-        r->startLine = r->identifier->startLine;
-        r->endLine = r->identifier->endLine;
-    }*/
+    updateRanges(node, v, ranges_copied);
     return v;
 }
 
@@ -833,45 +809,13 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     }
 
     if ( ! result ) return nullptr;
-    if ( ! ranges_copied ) {
-        result->startCol = getattr<int>(node, "col_offset");
-        result->endCol = getattr<int>(node, "end_col_offset");
-        result->startLine = tline(getattr<int>(node, "lineno"));
-        result->endLine = tline(getattr<int>(node, "end_lineno"));
-        result->hasUsefulRangeInformation = true;
-    }
-    else {
-        result->hasUsefulRangeInformation = true;
-    }
-
-    // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    // if ( result->hasUsefulRangeInformation ) {
-    //     Ast* parent = result->parent;
-    //     while ( parent ) {
-    //         if ( parent->endLine < result->endLine ) {
-    //             parent->endLine = result->endLine;
-    //             parent->endCol = result->endCol;
-    //         }
-    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-    //             parent->startLine = result->startLine;
-    //             parent->startCol = result->startCol;
-    //         }
-    //         parent = parent->parent;
-    //     }
-    // }
-    //
-    // if ( result && result->astType == Ast::NameAstType ) {
-    //     NameAst* r = static_cast<NameAst*>(result);
-    //     r->startCol = r->identifier->startCol;
-    //     r->endCol = r->identifier->endCol;
-    //     r->startLine = r->identifier->startLine;
-    //     r->endLine = r->identifier->endLine;
-    // }
+    updateRanges(node, result, ranges_copied);
     return result;
 }
 
 
-Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent) {
+Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent)
+{
     if ( ! node || node == Py_None ) return nullptr;
     // qDebug() << "visit slice: " << PyUnicodeObjectToQString(PyObject_Str(node));
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_slice));
@@ -912,34 +856,12 @@ Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent) {
         qWarning() << "Unsupported _slice AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
         Q_ASSERT(false);
     }
-
-    // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    // if ( result->hasUsefulRangeInformation ) {
-    //     Ast* parent = result->parent;
-    //     while ( parent ) {
-    //         if ( parent->endLine < result->endLine ) {
-    //             parent->endLine = result->endLine;
-    //             parent->endCol = result->endCol;
-    //         }
-    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-    //             parent->startLine = result->startLine;
-    //             parent->startCol = result->startCol;
-    //         }
-    //         parent = parent->parent;
-    //     }
-    // }
-    //
-    // if ( result && result->astType == Ast::NameAstType ) {
-    //     NameAst* r = static_cast<NameAst*>(result);
-    //     r->startCol = r->identifier->startCol;
-    //     r->endCol = r->identifier->endCol;
-    //     r->startLine = r->identifier->startLine;
-    //     r->endLine = r->identifier->endLine;
-    // }
+    updateRanges(node, result, false);
     return result;
 }
 
-Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
+Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
+{
     if ( !node || node == Py_None ) return nullptr;
     // qDebug() << "visit stmt: " << PyUnicodeObjectToQString(PyObject_Str(node));
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_stmt));
@@ -1276,40 +1198,7 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent) {
     }
 
     if ( ! result ) return nullptr;
-    if ( ! ranges_copied ) {
-        result->startCol = getattr<int>(node, "col_offset");
-        result->endCol = getattr<int>(node, "end_col_offset");
-        result->startLine = tline(getattr<int>(node, "lineno"));
-        result->endLine = tline(getattr<int>(node, "end_lineno"));
-        result->hasUsefulRangeInformation = true;
-    }
-    else {
-        result->hasUsefulRangeInformation = true;
-    }
-
-    // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
-    // if ( result->hasUsefulRangeInformation ) {
-    //     Ast* parent = result->parent;
-    //     while ( parent ) {
-    //         if ( parent->endLine < result->endLine ) {
-    //             parent->endLine = result->endLine;
-    //             parent->endCol = result->endCol;
-    //         }
-    //         if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
-    //             parent->startLine = result->startLine;
-    //             parent->startCol = result->startCol;
-    //         }
-    //         parent = parent->parent;
-    //     }
-    // }
-    //
-    // if ( result && result->astType == Ast::NameAstType ) {
-    //     NameAst* r = static_cast<NameAst*>(result);
-    //     r->startCol = r->identifier->startCol;
-    //     r->endCol = r->identifier->endCol;
-    //     r->startLine = r->identifier->startLine;
-    //     r->endLine = r->identifier->endLine;
-    // }
+    updateRanges(node, result, ranges_copied);
     return result;
 }
 
@@ -1329,7 +1218,8 @@ Ast* AstTransformer::visitKeywordNode(PyObject* node, Ast* parent)
 }
 
 
-Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent) {
+Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent)
+{
     if ( !node || node == Py_None ) return nullptr;
     // qDebug() << "visit with item: " << PyUnicodeObjectToQString(PyObject_Str(node));
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_withitem));
@@ -1343,6 +1233,44 @@ Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent) {
         v->optionalVars = static_cast<ExpressionAst*>(visitExprNode(optional_vars, v));
     }
     return v;
+}
+
+
+void AstTransformer::updateRanges(PyObject* node, Ast* result, bool ranges_copied)
+{
+    if ( ! ranges_copied ) {
+        result->startCol = getattr<int>(node, "col_offset");
+        result->endCol = getattr<int>(node, "end_col_offset");
+        result->startLine = tline(getattr<int>(node, "lineno"));
+        result->endLine = tline(getattr<int>(node, "end_lineno"));
+        result->hasUsefulRangeInformation = true;
+    }
+    else {
+        result->hasUsefulRangeInformation = true;
+    }
+    // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
+    if ( result->hasUsefulRangeInformation ) {
+        Ast* parent = result->parent;
+        while ( parent ) {
+            if ( parent->endLine < result->endLine ) {
+                parent->endLine = result->endLine;
+                parent->endCol = result->endCol;
+            }
+            if ( ! parent->hasUsefulRangeInformation && parent->startLine == -99999 ) {
+                parent->startLine = result->startLine;
+                parent->startCol = result->startCol;
+            }
+            parent = parent->parent;
+        }
+    }
+
+    if ( result && result->astType == Ast::NameAstType ) {
+        NameAst* r = static_cast<NameAst*>(result);
+        r->startCol = r->identifier->startCol;
+        r->endCol = r->identifier->endCol;
+        r->startLine = r->identifier->startLine;
+        r->endLine = r->identifier->endLine;
+    }
 }
 
 } // end namespace Python

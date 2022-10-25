@@ -294,7 +294,6 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         PyObjectRef type = getattr<PyObjectRef>(node, "type");
         v->type = static_cast<ExpressionAst*>(visitExprNode(type, v));
     }
-    bool ranges_copied = false;
     QString name = getattr<QString>(node, "name");
     if (name.size())
     {
@@ -308,7 +307,6 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         v->startLine = v->name->startLine;
         v->endCol = v->name->endCol;
         v->endLine = v->name->endLine;
-        ranges_copied = true;
     } else {
         v->name = nullptr;
     }
@@ -317,7 +315,7 @@ Ast* AstTransformer::visitExceptHandlerNode(PyObject* node, Ast* parent)
         PyObjectRef body = getattr<PyObjectRef>(node, "body");
         v->body = visitNodeList<Ast>(body, v);
     }
-    updateRanges(node, v, ranges_copied);
+    updateRanges(v);
     return v;
 }
 
@@ -809,7 +807,17 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     }
 
     if ( ! result ) return nullptr;
-    updateRanges(node, result, ranges_copied);
+    if ( ! ranges_copied ) {
+        result->startCol = getattr<int>(node, "col_offset");
+        result->endCol = result->startCol;
+        result->startLine = tline(getattr<int>(node, "lineno"));
+        result->endLine = result->startLine;
+        result->hasUsefulRangeInformation = true;
+    }
+    else {
+        result->hasUsefulRangeInformation = true;
+    }
+    updateRanges(result);
     return result;
 }
 
@@ -856,7 +864,7 @@ Ast* AstTransformer::visitSliceNode(PyObject* node, Ast* parent)
         qWarning() << "Unsupported _slice AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
         Q_ASSERT(false);
     }
-    updateRanges(node, result, false);
+    updateRanges(result);
     return result;
 }
 
@@ -1198,7 +1206,16 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
     }
 
     if ( ! result ) return nullptr;
-    updateRanges(node, result, ranges_copied);
+    if ( ! ranges_copied ) {
+        result->startCol = getattr<int>(node, "col_offset");
+        result->endCol = result->endCol;
+        result->startLine = tline(getattr<int>(node, "lineno"));
+        result->endLine = result->startLine;
+        result->hasUsefulRangeInformation = true;
+    } else {
+        result->hasUsefulRangeInformation = true;
+    }
+    updateRanges(result);
     return result;
 }
 
@@ -1236,18 +1253,8 @@ Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent)
 }
 
 
-void AstTransformer::updateRanges(PyObject* node, Ast* result, bool ranges_copied)
+void AstTransformer::updateRanges(Ast* result)
 {
-    if ( ! ranges_copied ) {
-        result->startCol = getattr<int>(node, "col_offset");
-        result->endCol = getattr<int>(node, "end_col_offset");
-        result->startLine = tline(getattr<int>(node, "lineno"));
-        result->endLine = tline(getattr<int>(node, "end_lineno"));
-        result->hasUsefulRangeInformation = true;
-    }
-    else {
-        result->hasUsefulRangeInformation = true;
-    }
     // Walk through the tree and set proper end columns and lines, as the python parser sadly does not do this for us
     if ( result->hasUsefulRangeInformation ) {
         Ast* parent = result->parent;

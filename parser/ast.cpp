@@ -745,6 +745,23 @@ QString UnaryOperationAst::dump() const {
     QString r;
     r.append("Unary(");
     dumpNode(r, "value=", operand);
+    r.append(", op=");
+    switch(type) {
+       case Ast::UnaryOperatorInvert:
+            r.append("Invert()");
+            break;
+        case Ast::UnaryOperatorNot:
+            r.append("Not()");
+            break;
+        case Ast::UnaryOperatorAdd:
+            r.append("UAdd()");
+            break;
+        case Ast::UnaryOperatorSub:
+            r.append("USub()");
+            break;
+        default:
+            r.append("Invalid");
+    }
     r.append(")");
     return r;
 }

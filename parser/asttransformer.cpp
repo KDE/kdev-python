@@ -370,13 +370,13 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
         UnaryOperationAst* v = new  UnaryOperationAst(parent);
         {
             PyObjectRef op = getattr<PyObjectRef>(node, "op");
-            if (PyObject_IsInstance(node, grammar.ast_Invert))
-                v->type = Ast::UnaryOperatorInvalid;
-            else if (PyObject_IsInstance(node, grammar.ast_Not))
+            if (PyObject_IsInstance(op, grammar.ast_Invert))
+                v->type = Ast::UnaryOperatorInvert;
+            else if (PyObject_IsInstance(op, grammar.ast_Not))
                 v->type = Ast::UnaryOperatorNot;
-            else if (PyObject_IsInstance(node, grammar.ast_UAdd))
+            else if (PyObject_IsInstance(op, grammar.ast_UAdd))
                 v->type = Ast::UnaryOperatorAdd;
-            else if (PyObject_IsInstance(node, grammar.ast_USub))
+            else if (PyObject_IsInstance(op, grammar.ast_USub))
                 v->type = Ast::UnaryOperatorSub;
             else
                 v->type = Ast::UnaryOperatorInvalid;

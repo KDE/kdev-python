@@ -1740,6 +1740,12 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int defaultParametersCount = node->defaultValues.length();
     int parametersCount = node->arguments.length();
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+
+    int defaultKwParametersCount = node->defaultKwValues.length();
+    int kwonlyCount = node->kwonlyargs.length();
+    int posonlyCount = node->posonlyargs.length();
+    int totalArgCount = parametersCount + posonlyCount + kwonlyCount;
+    int firstDefaultKwParameterOffset = totalArgCount - defaultKwParametersCount;
     int currentIndex = 0;
     foreach ( ArgAst* arg, node->posonlyargs + node->arguments + node->kwonlyargs ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
@@ -1792,6 +1798,18 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             // TODO add the real expression from the document here as default value
             workingOnDeclaration->addDefaultParameter(IndexedString("..."));
         }
+        else if ( currentIndex > firstDefaultKwParameterOffset && currentIndex <= totalArgCount ) {
+            // Handle kw only arguments with default values, like def foo(*, bar = 3): pass
+            // Find type of given default value, and assign it to the declaration
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->defaultKwValues.at(currentIndex - firstDefaultKwParameterOffset - 1));
+            if ( v.lastType() ) {
+                argumentType = v.lastType();
+            }
+            // TODO add the real expression from the document here as default value
+            workingOnDeclaration->addDefaultParameter(IndexedString("..."));
+        }
+
 
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;

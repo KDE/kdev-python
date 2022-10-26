@@ -114,6 +114,7 @@ QString ArgumentsAst::dump() const
     dumpList(r, ", args=", arguments);
     dumpList(r, ", kwonlyargs=", kwonlyargs);
     dumpList(r, ", defaults=", defaultValues);
+    dumpList(r, ", kw_defaults=", defaultKwValues);
     if (vararg)
         dumpNode(r, ", vararg=", vararg);
     if (kwarg)

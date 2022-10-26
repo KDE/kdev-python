@@ -774,6 +774,7 @@ public:
     QList<ArgAst*> kwonlyargs;
     QList<ArgAst*> posonlyargs;
     QList<ExpressionAst*> defaultValues;
+    QList<ExpressionAst*> defaultKwValues;
     ArgAst* vararg;
     ArgAst* kwarg;
     QString dump() const override;

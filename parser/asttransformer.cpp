@@ -252,20 +252,17 @@ Ast* AstTransformer::visitArgumentsNode(PyObject* node, Ast* parent)
         PyObjectRef posonlyargs = getattr<PyObjectRef>(node, "posonlyargs");
         v->posonlyargs = visitNodeList<ArgAst>(posonlyargs, v);
     }
-
-    // TODO: kw_defaults?
-    //{
-    //    PyObject *kw_defaults = getattr<PyObjectRef>(node, "kw_defaults");
-    //    v->kw_defaults = visitNodeList<ArgAst>(kw_defaults, v);
-    //    Py_DECREF(kw_defaults);
-    //}
 #endif
+    {
+        PyObjectRef kw_defaults = getattr<PyObjectRef>(node, "kw_defaults");
+        v->defaultKwValues = visitNodeList<ExpressionAst>(kw_defaults, v);
+    }
 
     return v;
 }
 
 Ast* AstTransformer::visitComprehensionNode(PyObject* node, Ast* parent) {
-    if ( ! node || node == Py_None ) return nullptr; // TODO: Type check?
+    if ( ! node || node == Py_None ) return nullptr;
     // qDebug() << "visit comp: " << PyUnicodeObjectToQString(PyObject_Str(node));
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_comprehension));
     ComprehensionAst* v = new  ComprehensionAst(parent);
@@ -505,7 +502,7 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
 
         {
             PyObject* ops = getattr<PyObject*>(node, "ops");
-            // TODO? Check list?
+            Q_ASSERT(PyList_Check(ops));
             for ( int _i = 0; _i < PyList_Size(ops); _i++ ) {
                 PyObject* elt = PyList_GET_ITEM(ops, _i); // borrowed
                 ExpressionAst::ComparisonOperatorTypes cmp;
@@ -1174,6 +1171,7 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
         GlobalAst* v = new  GlobalAst(parent);
 
         PyObject* names = getattr<PyObject*>(node, "names");
+        Q_ASSERT(PyList_Check(names));
         for ( int _i = 0; _i < PyList_Size(names); _i++ ) {
             Python::Identifier* id = new Python::Identifier(PyUnicodeObjectToQString(
                             static_cast<PyObject*>(PyList_GET_ITEM(names, _i))

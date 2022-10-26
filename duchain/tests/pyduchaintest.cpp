@@ -883,6 +883,11 @@ void PyDUChainTest::testTypes_data()
 
     QTest::newRow("arg_after_vararg") << "def func(x, y, *, z:int): return z\ncheckme = func()" << "int";
     QTest::newRow("arg_after_vararg_with_default") << "def func(x=5, y=3, *, z:int): return z\ncheckme = func()" << "int";
+    QTest::newRow("arg_default") << "def func(x=5, z='foo'): return z\ncheckme = func()" << "str";
+    QTest::newRow("arg_kw_no_default") << "def func(x=5, *, a, z='foo'): return a\ncheckme = func()" << "mixed";
+    QTest::newRow("arg_kw_default_after_no_default") << "def func(x=5, *, a, z='foo'): return z\ncheckme = func()" << "str";
+    QTest::newRow("arg_kw_default") << "def func(x=5, *, z='foo'): return z\ncheckme = func()" << "str";
+    QTest::newRow("arg_kw_default_after_default") << "def func(x=5, *, y='foo', z=True): return z\ncheckme = func()" << "bool";
 
     QTest::newRow("class_scope_end_inside") << "a = str()\nclass M:\n"
                                                "  a = 2\n  foo = a\n"

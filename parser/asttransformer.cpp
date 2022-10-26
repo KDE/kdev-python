@@ -172,6 +172,12 @@ Ast* AstTransformer::visitNode(PyObject* node, Ast* parent)
         return visitExceptHandlerNode(node, parent);
     if (PyObject_IsInstance(node, grammar.ast_slice))
         return visitSliceNode(node, parent);
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+    if (PyObject_IsInstance(node, grammar.ast_match_case))
+        return visitMatchCaseNode(node, parent);
+    if (PyObject_IsInstance(node, grammar.ast_pattern))
+        return visitPatternNode(node, parent);
+#endif
     if (PyObject_IsInstance(node, grammar.ast_mod))
         return visitModuleNode(node, parent);
     qWarning() << "Unsupported AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
@@ -708,7 +714,7 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
             PyObjectRef value = getattr<PyObjectRef>(node, "value");
             if (value == Py_None)
                 v->value = NameConstantAst::None;
-            else if (value == Py_false)
+            else if (value == Py_False)
                 v->value = NameConstantAst::False;
             else
                 v->value = NameConstantAst::True;
@@ -1198,6 +1204,20 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
         NonlocalAst* v = new  NonlocalAst(parent);
         result = v;
     }
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+    else if (PyObject_IsInstance(node, grammar.ast_Match)) {
+        MatchAst* v = new  MatchAst(parent);
+        {
+            PyObjectRef subject = getattr<PyObjectRef>(node, "subject");
+            v->subject = static_cast<ExpressionAst*>(visitExprNode(subject, v));
+        }
+        {
+            PyObjectRef cases = getattr<PyObjectRef>(node, "cases");
+            v->cases = visitNodeList<MatchCaseAst>(cases, v);
+        }
+        result = v;
+    }
+#endif
     else {
         qWarning() << "Unsupported _stmt AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
         Q_ASSERT(false);
@@ -1250,6 +1270,129 @@ Ast* AstTransformer::visitWithItemNode(PyObject* node, Ast* parent)
     return v;
 }
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+Ast* AstTransformer::visitMatchCaseNode(PyObject* node, Ast* parent)
+{
+    if ( !node || node == Py_None ) return nullptr;
+    // qDebug() << "visit match case: " << PyUnicodeObjectToQString(PyObject_Str(node));
+    Q_ASSERT(PyObject_IsInstance(node, grammar.ast_match_case));
+    MatchCaseAst* v = new  MatchCaseAst(parent);
+    {
+        PyObjectRef pattern = getattr<PyObjectRef>(node, "pattern");
+        v->pattern = static_cast<PatternAst*>(visitPatternNode(pattern, v));
+    }
+    {
+        PyObjectRef guard = getattr<PyObjectRef>(node, "guard");
+        v->guard = static_cast<ExpressionAst*>(visitExprNode(guard, v));
+    }
+    {
+        PyObjectRef body = getattr<PyObjectRef>(node, "body");
+        v->body = visitNodeList<Ast>(body, v);
+    }
+    return v;
+}
+Ast* AstTransformer::visitPatternNode(PyObject* node, Ast* parent)
+{
+    if ( !node || node == Py_None ) return nullptr;
+    // qDebug() << "visit pattern: " << PyUnicodeObjectToQString(PyObject_Str(node));
+    Q_ASSERT(PyObject_IsInstance(node, grammar.ast_pattern));
+    Ast* result = nullptr;
+    if (PyObject_IsInstance(node, grammar.ast_MatchValue)) {
+        MatchValueAst* v = new  MatchValueAst(parent);
+        PyObjectRef value = getattr<PyObjectRef>(node, "value");
+        v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchSingleton)) {
+        MatchSingletonAst* v = new  MatchSingletonAst(parent);
+        {
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
+            if (value == Py_None)
+                v->value = NameConstantAst::None;
+            else if (value == Py_False)
+                v->value = NameConstantAst::False;
+            else
+                v->value = NameConstantAst::True;
+        }
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchSequence)) {
+        MatchSequenceAst* v = new  MatchSequenceAst(parent);
+        PyObjectRef patterns = getattr<PyObjectRef>(node, "patterns");
+        v->patterns = visitNodeList<PatternAst>(patterns, v);
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchMapping)) {
+        MatchMappingAst* v = new  MatchMappingAst(parent);
+        {
+            PyObjectRef keys = getattr<PyObjectRef>(node, "keys");
+            v->keys = visitNodeList<ExpressionAst>(keys, v);
+        }
+        {
+            QString rest = getattr<QString>(node, "rest");
+            v->rest = rest.size() ? new Python::Identifier(rest) : nullptr;
+        }
+        {
+            PyObjectRef patterns = getattr<PyObjectRef>(node, "patterns");
+            v->patterns = visitNodeList<PatternAst>(patterns, v);
+        }
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchClass)) {
+        MatchClassAst* v = new  MatchClassAst(parent);
+        {
+            PyObjectRef cls = getattr<PyObjectRef>(node, "cls");
+            v->cls = static_cast<ExpressionAst*>(visitExprNode(cls, v));
+        }
+        {
+            PyObjectRef patterns = getattr<PyObjectRef>(node, "patterns");
+            v->patterns = visitNodeList<PatternAst>(patterns, v);
+        }
+        {
+            QString kwd_attrs = getattr<QString>(node, "kwd_attrs");
+            v->kwdAttrs = kwd_attrs.size() ? new Python::Identifier(kwd_attrs) : nullptr;
+        }
+        {
+            PyObjectRef kwd_patterns = getattr<PyObjectRef>(node, "kwd_patterns");
+            v->kwdPatterns = visitNodeList<PatternAst>(kwd_patterns, v);
+        }
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchStar)) {
+        MatchStarAst* v = new  MatchStarAst(parent);
+        QString name = getattr<QString>(node, "name");
+        v->name = name.size() ? new Python::Identifier(name) : nullptr;
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchAs)) {
+        MatchAsAst* v = new  MatchAsAst(parent);
+        {
+            PyObjectRef pattern = getattr<PyObjectRef>(node, "pattern");
+            v->pattern = static_cast<PatternAst*>(visitPatternNode(pattern, v));
+        }
+        {
+            QString name = getattr<QString>(node, "name");
+            v->name = name.size() ? new Python::Identifier(name) : nullptr;
+        }
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_MatchOr)) {
+        MatchOrAst* v = new MatchOrAst(parent);
+        {
+            PyObjectRef patterns = getattr<PyObjectRef>(node, "patterns");
+            v->patterns = visitNodeList<PatternAst>(patterns, v);
+        }
+        result = v;
+    }
+    else {
+        qWarning() << "Unsupported pattern AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
+        Q_ASSERT(false);
+    }
+    if ( ! result ) return nullptr;
+    updateRanges(result);
+    return result;
+}
+#endif
 
 void AstTransformer::updateRanges(Ast* result)
 {

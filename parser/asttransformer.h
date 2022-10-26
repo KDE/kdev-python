@@ -58,7 +58,10 @@ public:
     Ast* visitAliasNode(PyObject* node, Ast* parent);
     Ast* visitWithItemNode(PyObject* node, Ast* parent);
     Ast* visitSliceNode(PyObject* node, Ast* parent);
-
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+    Ast* visitMatchCaseNode(PyObject* node, Ast* parent);
+    Ast* visitPatternNode(PyObject* node, Ast* parent);
+#endif
     void updateRanges(Ast* result);
 };
 

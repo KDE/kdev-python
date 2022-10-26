@@ -345,11 +345,6 @@ DictionaryComprehensionAst::DictionaryComprehensionAst(Ast* parent): ExpressionA
     
 }
 
-EllipsisAst::EllipsisAst(Ast* parent): ExpressionAst(parent, Ast::EllipsisAstType)
-{
-    
-}
-
 ExceptionHandlerAst::ExceptionHandlerAst(Ast* parent): Ast(parent, Ast::ExceptionHandlerAstType), type(nullptr), name(nullptr)
 {
     
@@ -577,11 +572,6 @@ QString AwaitAst::dump() const
     return r;
 }
 
-NameConstantAst::NameConstantAst(Ast* parent): ExpressionAst(parent, Ast::NameConstantAstType), value(Invalid)
-{
-
-}
-
 QString NameConstantAst::dump() const
 {
     switch (value) {
@@ -594,11 +584,6 @@ QString NameConstantAst::dump() const
         default:
             return "Invalid";
     }
-}
-
-NumberAst::NumberAst(Ast* parent): ExpressionAst(parent, Ast::NumberAstType), value(0), isInt(false)
-{
-    
 }
 
 QString NumberAst::dump() const
@@ -671,11 +656,6 @@ StatementAst::StatementAst(Ast* parent, AstType type): Ast(parent, type)
     
 }
 
-StringAst::StringAst(Ast* parent): ExpressionAst(parent, Ast::StringAstType), value(""), usedAsComment(false)
-{
-
-}
-
 JoinedStringAst::JoinedStringAst(Ast* parent): ExpressionAst(parent, Ast::JoinedStringAstType), values()
 {
 
@@ -684,11 +664,6 @@ JoinedStringAst::JoinedStringAst(Ast* parent): ExpressionAst(parent, Ast::Joined
 FormattedValueAst::FormattedValueAst(Ast* parent): ExpressionAst(parent, Ast::FormattedValueAstType), value(nullptr), conversion(0), formatSpec(nullptr)
 {
 
-}
-
-BytesAst::BytesAst(Ast* parent): ExpressionAst(parent, Ast::BytesAstType), value("")
-{
-    
 }
 
 SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(nullptr), slice(nullptr)
@@ -847,6 +822,109 @@ QString AliasAst::dump() const
     QString r = "Alias(";
     dumpNode(r, "name=", name);
     dumpNode(r, ", as=", asName);
+    r.append(")");
+    return r;
+}
+
+QString MatchAst::dump() const
+{
+    QString r = "Match(";
+    dumpNode(r, "subject=", subject);
+    dumpList(r, ", cases=", cases);
+    r.append(")");
+    return r;
+}
+
+QString MatchCaseAst::dump() const
+{
+    QString r = "MatchCase(";
+    dumpNode(r, "pattern=", pattern);
+    if (guard)
+        dumpNode(r, ", guard=", guard);
+    dumpList(r, ", body=", body);
+    r.append(")");
+    return r;
+}
+
+QString MatchValueAst::dump() const
+{
+    QString r = "MatchValue(";
+    dumpNode(r, "value=", value);
+    r.append(")");
+    return r;
+}
+
+QString MatchSingletonAst::dump() const
+{
+    QString r = "MatchSingleton(";
+    switch (value) {
+        case NameConstantAst::NameConstantTypes::True:
+            r.append("value=True");
+            break;
+        case NameConstantAst::NameConstantTypes::False:
+            r.append("value=False");
+            break;
+        case NameConstantAst::NameConstantTypes::None:
+            r.append("value=None");
+            break;
+        default:
+            r.append("value=Invalid");
+    }
+    r.append(")");
+    return r;
+}
+
+QString MatchSequenceAst::dump() const
+{
+    QString r = "MatchSequence(";
+    dumpList(r, "patterns=", patterns);
+    r.append(")");
+    return r;
+}
+
+QString MatchMappingAst::dump() const
+{
+    QString r = "MatchMapping(";
+    dumpList(r, "keys=", keys);
+    dumpList(r, ", patterns=", patterns);
+    dumpNode(r, ", rest=", rest);
+    r.append(")");
+    return r;
+}
+
+QString MatchClassAst::dump() const
+{
+    QString r = "MatchClass(";
+    dumpNode(r, "cls=", cls);
+    dumpList(r, ", patterns=", patterns);
+    dumpNode(r, ", kwd_attrs=", kwdAttrs);
+    dumpList(r, ", kwd_patterns=", kwdPatterns);
+    r.append(")");
+    return r;
+}
+
+QString MatchStarAst::dump() const
+{
+    QString r = "MatchStar(";
+    dumpNode(r, "name=", name);
+    r.append(")");
+    return r;
+}
+
+QString MatchAsAst::dump() const
+{
+    QString r = "MatchAs(";
+    dumpNode(r, "name=", name);
+    if (pattern)
+        dumpNode(r, ", pattern=", pattern);
+    r.append(")");
+    return r;
+}
+
+QString MatchOrAst::dump() const
+{
+    QString r = "MatchOr(";
+    dumpList(r, ", patterns=", patterns);
     r.append(")");
     return r;
 }

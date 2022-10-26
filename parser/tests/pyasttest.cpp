@@ -156,6 +156,21 @@ void PyAstTest::testStatements_data()
     QTest::newRow("varannotation1") << "primes: List[int] = []";
     QTest::newRow("varannotation2") << "captain: str  # Note: no initial value!";
 #endif
+
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+    QTest::newRow("match_value") << "match x:\n case 1:\n  pass";
+    QTest::newRow("match_singleton") << "match x:\n case True:\n  pass";
+    QTest::newRow("match_sequence") << "match x:\n case [a, b]:\n  pass";
+    QTest::newRow("match_mapping") << "match x:\n case {'type': 'update'}:\n  pass";
+    // TODO: Mapping rest
+    // TODO: Class
+    QTest::newRow("match_star") << "match x:\n case [a, b, *c]:\n  pass";
+    QTest::newRow("match_as") << "match x:\n case a:\n  pass";
+    QTest::newRow("match_as_empty") << "match x:\n case _:\n  pass";
+    QTest::newRow("match_or") << "match x:\n case a|b:\n  pass";
+    QTest::newRow("match_guard") << "match x:\n case [a, b, c] if c != 0:\n  pass";
+#endif
+
 }
 
 void PyAstTest::testSlices()

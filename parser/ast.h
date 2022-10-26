@@ -80,9 +80,12 @@ public:
         AssertionAstType,
         AugmentedAssignmentAstType,
         AnnotationAssignmentAstType,
+        MatchAstType,
         LastStatementType,
+
         ExpressionAstType, // everything below is an expression
         AwaitAstType,
+        ConstantAstType,
         NameAstType,
         NameConstantAstType,
         CallAstType,
@@ -115,6 +118,19 @@ public:
         EllipsisAstType,
         AssignmentExpressionAstType,
         LastExpressionType, // keep this at the end of the expr ast list
+
+        // everything below is a pattern
+        MatchCaseAstType,
+        PatternAstType,
+        MatchValueAstType,
+        MatchSingletonAstType,
+        MatchSequenceAstType,
+        MatchMappingAstType,
+        MatchClassAstType,
+        MatchStarAstType,
+        MatchAsAstType,
+        MatchOrAstType,
+        LastPatternType,
 
         CodeAstType,
         ExceptionHandlerAstType,
@@ -474,6 +490,12 @@ public:
     ExpressionAst* value; // WARNING this is not set in most cases!
 };
 
+class KDEVPYTHONPARSER_EXPORT ConstantAst : public ExpressionAst {
+public:
+    ConstantAst(Ast* parent, AstType type = Ast::ConstantAstType): ExpressionAst(parent, type) {}
+    // TODO: Python 3.8 + removed classes ast.Num, ast.Str, ast.Bytes, ast.NameConstant and ast.Ellipsis
+};
+
 class KDEVPYTHONPARSER_EXPORT AssignmentExpressionAst : public ExpressionAst {
 public:
     AssignmentExpressionAst(Ast* parent);
@@ -625,19 +647,19 @@ public:
     ExpressionAst* value;
 };
 
-class KDEVPYTHONPARSER_EXPORT NumberAst : public ExpressionAst {
+class KDEVPYTHONPARSER_EXPORT NumberAst : public ConstantAst {
 public:
-    NumberAst(Ast* parent);
-    long value; // only used for ints
-    bool isInt; // otherwise it's a float
+    NumberAst(Ast* parent) : ConstantAst(parent, Ast::NumberAstType) {}
+    long value = 0; // only used for ints
+    bool isInt = false; // otherwise it's a float
     QString dump() const override;
 };
 
-class KDEVPYTHONPARSER_EXPORT StringAst : public ExpressionAst {
+class KDEVPYTHONPARSER_EXPORT StringAst : public ConstantAst {
 public:
-    StringAst(Ast* parent);
-    QString value;
-    bool usedAsComment;
+    StringAst(Ast* parent) : ConstantAst(parent, Ast::StringAstType) {}
+    QString value = "";
+    bool usedAsComment = false;
     QString dump() const override { return "Str('" + value + "')"; }
 };
 
@@ -655,10 +677,10 @@ public:
     ExpressionAst* formatSpec;
 };
 
-class KDEVPYTHONPARSER_EXPORT BytesAst : public ExpressionAst {
+class KDEVPYTHONPARSER_EXPORT BytesAst : public ConstantAst {
 public:
-    BytesAst(Ast* parent);
-    QString value;
+    BytesAst(Ast* parent) : ConstantAst(parent, Ast::BytesAstType) {};
+    QString value = "";
 };
 
 class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
@@ -676,16 +698,16 @@ public:
     QString dump() const override;
 };
 
-class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ExpressionAst {
+class KDEVPYTHONPARSER_EXPORT NameConstantAst : public ConstantAst {
 public:
-    NameConstantAst(Ast* parent);
+    NameConstantAst(Ast* parent) : ConstantAst(parent, Ast::NameConstantAstType) {}
     enum NameConstantTypes {
         False,
         True,
         None,
         Invalid // should not happen
     };
-    NameConstantTypes value;
+    NameConstantTypes value = Invalid;
     QString dump() const override;
 };
 
@@ -741,9 +763,9 @@ public:
     QString dump() const override;
 };
 
-class KDEVPYTHONPARSER_EXPORT EllipsisAst : public ExpressionAst {
+class KDEVPYTHONPARSER_EXPORT EllipsisAst : public ConstantAst {
 public:
-    EllipsisAst(Ast* parent);
+    EllipsisAst(Ast* parent) : ConstantAst(parent, Ast::EllipsisAstType) {};
     QString dump() const override { return "Ellipsis()"; }
 };
 
@@ -812,6 +834,95 @@ public:
     QString dump() const override;
 };
 
-}
+
+/** Match classes **/
+
+class KDEVPYTHONPARSER_EXPORT PatternAst : public Ast {
+public:
+    PatternAst(Ast* parent, AstType type = Ast::PatternAstType): Ast(parent, type) {};
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchCaseAst : public Ast {
+public:
+    MatchCaseAst(Ast* parent) : Ast(parent, Ast::MatchCaseAstType) {};
+    PatternAst* pattern = nullptr;
+    ExpressionAst* guard = nullptr;
+    QList<Ast*> body;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchAst : public Ast {
+public:
+    MatchAst(Ast* parent) : Ast(parent, Ast::MatchAstType) {};
+    ExpressionAst* subject = nullptr;
+    QList<MatchCaseAst*> cases;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchValueAst : public PatternAst {
+public:
+    MatchValueAst(Ast* parent): PatternAst(parent, Ast::MatchValueAstType) {};
+    ExpressionAst* value = nullptr;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchSingletonAst : public PatternAst {
+public:
+    MatchSingletonAst(Ast* parent): PatternAst(parent, Ast::MatchSingletonAstType) {};
+    NameConstantAst::NameConstantTypes value = NameConstantAst::NameConstantTypes::Invalid;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchSequenceAst : public PatternAst {
+public:
+    MatchSequenceAst(Ast* parent) : PatternAst(parent, Ast::MatchSequenceAstType) {};
+    QList<PatternAst*> patterns;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchMappingAst : public PatternAst {
+public:
+    MatchMappingAst(Ast* parent) : PatternAst(parent, Ast::MatchMappingAstType) {};
+    QList<ExpressionAst*> keys;
+    Identifier *rest = nullptr;
+    QList<PatternAst*> patterns;
+    QString dump() const override;
+};
+
+
+class KDEVPYTHONPARSER_EXPORT MatchClassAst : public PatternAst {
+public:
+    MatchClassAst(Ast* parent): PatternAst(parent, Ast::MatchClassAstType) {};
+    ExpressionAst* cls = nullptr;
+    QList<PatternAst*> patterns;
+    Identifier *kwdAttrs = nullptr;
+    QList<PatternAst*> kwdPatterns;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchStarAst : public PatternAst {
+public:
+    MatchStarAst(Ast* parent): PatternAst(parent, Ast::MatchStarAstType) {};
+    Identifier* name = nullptr;
+    QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT MatchAsAst : public PatternAst {
+public:
+    MatchAsAst(Ast* parent): PatternAst(parent, Ast::MatchAsAstType) {};
+    PatternAst* pattern = nullptr;
+    Identifier* name = nullptr;
+    QString dump() const override;
+};
+
+
+class KDEVPYTHONPARSER_EXPORT MatchOrAst : public PatternAst {
+public:
+    MatchOrAst(Ast* parent): PatternAst(parent, Ast::MatchOrAstType) {};
+    QList<PatternAst*> patterns;
+    QString dump() const override;
+};
+
+} // end namespace Python
 
 #endif

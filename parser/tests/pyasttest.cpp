@@ -163,7 +163,7 @@ void PyAstTest::testStatements_data()
     QTest::newRow("match_sequence") << "match x:\n case [a, b]:\n  pass";
     QTest::newRow("match_mapping") << "match x:\n case {'type': 'update'}:\n  pass";
     // TODO: Mapping rest
-    // TODO: Class
+    QTest::newRow("match_class") << "class Node:\n __match_args__=('type',)\ntype=1\nmatch x:\n case Node():\n  pass";
     QTest::newRow("match_star") << "match x:\n case [a, b, *c]:\n  pass";
     QTest::newRow("match_as") << "match x:\n case a:\n  pass";
     QTest::newRow("match_as_empty") << "match x:\n case _:\n  pass";

@@ -216,7 +216,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 
             qCWarning(KDEV_PYTHON_PARSER) << "Discarding parts of the code to be parsed because of previous errors";
             qCDebug(KDEV_PYTHON_PARSER) << indents;
-            int indentAtError = indents.at(errline);
+            int indentAtError = errline < indents.length() ? indents.at(errline): 0;
             QChar c;
             bool atLineBeginning = true;
             int currentIndent = -1;

@@ -9,6 +9,7 @@
 #include "ui_projectconfig.h"
 
 #include "duchain/helpers.h"
+#include <QLineEdit>
 
 namespace Python {
 
@@ -19,6 +20,8 @@ ProjectConfigPage::ProjectConfigPage(KDevelop::IPlugin* self, const KDevelop::Pr
     m_configGroup = options.project->projectConfiguration()->group("pythonsupport");
     m_ui->setupUi(this);
     m_project = options.project;
+    // So apply button activates
+    connect(m_ui->pythonInterpreter, &QLineEdit::textChanged, this, &ProjectConfigPage::changed);
 }
 
 void Python::ProjectConfigPage::apply()

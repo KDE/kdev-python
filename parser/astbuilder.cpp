@@ -15,19 +15,17 @@
 #include <memory>
 
 #include "python_header.h"
+#include "asttransformer.h"
 #include "astdefaultvisitor.h"
-#include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
 
 #include <QDebug>
 #include "parserdebug.h"
 
 using namespace KDevelop;
-extern grammar _PyParser_Grammar;
 
 namespace Python
 {
-#include "generated.h"
 
 QMutex AstBuilder::pyInitLock;
 
@@ -52,27 +50,44 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     Q_UNREACHABLE();
 }
 
-namespace {
-struct PythonInitializer : private QMutexLocker {
-    PythonInitializer(QMutex& pyInitLock):
-        QMutexLocker(&pyInitLock), arena(nullptr)
-    {
-            Py_InitializeEx(0);
-            Q_ASSERT(Py_IsInitialized());
+struct PythonParser : private QMutexLocker
+{
+    PyObject* m_parser_mod = nullptr;
+    PyObject* m_parse_func = nullptr;
 
-            arena = PyArena_New();
-            Q_ASSERT(arena); // out of memory
-    }
-    ~PythonInitializer()
+    PythonParser(QMutex& lock): QMutexLocker(&lock)
     {
-        if (arena)
-            PyArena_Free(arena);
-        if (Py_IsInitialized())
-            Py_Finalize();
+        Py_InitializeEx(0);
+        Q_ASSERT(Py_IsInitialized());
+        m_parser_mod = PyImport_ImportModule("ast");
+        Q_ASSERT(m_parser_mod); // parser import error
+        m_parse_func = PyObject_GetAttrString(m_parser_mod, "parse");
+        Q_ASSERT(m_parse_func); // parser function renamed?
     }
-    PyArena* arena;
+
+    // Call parser function and return the python ast.Module.
+    // NOTE: The caller must DECREF the result
+    PyObject* parse(QString const &source, QString const &filename) const
+    {
+        PyObject* args = PyTuple_New(3);
+        PyTuple_SET_ITEM(args, 0, PyUnicode_FromString(source.toUtf8().data()));
+        PyTuple_SET_ITEM(args, 1, PyUnicode_FromString(filename.toUtf8().data()));
+        PyTuple_SET_ITEM(args, 2, PyUnicode_FromString("exec"));
+        PyObject *result = PyObject_CallObject(m_parse_func, args);
+        Py_DECREF(args);
+        return result;
+    }
+
+    ~PythonParser()
+    {
+        if (Py_IsInitialized())
+        {
+            Py_XDECREF(m_parse_func);
+            Py_XDECREF(m_parser_mod);
+            Py_Finalize();
+        }
+    }
 };
-}
 
 CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
@@ -82,25 +97,9 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     
     contents.append('\n');
     
-    PythonInitializer pyIniter(pyInitLock);
-    PyArena* arena = pyIniter.arena;
+    PythonParser py_parser(pyInitLock);
 
-#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
-    PyCompilerFlags flags;
-    flags.cf_flags = PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE | PyCF_ONLY_AST;
-    flags.cf_feature_version = PYTHON_VERSION_MINOR;
-#else
-    PyCompilerFlags flags = {PyCF_SOURCE_IS_UTF8 | PyCF_IGNORE_COOKIE};
-#endif
-
-    CythonSyntaxRemover cythonSyntaxRemover;
-
-    if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
-        qCDebug(KDEV_PYTHON_PARSER) << filename.fileName() << "is probably Cython file.";
-        contents = cythonSyntaxRemover.stripCythonSyntax(contents);
-    }
-
-    mod_ty syntaxtree = PyParser_ASTFromString(contents.toUtf8().data(), "<kdev-editor-contents>", file_input, &flags, arena);
+    PyObject* syntaxtree = py_parser.parse(contents, filename.fileName());
 
     if ( ! syntaxtree ) {
         qCDebug(KDEV_PYTHON_PARSER) << " ====< parse error, trying to fix";
@@ -207,11 +206,14 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             }
         }
 
-        syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
+        syntaxtree = py_parser.parse(contents, filename.fileName());
         // 3rd try: discard everything after the last non-empty line, but only until the next block start
         currentLineBeginning = qMin(contents.length() - 1, currentLineBeginning);
         errline = qMax(0, qMin(indents.length()-1, errline));
         if ( ! syntaxtree ) {
+            PyErr_Fetch(&exception, &value, &backtrace);
+            qCDebug(KDEV_PYTHON_PARSER) << "Error objects: " << exception << value << backtrace;
+
             qCWarning(KDEV_PYTHON_PARSER) << "Discarding parts of the code to be parsed because of previous errors";
             qCDebug(KDEV_PYTHON_PARSER) << indents;
             int indentAtError = indents.at(errline);
@@ -249,21 +251,21 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                 if ( c.isSpace() && atLineBeginning ) currentIndent += 1;
             }
             qCDebug(KDEV_PYTHON_PARSER) << "This is what is left: " << contents;
-            syntaxtree = PyParser_ASTFromString(contents.toUtf8(), "<kdev-editor-contents>", file_input, &flags, arena);
+            syntaxtree = py_parser.parse(contents, filename.fileName());
         }
         if ( ! syntaxtree ) {
             return CodeAst::Ptr(); // everything fails, so we abort.
         }
     }
-    qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << syntaxtree->kind << Module_kind;
+    QString kind = PyUnicodeObjectToQString(PyObject_Repr(syntaxtree));
+    qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << kind;
 
-    PythonAstTransformer t;
+    AstTransformer t;
     t.run(syntaxtree, filename.fileName().replace(".py", ""));
+    Py_DECREF(syntaxtree);
 
     RangeFixVisitor fixVisitor(contents);
     fixVisitor.visitNode(t.ast);
-
-    cythonSyntaxRemover.fixAstRanges(t.ast);
 
     return CodeAst::Ptr(t.ast);
 }

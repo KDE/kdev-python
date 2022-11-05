@@ -85,11 +85,24 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::ExpressionAstType:                            this->visitExpression(static_cast<ExpressionAst*>(node)); break;
         case Ast::YieldFromAstType:                             this->visitYieldFrom(static_cast<YieldFromAst*>(node)); break;
         case Ast::WithItemAstType:                              this->visitWithItem(static_cast<WithItemAst*>(node)); break;
+        case Ast::MatchAstType:                                 this->visitMatch(static_cast<MatchAst*>(node)); break;
+        case Ast::MatchCaseAstType:                             this->visitMatchCase(static_cast<MatchCaseAst*>(node)); break;
+        case Ast::MatchValueAstType:                            this->visitMatchValue(static_cast<MatchValueAst*>(node)); break;
+        case Ast::MatchSingletonAstType:                        this->visitMatchSingleton(static_cast<MatchSingletonAst*>(node)); break;
+        case Ast::MatchSequenceAstType:                         this->visitMatchSequence(static_cast<MatchSequenceAst*>(node)); break;
+        case Ast::MatchMappingAstType:                          this->visitMatchMapping(static_cast<MatchMappingAst*>(node)); break;
+        case Ast::MatchClassAstType:                            this->visitMatchClass(static_cast<MatchClassAst*>(node)); break;
+        case Ast::MatchStarAstType:                             this->visitMatchStar(static_cast<MatchStarAst*>(node)); break;
+        case Ast::MatchAsAstType:                               this->visitMatchAs(static_cast<MatchAsAst*>(node)); break;
+        case Ast::MatchOrAstType:                               this->visitMatchOr(static_cast<MatchOrAst*>(node)); break;
         case Ast::IdentifierAstType:                            break;
         case Ast::StatementAstType:                             break;
+        case Ast::ConstantAstType:                              break;
+        case Ast::PatternAstType:                               break;
         case Ast::LastAstType:                                  Q_ASSERT(false); break;
         case Ast::LastStatementType:                            Q_ASSERT(false); break;
         case Ast::LastExpressionType:                           Q_ASSERT(false); break;
+        case Ast::LastPatternType:                              Q_ASSERT(false); break;
     }
 }
 

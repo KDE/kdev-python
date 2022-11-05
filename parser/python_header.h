@@ -17,16 +17,10 @@
 #ifndef _WIN32
 #include "pyconfig.h"
 #endif
-#include "node.h"
 
 #include "Python.h"
 
-#include "Python-ast.h"
 #include "ast.h"
-
-#include "graminit.h"
-#include "grammar.h"
-#include "parsetok.h"
 
 #include "unicodeobject.h"
 

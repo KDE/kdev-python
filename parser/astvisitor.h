@@ -98,6 +98,16 @@ public:
     virtual void visitExceptionHandler(ExceptionHandlerAst* node) { Q_UNUSED(node); };
     virtual void visitAlias(AliasAst* node) { Q_UNUSED(node); };
     virtual void visitWithItem(WithItemAst* node) { Q_UNUSED(node); };
+    virtual void visitMatch(MatchAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchCase(MatchCaseAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchValue(MatchValueAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchSingleton(MatchSingletonAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchSequence(MatchSequenceAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchMapping(MatchMappingAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchClass(MatchClassAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchStar(MatchStarAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchAs(MatchAsAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchOr(MatchOrAst* node) { Q_UNUSED(node); };
 
 };
 }

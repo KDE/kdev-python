@@ -17,7 +17,6 @@
 #include "python_header.h"
 #include "asttransformer.h"
 #include "astdefaultvisitor.h"
-#include "cythonsyntaxremover.h"
 #include "rangefixvisitor.h"
 
 #include <QDebug>
@@ -99,13 +98,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     contents.append('\n');
     
     PythonParser py_parser(pyInitLock);
-    CythonSyntaxRemover cythonSyntaxRemover;
-
-    if (filename.fileName().endsWith(".pyx", Qt::CaseInsensitive)) {
-        qCDebug(KDEV_PYTHON_PARSER) << filename.fileName() << "is probably Cython file.";
-        contents = cythonSyntaxRemover.stripCythonSyntax(contents);
-    }
-
 
     PyObject* syntaxtree = py_parser.parse(contents, filename.fileName());
 
@@ -275,7 +267,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     RangeFixVisitor fixVisitor(contents);
     fixVisitor.visitNode(t.ast);
 
-    cythonSyntaxRemover.fixAstRanges(t.ast);
     return CodeAst::Ptr(t.ast);
 }
 

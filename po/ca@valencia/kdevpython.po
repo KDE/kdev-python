@@ -517,7 +517,7 @@ msgstr "Variable sense definir: %1"
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr "No s'ha trobat l'atribut «%1» a l'objecte accedit"
+msgstr "No s'ha trobat l'atribut «%1» en l'objecte accedit"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format

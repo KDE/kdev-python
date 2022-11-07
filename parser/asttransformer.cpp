@@ -191,6 +191,14 @@ Ast* AstTransformer::visitAliasNode(PyObject* node, Ast* parent)
     Q_ASSERT(PyObject_IsInstance(node, grammar.ast_alias));
     AliasAst* v = new  AliasAst(parent);
     v->name = new Python::Identifier(getattr<QString>(node, "name"));
+    v->name->startLine = tline(getattr<int>(node, "lineno"));
+    v->name->startCol = getattr<int>(node, "col_offset");
+    v->name->endCol = v->name->startCol + v->name->value.size() - 1;
+    v->name->endLine = v->name->startLine;
+    v->startLine = v->name->startLine;;
+    v->startCol = v->name->startCol;
+    v->endCol = v->name->endCol;
+    v->endLine = v->name->endLine;
     QString asname = getattr<QString>(node, "asname");
     v->asName = asname.size() ? new Python::Identifier(asname) : nullptr;
     return v;

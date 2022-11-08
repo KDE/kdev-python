@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-10-30 00:15+0000\n"
+"POT-Creation-Date: 2022-11-08 02:24+0000\n"
 "PO-Revision-Date: 2014-01-20 20:24+0100\n"
 "Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
@@ -561,7 +561,7 @@ msgstr "Nem támogatott értelmező"
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
 
-#: projectconfig/projectconfigpage.cpp:44
+#: projectconfig/projectconfigpage.cpp:47
 #, fuzzy, kde-format
 #| msgid "Configure the Python interpreter to use"
 msgid "Python Settings"

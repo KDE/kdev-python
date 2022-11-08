@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-10-30 00:15+0000\n"
+"POT-Creation-Date: 2022-11-08 00:44+0000\n"
 "PO-Revision-Date: 2013-03-09 15:00+0530\n"
 "Last-Translator: Chetan Khona <chetan@kompkin.com>\n"
 "Language-Team: Marathi <kde-i18n-doc@kde.org>\n"
@@ -548,7 +548,7 @@ msgstr ""
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
 
-#: projectconfig/projectconfigpage.cpp:44
+#: projectconfig/projectconfigpage.cpp:47
 #, kde-format
 msgid "Python Settings"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-10-30 00:15+0000\n"
+"POT-Creation-Date: 2022-11-08 00:44+0000\n"
 "PO-Revision-Date: 2012-12-07 20:23-0500\n"
 "Last-Translator: Kevin Scannell <kscanne@gmail.com>\n"
 "Language-Team: Irish <gaeilge-gnulinux@lists.sourceforge.net>\n"
@@ -549,7 +549,7 @@ msgstr "Tacaíocht Python"
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
 
-#: projectconfig/projectconfigpage.cpp:44
+#: projectconfig/projectconfigpage.cpp:47
 #, kde-format
 msgid "Python Settings"
 msgstr ""

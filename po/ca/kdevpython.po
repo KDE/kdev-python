@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-10-30 00:15+0000\n"
+"POT-Creation-Date: 2022-11-08 00:44+0000\n"
 "PO-Revision-Date: 2021-11-11 19:50+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
@@ -583,7 +583,7 @@ msgstr "Intèrpret de Python:"
 msgid "Full path to python interpreter, leave empty for default"
 msgstr "Camí complet a l'intèrpret de Python, deixar buit per omissió"
 
-#: projectconfig/projectconfigpage.cpp:44
+#: projectconfig/projectconfigpage.cpp:47
 #, kde-format
 msgid "Python Settings"
 msgstr "Arranjament de Python"

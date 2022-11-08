@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: desktop files\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-10-30 00:15+0000\n"
+"POT-Creation-Date: 2022-11-08 00:44+0000\n"
 "PO-Revision-Date: 2014-11-27 13:41+0000\n"
 "Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
 "Language-Team: bs <bs@kde.org>\n"
@@ -598,7 +598,7 @@ msgstr "Nepodržan interpreter"
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
 
-#: projectconfig/projectconfigpage.cpp:44
+#: projectconfig/projectconfigpage.cpp:47
 #, fuzzy, kde-format
 #| msgid "Configure the Python interpreter to use"
 msgid "Python Settings"

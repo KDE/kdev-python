@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-11-08 00:44+0000\n"
-"PO-Revision-Date: 2017-06-17 07:37+0100\n"
-"Last-Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
+"PO-Revision-Date: 2022-11-08 10:52+0100\n"
+"Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
-"X-Generator: Lokalize 2.0\n"
+"X-Generator: Poedit 3.1.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -295,7 +295,7 @@ msgstr ""
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
 msgid "After copying, you will be editing the new document."
-msgstr "Po kopiranju boste urejali nov dokument"
+msgstr "Po kopiranju boste urejali nov dokument."
 
 #: docfilekcm/docfilemanagerwidget.cpp:166
 #, kde-format
@@ -439,12 +439,12 @@ msgstr "Deklaracija za \"%1\" ni bila najdena v podanem modulu"
 #: duchain/declarationbuilder.cpp:1535
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr "Prvi argument metode __new__ se ne imenuje cls, to je opuščeno."
+msgstr "Prvi argument metode __new__ se ne imenuje cls, to je opuščeno"
 
 #: duchain/declarationbuilder.cpp:1540
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
-msgstr "Prvi argument metode razreda se ne imenuje self, to je opuščeno."
+msgstr "Prvi argument metode razreda se ne imenuje self, to je opuščeno"
 
 #: duchain/declarationbuilder.cpp:1560
 #, kde-format

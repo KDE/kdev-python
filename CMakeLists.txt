@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 # KDE Gear version, managed by release service script
 set(RELEASE_SERVICE_VERSION_MAJOR "22")
 set(RELEASE_SERVICE_VERSION_MINOR "11")
-set(RELEASE_SERVICE_VERSION_MICRO "80")
+set(RELEASE_SERVICE_VERSION_MICRO "90")
 
 # generate patch level from release service version
 set(_micro ${RELEASE_SERVICE_VERSION_MICRO})

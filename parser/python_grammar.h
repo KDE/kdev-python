@@ -167,6 +167,11 @@ public:
     PyObject* ast_MatchOr;
 #endif
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+    // except*
+    PyObject* ast_TryStar;
+#endif
+
     // type_ignore
     PyObject* ast_type_ignore;
     PyObject* ast_TypeIgnore;
@@ -314,6 +319,10 @@ public:
 #endif
         Py_GRAMMAR_GET(mod, type_ignore);
         Py_GRAMMAR_GET(mod, TypeIgnore);
+
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+        Py_GRAMMAR_GET(mod, TryStar);
+#endif
 
 #if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
         Py_GRAMMAR_GET(mod, Num);

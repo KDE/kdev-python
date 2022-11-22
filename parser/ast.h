@@ -72,6 +72,7 @@ public:
         WithItemAstType,
         RaiseAstType,
         TryAstType,
+        TryStarAstType,
         ImportAstType,
         ImportFromAstType,
         GlobalAstType,
@@ -425,6 +426,15 @@ public:
     ExpressionAst* condition;
     ExpressionAst* message;
     QString dump() const override;
+};
+
+class KDEVPYTHONPARSER_EXPORT TryStarAst : public StatementAst {
+public:
+    TryStarAst(Ast* parent);
+    QList<Ast*> body;
+    QList<ExceptionHandlerAst*> handlers;
+    QList<Ast*> orelse;
+    QList<Ast*> finally;
 };
 
 class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst {

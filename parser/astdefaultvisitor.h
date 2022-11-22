@@ -42,6 +42,7 @@ public:
     void visitWith(WithAst* node) override;
     void visitRaise(RaiseAst* node) override;
     void visitTry(TryAst* node) override;
+    void visitTryStar(TryStarAst* node) override;
     void visitAssertion(AssertionAst* node) override;
     void visitImport(ImportAst* node) override;
     void visitImportFrom(ImportFromAst* node) override;

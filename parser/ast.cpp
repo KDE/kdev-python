@@ -742,11 +742,15 @@ QString UnaryOperationAst::dump() const {
     return r;
 }
 
-TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)
+TryStarAst::TryStarAst(Ast* parent): StatementAst(parent, Ast::TryStarAstType)
 {
 
 }
 
+TryAst::TryAst(Ast* parent): StatementAst(parent, Ast::TryAstType)
+{
+
+}
 
 QString TryAst::dump() const
 {

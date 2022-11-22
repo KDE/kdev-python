@@ -433,6 +433,8 @@ void PyDUChainTest::testCrashes_data() {
 #endif
     QTest::newRow("definition_in_baseclass_1") << "class Foo(lambda x: 1): pass";
     QTest::newRow("definition_in_baseclass_2") << "class Foo([x for x in (1, 2)]): pass";
+    QTest::newRow("match") << "match x.split():\n case [a, b]: pass";
+    QTest::newRow("except_star") << "try: pass\nexcept* (IndexError, ValueError): pass";
 }
 
 void PyDUChainTest::testClassVariables()

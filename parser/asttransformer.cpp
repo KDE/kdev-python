@@ -1226,6 +1226,28 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
         result = v;
     }
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+    else if (PyObject_IsInstance(node, grammar.ast_TryStar)) {
+        TryStarAst* v = new  TryStarAst(parent);
+        {
+            PyObjectRef body = getattr<PyObjectRef>(node, "body");
+            v->body = visitNodeList<Ast>(body, v);
+        }
+        {
+            PyObjectRef handlers = getattr<PyObjectRef>(node, "handlers");
+            v->handlers = visitNodeList<ExceptionHandlerAst>(handlers, v);
+        }
+        {
+            PyObjectRef orelse = getattr<PyObjectRef>(node, "orelse");
+            v->orelse = visitNodeList<Ast>(orelse, v);
+        }
+        {
+            PyObjectRef finalbody = getattr<PyObjectRef>(node, "finalbody");
+            v->finally = visitNodeList<Ast>(finalbody, v);
+        }
+        result = v;
+    }
+#endif
     else {
         qWarning() << "Unsupported _stmt AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
         Q_ASSERT(false);

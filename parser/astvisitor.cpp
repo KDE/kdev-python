@@ -40,6 +40,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::WithAstType:                                  this->visitWith(static_cast<WithAst*>(node)); break;
         case Ast::RaiseAstType:                                 this->visitRaise(static_cast<RaiseAst*>(node)); break;
         case Ast::TryAstType:                                   this->visitTry(static_cast<TryAst*>(node)); break;
+        case Ast::TryStarAstType:                               this->visitTryStar(static_cast<TryStarAst*>(node)); break;
         case Ast::AssertionAstType:                             this->visitAssertion(static_cast<AssertionAst*>(node)); break;
         case Ast::ImportAstType:                                this->visitImport(static_cast<ImportAst*>(node)); break;
         case Ast::ImportFromAstType:                            this->visitImportFrom(static_cast<ImportFromAst*>(node)); break;

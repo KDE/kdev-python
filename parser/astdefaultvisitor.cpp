@@ -190,6 +190,14 @@ void AstDefaultVisitor::visitTry(TryAst* node)
     visitNodeList(node->finally);
 }
 
+void AstDefaultVisitor::visitTryStar(TryStarAst* node)
+{
+    visitNodeList(node->body);
+    visitNodeList(node->handlers);
+    visitNodeList(node->orelse);
+    visitNodeList(node->finally);
+}
+
 void AstDefaultVisitor::visitTuple(TupleAst* node)
 {
     visitNodeList(node->elements);

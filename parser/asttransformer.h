@@ -62,6 +62,9 @@ public:
     Ast* visitMatchCaseNode(PyObject* node, Ast* parent);
     Ast* visitPatternNode(PyObject* node, Ast* parent);
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+    Ast* visitExceptStarNode(PyObject* node, Ast* parent);
+#endif
     void updateRanges(Ast* result);
 };
 

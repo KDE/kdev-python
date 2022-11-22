@@ -433,8 +433,12 @@ void PyDUChainTest::testCrashes_data() {
 #endif
     QTest::newRow("definition_in_baseclass_1") << "class Foo(lambda x: 1): pass";
     QTest::newRow("definition_in_baseclass_2") << "class Foo([x for x in (1, 2)]): pass";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
     QTest::newRow("match") << "match x.split():\n case [a, b]: pass";
+#endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
     QTest::newRow("except_star") << "try: pass\nexcept* (IndexError, ValueError): pass";
+#endif
 }
 
 void PyDUChainTest::testClassVariables()

@@ -1804,7 +1804,7 @@ void PyDUChainTest::testVariableCreation_data()
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
     QTest::newRow("assignment_expr") << "a = (b := 10)" << QStringList{"a", "b"} << QStringList{"int", "int"};
 #endif
-#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
     QTest::newRow("match") << "match 'x'.split():\n case [a, b]: pass" << QStringList{"a", "b"} << QStringList{"str", "str"};
     QTest::newRow("match_as") << "match 'x'.split():\n case [a, b] as w: pass" << QStringList{"w"} << QStringList{"list of str"};
 #endif

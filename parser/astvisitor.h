@@ -109,7 +109,6 @@ public:
     virtual void visitMatchStar(MatchStarAst* node) { Q_UNUSED(node); };
     virtual void visitMatchAs(MatchAsAst* node) { Q_UNUSED(node); };
     virtual void visitMatchOr(MatchOrAst* node) { Q_UNUSED(node); };
-
 };
 }
 

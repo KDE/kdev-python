@@ -95,6 +95,7 @@ protected:
     void visitAssertion(AssertionAst* node) override;
     void visitIf(IfAst* node) override;
     void visitString(StringAst* node) override;
+    void visitMatch(MatchAst* node) override;
     void visitNode(Ast* node) override;
 
 protected:

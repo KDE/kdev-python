@@ -354,5 +354,66 @@ void AstDefaultVisitor::visitArguments(ArgumentsAst* node)
     visitNodeList(node->defaultValues);
 }
 
+void AstDefaultVisitor::visitMatch(MatchAst* node)
+{
+    visitNode(node->subject);
+    visitNodeList(node->cases);
+}
+
+void AstDefaultVisitor::visitMatchCase(MatchCaseAst* node)
+{
+    visitNode(node->pattern);
+    visitNode(node->guard);
+    visitNodeList(node->body);
+}
+
+void AstDefaultVisitor::visitMatchValue(MatchValueAst* node)
+{
+    visitNode(node->value);
+}
+
+void AstDefaultVisitor::visitMatchSingleton(MatchSingletonAst* node)
+{
+    Q_UNUSED(node);
+}
+
+void AstDefaultVisitor::visitMatchSequence(MatchSequenceAst* node)
+{
+    visitNodeList(node->patterns);
+}
+
+void AstDefaultVisitor::visitMatchMapping(MatchMappingAst* node)
+{
+    visitNodeList(node->keys);
+    visitNode(node->rest);
+    visitNodeList(node->patterns);
+}
+
+
+void AstDefaultVisitor::visitMatchClass(MatchClassAst* node)
+{
+    visitNode(node->cls);
+    visitNodeList(node->patterns);
+    visitNode(node->kwdAttrs);
+    visitNodeList(node->kwdPatterns);
+}
+
+
+void AstDefaultVisitor::visitMatchStar(MatchStarAst* node)
+{
+    visitNode(node->name);
+}
+
+void AstDefaultVisitor::visitMatchAs(MatchAsAst* node)
+{
+    visitNode(node->pattern);
+    visitNode(node->name);
+}
+
+void AstDefaultVisitor::visitMatchOr(MatchOrAst* node)
+{
+    visitNodeList(node->patterns);
+}
+
 }
 

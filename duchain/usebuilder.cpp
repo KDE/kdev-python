@@ -161,6 +161,19 @@ void UseBuilder::visitSubscript(SubscriptAst* node) {
     }
 }
 
+void UseBuilder::visitMatchAs(MatchAsAst* node)
+{
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    Declaration* declaration = Helper::declarationForName(node->name->value, editorFindPositionSafe(node),
+                                                          DUChainPointer<const DUContext>(context));
+
+    RangeInRevision useRange = rangeForNode(node->name, true);
+    if ( declaration && declaration->range() == useRange )
+        return;
+
+    UseBuilderBase::newUse(useRange, DeclarationPointer(declaration));
+}
+
 ParseSession *UseBuilder::parseSession() const
 {
     return m_session;

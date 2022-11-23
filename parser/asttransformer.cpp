@@ -1403,6 +1403,13 @@ Ast* AstTransformer::visitPatternNode(PyObject* node, Ast* parent)
         {
             QString name = getattr<QString>(node, "name");
             v->name = name.size() ? new Python::Identifier(name) : nullptr;
+            if (v->name) {
+                v->name->startLine = tline(getattr<int>(node, "end_lineno"));
+                v->name->endCol = getattr<int>(node, "end_col_offset") - 1;
+                v->name->endLine = v->name->startLine;
+                v->name->startCol = v->name->endCol - name.size() + 1;
+                v->copyRange(v->name);
+            }
         }
         result = v;
     }

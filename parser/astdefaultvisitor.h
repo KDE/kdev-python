@@ -88,6 +88,16 @@ public:
     void visitAlias(AliasAst* node) override;
     void visitExpression(ExpressionAst* node) override;
     void visitWithItem(WithItemAst* node) override;
+    void visitMatch(MatchAst* node) override;
+    void visitMatchCase(MatchCaseAst* node) override;
+    void visitMatchValue(MatchValueAst* node) override;
+    void visitMatchSingleton(MatchSingletonAst* node) override;
+    void visitMatchSequence(MatchSequenceAst* node) override;
+    void visitMatchMapping(MatchMappingAst* node) override;
+    void visitMatchClass(MatchClassAst* node) override;
+    void visitMatchStar(MatchStarAst* node) override;
+    void visitMatchAs(MatchAsAst* node) override;
+    void visitMatchOr(MatchOrAst* node) override;
     virtual void visitIdentifier(Identifier* node);
 };
 

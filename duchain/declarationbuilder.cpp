@@ -1057,6 +1057,46 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     function->setAbstractType(functionType);
 }
 
+void DeclarationBuilder::visitMatch(MatchAst* node)
+{
+    // What are we matching?
+    ExpressionVisitor subjectVisitor(currentContext());
+    subjectVisitor.visitNode(node->subject);
+
+    for (auto* matchCase: node->cases) {
+        if (!matchCase || !matchCase->pattern) {
+            continue;
+        }
+        DUChainWriteLocker lock;
+        // We only support some forms for now.
+        switch (matchCase->pattern->astType) {
+            case Ast::MatchSequenceAstType: {
+                auto* seq = static_cast<MatchSequenceAst*>(matchCase->pattern);
+                for (auto* element: seq->patterns) {
+                    if (element->astType != Ast::MatchAsAstType) {
+                        continue;
+                    }
+                    auto* asElement = static_cast<MatchAsAst*>(element);
+                    auto type = Helper::contentOfIterable(subjectVisitor.lastType(), topContext());
+                    visitVariableDeclaration<Declaration>(asElement->name, nullptr, type);
+                }
+                break;
+            }
+
+            case Ast::MatchAsAstType: {
+                auto* as = static_cast<MatchAsAst*>(matchCase->pattern);
+                visitVariableDeclaration<Declaration>(as->name, nullptr, subjectVisitor.lastType());
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    Python::AstDefaultVisitor::visitMatch(node);
+}
+
 void DeclarationBuilder::visitCall(CallAst* node)
 {
     Python::AstDefaultVisitor::visitCall(node);

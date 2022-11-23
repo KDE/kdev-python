@@ -35,6 +35,8 @@ protected:
     void visitCall(CallAst* node) override;
     void visitAttribute(AttributeAst* node) override;
     void visitSubscript(SubscriptAst* node) override;
+    void visitMatchAs(MatchAsAst* node) override;
+
 private:
     ParseSession* m_session;
     inline int& nextUseIndex()

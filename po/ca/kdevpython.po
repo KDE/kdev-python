@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-08 00:44+0000\n"
+"POT-Creation-Date: 2022-11-24 00:44+0000\n"
 "PO-Revision-Date: 2021-11-11 19:50+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
@@ -446,20 +446,20 @@ msgstr "No s'ha trobat el mòdul «%1»"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "No s'ha trobat la declaració per a «%1» en el mòdul especificat"
 
-#: duchain/declarationbuilder.cpp:1535
+#: duchain/declarationbuilder.cpp:1575
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "El primer argument del mètode __new__ no s'anomena «cls», es desaconsella"
 
-#: duchain/declarationbuilder.cpp:1540
+#: duchain/declarationbuilder.cpp:1580
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "El primer argument del mètode de la classe no es crida a si mateix, es "
 "desaconsella"
 
-#: duchain/declarationbuilder.cpp:1560
+#: duchain/declarationbuilder.cpp:1600
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -467,7 +467,7 @@ msgstr ""
 "Mètode de classe no estàtic sense arguments. Com a mínim n'ha de contenir un "
 "(a si mateix)"
 
-#: duchain/declarationbuilder.cpp:1721
+#: duchain/declarationbuilder.cpp:1761
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "La sentència retornada no està present a la declaració de la funció"

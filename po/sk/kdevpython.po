@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-08 00:44+0000\n"
+"POT-Creation-Date: 2022-11-24 00:44+0000\n"
 "PO-Revision-Date: 2017-09-16 21:11+0100\n"
 "Last-Translator: Roman Paholik <wizzardsk@gmail.com>\n"
 "Language-Team: Slovak <kde-sk@linux.sk>\n"
@@ -432,23 +432,23 @@ msgstr "Modul \"%1\" nebol nájdený"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklarácia pre \"%1\" nenájdená v určenom module"
 
-#: duchain/declarationbuilder.cpp:1535
+#: duchain/declarationbuilder.cpp:1575
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "Prvý argument metódy __new__ nie je volaný cls, čo je zastaralé"
 
-#: duchain/declarationbuilder.cpp:1540
+#: duchain/declarationbuilder.cpp:1580
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "Prvý argument metódy triedy nie je volaný sám, čo je zastaralé"
 
-#: duchain/declarationbuilder.cpp:1560
+#: duchain/declarationbuilder.cpp:1600
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Nestatická metóda triedy bez argumentov, musí mať aspoň jednu (self)"
 
-#: duchain/declarationbuilder.cpp:1721
+#: duchain/declarationbuilder.cpp:1761
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Návratové vyhlásenie nie je v deklarácii funkcie"

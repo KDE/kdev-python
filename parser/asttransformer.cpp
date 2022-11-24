@@ -33,8 +33,7 @@ int AstTransformer::getattr(PyObject *obj, const char *attr) const
     int result;
     PyObject *v = PyObject_GetAttrString(obj, attr);
     // qDebug() << "getattr<int>: " << PyUnicodeObjectToQString(PyObject_Str(obj)) << "." << attr << "v=" << PyUnicodeObjectToQString(PyObject_Str(v));
-    Q_ASSERT(v); // attr missing
-    if (PyLong_Check(v)) {
+    if (v && PyLong_Check(v)) {
         result = PyLong_AsLong(v);
     } else {
         result = 0;

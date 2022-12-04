@@ -10,6 +10,7 @@
   <name xml:lang="en-GB">KDevelop Python Support</name>
   <name xml:lang="es">Implementación de Python para KDevelop</name>
   <name xml:lang="et">KDevelopi Pytoni toetus</name>
+  <name xml:lang="eu">KDevelop Python euskarria</name>
   <name xml:lang="fi">KDevelopin Python-tuki</name>
   <name xml:lang="fr">Prise en charge de Python pour KDevelop</name>
   <name xml:lang="gl">Compatibilidade con Python para KDevelop</name>
@@ -37,6 +38,7 @@
   <summary xml:lang="en-GB">Python language support for KDevelop</summary>
   <summary xml:lang="es">Implementación del lenguaje Python para KDevelop</summary>
   <summary xml:lang="et">KDevelopi Pythoni keele toetus</summary>
+  <summary xml:lang="eu">KDevelop-erako Python lengoaiaren euskarria</summary>
   <summary xml:lang="fi">Python-kielen tuki KDevelopiin</summary>
   <summary xml:lang="fr">Prise en charge du langage Python pour KDevelop</summary>
   <summary xml:lang="gl">Compatibilidade coa linguaxe Python para KDevelop</summary>
@@ -67,6 +69,7 @@
     <p xml:lang="en-GB">Adds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.</p>
     <p xml:lang="es">Implementa el uso de Python en KDevelop. Incluye resaltado de código, terminación automática de código, uso de sistemas de compilación, enlaces de documentación y depuración.</p>
     <p xml:lang="et">Pythoni toetus KDevelopis. Lõimimine võimaldab süntaksi esiletõstmist, koodilõpetus, ehitamissüsteemi toetust, dokumentatsiooni linkimist ja silumise toetust.</p>
+    <p xml:lang="eu">KDevelop-eri Python-en euskarria gehitzen dio. Kodea-nabarmentzea, kodea-osatzea, eraikitzeko sistemaren euskarria, dokumentazioa estekatzea eta arazteko euskarria barne.</p>
     <p xml:lang="fi">Lisää KDevelopiin Python-tuen. Sisältää yhtenäisen syntaksikorostuksen, koodintäydennyksen, koostamisjärjestelmätuen, ohjeiden linkityksen ja virheenpaikannustuen.</p>
     <p xml:lang="fr">Ajoute la prise en charge de Python à KDevelop. Les fonctionnalités incluent la coloration syntaxique, le complètement du code, la prise en charge du système de compilation, les liens avec la documentation et la prise en charge du débogage.</p>
     <p xml:lang="gl">Engade compatibilidade con Python a KDevelop. Inclúe engadir integración con KDevelop para realce de código, completado de código, compatibilidade co sistema de construción, ligazóns á documentación e funcionalidade de depuración.</p>
@@ -94,6 +97,7 @@
   <developer_name xml:lang="en-GB">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="et">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="eu">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="fi">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="fr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="gl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

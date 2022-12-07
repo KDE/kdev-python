@@ -771,6 +771,10 @@ void PyDUChainTest::testRanges_data()
     QTest::newRow("string_parentheses4") << "(\"asdf\".join()+2).join()" << 2 << ( QStringList() << "8,11,join" << "18,21,join" );
     QTest::newRow("string_parentheses_call") << "f(\"asdf\".join())" << 1 << ( QStringList() << "9,12,join" );
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
+    QTest::newRow("fstring_attr") << "f\"foo{bar.baz}\"" << 1 << ( QStringList() << "10,12,baz" );
+#endif
+
     QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
     QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );
     QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );

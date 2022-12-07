@@ -35,18 +35,14 @@ void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
-//TODO: Fix range/context/??? bugs, then re-enable this.
-    Q_UNUSED(node);
-//     foreach (Ast* value, node->values) {
-//         visitNode(value);
-//     }
+    foreach (Ast* value, node->values) {
+        visitNode(value);
+    }
 }
 
 void AstDefaultVisitor::visitFormattedValue(FormattedValueAst* node) {
-// TODO: Fix range issues, then re-enable (if required)
-    Q_UNUSED(node);
-//     visitNode(node->value);
-//     visitNode(node->formatSpec);
+    visitNode(node->value);
+    visitNode(node->formatSpec);
 }
 
 void AstDefaultVisitor::visitStarred(StarredAst* node) {

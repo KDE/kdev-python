@@ -74,6 +74,7 @@
     <p xml:lang="fr">Ajoute la prise en charge de Python à KDevelop. Les fonctionnalités incluent la coloration syntaxique, le complètement du code, la prise en charge du système de compilation, les liens avec la documentation et la prise en charge du débogage.</p>
     <p xml:lang="gl">Engade compatibilidade con Python a KDevelop. Inclúe engadir integración con KDevelop para realce de código, completado de código, compatibilidade co sistema de construción, ligazóns á documentación e funcionalidade de depuración.</p>
     <p xml:lang="it">Aggiunge il supporto a Python in KDevelop. Include l'integrazione con l'evidenziazione del codice, il completamente del codice, il supporto per il sistema di compilazione, il collegamento con la documentazione ed il supporto per il debugging.</p>
+    <p xml:lang="ka">KDevelop-სთვის Python-ის მხარდაჭერის დამატება. ემატება კოდის გამოკვეთა, კოდის დასრულება, აგების სისტემის მხარდაჭერა, აწყობისა და გამართვის დოკუმენტაცია.</p>
     <p xml:lang="ko">KDevelop에 Python 지원을 추가합니다. 코드 구문 강조, 자동 완성, 빌드 시스템 지원, 문서 링크 및 디버그 지원 통합이 들어 있습니다.</p>
     <p xml:lang="nl">Voegt ondersteuning voor Python toe aan KDevelop. Omvat toevoegen van integratie met accentuering van code, aanvullen van code, ondersteuning van bouwsysteem en koppelingen naar documentatie en ondersteuning van debuggen.</p>
     <p xml:lang="nn">Legg Python-støtte til KDevelop. Omfattar integrering med syntaks­merking, kode­fullføring, byggje­system, dokumentasjons­lenkjer og feilsøking.</p>

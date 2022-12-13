@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-11-24 00:44+0000\n"
-"PO-Revision-Date: 2022-12-11 07:30+0100\n"
+"PO-Revision-Date: 2022-12-12 07:39+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -255,6 +255,8 @@ msgid ""
 "Copy the contents of the active editor window to a new file in the "
 "documentation directory"
 msgstr ""
+"აქტიური რედაქტორის ფანჯრის შემცველობის დოკუმენტაციის საქაღალდეში ახალ ფაილში "
+"კოპირება"
 
 #: docfilekcm/docfilemanagerwidget.cpp:66
 #, kde-format
@@ -276,12 +278,12 @@ msgstr "ბილიკების ძებნა..."
 #, kde-format
 msgctxt "displays a list of search paths below"
 msgid "Paths searched for documentation by kdev-python (in this order):"
-msgstr ""
+msgstr "Kdev-python-ის მიერ ძებნადი ბილიკები (ამ მიმდევრობით):"
 
 #: docfilekcm/docfilemanagerwidget.cpp:141
 #, kde-format
 msgid "Enter a relative target path to copy %1 to:"
-msgstr ""
+msgstr "შეიყვანეთ შედარებითი სამიზნის ბილიკი %1-ის დასაკოპირებლად:"
 
 #: docfilekcm/docfilemanagerwidget.cpp:145
 #, kde-format
@@ -289,6 +291,8 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
+"ეს ბილიკი Python-ის მიერ ამ მოდულის შემოტანისას გამოყენებულს უნდა "
+"ემთხვეოდეს. მაგ: numpy.fft-სთვის შეიყვანეთ numpy/fft.py"
 
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
@@ -373,6 +377,8 @@ msgstr ""
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr ""
+"Kdev-python-ის მონაცემების სწორი საქაღალდე ვერ ვიპოვე. შეამოწმეთ პროგრამის "
+"ფაილები!"
 
 #: docfilekcm/docfilewizard.cpp:147
 #, kde-format
@@ -383,7 +389,7 @@ msgstr "გამოტანის ფაილის სახელი არ
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
-msgstr ""
+msgstr "გამოტანის ფაილი <br/>%1<br/> უკვე არსებობს. გნებავთ, თავზე გადააწეროთ?"
 
 #: docfilekcm/docfilewizard.cpp:201
 #, kde-format
@@ -402,7 +408,7 @@ msgstr ""
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
 msgid "Manage Documentation Files Used by the Python Plugin"
-msgstr ""
+msgstr "Python-ის დამატების მიერ გამოყენებული დოკუმენტაციის მართვა"
 
 #: docfilekcm/kcm_docfiles.cpp:58
 #, kde-format
@@ -427,18 +433,20 @@ msgstr "აღწერა \"%1\"-სთვის მითითებულ �
 #: duchain/declarationbuilder.cpp:1575
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
+msgstr "__new__ მეთოდის პირველ არგუმენტს cls არ ჰქვია და ეს მოძველებულია"
 
 #: duchain/declarationbuilder.cpp:1580
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
-msgstr ""
+msgstr "კლასის მეთოდის პირველ არგუმენტს self არ ჰქვია. ეს მოძველებულია"
 
 #: duchain/declarationbuilder.cpp:1600
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
+"არასტატიკური კლასის მეთოდი არგუმენტების გარეშეა. აუცილებელია, ერთი მაინც "
+"(self) ჰქონდეს"
 
 #: duchain/declarationbuilder.cpp:1761
 #, kde-format
@@ -491,7 +499,7 @@ msgstr "აღუწერელი ცვლადი: %1"
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr ""
+msgstr "წვდომად ობიექტზე ატრიბუტი \"%1\" ნაპოვნი არაა"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format

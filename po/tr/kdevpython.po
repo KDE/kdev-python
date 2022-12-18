@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-11-08 02:24+0000\n"
-"PO-Revision-Date: 2022-11-15 05:05+0300\n"
+"PO-Revision-Date: 2022-12-17 18:59+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 22.08.3\n"
+"X-Generator: Lokalize 22.12.0\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -247,7 +247,7 @@ msgstr "Oluştur..."
 #: docfilekcm/docfilemanagerwidget.cpp:53
 #, kde-format
 msgid "Import From Editor"
-msgstr "Düzenleyiciden İçeri Aktar"
+msgstr "Düzenleyiciden İçe Aktar"
 
 #: docfilekcm/docfilemanagerwidget.cpp:54
 #, kde-format
@@ -292,7 +292,7 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
-"Bu yol, bu modülü içeri aktarmak için Python 'da kullandığınız yol ile "
+"Bu yol, bu modülü içe aktarmak için Python 'da kullandığınız yol ile "
 "eşleşmek zorundadır; örneğin, numpy.ftt için \"numpy/fft.py\" girin"
 
 #: docfilekcm/docfilemanagerwidget.cpp:147

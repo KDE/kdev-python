@@ -61,7 +61,7 @@ if ( PYTHONINTERP_FOUND AND PYTHON_VERSION_STRING VERSION_GREATER "3.4" )
 endif()
 
 if ( NOT PYTHONLIBS_FOUND OR PYTHONLIBS_VERSION_STRING VERSION_LESS "3.4.3" )
-    message(FATAL_ERROR "Python >= 3.4.3 but < 3.10 with --enable-shared is required to build kdev-python")
+    message(FATAL_ERROR "Python >= 3.4.3 but < 3.12 with --enable-shared is required to build kdev-python")
 endif()
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)

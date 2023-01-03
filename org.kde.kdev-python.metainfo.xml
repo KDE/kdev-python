@@ -137,10 +137,10 @@
     <category>IDE</category>
   </categories>
   <releases>
+    <release version="5.7.221201" date="2023-01-05"/>
     <release version="5.7.221200" date="2022-12-08"/>
     <release version="5.7.220803" date="2022-11-03"/>
     <release version="5.7.220802" date="2022-10-13"/>
-    <release version="5.7.220801" date="2022-09-08"/>
   </releases>
   <update_contact>mail@svenbrauch.de</update_contact>
 </component>

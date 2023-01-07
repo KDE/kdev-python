@@ -6,20 +6,21 @@
 # Thomas Vergnaud <thomas.vergnaud@gmx.fr>, 2015, 2017, 2018, 2022.
 # Xavier Besnard <xavier.besnard@neuf.fr>, 2021.
 #
+# Xavier BESNARD <xavier.besnard]neuf.fr>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-11-08 02:24+0000\n"
-"PO-Revision-Date: 2022-10-09 17:36+0200\n"
-"Last-Translator: Thomas Vergnaud <thomas.vergnaud@mailo.eu>\n"
-"Language-Team: French <kde-francophone@kde.org>\n"
+"PO-Revision-Date: 2023-01-06 13:37+0100\n"
+"Last-Translator: Xavier BESNARD <xavier.besnard]neuf.fr>\n"
+"Language-Team: fr\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 21.12.3\n"
+"X-Generator: Lokalize 22.12.0\n"
 "X-Environment: kde\n"
 "X-Accelerator-Marker: &\n"
 "X-Text-Markup: kde4\n"
@@ -37,7 +38,7 @@ msgstr "jcorn@free.fr, vpinon@kde.org, thomas.vergnaud@mailo.eu"
 #: codecompletion/context.cpp:115
 #, kde-format
 msgid "insert Shebang line"
-msgstr "Insérer une ligne « Shebang »"
+msgstr "Insérer une ligne « shebang »"
 
 #: codecompletion/context.cpp:123
 #, kde-format
@@ -231,7 +232,9 @@ msgstr ""
 #: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
-msgstr "Un module externe pour déboguer des applications en Python avec PDB."
+msgstr ""
+"Un module externe pour déboguer des applications en Python avec le débogueur "
+"« pdb » de Python."
 
 #: debugger/pdblauncher.cpp:77
 #, kde-format
@@ -466,7 +469,7 @@ msgstr ""
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
-"Le premier argument de la méthode __new__ n'est pas appelé cls. Cette "
+"Le premier argument de la méthode __new__ n'est pas appelé « cls ». Cette "
 "utilisation est déconseillée"
 
 #: duchain/declarationbuilder.cpp:1540
@@ -610,7 +613,7 @@ msgstr "Paramètres Python"
 #: pythonlanguagesupport.cpp:140
 #, kde-format
 msgid "Format source with the autopep8 formatter."
-msgstr "Mettre en forme le code source avec l'outil autopep8."
+msgstr "Mettre en forme le code source avec l'outil « autopep8 »."
 
 #: pythonstylechecking.cpp:104
 #, kde-format

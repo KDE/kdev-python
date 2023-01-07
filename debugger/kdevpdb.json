@@ -47,7 +47,7 @@
         "Description[et]": "See plugin pakub PDB kasutajaliidest",
         "Description[eu]": "Plugin honek PDBren bitarteko bat hornitzen du",
         "Description[fi]": "Tämä liitännäinen tarjoaa PDB-käyttöliittymän",
-        "Description[fr]": "Ce module externe fournit une interface pour PDB",
+        "Description[fr]": "Ce module externe fournit une interface pour le débogueur Python (pdb)",
         "Description[gl]": "Este complemento fornece unha interface para PDB.",
         "Description[it]": "Questa estensione fornisce un'interfaccia per PDB",
         "Description[ka]": "ეს დამატება PDB-ის წინაბოლოს წარმოადგენს",

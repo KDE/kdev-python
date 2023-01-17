@@ -312,7 +312,7 @@ msgstr "Per a editar un fitxer, seleccioneu-ne almenys un de la llista."
 #: docfilekcm/docfilewizard.cpp:40
 #, kde-format
 msgid "Configure the Python interpreter to use"
-msgstr "Configuració de l'intèrpret de Python que s'ha d'utilitzar"
+msgstr "Configureu l'intèrpret de Python que s'ha d'utilitzar"
 
 #: docfilekcm/docfilewizard.cpp:43
 #, kde-format

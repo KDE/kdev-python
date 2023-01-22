@@ -97,7 +97,7 @@ void UseBuilder::visitCall(CallAst* node)
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
     ExpressionVisitor v(context);
     v.visitNode(node->function);
-    if ( auto classType = v.lastType().cast<StructureType>() ) {
+    if ( auto classType = v.lastType().dynamicCast<StructureType>() ) {
         DUChainReadLocker lock;
         // This is either __init__() or __call__(): `a = Foo()` or `b = a()`.
         auto function = Helper::functionForCalled(classType->declaration(topContext()), v.isAlias());

@@ -298,7 +298,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
         // The class completion is a member access
         auto v = visitorForString(m_guessTypeOfExpression, m_duContext.data());
         if ( v ) {
-            TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(v->lastType());
+            auto cls = v->lastType().dynamicCast<StructureType>();
             if ( cls && cls->declaration(m_duContext->topContext()) ) {
                 if ( DUContext* internal = cls->declaration(m_duContext->topContext())->internalContext() ) {
                     declarations = internal->allDeclarations(m_position, m_duContext->topContext(), false);
@@ -716,7 +716,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
     }
 
     QList<CompletionTreeItemPointer> result;
-    UnsureType::Ptr unsure = type.cast<UnsureType>();
+    auto unsure = type.staticCast<UnsureType>();
     int count = unsure->typesSize();
     for ( int i = 0; i < count; i++ ) {
         result.append(getCompletionItemsForOneType(unsure->types()[i].abstractType()));
@@ -761,7 +761,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         return ItemList();
     }
     // find properties of class declaration
-    TypePtr<StructureType> cls = StructureType::Ptr::dynamicCast(type);
+    auto cls = type.dynamicCast<StructureType>();
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Finding completion items for class type";
     if ( ! cls || ! cls->internalContext(m_duContext->topContext()) ) {
         qCWarning(KDEV_PYTHON_CODECOMPLETION) << "No class type available, no completion offered";

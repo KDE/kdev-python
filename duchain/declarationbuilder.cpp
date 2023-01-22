@@ -289,7 +289,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
-            if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
+            if ( hints.dynamicCast<IndexedContainer>() || hints.dynamicCast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
             }
@@ -796,21 +796,21 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     if ( ! t ) {
         return;
     }
-    if ( auto previous = t->returnType().cast<ListType>() ) {
+    if ( auto previous = t->returnType().dynamicCast<ListType>() ) {
         // If the return type of the function already is set to a list, *add* the encountered type
         // to its possible content types.
         DUChainWriteLocker lock;
         previous->addContentType<Python::UnsureType>(encountered);
-        t->setReturnType(previous.cast<AbstractType>());
+        t->setReturnType(previous);
     }
     else {
         // Otherwise, create a new container type, and set it as the function's return type.
         DUChainWriteLocker lock;
         auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
         if ( container ) {
-            openType<ListType>(container);
+            openType(container);
             container->addContentType<Python::UnsureType>(encountered);
-            t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+            t->setReturnType(Helper::mergeTypes(t->returnType(), container));
             closeType();
         }
     }
@@ -842,7 +842,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     v.visitNode(static_cast<AttributeAst*>(node->function)->value);
 
     // Don't do anything if the object the function is being called on is not a container.
-    auto container = v.lastType().cast<ListType>();
+    auto container = v.lastType().dynamicCast<ListType>();
     if ( ! container || ! function ) {
         return;
     }
@@ -984,22 +984,22 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             if ( ! varargContainer ) continue;
             if ( varargContainer->typesCount() > indexInVararg ) {
                 AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
-                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType);
                 varargContainer->replaceType(indexInVararg, newType);
             }
             else {
-                varargContainer->addEntry(addType.cast<AbstractType>());
+                varargContainer->addEntry(addType);
             }
-            parameter->setAbstractType(varargContainer.cast<AbstractType>());
+            parameter->setAbstractType(varargContainer);
         }
         else {
             if ( ! argumentType ) continue;
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
-                                                           addType.cast<AbstractType>());
+                                                           addType);
             // TODO this does not correctly update the types in quickopen! Investigate why.
             functionType->removeArgument(currentParamIndex);
             functionType->addArgument(newType, currentParamIndex);
-            function->setAbstractType(functionType.cast<AbstractType>());
+            function->setAbstractType(functionType);
             parameters.at(currentParamIndex)->setType(newType);
             currentParamIndex++;
         }
@@ -1008,7 +1008,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     // **kwargs is always the last parameter
     MapType::Ptr kwargsDict;
     if ( function->kwarg() != -1 ) {
-        kwargsDict = parameters.last()->abstractType().cast<MapType>();
+        kwargsDict = parameters.last()->abstractType().dynamicCast<MapType>();
     }
     lock.unlock();
     DUChainWriteLocker wlock;
@@ -1038,7 +1038,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
                 parameters.at(ip)->setType(newType);
             }
         }
-        else if ( auto unpackedDict = argumentVisitor.lastType().cast<MapType>() ) {
+        else if ( auto unpackedDict = argumentVisitor.lastType().dynamicCast<MapType>() ) {
             // 'keyword is actually an unpacked dict: `foo(**{'a': 12}).
             openType(addType);
             addType->setType(unpackedDict->contentType().abstractType());
@@ -1163,12 +1163,12 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     }
     ExpressionVisitor targetVisitor(currentContext());
     targetVisitor.visitNode(v);
-    auto list = ListType::Ptr::dynamicCast(targetVisitor.lastType());
+    auto list = targetVisitor.lastType().dynamicCast<ListType>();
     if ( list ) {
         DUChainWriteLocker lock;
         list->addContentType<Python::UnsureType>(element.type);
     }
-    auto map = MapType::Ptr::dynamicCast(list);
+    auto map = list.dynamicCast<MapType>();
     if ( map ) {
         if ( subscript->slice && subscript->slice->astType != Ast::SliceAstType) {
             ExpressionVisitor keyVisitor(currentContext());
@@ -1182,7 +1182,7 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
     if ( list && lastDecl ) {
         DUChainWriteLocker lock;
-        lastDecl->setAbstractType(list.cast<AbstractType>());
+        lastDecl->setAbstractType(list);
     }
 }
 
@@ -1206,7 +1206,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     // while this is like A = foo(); A.bar = 3
     else {
         DUChainReadLocker lock;
-        StructureType::Ptr structure(parentObjectDeclaration->abstractType().cast<StructureType>());
+        auto structure = parentObjectDeclaration->abstractType().dynamicCast<StructureType>();
         if ( ! structure || ! structure->declaration(topContext()) ) {
             return;
         }
@@ -1263,7 +1263,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
 }
 
 void DeclarationBuilder::tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
-    if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
+    if ( const auto indexed = sourceType.dynamicCast<IndexedContainer>() ) {
         int spare = indexed->typesCount() - outTypes.length();
         if ( spare < -1 || (starred == -1 && spare != 0) ) {
             return; // Wrong number of elements to unpack.
@@ -1302,7 +1302,7 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
 
     QVector<AbstractType::Ptr> outTypes(tuple->elements.length());
 
-    if ( auto unsure = element.type.cast<UnsureType>() ) {
+    if ( auto unsure = element.type.dynamicCast<UnsureType>() ) {
         FOREACH_FUNCTION ( const auto& type, unsure->types ) {
             tryUnpackType(type.abstractType(), outTypes, starred);
         }
@@ -1434,7 +1434,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         ExpressionVisitor v(currentContext());
         v.visitNode(c);
         if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
-            StructureType::Ptr baseClassType = v.lastType().cast<StructureType>();
+            auto baseClassType = v.lastType().staticCast<StructureType>();
             BaseClassInstance base;
             base.baseClass = baseClassType->indexed();
             base.access = KDevelop::Declaration::Public;
@@ -1609,7 +1609,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     if ( AbstractType::Ptr hint = m_correctionHelper->returnTypeHint() ) {
         type->setReturnType(hint);
-        dec->setType<FunctionType>(type);
+        dec->setType(type);
     }
     
     // check for (python3) function annotations
@@ -1857,7 +1857,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
-                argumentType = m_currentClassTypes.last().cast<AbstractType>();
+                argumentType = m_currentClassTypes.last();
                 isFirst = false;
             }
         }
@@ -1886,9 +1886,9 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple");
         lock.unlock();
         if ( tupleType ) {
-            visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType);
             workingOnDeclaration->setVararg(atIndex);
-            type->addArgument(tupleType.cast<AbstractType>(), useIndex);
+            type->addArgument(tupleType, useIndex);
         }
     }
 
@@ -1899,8 +1899,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         lock.unlock();
         if ( dictType && stringType ) {
             dictType->addKeyType<Python::UnsureType>(stringType);
-            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, nullptr, dictType.cast<AbstractType>());
-            type->addArgument(dictType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, nullptr, dictType);
+            type->addArgument(dictType);
             workingOnDeclaration->setKwarg(type->arguments().size() - 1);
         }
     }

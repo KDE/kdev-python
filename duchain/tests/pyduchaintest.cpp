@@ -1647,7 +1647,7 @@ void PyDUChainTest::testContainerTypes()
     QVERIFY(decls.length() > 0);
     QVERIFY(decls.first()->abstractType());
     if ( ! use_type ) {
-        auto type = ListType::Ptr::dynamicCast(decls.first()->abstractType());
+        auto type = decls.first()->abstractType().dynamicCast<ListType>();
         QVERIFY(type);
         QVERIFY(type->contentType());
         QCOMPARE(type->contentType().abstractType()->toString(), contenttype);

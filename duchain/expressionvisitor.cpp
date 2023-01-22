@@ -109,11 +109,11 @@ void ExpressionVisitor::visitCall(CallAst* node)
     v.visitNode(node->function);
     auto declaration = Helper::resolveAliasDeclaration(v.lastDeclaration().data());
     if ( ! v.isAlias() && v.lastType() ) {
-        if ( auto functionType = v.lastType().cast<FunctionType>() ) {
+        if ( auto functionType = v.lastType().dynamicCast<FunctionType>() ) {
             encounter(functionType->returnType());
             return;
         }
-        if ( auto classType = v.lastType().cast<StructureType>() ) {
+        if ( auto classType = v.lastType().dynamicCast<StructureType>() ) {
             declaration = classType->declaration(topContext());
         }
     }
@@ -174,9 +174,8 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         }
         newContents->addEntry(key);
         newContents->addEntry(value);
-        newType->addContentType<Python::UnsureType>(AbstractType::Ptr::staticCast(newContents));
-        AbstractType::Ptr resultingType = AbstractType::Ptr::staticCast(newType);
-        return resultingType;
+        newType->addContentType<Python::UnsureType>(newContents);
+        return newType.staticCast<AbstractType>();
     };
 
     QHash< QString, std::function<bool(QStringList, QString)> > knownDocstringHints;
@@ -187,7 +186,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         ExpressionVisitor baseTypeVisitor(this);
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
-        if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
+        if ( auto t = baseTypeVisitor.lastType().dynamicCast<ListType>() ) {
             docstringType = t->contentType().abstractType();
             return true;
         }
@@ -202,7 +201,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainReadLocker lock;
-        if ( auto t = baseTypeVisitor.lastType().cast<ListType>() ) {
+        if ( auto t = baseTypeVisitor.lastType().dynamicCast<ListType>() ) {
             auto newType = typeObjectForIntegralType<ListType>("list");
             if ( ! newType ) {
                 return false;
@@ -211,11 +210,11 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
             if ( currentHint == "getsList" ) {
                 contentType = t->contentType().abstractType();
             }
-            else if ( auto map = MapType::Ptr::dynamicCast(t) ) {
+            else if ( auto map = t.dynamicCast<MapType>() ) {
                 contentType = map->keyType().abstractType();
             }
             newType->addContentType<Python::UnsureType>(contentType);
-            docstringType = newType.cast<AbstractType>();
+            docstringType = newType;
             return true;
         }
         return false;
@@ -244,7 +243,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         // when calling foo.bar[3].baz.iteritems(), find the type of "foo.bar[3].baz"
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainReadLocker lock;
-        if ( auto t = baseTypeVisitor.lastType().cast<MapType>() ) {
+        if ( auto t = baseTypeVisitor.lastType().dynamicCast<MapType>() ) {
             docstringType = listOfTuples(t->keyType().abstractType(), t->contentType().abstractType());
             return true;
         }
@@ -263,14 +262,14 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
             return false;
         }
         AbstractType::Ptr newType;
-        if ( auto targetContainer = ListType::Ptr::dynamicCast(normalType) ) {
+        if ( auto targetContainer = normalType.dynamicCast<ListType>() ) {
             // Copy the return type, to set contents for this call only.
             docstringType = AbstractType::Ptr(targetContainer->clone());
             // Add content type of the source.
             auto sourceContentType = Helper::contentOfIterable(v.lastType(), topContext());
-            ListType::Ptr::staticCast(docstringType)->addContentType<Python::UnsureType>(sourceContentType);
+            docstringType.staticCast<ListType>()->addContentType<Python::UnsureType>(sourceContentType);
         }
-        else if ( auto sourceContainer = ListType::Ptr::dynamicCast(v.lastType()) ) {
+        else if ( auto sourceContainer = v.lastType().dynamicCast<ListType>() ) {
             // if the function does not force a return type, just copy the source (like for reversed())
             docstringType = AbstractType::Ptr(sourceContainer->clone());
         }
@@ -329,7 +328,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     foreach (const auto& type, valueTypes) {
         if ( node->slice->astType == Ast::SliceAstType ) {
             auto slice = static_cast<SliceAst*>(node->slice);
-            if ( auto tupleType = type.cast<IndexedContainer>() ) {
+            if ( auto tupleType = type.dynamicCast<IndexedContainer>() ) {
                 DUChainReadLocker lock;
                 auto newTuple = typeObjectForIntegralType<IndexedContainer>("tuple");
                 if ( ! newTuple ) {
@@ -352,14 +351,14 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
                 continue;
             }
         }
-        if ( (node->slice->astType == Ast::SliceAstType) && type.cast<ListType>() ) {
-            if ( type.cast<MapType>() ) {
+        if ( (node->slice->astType == Ast::SliceAstType) && type.dynamicCast<ListType>() ) {
+            if ( type.dynamicCast<MapType>() ) {
                 continue; // Can't slice dicts.
             }
             // Assume that slicing (e.g. foo[3:5]) a list returns the same type.
             result = Helper::mergeTypes(result, type);
         }
-        else if ( const auto& indexed = type.cast<IndexedContainer>() ) {
+        else if ( const auto& indexed = type.dynamicCast<IndexedContainer>() ) {
             long sliceIndex = integerValue(node->slice, indexed->typesCount());
             if ( 0 <= sliceIndex && sliceIndex < indexed->typesCount() ) {
                 result = Helper::mergeTypes(result, indexed->typeAt(sliceIndex).abstractType());
@@ -368,7 +367,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             // Index is unknown or invalid, could be returning any of the content types.
             result = Helper::mergeTypes(result, indexed->asUnsureType());
         }
-        else if ( const auto& listType = type.cast<ListType>() ) {
+        else if ( const auto& listType = type.dynamicCast<ListType>() ) {
             result = Helper::mergeTypes(result, listType->contentType().abstractType());
         }
         else {
@@ -420,7 +419,7 @@ void ExpressionVisitor::visitList(ListAst* node)
         encounterUnknown();
         qCWarning(KDEV_PYTHON_DUCHAIN) << " [ !!! ] did not get a typetrack container object when expecting one! Fix code / setup.";
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
@@ -446,7 +445,7 @@ void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst*
     else {
         return encounterUnknown();
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
@@ -464,7 +463,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
             type->addContentType<Python::UnsureType>(v.lastType());
         }
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
@@ -485,7 +484,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
     else {
         return encounterUnknown();
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
@@ -498,7 +497,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
             v.visitNode(expr);
             if ( expr->astType == Ast::StarredAstType ) {
                 // foo = a, *b, c
-                if ( auto unpackedType = v.lastType().cast<IndexedContainer>() ) {
+                if ( auto unpackedType = v.lastType().dynamicCast<IndexedContainer>() ) {
                     for ( int ii = 0; ii < unpackedType->typesCount(); ++ii ) {
                         type->addEntry(unpackedType->typeAt(ii).abstractType());
                     }
@@ -507,7 +506,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
                 type->addEntry(v.lastType());
             }
         }
-        encounter(AbstractType::Ptr::staticCast(type));
+        encounter(type);
     }
     else {
         qCWarning(KDEV_PYTHON_DUCHAIN) << "tuple type object is not available";
@@ -546,7 +545,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
             }
         }
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitDict(DictAst* node)
@@ -565,14 +564,14 @@ void ExpressionVisitor::visitDict(DictAst* node)
                 keyVisitor.visitNode(node->keys.at(ii));
                 type->addKeyType<Python::UnsureType>(keyVisitor.lastType());
             }
-            else if ( auto unpackedType = contentVisitor.lastType().cast<MapType>() ) {
+            else if ( auto unpackedType = contentVisitor.lastType().dynamicCast<MapType>() ) {
                 // Key is null for `{**foo}`
                 type->addContentType<Python::UnsureType>(unpackedType->contentType().abstractType());
                 type->addKeyType<Python::UnsureType>(unpackedType->keyType().abstractType());
             }
         }
     }
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitNumber(Python::NumberAst* number)
@@ -592,26 +591,26 @@ void ExpressionVisitor::visitString(Python::StringAst* )
 {
     DUChainReadLocker lock;
     StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
     DUChainReadLocker lock;
     auto type = typeObjectForIntegralType<StructureType>("bytes");
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitFormattedValue(Python::FormattedValueAst* ) {
     DUChainReadLocker lock;
     StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 void ExpressionVisitor::visitJoinedString(Python::JoinedStringAst* )
 {
     DUChainReadLocker lock;
     StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
-    encounter(AbstractType::Ptr::staticCast(type));
+    encounter(type);
 }
 
 RangeInRevision nodeRange(Python::Ast* node)
@@ -675,7 +674,7 @@ void ExpressionVisitor::visitCompare(CompareAst* node)
 AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, AbstractType::Ptr rhs, const QString& op) {
     DUChainReadLocker lock;
     auto operatorReturnType = [&op, this](const AbstractType::Ptr& p) {
-        StructureType::Ptr type = p.cast<StructureType>();
+        auto type = p.dynamicCast<StructureType>();
         if ( ! type ) {
             return AbstractType::Ptr();
         }
@@ -709,7 +708,7 @@ void ExpressionVisitor::visitBinaryOperation(Python::BinaryOperationAst* node)
     rhsVisitor.visitNode(node->rhs);
 
     if ( lhsVisitor.lastType() && lhsVisitor.lastType()->whichType() == AbstractType::TypeUnsure ) {
-        KDevelop::UnsureType::Ptr unsure = lhsVisitor.lastType().cast<KDevelop::UnsureType>();
+        auto unsure = lhsVisitor.lastType().staticCast<KDevelop::UnsureType>();
         const IndexedType* types = unsure->types();
         for( uint i = 0; i < unsure->typesSize(); i++ ) {
             result = Helper::mergeTypes(result, fromBinaryOperator(types[i].abstractType(),

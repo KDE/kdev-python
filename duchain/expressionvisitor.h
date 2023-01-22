@@ -105,13 +105,14 @@ public:
     static TypePtr<T> typeObjectForIntegralType(const QString& typeDescriptor) {
         auto context = Helper::getDocumentationFileContext();
         if ( ! context ) {
-            AbstractType::Ptr null;
-            return null.cast<T>();
+            return {};
         }
         auto decls = context->findDeclarations(QualifiedIdentifier(typeDescriptor));
         auto decl = decls.isEmpty() ? nullptr : dynamic_cast<Declaration*>(decls.first());
-        auto type = decl ? decl->abstractType() : AbstractType::Ptr();
-        return type.cast<T>();
+        if ( ! decl ) {
+            return {};
+        }
+        return decl->abstractType().dynamicCast<T>();
     }
 
 private:

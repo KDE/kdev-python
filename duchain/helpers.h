@@ -102,16 +102,16 @@ public:
             return types;
         }
         if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
-            UnsureType::Ptr unsure(type.cast<UnsureType>());
+            auto unsure = type.staticCast<UnsureType>();
             for ( unsigned int i = 0; i < unsure->typesSize(); i++ ) {
                 AbstractType::Ptr t = unsure->types()[i].abstractType();
                 if ( accept(t) ) {
-                    types << ( map ? map(t) : t.cast<T>() );
+                    types << ( map ? map(t) : t.dynamicCast<T>() );
                 }
             }
         }
         else if ( accept(type) ) {
-            types << ( map ? map(type) : type.cast<T>() );
+            types << ( map ? map(type) : type.dynamicCast<T>() );
         }
         return types;
     }
@@ -164,7 +164,7 @@ public:
     {
         AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
         for ( T type : types ) {
-            result = Helper::mergeTypes(result, transform ? transform(type) : AbstractType::Ptr::staticCast(type));
+            result = Helper::mergeTypes(result, transform ? transform(type) : type);
         }
         return result;
     };

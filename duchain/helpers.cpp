@@ -114,7 +114,7 @@ Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed,
             return type && type->whichType() == AbstractType::TypeStructure;
         },
         [](AbstractType::Ptr toMap) {
-            return StructureType::Ptr::staticCast(Helper::resolveAliasType(toMap));
+            return Helper::resolveAliasType(toMap).staticCast<StructureType>();
         }
     );
     auto docFileContext = Helper::getDocumentationFileContext();
@@ -143,7 +143,7 @@ AbstractType::Ptr Helper::resolveAliasType(const AbstractType::Ptr eventualAlias
 AbstractType::Ptr Helper::extractTypeHints(AbstractType::Ptr type)
 {
     return Helper::foldTypes(Helper::filterType<AbstractType>(type, [](AbstractType::Ptr t) -> bool {
-        auto hint = t.cast<HintedType>();
+        auto hint = t.dynamicCast<HintedType>();
         return !hint || hint->isValid();
     }));
 }
@@ -515,23 +515,23 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable, co
     AbstractType::Ptr content(new IntegralType(IntegralType::TypeMixed));
 
     for ( const auto& type: types ) {
-        if ( auto map = type.cast<MapType>() ) {
+        if ( auto map = type.dynamicCast<MapType>() ) {
             // Iterating over dicts gets keys, not values
             content = mergeTypes(content, map->keyType().abstractType());
             continue;
         }
-        else if ( auto list = type.cast<ListType>() ) {
+        else if ( auto list = type.dynamicCast<ListType>() ) {
             content = mergeTypes(content, list->contentType().abstractType());
             continue;
         }
-        else if ( auto indexed = type.cast<IndexedContainer>() ) {
+        else if ( auto indexed = type.dynamicCast<IndexedContainer>() ) {
             content = mergeTypes(content, indexed->asUnsureType());
             continue;
         }
         DUChainReadLocker lock;
         // Content of an iterable object is iterable.__iter__().__next__().
         if ( auto iterFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(type, iterId, topContext)) ) {
-            if ( auto iterator = iterFunc->type<FunctionType>()->returnType().cast<StructureType>() ) {
+            if ( auto iterator = iterFunc->type<FunctionType>()->returnType().dynamicCast<StructureType>() ) {
                 if ( auto nextFunc = dynamic_cast<FunctionDeclaration*>(accessAttribute(iterator, nextId, topContext)) ) {
                     content = mergeTypes(content, nextFunc->type<FunctionType>()->returnType());
                 }

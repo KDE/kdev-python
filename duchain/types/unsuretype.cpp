@@ -47,7 +47,7 @@ const QList<AbstractType::Ptr> UnsureType::typesRecursive() const
         AbstractType::Ptr current = type.abstractType();
         AbstractType::Ptr resolved = Helper::resolveAliasType(current);
         if ( resolved->whichType() == AbstractType::TypeUnsure ) {
-            results.append(resolved.cast<UnsureType>()->typesRecursive());
+            results.append(resolved.staticCast<UnsureType>()->typesRecursive());
         }
         else
             results.append(current);
@@ -100,7 +100,7 @@ QString UnsureType::toString() const
             // TODO collapse arguments / return type
             collapsedTypes.append(i18nc("some object that can be called, in programming", "<callable>"));
         }
-        auto have_iterable = count_and_remove([](T t) { return t.cast<IndexedContainer>() || t.cast<ListType>(); });
+        auto have_iterable = count_and_remove([](T t) { return t.dynamicCast<IndexedContainer>() || t.dynamicCast<ListType>(); });
         if ( have_iterable ) {
             // TODO collapse element count / types
             collapsedTypes.append(i18nc("a set with some elements", "<iterable>"));
@@ -143,7 +143,7 @@ AbstractType::WhichType UnsureType::whichType() const
 
 void UnsureType::addType(const IndexedType& indexed) {
     auto type = indexed.abstractType();
-    auto hinted = type.cast<HintedType>(); // XXX: do we need a read locker here?
+    auto hinted = type.dynamicCast<HintedType>(); // XXX: do we need a read locker here?
     if ( ! hinted ) {
         // if we aren't adding a HintedType the default implementation works
         KDevelop::UnsureType::addType(indexed);
@@ -167,7 +167,7 @@ void UnsureType::addType(const IndexedType& indexed) {
             alreadyExists = true;
         }
         const auto& old = oldIndexed.abstractType();
-        if ( auto oldHinted = old.cast<HintedType>() ) {
+        if ( auto oldHinted = old.dynamicCast<HintedType>() ) {
             if ( !alreadyExists ) {
                 // only do these checks if we haven't already determined that it is a duplicate
                 auto oldHintedTarget = oldHinted->type()->indexed();
@@ -200,12 +200,12 @@ void UnsureType::addType(const IndexedType& indexed) {
             auto t = type2.abstractType();
             auto str = t->toString();
             types += "\n    " + QString::number(type2.index());
-            auto hinted = t.cast<HintedType>();
+            auto hinted = t.dynamicCast<HintedType>();
             while (hinted) {
                 auto target = hinted->type();
                 types += " (aka " + QString::number(target->indexed().index()) + ": " + target->toString()
                         +  " and context " + QString::number(hinted->createdBy().index()) + ")";
-                hinted = target.cast<HintedType>();
+                hinted = target.dynamicCast<HintedType>();
             }
             types += " - " + t->toString() + " of type "  + typeid(*t).name();
             if (!foundDuplicates) {

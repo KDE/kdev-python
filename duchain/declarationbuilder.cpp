@@ -1085,6 +1085,9 @@ void DeclarationBuilder::visitMatch(MatchAst* node)
 
             case Ast::MatchAsAstType: {
                 auto* as = static_cast<MatchAsAst*>(matchCase->pattern);
+                if (!as->name) {
+                    break;
+                }
                 visitVariableDeclaration<Declaration>(as->name, nullptr, subjectVisitor.lastType());
                 break;
             }

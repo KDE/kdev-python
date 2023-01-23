@@ -164,6 +164,9 @@ void UseBuilder::visitSubscript(SubscriptAst* node) {
 void UseBuilder::visitMatchAs(MatchAsAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    if (!node->name) {
+        return;
+    }
     Declaration* declaration = Helper::declarationForName(node->name->value, editorFindPositionSafe(node),
                                                           DUChainPointer<const DUContext>(context));
 

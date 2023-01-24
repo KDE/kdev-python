@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-24 00:44+0000\n"
+"POT-Creation-Date: 2023-01-24 00:55+0000\n"
 "PO-Revision-Date: 2023-01-12 10:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -425,23 +425,23 @@ msgstr "找不到模块 “%1”"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "在指定模块中找不到 %1 的声明"
 
-#: duchain/declarationbuilder.cpp:1575
+#: duchain/declarationbuilder.cpp:1578
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "__new__ 方法的第一个参数不叫 cls，这是不推荐使用的"
 
-#: duchain/declarationbuilder.cpp:1580
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "类方法的第一个参数不叫 self，这是不推荐使用的"
 
-#: duchain/declarationbuilder.cpp:1600
+#: duchain/declarationbuilder.cpp:1603
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "没有参数的非静态类方法，必须至少有一个参数 (self)"
 
-#: duchain/declarationbuilder.cpp:1761
+#: duchain/declarationbuilder.cpp:1764
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "返回语句不在函数声明内"

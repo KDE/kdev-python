@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-24 00:44+0000\n"
-"PO-Revision-Date: 2023-01-18 22:31+0300\n"
+"POT-Creation-Date: 2023-01-24 00:55+0000\n"
+"PO-Revision-Date: 2023-01-23 20:12+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -403,17 +403,15 @@ msgid ""
 "Make sure to keep a copy of your changes so you don't accidentally\n"
 "overwrite them by re-generating the file.\n"
 msgstr ""
-"Bu dosya Python çalışma zamanı bilgisinden çıkarılmış\n"
-"otomatik oluşturulan belgelendirmeyi içermektedir. Kod tamamlama\n"
-"ve sözdizim vurgulama gibi özellikleri sunmak için KDevelop\n"
-"tarafından incelenmiştir.\n"
-"Eğer bu modül için KDevelop desteğinde\n"
+"Bu dosya, Python çalışma zamanı bilgisinden çıkarılmış otomatik\n"
+"oluşturulan belgelendirmeyi içermektedir. Kod tamamlama\n"
+"ve sözdizim vurgulama gibi özellikleri sunmak için K Geliştir\n"
+"tarafından incelenmiştir. Eğer bu modül için K Geliştir desteğinde\n"
 "hatalar bulursanız onları düzeltmek için dosyayı düzenleyebilirsiniz;\n"
-"örneğin, işlevlerin dönüş türlerini kontrol etmek için ek dönüş ifadeleri "
-"ekleyebilirsiniz.\n"
-"Dosyayı yanlışlıkla yeniden oluşturarak yaptığınız değişikliklerin\n"
-"üzerine yazmamak için eklemelerinizin bir kopyasını sakladığınızdan emin "
-"olun.\n"
+"örneğin, işlevlerin dönüş türlerini kontrol etmek için ek dönüş ifadeleri\n"
+"ekleyebilirsiniz. Dosyayı yanlışlıkla yeniden oluşturarak yaptığınız\n"
+"değişikliklerin üzerine yazmamak için eklemelerinizin bir kopyasını\n"
+"sakladığınızdan emin olun.\n"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
@@ -441,27 +439,27 @@ msgstr "\"%1\" modülü bulunamadı"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Belirtilen modülde \"%1\" bildirimi bulunamadı"
 
-#: duchain/declarationbuilder.cpp:1575
+#: duchain/declarationbuilder.cpp:1578
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "__new__method metodunun ilk değişkeni cls 'yi çağırmıyor, kullanımdan "
 "çıkarılmış"
 
-#: duchain/declarationbuilder.cpp:1580
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "class metodunun ilk değişkeni kendisini çağırmıyor, kullanımdan çıkarılmış"
 
-#: duchain/declarationbuilder.cpp:1600
+#: duchain/declarationbuilder.cpp:1603
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Değişkensiz statik olmayan sınıf metodu, en az bir taneye (self) sahip olmalı"
 
-#: duchain/declarationbuilder.cpp:1761
+#: duchain/declarationbuilder.cpp:1764
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Dönüş ifadesi işlev bildirimi içinde değil"

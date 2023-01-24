@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-24 00:44+0000\n"
+"POT-Creation-Date: 2023-01-24 00:55+0000\n"
 "PO-Revision-Date: 2014-02-23 14:14+0100\n"
 "Last-Translator: Martin Schlander <mschlander@opensuse.org>\n"
 "Language-Team: Danish <kde-i18n-doc@kde.org>\n"
@@ -458,26 +458,26 @@ msgstr "Modulet \"%1\" blev ikke fundet"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Erklæringen for \"%1\" blev ikke fundet i det angivne modul"
 
-#: duchain/declarationbuilder.cpp:1575
+#: duchain/declarationbuilder.cpp:1578
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "Første argument i en __ny__ metode kaldes ikke cls, dette bør ikke bruges "
 "mere"
 
-#: duchain/declarationbuilder.cpp:1580
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "Klassemetodes første argument kaldes ikke self, dette bør ikke bruges mere"
 
-#: duchain/declarationbuilder.cpp:1600
+#: duchain/declarationbuilder.cpp:1603
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Ikke-statisk klassemetode uden argumenter, skal have mindst en (self)"
 
-#: duchain/declarationbuilder.cpp:1761
+#: duchain/declarationbuilder.cpp:1764
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return-sætning ikke indenfor funktionserklæring"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2022-11-24 00:44+0000\n"
+"POT-Creation-Date: 2023-01-24 00:55+0000\n"
 "PO-Revision-Date: 2012-12-21 03:14+0200\n"
 "Last-Translator: Sergiu Bivol <sergiu@cip.md>\n"
 "Language-Team: Romanian <kde-i18n-ro@kde.org>\n"
@@ -419,23 +419,23 @@ msgstr "Modulul „%1” nu a fost găsit"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1575
+#: duchain/declarationbuilder.cpp:1578
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1580
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1600
+#: duchain/declarationbuilder.cpp:1603
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1761
+#: duchain/declarationbuilder.cpp:1764
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr ""

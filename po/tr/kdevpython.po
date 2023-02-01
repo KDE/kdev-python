@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-01-24 00:55+0000\n"
-"PO-Revision-Date: 2023-01-23 20:12+0300\n"
+"PO-Revision-Date: 2023-02-01 00:10+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -560,7 +560,8 @@ msgid ""
 "The `pycodestyle` Python module must be installed in order to use style "
 "checking."
 msgstr ""
-"Biçem kontrolünü kullanabilmek için `pycodestyle` Python modülü yüklü olmalı."
+"Biçem kontrolünü kullanabilmek için `pycodestyle` Python modülü kurulu "
+"olmalı."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19

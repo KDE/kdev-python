@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2022-11-08 02:24+0000\n"
-"PO-Revision-Date: 2022-12-13 06:17+0100\n"
+"PO-Revision-Date: 2023-02-11 07:07+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -354,7 +354,7 @@ msgstr "შედეგები"
 #: docfilekcm/docfilewizard.cpp:81
 #, kde-format
 msgid "Close"
-msgstr "დაკეტვა"
+msgstr "დახურვა"
 
 #: docfilekcm/docfilewizard.cpp:83
 #, kde-format

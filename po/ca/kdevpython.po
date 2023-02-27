@@ -1,17 +1,17 @@
 # Translation of kdevpython.po to Catalan
-# Copyright (C) 2009-2021 This_file_is_part_of_KDE
+# Copyright (C) 2009-2023 This_file_is_part_of_KDE
 # This file is distributed under the license LGPL version 2.1 or
 # version 3 or later versions approved by the membership of KDE e.V.
 #
 # Manuel Tortosa <manutortosa@gmail.com>, 2009.
-# Josep M. Ferrer <txemaq@gmail.com>, 2010, 2013, 2014, 2015, 2016, 2017, 2021.
+# Josep M. Ferrer <txemaq@gmail.com>, 2010, 2013, 2014, 2015, 2016, 2017, 2021, 2023.
 # Antoni Bella Pérez <antonibella5@yahoo.com>, 2013, 2014, 2015, 2016, 2017, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-01-24 00:55+0000\n"
-"PO-Revision-Date: 2021-11-11 19:50+0100\n"
+"PO-Revision-Date: 2023-02-26 18:50+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: ca\n"
@@ -561,6 +561,7 @@ msgstr "Longitud màxima de la línia:"
 msgid "Disable these errors and warnings:"
 msgstr "Desactiva aquests errors i avisos:"
 
+# skip-rule: rst-link0italic,rst-italic2
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #: pep8kcm/pep8.ui:100
 #, kde-format

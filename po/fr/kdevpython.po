@@ -5,8 +5,8 @@
 # Vincent PINON <vpinon@kde.org>, 2013, 2014.
 # Thomas Vergnaud <thomas.vergnaud@gmx.fr>, 2015, 2017, 2018, 2022.
 # Xavier Besnard <xavier.besnard@neuf.fr>, 2021.
+# Xavier BESNARD <xavier.besnard@neuf.fr>, 2023.
 #
-# Xavier BESNARD <xavier.besnard]neuf.fr>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"

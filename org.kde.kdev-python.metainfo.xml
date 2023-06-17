@@ -8,6 +8,7 @@
   <name xml:lang="cs">Podpora Pythonu v KDevelop</name>
   <name xml:lang="de">KDevelop – Python-Unterstützung</name>
   <name xml:lang="en-GB">KDevelop Python Support</name>
+  <name xml:lang="eo">KDevelop subteno por Python</name>
   <name xml:lang="es">Implementación de Python para KDevelop</name>
   <name xml:lang="et">KDevelopi Pytoni toetus</name>
   <name xml:lang="eu">KDevelop Python euskarria</name>
@@ -36,6 +37,7 @@
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python a KDevelop</summary>
   <summary xml:lang="de">Python-Sprachunterstützung für KDevelop</summary>
   <summary xml:lang="en-GB">Python language support for KDevelop</summary>
+  <summary xml:lang="eo">Python-Lingvosubteno en KDevelop</summary>
   <summary xml:lang="es">Implementación del lenguaje Python para KDevelop</summary>
   <summary xml:lang="et">KDevelopi Pythoni keele toetus</summary>
   <summary xml:lang="eu">KDevelop-erako Python lengoaiaren euskarria</summary>
@@ -97,6 +99,7 @@
   <developer_name xml:lang="cs">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="de">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="en-GB">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
+  <developer_name xml:lang="eo">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="et">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="eu">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

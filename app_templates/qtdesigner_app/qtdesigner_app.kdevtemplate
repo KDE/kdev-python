@@ -38,6 +38,7 @@ Comment[ca@valencia]=Un exemple d'aplicació que utilitza Designer de les Qt. Si
 Comment[de]=Ein Beispiel-Anwendung mit Qt Designer. Wenn Sie die Datei mainwindow.ui bearbeiten, erzeugen Sie die Datei mainwindow.py mit dem Befehl pyuic5 neu.
 Comment[el]=Μια εφαρμογή παράδειγμα με χρήση του Qt Designer. Αν ανοίξετε το mainwindow.ui για επεξεργασία, παραγάγετε ξανά το mainwindow.py καλώντας το pyuic5.
 Comment[en_GB]=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
+Comment[eo]=Ekzempla aplikaĵo uzante Qt Designer. Se vi redaktas mainwindow.ui, regeneru mainwindow.py perl lanĉo de pyuic5.
 Comment[es]=Un ejemplo de aplicación que usa Qt Designer. Si edita mainwindow.ui, vuelva a generar mainwindow.py llamando a pyuic5.
 Comment[et]=Näidisrakendus Qt Designeri abil. Kui redigeerid faili mainwindow.ui, regenereeri mainwindow.py, kutsudes välja pyuic5.
 Comment[eu]=Adibide aplikazio bat Qt Designer erabiliz. «mainwindow.ui» editatzen baduzu, birsortu «mainwindow.py» «pyuic5»eri deituz.

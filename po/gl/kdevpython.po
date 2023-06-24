@@ -348,7 +348,7 @@ msgstr "O proceso aínda non se executou."
 #: docfilekcm/docfilewizard.cpp:74
 #, kde-format
 msgid "Script output"
-msgstr "Saída do script"
+msgstr "Saída do guión"
 
 #: docfilekcm/docfilewizard.cpp:75
 #, kde-format
@@ -373,7 +373,7 @@ msgstr "Xerar"
 #: docfilekcm/docfilewizard.cpp:137
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
-msgstr "Non foi posíbel atopar o script introspect.py, comprobe a instalación!"
+msgstr "Non foi posíbel atopar o guión introspect.py, comprobe a instalación!"
 
 #: docfilekcm/docfilewizard.cpp:141
 #, kde-format

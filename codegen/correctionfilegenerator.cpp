@@ -498,3 +498,5 @@ CorrectionFileGenerator::HintType CorrectionAssistant::hintType() const
 }
 
 }
+
+#include "moc_correctionfilegenerator.cpp"

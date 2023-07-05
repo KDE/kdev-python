@@ -91,3 +91,5 @@ KDevelop::CodeCompletionWorker* PythonCodeCompletionModel::createCompletionWorke
 }
 
 }
+
+#include "moc_model.cpp"

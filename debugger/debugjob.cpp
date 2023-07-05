@@ -93,3 +93,5 @@ DebugJob::~DebugJob()
 }
 
 }
+
+#include "moc_debugjob.cpp"

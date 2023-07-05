@@ -113,3 +113,4 @@ void Variable::moreChildrenFetched(QByteArray rawData)
 
 }
 
+#include "moc_variable.cpp"

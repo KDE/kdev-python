@@ -523,3 +523,4 @@ KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 
 }
 
+#include "moc_debugsession.cpp"

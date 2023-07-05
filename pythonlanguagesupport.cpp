@@ -217,3 +217,5 @@ KDevelop::ConfigPage* LanguageSupport::perProjectConfigPage(int number, const KD
 }
 
 #include "pythonlanguagesupport.moc"
+
+#include "moc_pythonlanguagesupport.cpp"

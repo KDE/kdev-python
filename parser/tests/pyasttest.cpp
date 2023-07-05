@@ -323,3 +323,4 @@ void PyAstTest::testClass()
     testCode("class c: pass");
 }
 
+#include "moc_pyasttest.cpp"

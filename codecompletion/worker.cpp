@@ -56,3 +56,5 @@ void PythonCodeCompletionWorker::updateContextRange(KTextEditor::Range &contextR
 
 
 }
+
+#include "moc_worker.cpp"

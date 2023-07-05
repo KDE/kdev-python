@@ -69,3 +69,4 @@ CodeHighlightingInstance* Highlighting::createInstance() const
 
 }
 
+#include "moc_pythonhighlighting.cpp"

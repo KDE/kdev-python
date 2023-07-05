@@ -697,3 +697,5 @@ void PyCompletionTest::completionBenchTest_data()
 }
 
 }
+
+#include "moc_pycompletiontest.cpp"

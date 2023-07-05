@@ -196,3 +196,5 @@ void DocfileManagerWidget::runWizard()
     DocfileWizard wizard(docfilePath(), this);
     wizard.exec();
 }
+
+#include "moc_docfilemanagerwidget.cpp"

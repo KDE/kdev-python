@@ -81,3 +81,5 @@ KDevelop::ConfigPage::ConfigPageType PEP8KCModule::configPageType() const
 {
     return KDevelop::ConfigPage::AnalyzerConfigPage;
 }
+
+#include "moc_kcm_pep8.cpp"

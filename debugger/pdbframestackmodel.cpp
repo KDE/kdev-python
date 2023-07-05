@@ -108,3 +108,4 @@ void PdbFrameStackModel::fetchThreads()
 
 }
 
+#include "moc_pdbframestackmodel.cpp"

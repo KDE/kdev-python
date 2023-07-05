@@ -44,3 +44,5 @@ PdbDebuggerPlugin::~PdbDebuggerPlugin()
 }
 
 #include "pdbdebuggerplugin.moc"
+
+#include "moc_pdbdebuggerplugin.cpp"

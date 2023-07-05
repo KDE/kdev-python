@@ -239,3 +239,5 @@ void DocfileWizard::updateOutputFilename(const QString& newModuleName)
     }
     previousModuleName = newModuleName;
 }
+
+#include "moc_docfilewizard.cpp"

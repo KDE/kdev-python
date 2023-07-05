@@ -1851,3 +1851,5 @@ void PyDUChainTest::testComments_data()
     QTest::newRow("function") << "def a():\n    \"\"\"comment\"\"\"\n    b=5";
     QTest::newRow("class") << "class a:\n    \"\"\"comment\"\"\"\n    b=5";
 }
+
+#include "moc_pyduchaintest.cpp"

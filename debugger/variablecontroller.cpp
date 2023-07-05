@@ -161,3 +161,4 @@ void VariableController::_update()
 
 }
 
+#include "moc_variablecontroller.cpp"

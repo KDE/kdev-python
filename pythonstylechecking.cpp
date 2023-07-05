@@ -209,3 +209,5 @@ void StyleChecking::addSetupErrorToContext(const QString& error)
 }
 
 };
+
+#include "moc_pythonstylechecking.cpp"

@@ -115,3 +115,5 @@ void DUChainBench::benchSimpleStatements()
         parse(code);
     }
 }
+
+#include "moc_duchainbench.cpp"

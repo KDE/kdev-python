@@ -8,7 +8,6 @@
   <name xml:lang="cs">Podpora Pythonu v KDevelop</name>
   <name xml:lang="de">KDevelop – Python-Unterstützung</name>
   <name xml:lang="en-GB">KDevelop Python Support</name>
-  <name xml:lang="eo">KDevelop subteno por Python</name>
   <name xml:lang="es">Implementación de Python para KDevelop</name>
   <name xml:lang="et">KDevelopi Pytoni toetus</name>
   <name xml:lang="eu">KDevelop Python euskarria</name>
@@ -37,7 +36,6 @@
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python a KDevelop</summary>
   <summary xml:lang="de">Python-Sprachunterstützung für KDevelop</summary>
   <summary xml:lang="en-GB">Python language support for KDevelop</summary>
-  <summary xml:lang="eo">Python-Lingvosubteno en KDevelop</summary>
   <summary xml:lang="es">Implementación del lenguaje Python para KDevelop</summary>
   <summary xml:lang="et">KDevelopi Pythoni keele toetus</summary>
   <summary xml:lang="eu">KDevelop-erako Python lengoaiaren euskarria</summary>
@@ -69,7 +67,6 @@
     <p xml:lang="ca-valencia">Afig suport de Python a KDevelop. Afig els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços cap a la documentació i suport per a la depuració.</p>
     <p xml:lang="de">Python-Unterstützung für KDevelop. Einschließlich Integration von Quelltexthervorhebung, Quelltextvervollständigung, Unterstützung für Build-System, Verknüpfung zur Dokumentation und Unterstützung für die Fehlersuche.</p>
     <p xml:lang="en-GB">Adds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.</p>
-    <p xml:lang="eo">Aldonas Python-subtenon al KDevelop. Inkluzivas aldonadon de integriĝo kun koda reliefigo, kodkompletigo, konstrusistema subteno, dokumentar-ligado kaj sencimiga subteno.</p>
     <p xml:lang="es">Implementa el uso de Python en KDevelop. Incluye resaltado de código, terminación automática de código, uso de sistemas de compilación, enlaces de documentación y depuración.</p>
     <p xml:lang="et">Pythoni toetus KDevelopis. Lõimimine võimaldab süntaksi esiletõstmist, koodilõpetus, ehitamissüsteemi toetust, dokumentatsiooni linkimist ja silumise toetust.</p>
     <p xml:lang="eu">KDevelop-eri Python-en euskarria gehitzen dio. Kodea-nabarmentzea, kodea-osatzea, eraikitzeko sistemaren euskarria, dokumentazioa estekatzea eta arazteko euskarria barne.</p>
@@ -88,7 +85,7 @@
     <p xml:lang="sk">Pridá podporu Pythonu do KDevelopu. Zahŕňa pridanie integrácie so zvýrazňovaním kódu, ukončovanie kódu, podpora systému zostavení, linkovanie dokumentácie a podporu ladenia.</p>
     <p xml:lang="sl">Programu KDevelop doda podporo za Python. Vključuje dodatek integracije z označevanjem kode, dokončanje kode, gradnje podpore sistema, povezovanje dokumentacije in podporo za odpravljanje napak</p>
     <p xml:lang="sv">Lägger till stöd för Python i KDevelop. Inkluderar tillägg av integrering med kodfärgläggning, kodkomplettering, byggsystemstöd, dokumentationslänkning och avlusningsstöd.</p>
-    <p xml:lang="tr">K Geliştir'e Python desteği ekler. Kod vurgulaması, kod tamamlama, yapı sistemi desteği, belgelendirme bağlaması ve hata ayıklama desteği bütünleştirmesi içerir.</p>
+    <p xml:lang="tr">K Geliştir'a Python desteği ekler. Kod vurgulaması, kod tamamlama, yapı sistemi desteği, belgelendirme bağlaması ve hata ayıklama desteği bütünleştirmesi içerir.</p>
     <p xml:lang="uk">Додає підтримку Python до KDevelop. Включено інтеграцію із засобами підсвічування коду, автоматичне доповнення коду, підтримку систем збирання, інтеграцію посилань на документацію та засобів діагностики.</p>
     <p xml:lang="x-test">xxAdds Python support to KDevelop. Includes adding integration with code highlighting, code completion, build system support, documentation linking and debugging support.xx</p>
     <p xml:lang="zh-CN">向 KDevelop 添加 Python 支持。包括代码高亮、代码完成、构建系统支持、文档链接和调试支持的集成。</p>
@@ -100,7 +97,6 @@
   <developer_name xml:lang="cs">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="de">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="en-GB">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="eo">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="et">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <developer_name xml:lang="eu">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>

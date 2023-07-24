@@ -215,12 +215,12 @@ msgstr "다음 명령을 내렸을 때 디버거가 조용히 중단됩니다."
 #: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
-msgstr "Python 프로그램을 pdb로 디버그하는 플러그인입니다."
+msgstr "Python 앱을 pdb로 디버그하는 플러그인입니다."
 
 #: debugger/pdblauncher.cpp:77
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
-msgstr "디버깅은 Python 3.x 프로그램만 지원합니다."
+msgstr "디버깅은 Python 3.x 앱만 지원합니다."
 
 #: debugger/pdblauncher.cpp:78
 #, kde-format

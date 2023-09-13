@@ -193,7 +193,7 @@ msgstr "Tipus correcte:"
 #: codegen/correctionwidget.ui:63
 #, kde-format
 msgid "Code which evaluates to the type, e.g. int()"
-msgstr "Codi que avalua el tipus, p. ex. int()"
+msgstr "Codi que avalua el tipus, p. ex., int()"
 
 #. i18n: ectx: property (text), widget (QLabel, importsLabel)
 #: codegen/correctionwidget.ui:70

@@ -220,7 +220,7 @@ msgstr "Ara podeu inspeccionar l'estat del programa després que finalitze."
 #: debugger/debugsession.cpp:165
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
-msgstr "El depurador es pararà en silenci quan s'active la següent ordre."
+msgstr "El depurador es pararà en silenci quan s'active l'ordre següent."
 
 #: debugger/pdblauncher.cpp:45
 #, kde-format

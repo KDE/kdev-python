@@ -31,7 +31,6 @@
                 "Name[sv]": "Sven Brauch",
                 "Name[tr]": "Sven Brauch",
                 "Name[uk]": "Sven Brauch",
-                "Name[x-test]": "xxSven Brauchxx",
                 "Name[zh_CN]": "Sven Brauch",
                 "Name[zh_TW]": "Sven Brauch"
             }
@@ -65,7 +64,6 @@
         "Description[sv]": "Insticksprogrammet tillhandahåller ett gränssnitt för PDB",
         "Description[tr]": "Bu eklenti PDB için bir ön uç sağlar",
         "Description[uk]": "Цей додаток є графічною оболонкою до PDB",
-        "Description[x-test]": "xxThis plugin provides a frontend for PDBxx",
         "Description[zh_CN]": "插件提供了 PDB 前端",
         "Description[zh_TW]": "此外掛程式提供了 PDB 的前端",
         "Icon": "text-x-python",
@@ -99,7 +97,6 @@
         "Name[sv]": "Stöd för Python-avlusare (PDB)",
         "Name[tr]": "Python Hata Ayıklayıcı (PDB) desteği",
         "Name[uk]": "Підтримка засобу діагностики Python (PDB)",
-        "Name[x-test]": "xxPython Debugger (PDB) supportxx",
         "Name[zh_CN]": "Python 调试器 (PDB) 支持",
         "Name[zh_TW]": "Python 偵錯器 (PDB) 支援",
         "ServiceTypes": [

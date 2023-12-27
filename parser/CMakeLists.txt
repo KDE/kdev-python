@@ -25,8 +25,8 @@ generate_export_header(kdevpythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPOR
 
 target_link_libraries(kdevpythonparser LINK_PRIVATE
     KDev::Language
-    Qt5::Core
     Python3::Python
+    Qt${QT_MAJOR_VERSION}::Core
 )
 
 install(TARGETS kdevpythonparser DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})

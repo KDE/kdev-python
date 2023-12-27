@@ -26,9 +26,9 @@ target_link_libraries(kdevpdb
     KDev::Language
     KDev::Debugger
     KDev::OutputView
-    KDev::Project    
+    KDev::Project
     KDev::Util
-    KF5::TextEditor
+    KF${KF_MAJOR_VERSION}::TextEditor
 )
 
 install(FILES __kdevpython_debugger_utils.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)

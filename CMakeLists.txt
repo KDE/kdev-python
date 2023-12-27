@@ -19,10 +19,19 @@ set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
-set(QT_MIN_VERSION "5.15.0")
-set(KF5_DEP_VERSION "5.78.0")
+if (BUILD_WITH_QT6)
+    set(KF_MAJOR_VERSION "6")
+    set(QT_MIN_VERSION "6.4.0")
+    set(KF_MIN_VERSION "5.240.0")
+else()
+    set(KF_MAJOR_VERSION "5")
+    set(QT_MIN_VERSION "5.15.2")
+    set(KF_MIN_VERSION "5.91.0")
+endif()
 
-find_package (ECM ${KF5_DEP_VERSION} REQUIRED NO_MODULE)
+#set(KF5_DEP_VERSION "5.78.0")
+
+find_package (ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -47,14 +56,27 @@ find_package(Python3 3.4.3...<3.13 COMPONENTS Interpreter Development REQUIRED)
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-find_package(Qt5 ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-find_package(KF5 ${KF5_DEP_VERSION} REQUIRED
+set(CMAKE_FIND_DEBUG_MODE TRUE)
+find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
+set(CMAKE_FIND_DEBUG_MODE FALSE)
+
+find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
+
+find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
+# if(BUILD_TESTING)
+#     find_package(Qt${QT_MAJOR_VERSION}Test ${QT_MIN_VERSION} CONFIG REQUIRED)
+# endif()
+
+find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
     I18n
     ThreadWeaver
     TextEditor
 )
-find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
-find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
+
+if(QT_MAJOR_VERSION STREQUAL 6)
+    find_package(Qt6Core5Compat ${QT_MIN_VERSION} CONFIG REQUIRED)
+    find_package(KF6TextWidgets ${KF_MIN_VERSION} CONFIG REQUIRED)
+    endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS "3.10.0" AND KF5_VERSION VERSION_LESS "5.42.0")
     # Avoids bogus warnings with CMake 3.10+, KF5.42+ has workaround
@@ -123,8 +145,8 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
-    KF5::ThreadWeaver
-    KF5::TextEditor
+    KF${KF_MAJOR_VERSION}::ThreadWeaver
+    KF${KF_MAJOR_VERSION}::TextEditor
     kdevpythoncompletion
     kdevpythonparser
     kdevpythonduchain

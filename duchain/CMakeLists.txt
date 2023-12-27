@@ -39,7 +39,7 @@ generate_export_header( kdevpythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EX
 )
 
 target_link_libraries( kdevpythonduchain LINK_PRIVATE
-    KF5::TextEditor
+    KF${KF_MAJOR_VERSION}::TextEditor
     KDev::Interfaces
     KDev::Language
     KDev::Project

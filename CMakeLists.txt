@@ -56,16 +56,10 @@ find_package(Python3 3.4.3...<3.13 COMPONENTS Interpreter Development REQUIRED)
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-set(CMAKE_FIND_DEBUG_MODE TRUE)
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
-set(CMAKE_FIND_DEBUG_MODE FALSE)
-
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
 find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-# if(BUILD_TESTING)
-#     find_package(Qt${QT_MAJOR_VERSION}Test ${QT_MIN_VERSION} CONFIG REQUIRED)
-# endif()
 
 find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
     I18n

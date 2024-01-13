@@ -12,6 +12,7 @@
 #include <QString>
 #include <QList>
 #include <QVariant>
+#include <QRegularExpression>
 
 #include "pythoncompletionexport.h"
 
@@ -234,7 +235,7 @@ public:
 
     bool hasAlign() const
     {
-        QRegExp regex("^.?[<>\\^=]");
+        QRegularExpression regex(QStringLiteral("^.?[<>\\^=]"));
         return m_formatSpec.contains(regex);
     }
 

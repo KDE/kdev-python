@@ -9,6 +9,7 @@
 #include <interfaces/icore.h>
 
 #include <QDebug>
+#include <QRegularExpression>
 #include "debuggerdebug.h"
 
 namespace Python {
@@ -72,9 +73,8 @@ void Variable::moreChildrenFetched(QByteArray rawData)
     data.removeLast();
     int i = 0;
     int initialLength = data.length();
-    QRegExp formatExtract("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$");
-    formatExtract.setPatternSyntax(QRegExp::RegExp2);
-    formatExtract.setMinimal(true);
+    QRegularExpression formatExtract(QStringLiteral("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$"),
+                                     QRegularExpression::InvertedGreedinessOption);
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
         // sort magic functions at the end of the list, they're not too interesting usually
@@ -88,14 +88,15 @@ void Variable::moreChildrenFetched(QByteArray rawData)
         QString realValue;
         QString prettyName;
         unsigned long int pythonId = 0;
-        if ( formatExtract.exactMatch(d) ) {
-            QString id = formatExtract.capturedTexts().at(2);
+        auto match = formatExtract.match(QString::fromLatin1(d));
+        if ( match.hasMatch() ) {
+            QString id = match.captured(2);
             if ( ! id.isEmpty() ) {
                 pythonId = id.toLong();
             }
-            childName = expression() + formatExtract.capturedTexts().at(3);
-            prettyName = formatExtract.capturedTexts().at(3);
-            realValue = formatExtract.capturedTexts().at(4);
+            childName = expression() + match.captured(3);
+            prettyName = match.captured(3);
+            realValue = match.captured(4);
         }
         else {
             i++;

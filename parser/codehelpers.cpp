@@ -6,6 +6,7 @@
 
 #include "codehelpers.h"
 #include <QStack>
+#include <QRegularExpression>
 
 namespace Python {
     
@@ -153,9 +154,9 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
 
 QString CodeHelpers::killStrings(QString stringWithStrings)
 {
-    QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
-    replaceStrings.setMinimal(true);
-    QString stripped = stringWithStrings.replace(replaceStrings, "\"S\"");
+    QRegularExpression replaceStrings(QStringLiteral("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')"),
+                                      QRegularExpression::InvertedGreedinessOption);
+    QString stripped = stringWithStrings.replace(replaceStrings, QStringLiteral("\"S\""));
     return stripped;
 }
 

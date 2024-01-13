@@ -38,7 +38,7 @@
 #include <project/projectmodel.h>
 
 #include <QProcess>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <KTextEditor/View>
 #include <memory>
 
@@ -624,9 +624,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     components.removeAll(QString());
 
     // Check all components are alphanumeric
-    QRegExp alnum("\\w*");
+    QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
     foreach ( const QString& component, components ) {
-        if ( ! alnum.exactMatch(component) ) return items;
+        QRegularExpressionMatch match = alnum.match(component);
+        if ( ! match.hasMatch() ) return items;
     }
 
     if ( components.isEmpty() ) {

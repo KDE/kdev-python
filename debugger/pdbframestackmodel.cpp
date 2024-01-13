@@ -6,7 +6,7 @@
 
 #include "pdbframestackmodel.h"
 #include "debugsession.h"
-#include <QRegExp>
+#include <QRegularExpression>
 
 #include <QDebug>
 #include "debuggerdebug.h"
@@ -50,17 +50,18 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
             framesCount++;
         }
         else if ( parsingLocation ) {
-            QRegExp location("(\\>?)\\s*(.*)\\(([0-9]+)\\)(.*)");
+            QRegularExpression location(QStringLiteral("(\\>?)\\s*(.*)\\(([0-9]+)\\)(.*)"));
             // version 1 has some *really* weird "greedy" ruleset which makes no sense at all for me
             location.setPatternSyntax(QRegExp::RegExp2);
-            if ( location.exactMatch(line) ) {
-                qCDebug(KDEV_PYTHON_DEBUGGER) << location.capturedTexts();
+            const auto match = location.match(line);
+            if ( match.hasMatch() ) {
                 if ( ! location.capturedTexts().at(1).isEmpty() ) {
+                if ( ! match.captured(1).isEmpty() ) {
                     m_debuggerAtFrame = framesCount;
                 }
-                currentFrame->file = QUrl::fromLocalFile(location.capturedTexts().at(2));
-                currentFrame->line = location.capturedTexts().at(3).toInt() - 1;
-                currentFrame->name = location.capturedTexts().at(4);
+                currentFrame->file = QUrl::fromLocalFile(match.captured(2));
+                currentFrame->line = match.captured(3).toInt() - 1;
+                currentFrame->name = match.captured(4);
             }
             else {
                 qCDebug(KDEV_PYTHON_DEBUGGER) << "regular expression mismatches" << line;

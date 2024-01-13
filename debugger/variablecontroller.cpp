@@ -94,7 +94,7 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
 
 void VariableController::localsUpdateReady(QByteArray rawData)
 {
-    QRegExp formatExtract("([a-zA-Z0-9_]+) \\=\\> (.*)");
+    QRegularExpression formatExtract( QRegularExpression::anchoredPattern(QStringLiteral("([a-zA-Z0-9_]+) \\=\\> (.*)")));
     QList<QByteArray> data = rawData.split('\n');
     data.removeAll({});
     qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
@@ -104,10 +104,11 @@ void VariableController::localsUpdateReady(QByteArray rawData)
     QMap<QString, QString> values;
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
-        if ( formatExtract.exactMatch(d) ) {
-            QString key = formatExtract.capturedTexts().at(1);
+        auto match = formatExtract.match(QString::fromLatin1(d));
+        if ( match.hasMatch() ) {
+            QString key = match.captured(1);
             vars << key;
-            values[key] = formatExtract.capturedTexts().at(2);
+            values[key] = match.captured(2);
         }
         else qCWarning(KDEV_PYTHON_DEBUGGER) << "mismatch:" << d;
         i++;

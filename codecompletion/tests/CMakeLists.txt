@@ -10,5 +10,6 @@ ecm_add_test(${pycompletiontest_SRCS}
         kdevpythonparser
         ${kdevpythonparser_LIBRARIES}
         Qt${QT_MAJOR_VERSION}::Test
+        KF${KF_MAJOR_VERSION}::Service
         KDev::Tests
 )

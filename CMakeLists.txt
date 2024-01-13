@@ -63,6 +63,7 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widget
 
 find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
     I18n
+    Service
     ThreadWeaver
     TextEditor
 )
@@ -139,6 +140,7 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
+    KF${KF_MAJOR_VERSION}::Service
     KF${KF_MAJOR_VERSION}::ThreadWeaver
     KF${KF_MAJOR_VERSION}::TextEditor
     kdevpythoncompletion

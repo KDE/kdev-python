@@ -31,7 +31,7 @@ public:
     static TypeCorrection& self();
     void doContextMenu(KDevelop::ContextMenuExtension& extension, KDevelop::Context* context);
 
-public slots:
+public Q_SLOTS:
     void executeSpecifyTypeAction();
     void accepted();
 

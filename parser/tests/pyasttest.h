@@ -25,7 +25,7 @@ public:
     void initShell();
     CodeAst::Ptr getAst(QString code);
     void testCode(QString code);
-private slots:
+private Q_SLOTS:
     void testClass();
     void testStatements();
     void testStatements_data();

@@ -28,7 +28,7 @@ public:
     /// to select frames. Those two functions tell at which frame the debugger is internally.
     int debuggerAtFrame() const;
     void setDebuggerAtFrame(int newFrame);
-public slots:
+public Q_SLOTS:
     void framesFetched(QByteArray frames);
     void threadsFetched(QByteArray threads);
 private:

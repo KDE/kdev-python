@@ -34,7 +34,7 @@ public:
     DocumentationGeneratorAction(const QString& module, const KDevelop::IndexedString& document);
     QString description() const override;
 
-public slots:
+public Q_SLOTS:
     void execute() override;
 
 private:

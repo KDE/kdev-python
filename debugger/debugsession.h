@@ -168,7 +168,7 @@ public:
      **/
     void write(const QByteArray& cmd);
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Emitted when new data has been received from the debugger process (via stdout)
      **/
@@ -194,7 +194,7 @@ public slots:
     void locationUpdateReady(QByteArray data);
     void debuggerQuit(int);
 
-signals:
+Q_SIGNALS:
     /// Emitted when the debugger becomes ready to process a new command, i.e. shows its prompt
     void debuggerReady();
     /// Emitted when a new command is added to the queue

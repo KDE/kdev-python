@@ -34,7 +34,7 @@ class PyDUChainTest : public QObject
         
         Python::CodeAst::Ptr m_ast;
         
-    private slots:
+    private Q_SLOTS:
         void init();
         void testSimple();
         void testSimple_data();

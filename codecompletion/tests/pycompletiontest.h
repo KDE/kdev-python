@@ -46,7 +46,7 @@ class PyCompletionTest : public QObject
         // convenience function
         bool itemInCompletionList(const QString& initCode, const QString& invokeCode, QString itemName);
         
-    private slots:
+    private Q_SLOTS:
         void testIntegralTypesImmediate();
         void testIntegralTypesImmediate_data();
         void testIntegralExpressionsDifferentContexts();

@@ -57,7 +57,7 @@ private:
     QTimer m_updateTimer;
     QList<Variable*> m_watchVariables;
 
-private slots:
+private Q_SLOTS:
     /**
      * @brief Parse the debugger output, and perform an update of the local variables.
      **/

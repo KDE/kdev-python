@@ -35,7 +35,7 @@ public:
     
     QObject* m_notifyCreated;
     const char* m_notifyCreatedMethod;
-public slots:
+public Q_SLOTS:
     /**
      * @brief Parse the debugger output and update this variable's value.
      **/

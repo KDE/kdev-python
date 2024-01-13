@@ -148,7 +148,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
     }
 
     auto calltipItems = declarationListToItemList(calltips);
-    foreach ( CompletionTreeItemPointer current, calltipItems ) {
+    for ( CompletionTreeItemPointer current : calltipItems ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1;
         FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
         item->setAtArgument(m_alreadyGivenParametersCount + 1);
@@ -205,11 +205,11 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
     QList<IndexedString> existingIdentifiers;
 
     bool isOwnContext = true;
-    foreach ( DUContext* c, baseClassContexts ) {
+    for ( DUContext* c : baseClassContexts ) {
         const auto declarations = c->allDeclarations(
             CursorInRevision::invalid(), m_duContext->topContext(), false
         );
-        foreach ( const DeclarationDepthPair& d, declarations ) {
+        for ( const DeclarationDepthPair& d : declarations ) {
             if ( FunctionDeclaration* funcDecl = dynamic_cast<FunctionDeclaration*>(d.first) ) {
                 // python does not have overloads or similar, so comparing the function names is enough.
                 const IndexedString identifier = funcDecl->identifier().identifier();
@@ -224,7 +224,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
                 QStringList argumentNames;
                 DUContext* argumentsContext = DUChainUtils::argumentContext(funcDecl);
                 if ( argumentsContext ) {
-                    foreach ( Declaration* argument, argumentsContext->localDeclarations() ) {
+                    for ( Declaration* argument : argumentsContext->localDeclarations() ) {
                         argumentNames << argument->identifier().toString();
                     }
                     resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
@@ -258,7 +258,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     ClassDeclaration* current = nullptr;
     StructureType::Ptr type;
     auto decls = m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
-    foreach ( const DeclarationDepthPair d, decls ) {
+    for ( const DeclarationDepthPair& d : decls ) {
         current = dynamic_cast<ClassDeclaration*>(d.first);
         if ( ! current || ! current->baseClassesSize() ) {
             continue;
@@ -310,7 +310,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
         declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
     }
     QVector<DeclarationDepthPair> remainingDeclarations;
-    foreach ( const DeclarationDepthPair& d, declarations ) {
+    for ( const DeclarationDepthPair& d : declarations ) {
         Declaration* r = Helper::resolveAliasDeclaration(d.first);
         if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
             continue;
@@ -343,7 +343,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessI
 
     // append eventually stripped postfix, for e.g. os.chdir|
     bool needDot = true;
-    foreach ( const QChar& c, m_followingText ) {
+    for ( const QChar& c : m_followingText ) {
         if ( needDot ) {
             m_guessTypeOfExpression.append('.');
             needDot = false;
@@ -481,7 +481,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
         return resultingItems;
     }
     // the current context actually belongs to a constructor
-    foreach ( const Declaration* argument, args->localDeclarations() ) {
+    for ( const Declaration* argument : args->localDeclarations() ) {
         const QString argName = argument->identifier().toString();
         // Do not suggest "self.self = self"
         if ( argName == "self" ) {
@@ -529,11 +529,11 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
             items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
         }
     }
-    foreach ( const QString& n, v->unknownNames() ) {
+    for ( const QString& n : v->unknownNames() ) {
         items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
     }
 
-    foreach ( KeywordItem* item, items ) {
+    for ( KeywordItem* item : items ) {
         resultingItems << CompletionTreeItemPointer(item);
     }
     return resultingItems;
@@ -601,7 +601,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         DUChainReadLocker lock;
         auto declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        foreach ( const DeclarationDepthPair& d, declarations ) {
+        for ( const DeclarationDepthPair& d : declarations ) {
             if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
@@ -625,7 +625,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
 
     // Check all components are alphanumeric
     QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
-    foreach ( const QString& component, components ) {
+    for ( const QString& component : components ) {
         QRegularExpressionMatch match = alnum.match(component);
         if ( ! match.hasMatch() ) return items;
     }
@@ -703,7 +703,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::declarationListT
 {
     QVector<DeclarationDepthPair> fakeItems;
     fakeItems.reserve(declarations.size());
-    foreach ( Declaration* d, declarations ) {
+    for ( Declaration* d : declarations ) {
         fakeItems << DeclarationDepthPair(d, 0);
     }
     return declarationListToItemList(fakeItems);
@@ -748,7 +748,7 @@ QList< CompletionTreeItemPointer > PythonCodeCompletionContext::getCompletionIte
         }
         itemTitles.append(title);
     }
-    foreach ( const CompletionTreeItemPointer& ptr, remove ) {
+    for ( const CompletionTreeItemPointer& ptr : remove ) {
         result.removeOne(ptr);
     }
     return result;
@@ -771,7 +771,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
     auto searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
     QVector<DeclarationDepthPair> keepDeclarations;
-    foreach ( const DUContext* currentlySearchedContext, searchContexts ) {
+    for ( const DUContext* currentlySearchedContext : searchContexts ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
         const auto declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
                                                                                                 m_duContext->topContext(),
@@ -782,7 +782,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         // also, discard all magic functions from autocompletion
         // TODO rework this, it's maybe not the most elegant solution possible
         // TODO rework the magic functions thing, I want them sorted at the end of the list but KTE doesn't seem to allow that
-        foreach ( const DeclarationDepthPair& current, declarations ) {
+        for ( const DeclarationDepthPair& current : declarations ) {
             if ( current.first->context() != builtinTopContext && ! current.first->identifier().identifier().str().startsWith("__") ) {
                 keepDeclarations.append(current);
             }
@@ -849,7 +849,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     
     if ( atBottom ) {
         // append all python files in the directory
-        foreach ( QFileInfo file, contents ) {
+        for ( QFileInfo file : contents ) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
                 if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {
@@ -879,7 +879,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(QList< Python::IncludeSearchTarget > items)
 {
     QList<CompletionTreeItemPointer> results;
-    foreach ( const IncludeSearchTarget& item, items ) {
+    for ( const IncludeSearchTarget& item : items ) {
         results << findIncludeItems(item);
     }
     return results;
@@ -932,11 +932,11 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
     
-    foreach ( QUrl currentPath, searchPaths ) {
+    for ( QUrl currentPath : searchPaths ) {
         auto d = QDir(currentPath.path());
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
-        foreach ( const QString& subdir, subdirs ) {
+        for ( const QString& subdir : subdirs ) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << "changing into subdir" << subdir;
             if ( ! d.cd(subdir) ) {
                 break;

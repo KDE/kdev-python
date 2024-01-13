@@ -31,7 +31,7 @@ public:
     virtual void visitNode(Ast* node);
 
     template <typename T> void visitNodeList( const QList<T*>& l ) {
-        foreach ( T* node, l ) {
+        for (  T* node: l ) {
             visitNode(node);
         }
     }

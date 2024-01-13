@@ -121,7 +121,7 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
         if ( max_len - atChar > 2 ) {
             t = code.midRef(atChar, 3);
         }
-        foreach ( const QString& check, stringDelimiters ) {
+        for ( const QString& check : stringDelimiters ) {
             if ( t != check && ! ( check.size() == 1 && c == check.at(0) ) ) {
                 continue;
             }

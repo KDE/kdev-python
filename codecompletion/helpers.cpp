@@ -66,8 +66,8 @@ int identifierMatchQuality(const QString& identifier1_, const QString& identifie
         // more than 5 words for their variable names
         return 0;
     }
-    foreach ( const QString& part1, parts1 ) {
-        foreach ( const QString& part2, parts2 ) {
+    for ( const QString& part1 : parts1 ) {
+        for ( const QString& part2 : parts2 ) {
             // Don't take very short name parts into account,
             // those are not very descriptive eventually
             if ( part1.size() < 3 || part2.size() < 3 ) {
@@ -322,7 +322,7 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
         // disable highlighting when in default arguments, it doesn't make much sense then
         bool disableHighlighting = false;
         
-        foreach(Declaration* dec, parameters) {
+        for (Declaration* dec : parameters) {
             if ( skipFirst ) {
                 skipFirst = false;
                 continue;
@@ -434,7 +434,7 @@ bool StringFormatter::isInsideReplacementVariable(int cursorPosition) const
 const ReplacementVariable *StringFormatter::getReplacementVariable(int cursorPosition) const
 {
     int index = 0;
-    foreach ( const RangeInString &variablePosition, m_variablePositions ) {
+    for ( const RangeInString &variablePosition : m_variablePositions ) {
         if ( cursorPosition >= variablePosition.beginIndex && cursorPosition <= variablePosition.endIndex ) {
             return &m_replacementVariables.at(index);
         }
@@ -447,7 +447,7 @@ const ReplacementVariable *StringFormatter::getReplacementVariable(int cursorPos
 RangeInString StringFormatter::getVariablePosition(int cursorPosition) const
 {
     int index = 0;
-    foreach ( const RangeInString &variablePosition, m_variablePositions ) {
+    for ( const RangeInString &variablePosition : m_variablePositions ) {
         if ( cursorPosition >= variablePosition.beginIndex && cursorPosition <= variablePosition.endIndex ) {
             return m_variablePositions.at(index);
         }
@@ -459,7 +459,7 @@ RangeInString StringFormatter::getVariablePosition(int cursorPosition) const
 int StringFormatter::nextIdentifierId() const
 {
     int highestIdFound = -1;
-    foreach ( const ReplacementVariable &variable, m_replacementVariables ) {
+    for ( const ReplacementVariable &variable : m_replacementVariables ) {
         bool isNumeric;
         int identifier = variable.identifier().toInt(&isNumeric);
         if ( isNumeric && identifier > highestIdFound ) {

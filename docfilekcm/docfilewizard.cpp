@@ -169,7 +169,7 @@ bool DocfileWizard::run()
     QList<KDevelop::IProject*> projs = KDevelop::ICore::self()->projectController()->projects();
     QStringList args;
     args << scriptUrl;
-    foreach(const KDevelop::IProject* proj, projs)
+    for (const KDevelop::IProject* proj : projs)
     {
         if ( proj )
             args << proj->path().toLocalFile();

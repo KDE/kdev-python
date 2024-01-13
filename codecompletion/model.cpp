@@ -32,7 +32,7 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
 {
     QList<QString> words;
     words << "for" << "raise" << "except" << "in";
-    foreach ( const QString& word, words ) {
+    for ( const QString& word : words ) {
         if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + " ") ) {
             return true;
         }

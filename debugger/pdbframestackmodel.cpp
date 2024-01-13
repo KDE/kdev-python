@@ -39,7 +39,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
     bool parsingLocation = false;
     FrameItem* currentFrame = nullptr;
     int framesCount = 0;
-    foreach ( const QString& line, lines ) {
+    for ( const QString& line : lines ) {
         if ( line.startsWith("-> ") ) {
             parsingLocation = true;
             if ( currentFrame ) {

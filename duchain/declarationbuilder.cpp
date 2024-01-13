@@ -58,7 +58,7 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
     if ( ! m_scheduledForDeletion.isEmpty() ) {
         DUChainWriteLocker lock;
-        foreach ( DUChainBase* d, m_scheduledForDeletion ) {
+        for ( DUChainBase* d : m_scheduledForDeletion ) {
             delete d;
         }
         m_scheduledForDeletion.clear();
@@ -177,7 +177,7 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     // Search for a declaration from a previous parse pass which should be re-used
     QList<Declaration*> remainingDeclarations;
     *ok = nullptr;
-    foreach ( Declaration* d, declarations ) {
+    for ( Declaration* d : declarations ) {
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
             // Only use a declaration if the type matches
@@ -387,7 +387,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     Declaration* lastAccessedDeclaration = nullptr;
     int i = 0;
     int identifierCount = dottedNameIdentifier.length();
-    foreach ( const QString& currentIdentifier, dottedNameIdentifier ) {
+    for ( const QString& currentIdentifier : dottedNameIdentifier ) {
         Q_ASSERT(currentContext);
         i++;
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
@@ -426,7 +426,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     QString moduleName;
     QString declarationName;
-    foreach ( AliasAst* name, node->names ) {
+    for ( AliasAst* name : node->names ) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
         Identifier* declarationIdentifier = nullptr;
         declarationName.clear();
@@ -471,7 +471,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
     DUChainWriteLocker lock;
-    foreach ( AliasAst* name, node->names ) {
+    for ( AliasAst* name : node->names ) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
@@ -619,7 +619,7 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other, &contextIdentifier);
         openedContexts.append(moduleContext);
 
-        foreach ( Declaration* local, currentContext()->localDeclarations() ) {
+        for ( Declaration* local : currentContext()->localDeclarations() ) {
             // keep all the declarations until the builder finished
             // kdevelop would otherwise delete them as soon as the context is closed
             if ( ! wasEncountered(local) ) {
@@ -722,7 +722,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             dir.setNameFilters({"*.py"});
             dir.setFilter(QDir::Files);
             auto files = dir.entryList();
-            foreach ( const auto& file, files ) {
+            for ( const auto& file : files ) {
                 if ( file == QStringLiteral("__init__.py") ) {
                     continue;
                 }
@@ -822,7 +822,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    foreach ( ArgAst* argument, node->arguments->arguments ) {
+    for ( ArgAst* argument : node->arguments->arguments ) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
     visitNodeList(node->arguments->defaultValues);
@@ -886,7 +886,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     };
     auto docstring = function->comment();
     if ( ! docstring.isEmpty() ) {
-        foreach ( const auto& key, items.keys() ) {
+        for ( const auto& key : items.keys() ) {
             if ( Helper::docstringContainsHint(docstring, key, &args) ) {
                 items[key]();
             }
@@ -1012,7 +1012,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     }
     lock.unlock();
     DUChainWriteLocker wlock;
-    foreach ( KeywordAst* keyword, node->keywords ) {
+    for ( KeywordAst* keyword : node->keywords ) {
         wlock.unlock();
         ExpressionVisitor argumentVisitor(currentContext());
         argumentVisitor.visitNode(keyword->value);
@@ -1368,7 +1368,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         v.isAlias()
     };
 
-    foreach(ExpressionAst* target, node->targets) {
+    for (ExpressionAst* target : node->targets) {
         assignToUnknown(target, sourceType);
     }
 }
@@ -1429,7 +1429,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         }
     }
     lock.unlock();
-    foreach ( ExpressionAst* c, node->baseClasses ) {
+    for ( ExpressionAst* c : node->baseClasses ) {
         // Iterate over all the base classes, and add them to the duchain.
         ExpressionVisitor v(currentContext());
         v.visitNode(c);
@@ -1511,7 +1511,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setStatic(false);
     dec->setClassMethod(false);
     dec->setProperty(false);
-    foreach ( auto decorator, node->decorators) {
+    for ( auto decorator : node->decorators) {
         visitNode(decorator);
         switch (decorator->astType) {
           case Ast::AttributeAstType: {
@@ -1790,7 +1790,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int totalArgCount = parametersCount + posonlyCount + kwonlyCount;
     int firstDefaultKwParameterOffset = totalArgCount - defaultKwParametersCount;
     int currentIndex = 0;
-    foreach ( ArgAst* arg, node->posonlyargs + node->arguments + node->kwonlyargs ) {
+    for ( ArgAst* arg : node->posonlyargs + node->arguments + node->kwonlyargs ) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
         currentIndex += 1;
@@ -1871,7 +1871,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         // inject the vararg at the correct place
         int atIndex = 0;
         int useIndex = -1;
-        foreach ( ArgAst* arg, node->arguments ) {
+        for ( ArgAst* arg : node->arguments ) {
             if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
                 useIndex = atIndex;
             }
@@ -1923,7 +1923,7 @@ void DeclarationBuilder::visitNode(Ast* node) {
 void DeclarationBuilder::visitGlobal(GlobalAst* node)
 {
     TopDUContext* top = topContext();
-    foreach ( Identifier *id, node->names ) {
+    for ( Identifier *id : node->names ) {
         QualifiedIdentifier qid = identifierForNode(id);
         DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());

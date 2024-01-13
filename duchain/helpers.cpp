@@ -345,7 +345,7 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
     }
 
     foreach (QString correctionFileDir, correctionFileDirs) {
-        foreach ( const QUrl& basePath, Helper::getSearchPaths(QUrl()) ) {
+        for ( const QUrl& basePath : Helper::getSearchPaths(QUrl()) ) {
             if ( ! basePath.isParentOf(document) ) {
                 continue;
             }
@@ -368,7 +368,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     }
 
     auto absolutePath = QUrl();
-    foreach ( const auto& basePath, Helper::getSearchPaths(QUrl()) ) {
+    for ( const auto& basePath : Helper::getSearchPaths(QUrl()) ) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }
@@ -454,7 +454,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         searchPaths << Helper::cachedCustomIncludes.value(project);
     }
     
-    foreach ( const QString& path, getDataDirs() ) {
+    for ( const QString& path : getDataDirs() ) {
         searchPaths.append(QUrl::fromLocalFile(path));
     }
 
@@ -471,7 +471,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
 
         if ( ! pythonpath.isEmpty() ) {
             const auto paths = pythonpath.split("$|$", SkipEmptyParts);
-            foreach ( const QString& path, paths ) {
+            for ( const QString& path : paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }
         }
@@ -481,7 +481,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
             searchPaths.append(QUrl::fromLocalFile("/usr/lib/python" PYTHON_VERSION_STR "/site-packages"));
             QString path = qgetenv("PYTHONPATH");
             QStringList paths = path.split(':');
-            foreach ( const QString& path, paths ) {
+            for ( const QString& path : paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }
         }

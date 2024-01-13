@@ -60,7 +60,7 @@ QString UnsureType::toString() const
     QString typeList;
     QVector<AbstractType::Ptr> types;
     auto is_new_type = [&types](const IndexedType newType) {
-        foreach ( const auto& type, types ) {
+        for ( const auto& type : types ) {
             if ( type->indexed() == newType ) {
                 return false;
             }
@@ -68,7 +68,7 @@ QString UnsureType::toString() const
         return true;
     };
 
-    foreach ( AbstractType::Ptr type, typesRecursive() ) {
+    for ( AbstractType::Ptr type : typesRecursive() ) {
         if ( ! type ) {
             qCWarning(KDEV_PYTHON_DUCHAIN) << "Invalid type: " << type.data();
             continue;
@@ -108,14 +108,14 @@ QString UnsureType::toString() const
     }
 
     int count = 0;
-    foreach ( const auto& type, types ) {
+    for ( const auto& type : types ) {
         if ( count )
             typeList += ", ";
         count += 1;
 
         typeList += type->toString();
     }
-    foreach ( const auto& collapsed, collapsedTypes ) {
+    for ( const auto& collapsed : collapsedTypes ) {
         if ( count )
             typeList += ", ";
         count += 1;

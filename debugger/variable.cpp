@@ -27,7 +27,7 @@ void Variable::dataFetched(QByteArray rawData)
     QList<QByteArray> data = rawData.split('\n');
     data.removeLast();
     QByteArray value;
-    foreach ( const QByteArray& item, data ) {
+    for ( const QByteArray& item : data ) {
         value.append(item);
     }
     setValue(value);

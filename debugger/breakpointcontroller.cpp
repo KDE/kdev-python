@@ -27,7 +27,7 @@ void BreakpointController::slotEvent(IDebugSession::event_t evt)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << evt;
     if ( evt == IDebugSession::connected_to_program ) {
-        foreach ( Breakpoint* bp, breakpointModel()->breakpoints() ) {
+        for ( Breakpoint* bp : breakpointModel()->breakpoints() ) {
             if ( bp->deleted() ) {
                 continue;
             }

@@ -105,12 +105,12 @@ void PyDUChainTest::init()
     for ( int i = 0; i < 2; i++ ) {
         // Parse each file twice, to ensure no parsing-order related bugs appear.
         // Such bugs will need separate unit tests and should not influence these.
-        foreach(const QString filename, foundfiles) {
+        for (const QString &filename : foundfiles) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Parsing asset: " << filename;
             DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
             ICore::self()->languageController()->backgroundParser()->parseDocuments();
         }
-        foreach(const QString filename, foundfiles) {
+        for (const QString &filename: foundfiles) {
             DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
         }
         while ( ICore::self()->languageController()->backgroundParser()->queuedCount() > 0 ) {
@@ -159,7 +159,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 
 PyDUChainTest::~PyDUChainTest()
 {
-    foreach ( TestFile* f, createdFiles ) {
+    for ( TestFile* f : createdFiles ) {
         delete f;
     }
     testDir.rmdir(testDir.absolutePath());
@@ -546,7 +546,7 @@ void PyDUChainTest::testFlickering()
     qDebug() << "Declaration count afterwards: " << count;
     QVERIFY(count == after);
     
-    foreach(Declaration* dec, ctx->localDeclarations()) {
+    for (Declaration* dec : ctx->localDeclarations()) {
         qDebug() << dec->toString() << dec->range();
         qDebug() << dec->uses().size();
     }
@@ -623,7 +623,7 @@ void PyDUChainTest::testSimple()
     QCOMPARE(declarations.size(), decls);
     
     int usesCount = 0;
-    foreach(Declaration* d, declarations) {
+    for (Declaration* d : declarations) {
         usesCount += d->uses().size();
         
         QVERIFY(d->abstractType());
@@ -695,7 +695,7 @@ public:
         AstDefaultVisitor::visitClassDefinition(node);
     }
     void visitImport(ImportAst* node) override {
-        foreach ( const AliasAst* name, node->names ) {
+        for ( const AliasAst* name : node->names ) {
             if ( name->name ) {
                 qDebug() << "found import" << name->name->value << name->name->range();
             }
@@ -1344,15 +1344,15 @@ void PyDUChainTest::testImportDeclarations() {
     QVERIFY(m_ast);
     
     DUChainReadLocker lock(DUChain::lock());
-    foreach ( const QString& expected, expectedDecls ) {
+    for ( const QString& expected : expectedDecls ) {
         bool found = false;
         QString name = expected;
         const auto decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
         qCDebug(KDEV_PYTHON_DUCHAIN) << "FOUND DECLARATIONS:";
-        foreach ( const pair& current, decls ) {
+        for ( const pair& current : decls ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
         }
-        foreach ( const pair& current, decls ) {
+        for ( const pair& current : decls ) {
             if ( ! ( current.first->identifier().identifier().byteArray() == name ) ) continue;
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Found: " << current.first->toString() << " for " << name;
             AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current.first);
@@ -1430,7 +1430,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     QVERIFY(ctx1);
     auto decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
     QList<DeclarationId> declIds;
-    foreach ( p d, decls1 ) {
+    for ( p d : decls1 ) {
         declIds << d.first->id();
     }
     lock.unlock();
@@ -1443,7 +1443,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     QVERIFY(ctx2);
     lock.lock();
     auto decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
-    foreach ( p d2, decls2 ) {
+    for ( p d2 : decls2 ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
@@ -1462,7 +1462,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext(), false).first().first->internalContext()
                  ->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
     declIds.clear();
-    foreach ( p d, decls1 ) {
+    for ( p d : decls1 ) {
         declIds << d.first->id();
     }
     lock.unlock();
@@ -1476,7 +1476,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     lock.lock();
     decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()
                  ->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
-    foreach ( p d2, decls2 ) {
+    for ( p d2 : decls2 ) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "@2: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
@@ -1604,7 +1604,7 @@ void PyDUChainTest::testInheritance()
     auto decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
     bool found = false;
     bool classDeclFound = false;
-    foreach ( const p& item, decls ) {
+    for ( const p& item : decls ) {
         if ( item.first->identifier().toString() == "B" ) {
             auto klass = dynamic_cast<ClassDeclaration*>(item.first);
             QVERIFY(klass);

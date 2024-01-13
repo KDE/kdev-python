@@ -280,7 +280,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return true;
     };
 
-    foreach ( const QString& currentHint, knownDocstringHints.keys() ) {
+    for ( const QString& currentHint : knownDocstringHints.keys() ) {
         QStringList arguments;
         if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
             continue;
@@ -325,7 +325,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     auto valueTypes = Helper::filterType<AbstractType>(lastType(), [](AbstractType::Ptr) { return true; });
     AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
 
-    foreach (const auto& type, valueTypes) {
+    for (const auto& type : valueTypes) {
         if ( node->slice->astType == Ast::SliceAstType ) {
             auto slice = static_cast<SliceAst*>(node->slice);
             if ( auto tupleType = type.dynamicCast<IndexedContainer>() ) {
@@ -404,7 +404,7 @@ void ExpressionVisitor::visitList(ListAst* node)
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
-        foreach ( ExpressionAst* content, node->elements ) {
+        for ( ExpressionAst* content : node->elements ) {
             contentVisitor.visitNode(content);
             if ( content->astType == Ast::StarredAstType ) {
                 auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());
@@ -492,7 +492,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple");
     if ( type ) {
         lock.unlock();
-        foreach ( ExpressionAst* expr, node->elements ) {
+        for ( ExpressionAst* expr : node->elements ) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
             if ( expr->astType == Ast::StarredAstType ) {
@@ -534,7 +534,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
-        foreach ( ExpressionAst* content, node->elements ) {
+        for ( ExpressionAst* content : node->elements ) {
             contentVisitor.visitNode(content);
             if ( content->astType == Ast::StarredAstType ) {
                 auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());

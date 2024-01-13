@@ -329,9 +329,9 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     }
 
     // We safely insert any import declaration at the top
-    foreach ( const QString &moduleName, modules ) {
+    for ( const QString &moduleName : modules ) {
         bool importExists = false;
-        foreach (const QString &line, m_code) {
+        for (const QString &line : m_code) {
             if ( ! line.startsWith("import") && ! line.startsWith("from") && ! line.isEmpty() ) {
                 break;
             }

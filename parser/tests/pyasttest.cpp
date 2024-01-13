@@ -98,7 +98,7 @@ void PyAstTest::testExceptionHandlers()
     QVERIFY(ast->body.first()->astType == Ast::TryAstType);
     TryAst* try_ = static_cast<TryAst*>(ast->body.first());
     QCOMPARE(try_->handlers.size(), 3);
-    foreach ( ExceptionHandlerAst* handler, try_->handlers ) {
+    for ( ExceptionHandlerAst* handler : try_->handlers ) {
         QVERIFY(handler->name);
         QCOMPARE(handler->name->astType, Ast::IdentifierAstType);
     }
@@ -276,7 +276,7 @@ void PyAstTest::testCorrectedFuncRanges()
 
     CodeAst::Ptr ast = getAst(code);
     QVERIFY(ast);
-    foreach ( Ast* node, ast->body ) {
+    for ( Ast* node : ast->body ) {
         if ( node->astType != Ast::FunctionDefinitionAstType ) {
             continue;
         }

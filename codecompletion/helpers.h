@@ -123,7 +123,7 @@ public:
     QString toString() {
         QString ret;
         int pos = 0;
-        foreach ( TokenListEntry item, *this ) {
+        for ( TokenListEntry item : *this ) {
             ret.append(
                 "offset " + QString::number(item.charOffset) + 
                 " position " + QString::number(pos) +

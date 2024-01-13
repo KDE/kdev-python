@@ -116,7 +116,7 @@ void DebugSession::debuggerQuit(int )
 
 QStringList byteArrayToStringList(const QByteArray& r) {
     QStringList items;
-    foreach ( const QByteArray& item, r.split('\n') ) {
+    for ( const QByteArray& item : r.split('\n') ) {
         items << item.data();
     }
     if ( r.endsWith('\n') ) {

@@ -227,7 +227,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::runCompletion(const Completio
     PythonCodeCompletionContext* context = new PythonCodeCompletionContext(parameters.contextAtCursor, parameters.snip, parameters.remaining, parameters.cursorAt, 0, nullptr);
     bool abort = false;
     QList<CompletionTreeItem*> items;
-    foreach ( CompletionTreeItemPointer ptr, context->completionItems(abort, true) ) {
+    for ( CompletionTreeItemPointer ptr : context->completionItems(abort, true) ) {
         items << ptr.data();
         // those are leaked, but it's only a few kb while the tests are running. who cares.
         m_ptrs << ptr;
@@ -237,7 +237,7 @@ const QList<CompletionTreeItem*> PyCompletionTest::runCompletion(const Completio
 
 bool PyCompletionTest::containsItemForDeclarationNamed(const QList<CompletionTreeItem*> items, QString itemName)
 {
-    foreach ( const CompletionTreeItem* ptr, items ) {
+    for ( const CompletionTreeItem* ptr : items ) {
         if ( ptr->declaration() ) {
             if ( ptr->declaration()->identifier().toString() == itemName ) {
                 return true;
@@ -250,7 +250,7 @@ bool PyCompletionTest::containsItemForDeclarationNamed(const QList<CompletionTre
 bool PyCompletionTest::containsItemStartingWith(const QList<CompletionTreeItem*> items, const QString& itemName)
 {
     QModelIndex idx = fakeModel().index(0, KDevelop::CodeCompletionModel::Name);
-    foreach ( const CompletionTreeItem* ptr, items ) {
+    for ( const CompletionTreeItem* ptr : items ) {
         if ( ptr->data(idx, Qt::DisplayRole, nullptr).toString().startsWith(itemName) ) {
             return true;
         }
@@ -445,7 +445,7 @@ void PyCompletionTest::testAutoBrackets()
                                                             "a=Foo()\n%INVOKE", "a.%CURSOR");
     QVERIFY(containsItemForDeclarationNamed(items, "myprop"));
     CompletionTreeItem* item = nullptr;
-    foreach ( CompletionTreeItem* ptr, items ) {
+    for ( CompletionTreeItem* ptr : items ) {
         if ( ptr->declaration() ) {
             if ( ptr->declaration()->identifier().toString() == "myprop" ) {
                 item = ptr;
@@ -629,7 +629,7 @@ void PyCompletionTest::testStringFormatter()
 
     for (int i = 0; i < string.size(); i++) {
         bool expectedInsideVariable = false;
-        foreach (RangeInString range, expectedVariablePositions) {
+        for (RangeInString range : expectedVariablePositions) {
             if (i >= range.beginIndex && i <= range.endIndex) {
                 expectedInsideVariable = true;
                 break;

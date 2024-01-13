@@ -170,7 +170,7 @@ void ContextBuilder::addImportedContexts()
     if ( compilingContexts() && !m_importedParentContexts.isEmpty() )
     {
         DUChainWriteLocker lock( DUChain::lock() );
-        foreach( DUContext* imported, m_importedParentContexts )
+        for ( DUContext* imported : m_importedParentContexts )
             currentContext()->addImportedParentContext( imported );
 
         m_importedParentContexts.clear();
@@ -319,7 +319,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         nameComponents.removeFirst();
         QString tname = name.mid(1); // remove first dot
         QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
-        foreach(QString c, tname) {
+        for (QString c : tname) {
             if (c != ".")
                 break;
             curPathDir.cdUp();
@@ -336,10 +336,10 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     // Loop over all the name components, and find matching folders or files.
     QDir tmp;
     QStringList leftNameComponents;
-    foreach ( const QUrl& currentPath, searchPaths ) {
+    for ( const QUrl& currentPath : searchPaths ) {
         tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
-        foreach ( QString component, nameComponents ) {
+        for ( QString component : nameComponents ) {
             if ( component == "*" ) {
                 // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = QStringLiteral("__init__");
@@ -357,7 +357,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
             static QStringList valid_extensions{".py", ".pyx"};
-            foreach ( const auto& extension, valid_extensions ) {
+            for ( const auto& extension : valid_extensions ) {
                 QFile sourcefile(testFilename + extension);
                 if ( ! dir_exists || leftNameComponents.isEmpty() ) {
                     // If the search cannot continue further down into a hierarchy of directories,

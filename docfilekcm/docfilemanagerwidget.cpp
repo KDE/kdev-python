@@ -165,7 +165,7 @@ void DocfileManagerWidget::openSelectedInTextEditor()
     if ( selected.isEmpty() ) {
         KMessageBox::information(this, i18n("Please select at least one file from the list for editing."));
     }
-    foreach ( const QUrl& item, selected ) {
+    for ( const QUrl& item : selected ) {
         KDevelop::ICore::self()->documentController()->openDocument(item);
     }
 }
@@ -185,7 +185,7 @@ const QList<QUrl> DocfileManagerWidget::selectedItems() const
     const QModelIndexList items = filesTreeView->selectionModel()->selectedRows();
     QList<QUrl> urls;
     const QFileSystemModel* fsmodel = qobject_cast<QFileSystemModel*>(filesTreeView->model());
-    foreach ( const QModelIndex& index, items ) {
+    for ( const QModelIndex& index : items ) {
         urls << QUrl::fromLocalFile(fsmodel->filePath(index));
     }
     return urls;

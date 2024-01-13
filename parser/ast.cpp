@@ -86,7 +86,7 @@ static void dumpList(QString &r, QString prefix, const T list, QString sep=", ")
     int i = 0;
     r.append(prefix);
     r.append("[");
-    foreach(const Ast* node, list) {
+    for (const Ast* node : list) {
         i += 1;
         dumpNode(r, "", node);
         if (i < list.size())

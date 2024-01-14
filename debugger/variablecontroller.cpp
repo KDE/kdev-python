@@ -22,6 +22,7 @@
 #include <KLocalizedString>
 
 #include <QDebug>
+#include <QRegularExpression>
 #include "debuggerdebug.h"
 
 using namespace KDevelop;

@@ -22,7 +22,9 @@
 #include "breakpointcontroller.h"
 
 #include <QDebug>
+#include <QRegularExpression>
 #include <QStandardPaths>
+
 #include "debuggerdebug.h"
 
 #ifdef Q_OS_WIN

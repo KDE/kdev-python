@@ -272,8 +272,8 @@ DataAccessRepository* ParseJob::dataAccessInformation()
 
 void ParseJob::eventuallyDoPEP8Checking(TopDUContext* topContext)
 {
-    KConfig config("kdevpythonsupportrc");
-    KConfigGroup configGroup = config.group("pep8");
+    KConfig config(QStringLiteral("kdevpythonsupportrc"));
+    KConfigGroup configGroup = config.group(QStringLiteral("pep8"));
     if ( !PEP8KCModule::isPep8Enabled(configGroup) ) {
         return;
     }

@@ -52,7 +52,7 @@ QString PythonDeclarationCompletionItem::shortenedTypeString(const KDevelop::Dec
     }
     auto type = decl->abstractType()->toString();
     if ( type.length() > desiredTypeLength ) {
-        return type.left(desiredTypeLength) + "...";
+        return type.left(desiredTypeLength) + QStringLiteral("...");
     }
     return type;
 }
@@ -63,7 +63,7 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
         case KDevelop::CodeCompletionModel::MatchQuality: {
             if ( ! declaration() ) return 0;
             if ( ! model->completionContext()->duContext() ) return 0;
-            if ( declaration()->identifier().identifier().str().startsWith('_') ) {
+            if ( declaration()->identifier().identifier().str().startsWith(QLatin1Char('_')) ) {
                 return 0;
             }
             if ( declaration()->context()->topContext() == Helper::getDocumentationFileContext() ) {
@@ -90,12 +90,12 @@ QVariant PythonDeclarationCompletionItem::data(const QModelIndex& index, int rol
     QVariant data = KDevelop::NormalDeclarationCompletionItem::data(index, role, model);
     if ( data.canConvert<QString>() ) {
         QString s = data.toString();
-        s.replace("<unknown>", "?");
+        s.replace(QStringLiteral("<unknown>"), QStringLiteral("?"));
         return QVariant(s);
     }
     else if ( data.canConvert<QStringList>() ) {
         QStringList s = data.toStringList();
-        s.replaceInStrings("<unknown>", "?");
+        s.replaceInStrings(QStringLiteral("<unknown>"), QStringLiteral("?"));
         return QVariant(s);
     }
     else return data;

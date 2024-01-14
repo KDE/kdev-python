@@ -57,7 +57,7 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         qCDebug(KDEV_PYTHON_DEBUGGER) << "changing frame by" << delta;
         for ( int i = delta; i != 0; i += ( positive ? -1 : 1 ) ) {
             qCDebug(KDEV_PYTHON_DEBUGGER) << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
-            s->addSimpleInternalCommand(positive ? "up" : "down");
+            s->addSimpleInternalCommand(positive ? QStringLiteral("up") : QStringLiteral("down"));
         }
     }
     KDevelop::IVariableController::handleEvent(event);
@@ -77,7 +77,7 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
             DUContext* contextAtCursor = context->findContextAt(CursorInRevision(cursor.line(), cursor.column()));
             if ( contextAtCursor && contextAtCursor->type() == DUContext::Class ) {
                 if ( contextAtCursor->owner() && ! contextAtCursor->owner()->identifier().isEmpty() ) {
-                    prefix = contextAtCursor->owner()->identifier().toString() + ".";
+                    prefix = contextAtCursor->owner()->identifier().toString() + QStringLiteral(".");
                 }
             }
         }
@@ -88,8 +88,8 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
 
     TextDocumentLazyLineFetcher linefetcher(doc);
     KTextEditor::Cursor startCursor;
-    auto text = prefix + CodeHelpers::expressionUnderCursor(linefetcher, cursor, startCursor);
-    return {startCursor, startCursor + KTextEditor::Cursor{0, text.length()}};
+    auto text = QString(prefix + CodeHelpers::expressionUnderCursor(linefetcher, cursor, startCursor));
+    return {startCursor, startCursor + KTextEditor::Cursor{0, static_cast<int>(text.length())}};
 }
 
 void VariableController::localsUpdateReady(QByteArray rawData)
@@ -152,9 +152,9 @@ void VariableController::_update()
 
    if (autoUpdate() & UpdateLocals) {
         // TODO find a more elegant solution for this import!
-        InternalPdbCommand* import = new InternalPdbCommand(nullptr, nullptr, "import __kdevpython_debugger_utils\n");
+        InternalPdbCommand* import = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));
         InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady",
-                                  "__kdevpython_debugger_utils.format_locals(__kdevpython_debugger_utils.__kdevpython_builtin_locals())\n");
+                                  QStringLiteral("__kdevpython_debugger_utils.format_locals(__kdevpython_debugger_utils.__kdevpython_builtin_locals())\n"));
         d->addCommand(import);
         d->addCommand(cmd);
    }

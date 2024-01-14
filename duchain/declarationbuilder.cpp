@@ -353,7 +353,7 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
         auto mgrType = v.lastType();
         auto enterType = mgrType; // If we can't find __enter__(), assume it returns `self` like file objects.
 
-        static const IndexedIdentifier enterId(KDevelop::Identifier("__enter__"));
+        static const IndexedIdentifier enterId(KDevelop::Identifier(QStringLiteral("__enter__")));
 
         DUChainReadLocker lock;
         if ( auto enterFunc = dynamic_cast<FunctionDeclaration*>(
@@ -410,14 +410,14 @@ QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAs
 {
     QString moduleName = alias->name->value;
     if ( ! intermediate.isEmpty() ) {
-        moduleName.prepend('.').prepend(intermediate);
+        moduleName.prepend(QLatin1Char('.')).prepend(intermediate);
     }
     if ( node->module ) {
-        moduleName.prepend('.').prepend(node->module->value);
+        moduleName.prepend(QLatin1Char('.')).prepend(node->module->value);
     }
     // To handle relative imports correctly, add node level in the beginning of the path
     // This will allow findModulePath to deduce module search direcotry properly
-    moduleName.prepend(QString(node->level, '.'));
+    moduleName.prepend(QString(node->level, QLatin1Char('.')));
     return moduleName;
 }
 
@@ -448,7 +448,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
         if ( ! success && (node->module || node->level) ) {
             ProblemPointer problem_init(nullptr);
-            intermediate = QString("__init__");
+            intermediate = QStringLiteral("__init__");
             moduleName = buildModuleNameFromNode(node, name, intermediate);
             success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem_init);
         }
@@ -712,22 +712,22 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
-        resultingDeclaration = createDeclarationTree(declarationName.split("."),
+        resultingDeclaration = createDeclarationTree(declarationName.split(QLatin1Char('.')),
                                                      declarationIdentifier, moduleContext, nullptr, range);
         auto initFile = QStringLiteral("/__init__.py");
         auto path = moduleInfo.first.path();
         if ( path.endsWith(initFile) ) {
             // if the __init__ file is imported, import all the other files in that directory as well
             QDir dir(path.left(path.size() - initFile.size()));
-            dir.setNameFilters({"*.py"});
+            dir.setNameFilters({QStringLiteral("*.py")});
             dir.setFilter(QDir::Files);
             auto files = dir.entryList();
             for ( const auto& file : files ) {
                 if ( file == QStringLiteral("__init__.py") ) {
                     continue;
                 }
-                const auto filePath = declarationName.split(".") << file.left(file.lastIndexOf(".py"));
-                const auto fileUrl = QUrl::fromLocalFile(dir.path() + "/" + file);
+                const auto filePath = declarationName.split(QLatin1Char('.')) << file.left(file.lastIndexOf(QStringLiteral(".py")));
+                const auto fileUrl = QUrl::fromLocalFile(dir.path() + QLatin1Char('/') + file);
                 ReferencedTopDUContext fileContext;
                 {
                     DUChainReadLocker lock;
@@ -735,7 +735,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 }
                 if ( fileContext ) {
                     Identifier id = *declarationIdentifier;
-                    id.value.append(".").append(filePath.last());
+                    id.value.append(QLatin1Char('.')).append(filePath.last());
                     createDeclarationTree(filePath,
                                           &id, fileContext, nullptr);
                 }
@@ -749,7 +749,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     else {
         // import a specific declaration from the given file
         lock.lock();
-        if ( declarationIdentifier->value == "*" ) {
+        if ( declarationIdentifier->value == QLatin1Char('*') ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Importing * from module";
             currentContext()->addImportedParentContext(moduleContext);
         }
@@ -758,7 +758,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
+                resultingDeclaration = createDeclarationTree(declarationName.split(QLatin1Char('.')), declarationIdentifier,
                                                              ReferencedTopDUContext(nullptr), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
@@ -767,7 +767,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::IProblem::SemanticAnalysis);
                 p->setSeverity(KDevelop::IProblem::Warning);
-                p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
+                p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(QLatin1Char('.'))));
                 problemEncountered = p;
             }
         }
@@ -806,7 +806,7 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     else {
         // Otherwise, create a new container type, and set it as the function's return type.
         DUChainWriteLocker lock;
-        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>(QStringLiteral("list"));
         if ( container ) {
             openType(container);
             container->addContentType<Python::UnsureType>(encountered);
@@ -853,7 +853,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     // Check for the different types of modifiers such a function can have
     QStringList args;
     QHash< QString, std::function<void()> > items;
-    items["addsTypeOfArg"] = [&]() {
+    items[QStringLiteral("addsTypeOfArg")] = [&]() {
         const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
@@ -870,7 +870,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         container->addContentType<Python::UnsureType>(argVisitor.lastType());
         v.lastDeclaration()->setType(container);
     };
-    items["addsTypeOfArgContent"] = [&]() {
+    items[QStringLiteral("addsTypeOfArgContent")] = [&]() {
         const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
@@ -884,7 +884,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
             v.lastDeclaration()->setType(container);
         }
     };
-    auto docstring = function->comment();
+    auto docstring = QString::fromLatin1(function->comment());
     if ( ! docstring.isEmpty() ) {
         for ( const auto& key : items.keys() ) {
             if ( Helper::docstringContainsHint(docstring, key, &args) ) {
@@ -1315,7 +1315,7 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
         auto target = tuple->elements.at(ii);
         if ( target->astType == Ast::StarredAstType ) {
             DUChainReadLocker lock;
-            auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+            auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>(QStringLiteral("list"));
             lock.unlock();
             if (listType) {
                 listType->addContentType<Python::UnsureType>(sourceType);
@@ -1413,9 +1413,9 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setComment(docstring);
     if ( ! docstring.isEmpty() ) {
         // check whether this is a type container (list, dict, ...) or just a "normal" class
-        if ( Helper::docstringContainsHint(docstring, "TypeContainer") ) {
+        if ( Helper::docstringContainsHint(docstring, QStringLiteral("TypeContainer")) ) {
             ListType* container = nullptr;
-            if ( Helper::docstringContainsHint(docstring, "hasTypedKeys") ) {
+            if ( Helper::docstringContainsHint(docstring, QStringLiteral("hasTypedKeys")) ) {
                 container = new MapType();
             }
             else {
@@ -1423,7 +1423,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
             }
             type = StructureType::Ptr(container);
         }
-        if ( Helper::docstringContainsHint(docstring, "IndexedTypeContainer") ) {
+        if ( Helper::docstringContainsHint(docstring, QStringLiteral("IndexedTypeContainer")) ) {
             IndexedContainer* container = new IndexedContainer();
             type = StructureType::Ptr(container);
         }
@@ -1446,12 +1446,12 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
-    if ( dec->baseClassesSize() == 0 && node->name->value != "object" ) {
+    if ( dec->baseClassesSize() == 0 && node->name->value != QStringLiteral("object") ) {
         DUChainWriteLocker wlock;
         ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
         if ( docContext ) {
             QList<Declaration*> object = docContext->findDeclarations(
-                QualifiedIdentifier("object")
+                QualifiedIdentifier(QStringLiteral("object"))
             );
             if ( ! object.isEmpty() && object.first()->abstractType() ) {
                 Declaration* objDecl = object.first();
@@ -1883,7 +1883,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             useIndex = type->arguments().size();
         }
         DUChainReadLocker lock;
-        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple");
+        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
         lock.unlock();
         if ( tupleType ) {
             visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType);
@@ -1894,8 +1894,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
     if ( node->kwarg ) {
         DUChainReadLocker lock;
-        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("str");
-        auto dictType = ExpressionVisitor::typeObjectForIntegralType<MapType>("dict");
+        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>(QStringLiteral("str"));
+        auto dictType = ExpressionVisitor::typeObjectForIntegralType<MapType>(QStringLiteral("dict"));
         lock.unlock();
         if ( dictType && stringType ) {
             dictType->addKeyType<Python::UnsureType>(stringType);

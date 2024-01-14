@@ -31,14 +31,14 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
                                                 bool userInsertion, const KTextEditor::Cursor& position)
 {
     QList<QString> words;
-    words << "for" << "raise" << "except" << "in";
+    words << QStringLiteral("for") << QStringLiteral("raise") << QStringLiteral("except") << QStringLiteral("in");
     for ( const QString& word : words ) {
-        if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + " ") ) {
+        if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + QStringLiteral(" ")) ) {
             return true;
         }
     }
     // shebang / encoding lines
-    if ( view->document()->line(position.line()).mid(0, position.column()).endsWith("#") && 
+    if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(QLatin1Char('#')) &&
          position.line() < 2 )
     {
         return true;
@@ -46,7 +46,7 @@ bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, c
 
     // we're probably dealing with string formatting completion
     // is there any other case where this condition is true?
-    if ( ! userInsertion && inserted.startsWith('{') ) {
+    if ( ! userInsertion && inserted.startsWith(QLatin1Char('{')) ) {
         return true;
     }
 
@@ -59,7 +59,7 @@ bool PythonCodeCompletionModel::shouldAbortCompletion(KTextEditor::View* view, c
     if ( completionContext() ) {
         auto context = static_cast<PythonCodeCompletionContext*>(completionContext().data());
         if ( context->completionContextType() == PythonCodeCompletionContext::StringFormattingCompletion ) {
-            if ( text.endsWith('"') || text.endsWith("'") || text.endsWith(' ') ) {
+            if ( text.endsWith(QLatin1Char('"')) || text.endsWith(QLatin1Char('\'')) || text.endsWith(QLatin1Char(' ')) ) {
                 return true;
             }
         }

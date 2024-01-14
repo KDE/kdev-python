@@ -20,6 +20,7 @@
 #include <QStandardPaths>
 
 #include <KLocalizedString>
+#include <KMessageDialog>
 #include <KMessageBox>
 #include <KProcess>
 #include <interfaces/icore.h>
@@ -39,7 +40,7 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     QGroupBox* interpreter = new QGroupBox;
     interpreter->setTitle(i18n("Configure the Python interpreter to use"));
     QFormLayout* interpreterLayout = new QFormLayout;
-    interpreterField = new QLineEdit("python");
+    interpreterField = new QLineEdit(QStringLiteral("python"));
     interpreterLayout->addRow(new QLabel(i18n("Python executable")), interpreterField);
     interpreter->setLayout(interpreterLayout);
 
@@ -60,13 +61,13 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     status->setTitle(i18n("Status and output"));
     statusField = new QTextEdit();
     statusField->setText(i18n("The process has not been run yet."));
-    statusField->setFontFamily("monospace");
+    statusField->setFontFamily(QStringLiteral("monospace"));
     statusField->setLineWrapMode(QTextEdit::NoWrap);
     statusField->setReadOnly(true);
     statusField->setAcceptRichText(false);
     resultField = new QTextEdit();
     resultField->setText(i18n("The process has not been run yet."));
-    resultField->setFontFamily("monospace");
+    resultField->setFontFamily(QStringLiteral("monospace"));
     resultField->setLineWrapMode(QTextEdit::NoWrap);
     resultField->setReadOnly(true);
     resultField->setAcceptRichText(false);
@@ -79,13 +80,13 @@ DocfileWizard::DocfileWizard(const QString& workingDirectory, QWidget* parent)
     QHBoxLayout* buttonsLayout = new QHBoxLayout;
     buttonsLayout->setDirection(QBoxLayout::RightToLeft);
     QPushButton* closeButton = new QPushButton(i18n("Close"));
-    closeButton->setIcon(QIcon::fromTheme("dialog-close"));
+    closeButton->setIcon(QIcon::fromTheme(QStringLiteral("dialog-close")));
     saveButton = new QPushButton(i18n("Save and close"));
     saveButton->setEnabled(false);
-    saveButton->setIcon(QIcon::fromTheme("dialog-ok-apply"));
+    saveButton->setIcon(QIcon::fromTheme(QStringLiteral("dialog-ok-apply")));
     runButton = new QPushButton(i18n("Generate"));
     runButton->setDefault(true);
-    runButton->setIcon(QIcon::fromTheme("tools-wizard"));
+    runButton->setIcon(QIcon::fromTheme(QStringLiteral("tools-wizard")));
     buttonsLayout->addWidget(closeButton);
     buttonsLayout->addWidget(runButton);
     buttonsLayout->addWidget(saveButton);
@@ -117,7 +118,7 @@ QString DocfileWizard::fileNameForModule(QString moduleName) const
     if ( moduleName.isEmpty() ) {
         return moduleName;
     }
-    return moduleName.replace('.', '/') + ".py";
+    return moduleName.replace(QLatin1Char('.'), QLatin1Char('/')) + QStringLiteral(".py");
 }
 
 void DocfileWizard::setModuleName(const QString& moduleName)
@@ -132,7 +133,7 @@ bool DocfileWizard::run()
         // process already running
         return false;
     }
-    QString scriptUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/scripts/introspect.py");
+    QString scriptUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/scripts/introspect.py"));
     if ( scriptUrl.isEmpty() ) {
         KMessageBox::error(this, i18n("Couldn't find the introspect.py script; check your installation!"));
         return false;
@@ -142,7 +143,7 @@ bool DocfileWizard::run()
         return false;
     }
     QString outputFilename = outputFilenameField->text();
-    if ( outputFilename.contains("..") ) {
+    if ( outputFilename.contains(QStringLiteral("..")) ) {
         // protect the user from writing outside the data directory accidentally
         KMessageBox::error(this, i18n("Invalid output filename"));
         return false;
@@ -164,7 +165,7 @@ bool DocfileWizard::run()
     QObject::connect(worker, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &DocfileWizard::processFinished);
 
     // can never have too many slashes
-    outputFile.setFileName(workingDirectory + "/" + outputFilename);
+    outputFile.setFileName(workingDirectory + QStringLiteral("/") + outputFilename);
     
     QList<KDevelop::IProject*> projs = KDevelop::ICore::self()->projectController()->projects();
     QStringList args;
@@ -183,9 +184,10 @@ void DocfileWizard::saveAndClose()
 {
     bool mayWrite = true;
     if ( outputFile.exists() ) {
-        mayWrite = KMessageBox::questionYesNo(this, i18n("The output file <br/>%1<br/> already exists, "
-                                                         "do you want to overwrite it?",
-                                                          outputFile.fileName())) == KMessageBox::Yes;
+        //mayWrite = FIXME
+        KMessageDialog(KMessageDialog::QuestionTwoActions,
+                                  i18n("The output file <br/>%1<br/> already exists, do you want to overwrite it?",
+                                       outputFile.fileName()), this);
     }
     if ( mayWrite ) {
         auto url = QUrl::fromLocalFile(outputFile.fileName());
@@ -198,7 +200,8 @@ void DocfileWizard::saveAndClose()
             QDir(basePath).mkpath(basePath);
         }
         outputFile.open(QIODevice::WriteOnly);
-        QString header = "\"\"\"" + i18n("This file contains auto-generated documentation extracted\n"
+        QString header = QStringLiteral("\"\"\"") +
+        i18n("This file contains auto-generated documentation extracted\n"
                                          "from python run-time information. It is analyzed by KDevelop\n"
                                          "to offer features such as code-completion and syntax highlighting.\n"
                                          "If you discover errors in KDevelop's support for this module,\n"
@@ -206,7 +209,7 @@ void DocfileWizard::saveAndClose()
                                          "additional return statements to functions to control the return\n"
                                          "type to be used for that function by the analyzer.\n"
                                          "Make sure to keep a copy of your changes so you don't accidentally\n"
-                                         "overwrite them by re-generating the file.\n") + "\"\"\"\n\n";
+                                         "overwrite them by re-generating the file.\n") + QStringLiteral("\"\"\"\n\n");
         outputFile.write(header.toUtf8() + resultField->toPlainText().toUtf8());
         outputFile.close();
         savedAs = outputFile.fileName();
@@ -216,8 +219,8 @@ void DocfileWizard::saveAndClose()
 
 void DocfileWizard::processScriptOutput()
 {
-    statusField->insertPlainText(worker->readAllStandardError());
-    resultField->insertPlainText(worker->readAllStandardOutput());
+    statusField->insertPlainText(QString::fromLatin1(worker->readAllStandardError()));
+    resultField->insertPlainText(QString::fromLatin1(worker->readAllStandardOutput()));
     QScrollBar* scrollbar = statusField->verticalScrollBar();
     scrollbar->setValue(scrollbar->maximum());
 }

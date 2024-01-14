@@ -134,14 +134,14 @@ public:
 
     static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = nullptr) {
         // TODO cache types! this is horribly inefficient
-        const QString search = "! " + hintName + " !";
+        const QString search = QStringLiteral("! ") + hintName + QStringLiteral(" !");
         int index = comment.indexOf(search);
         if ( index >= 0 ) {
             if ( args ) {
-                int eol = comment.indexOf('\n', index);
+                int eol = comment.indexOf(QLatin1Char('\n'), index);
                 int start = index+search.size()+1;
                 QString decl = comment.mid(start, eol-start);
-                *args = decl.split(' ');
+                *args = decl.split(QLatin1Char(' '));
             }
             return true;
         }

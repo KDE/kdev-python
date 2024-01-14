@@ -78,7 +78,7 @@ QVariant FunctionDeclarationCompletionItem::data(const QModelIndex& index, int r
             if ( index.column() == KDevelop::CodeCompletionModel::Prefix ) {
                 FunctionType::Ptr type = dec->type<FunctionType>();
                 if ( type && type->returnType() ) {
-                    return i18n("function") + " -> " + type->returnType()->toString();
+                    return QVariant(i18n("function") + QStringLiteral(" -> ") + type->returnType()->toString());
                 }
             }
             break;
@@ -134,11 +134,11 @@ void FunctionDeclarationCompletionItem::executed(KTextEditor::View* view, const 
         qCritical(KDEV_PYTHON_CODECOMPLETION) << "ERROR: could not get declaration data, not executing completion item!";
         return;
     }
-    QString suffix = "()";
+    QString suffix = QStringLiteral("()");
     KTextEditor::Range checkPrefix(word.start().line(), 0, word.start().line(), word.start().column());
     KTextEditor::Range checkSuffix(word.end().line(), word.end().column(), word.end().line(), document->lineLength(word.end().line()));
-    if ( m_doNotCall || document->text(checkSuffix).trimmed().startsWith('(')
-         || document->text(checkPrefix).trimmed().endsWith('@')
+    if ( m_doNotCall || document->text(checkSuffix).trimmed().startsWith(QLatin1Char('('))
+         || document->text(checkPrefix).trimmed().endsWith(QLatin1Char('@'))
          || (functionDecl && functionDecl->isProperty()) )
     {
         // don't insert brackets if they're already there,

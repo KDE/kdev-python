@@ -19,8 +19,8 @@ namespace {
 PEP8KCModule::PEP8KCModule(KDevelop::IPlugin* plugin, QWidget* parent)
     : KDevelop::ConfigPage(plugin, nullptr, parent)
 {
-    auto config = KSharedConfig::openConfig("kdevpythonsupportrc");
-    configGroup = config->group("pep8");
+    auto config = KSharedConfig::openConfig(QStringLiteral("kdevpythonsupportrc"));
+    configGroup = config->group(QStringLiteral("pep8"));
     m_ui.setupUi(this);
 
     connect(m_ui.disableErrors, &QLineEdit::textChanged, this, &PEP8KCModule::changed);
@@ -52,7 +52,7 @@ void PEP8KCModule::reset()
 
 void PEP8KCModule::defaults()
 {
-    m_ui.enableErrors->setText("");
+    m_ui.enableErrors->setText(QString());
     m_ui.disableErrors->setText(pep8DefaultIgnoreErrors());
     m_ui.maxLineLength->setValue(79);
     m_ui.enableChecking->setChecked(false);

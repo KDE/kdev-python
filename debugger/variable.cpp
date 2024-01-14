@@ -30,7 +30,7 @@ void Variable::dataFetched(QByteArray rawData)
     for ( const QByteArray& item : data ) {
         value.append(item);
     }
-    setValue(value);
+    setValue(QString::fromLatin1(value));
     setHasMore(true);
     qCDebug(KDEV_PYTHON_DEBUGGER) << "value set to" << value << ", calling update method";
     if ( m_notifyCreated ) {
@@ -51,10 +51,10 @@ void Variable::fetchMoreChildren()
 {
     QString cmd;
     if ( m_pythonPtr ) {
-        cmd = "__kdevpython_debugger_utils.format_ptr_children("+QString::number(m_pythonPtr)+")\n";
+        cmd = QStringLiteral("__kdevpython_debugger_utils.format_ptr_children(") + QString::number(m_pythonPtr) + QStringLiteral(")\n");
     }
     else {
-        cmd = "__kdevpython_debugger_utils.format_object_children("+expression()+")\n";
+        cmd = QStringLiteral("__kdevpython_debugger_utils.format_object_children(") + expression() + QStringLiteral(")\n");
     }
     InternalPdbCommand* fetchChildrenScript = new InternalPdbCommand(this, "moreChildrenFetched", cmd);
     static_cast<DebugSession*>(ICore::self()->debugController()->currentSession())->addCommand(fetchChildrenScript);

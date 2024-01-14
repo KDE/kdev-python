@@ -110,14 +110,14 @@ QString UnsureType::toString() const
     int count = 0;
     for ( const auto& type : types ) {
         if ( count )
-            typeList += ", ";
+            typeList += QStringLiteral(", ");
         count += 1;
 
         typeList += type->toString();
     }
     for ( const auto& collapsed : collapsedTypes ) {
         if ( count )
-            typeList += ", ";
+            typeList += QStringLiteral(", ");
         count += 1;
 
         typeList += collapsed;

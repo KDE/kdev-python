@@ -25,8 +25,8 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/debugger", QStandardPaths::LocateDirectory) + "/kdevpdb.py";
-    program << m_interpreter << "-u" << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
+    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/debugger"), QStandardPaths::LocateDirectory) + QStringLiteral("/kdevpdb.py");
+    program << m_interpreter << QStringLiteral("-u") << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
     // Inject environment
     m_session = new DebugSession(program, m_workingDirectory, m_envProfileName);
     

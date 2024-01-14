@@ -77,7 +77,7 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
                                               NavigationAction::NavigateDeclaration );
         if ( auto map = listType.dynamicCast<MapType>() ) {
             contentType.append(typeLinkOrString(map->keyType().abstractType()));
-            contentType.append(" : ");
+            contentType.append(QStringLiteral(" : "));
         }
         contentType.append(typeLinkOrString(listType->contentType().abstractType()));
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
@@ -90,12 +90,12 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
         for ( int i = 0; i < indexedContainer->typesCount(); i++ ) {
             if ( i >= 5 ) {
                 // Don't print more than five types explicitly
-                typesArray << "...";
+                typesArray << QStringLiteral("...");
                 break;
             }
             typesArray << typeLinkOrString(indexedContainer->typeAt(i).abstractType());
         }
-        const QString contentType = QStringLiteral("(") + typesArray.join(", ") + ")";
+        const QString contentType = QStringLiteral("(") + typesArray.join(QStringLiteral(", ")) + QStringLiteral(")");
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }
     else {

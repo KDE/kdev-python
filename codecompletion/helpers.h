@@ -125,10 +125,10 @@ public:
         int pos = 0;
         for ( TokenListEntry item : *this ) {
             ret.append(
-                "offset " + QString::number(item.charOffset) + 
-                " position " + QString::number(pos) +
-                ": status " + QString::number(item.status) +
-                ", expression " + item.expression + "\n"
+                QStringLiteral("offset ") + QString::number(item.charOffset) +
+                QStringLiteral(" position ") + QString::number(pos) +
+                QStringLiteral(": status ") + QString::number(item.status) +
+                QStringLiteral(", expression ") + item.expression + QStringLiteral("\n")
             );
             pos ++;
         }
@@ -221,7 +221,7 @@ public:
 
     bool hasFillCharacter() const
     {
-        QStringList alignChars = QStringList() << "<" << ">" << "^" << "=";
+        QStringList alignChars = QStringList() << QStringLiteral("<") << QStringLiteral(">") << QStringLiteral("^") << QStringLiteral("=");
         return hasAlign() && alignChars.indexOf(m_formatSpec.at(1)) != -1;
     }
 
@@ -241,10 +241,10 @@ public:
 
     bool hasPrecision() const
     {
-        if (fillCharacter() == '.') {
-            return m_formatSpec.count('.') == 2;
+        if (fillCharacter() == QLatin1Char('.')) {
+            return m_formatSpec.count(QLatin1Char('.')) == 2;
         }
-        return m_formatSpec.contains('.');
+        return m_formatSpec.contains(QLatin1Char('.'));
     }
 
     QChar type() const
@@ -254,23 +254,24 @@ public:
 
     bool hasType() const
     {
-        QStringList possibleTypes = QStringList() << "b" << "c" << "d" << "e" << "E"
-                                                  << "f" << "F" << "g" << "G" << "n"
-                                                  << "o" << "s" << "x" << "X" << "%";
+        QStringList possibleTypes = QStringList() << QStringLiteral("b") << QStringLiteral("c") << QStringLiteral("d") << QStringLiteral("e")
+                                                  << QStringLiteral("E") << QStringLiteral("f") << QStringLiteral("F") << QStringLiteral("g")
+                                                  << QStringLiteral("G") << QStringLiteral("n") << QStringLiteral("o") << QStringLiteral("s")
+                                                  << QStringLiteral("x") << QStringLiteral("X") << QStringLiteral("%");
 
         return (hasFormatSpec() && possibleTypes.indexOf(m_formatSpec.at(m_formatSpec.size() - 1)) != -1);
     }
 
     QString toString() const
     {
-        QString variable = "{" + m_identifier;
+        QString variable = QLatin1Char('{') + m_identifier;
         if (hasConversion()) {
-            variable += '!' + m_conversion;
+            variable += QLatin1Char('!') + m_conversion;
         }
         if (hasFormatSpec()) {
-            variable += ':' + m_formatSpec;
+            variable += QLatin1Char(':') + m_formatSpec;
         }
-        variable += "}";
+        variable += QLatin1Char('}');
 
         return variable;
     }

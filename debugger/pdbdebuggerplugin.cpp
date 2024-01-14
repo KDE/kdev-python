@@ -4,7 +4,7 @@
     SPDX-License-Identifier: GPL-2.0-or-later
 */
 
-#include <kexportplugin.h>
+//#include <kexportplugin.h>
 #include <kpluginfactory.h>
 #include <KAboutData>
 #include <KLocalizedString>
@@ -25,10 +25,10 @@ namespace Python {
 K_PLUGIN_FACTORY_WITH_JSON(PdbDebuggerPluginFactory, "kdevpdb.json", registerPlugin<PdbDebuggerPlugin>(); )
 
 PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
-    : IPlugin("kdevpdbsupport", parent)
+    : IPlugin(QStringLiteral("kdevpdbsupport"), parent)
 {
     IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
-                            ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+                            ->pluginForExtension(QStringLiteral("org.kdevelop.IExecuteScriptPlugin"))->extension<IExecuteScriptPlugin>();
     Q_ASSERT(iface);
     KDevelop::LaunchConfigurationType* type = core()->runController()
                                               ->launchConfigurationTypeForId(iface->scriptAppConfigTypeId());

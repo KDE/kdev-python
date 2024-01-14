@@ -310,9 +310,9 @@ void ContextBuilder::visitCode(CodeAst* node) {
 
 QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const QUrl& currentDocument)
 {
-    QStringList nameComponents = name.split(".");
+    QStringList nameComponents = name.split(QLatin1Char('.'));
     QVector<QUrl> searchPaths;
-    if ( name.startsWith('.') ) {
+    if ( name.startsWith(QLatin1Char('.')) ) {
         /* To take care for imports like "from ....xxxx.yyy import zzz"
          * we need to take current doc path and run "cd .." enough times
          */
@@ -320,7 +320,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         QString tname = name.mid(1); // remove first dot
         QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
         for (QString c : tname) {
-            if (c != ".")
+            if (c != QLatin1Char('.'))
                 break;
             curPathDir.cdUp();
             nameComponents.removeFirst();
@@ -340,7 +340,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
         tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
         for ( QString component : nameComponents ) {
-            if ( component == "*" ) {
+            if ( component == QLatin1Char('*') ) {
                 // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = QStringLiteral("__init__");
             }
@@ -348,7 +348,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
-            QString testFilename = tmp.path() + "/" + component;
+            QString testFilename = tmp.path() + QLatin1Char('/') + component;
 
             bool can_continue = tmp.cd(component);
             QFileInfo sourcedir(testFilename);
@@ -356,7 +356,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
-            static QStringList valid_extensions{".py", ".pyx"};
+            static QStringList valid_extensions{QStringLiteral(".py"), QStringLiteral(".pyx")};
             for ( const auto& extension : valid_extensions ) {
                 QFile sourcefile(testFilename + extension);
                 if ( ! dir_exists || leftNameComponents.isEmpty() ) {
@@ -369,7 +369,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                         return qMakePair(sourceUrl, leftNameComponents);
                     }
                     else if ( dir_exists ) {
-                        auto path = QUrl::fromLocalFile(testFilename + "/__init__.py");
+                        auto path = QUrl::fromLocalFile(testFilename + QStringLiteral("/__init__.py"));
                         // TODO QUrl: cleanPath?
                         return qMakePair(path, leftNameComponents);
                     }

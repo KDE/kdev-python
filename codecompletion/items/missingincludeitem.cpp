@@ -33,11 +33,11 @@ QVariant MissingIncludeItem::data(const QModelIndex& index, int role, const KDev
                 case KDevelop::CodeCompletionModel::Name:
                     return m_matchText;
                 case KDevelop::CodeCompletionModel::Postfix:
-                    return "";
+                    return QString();
                 case KDevelop::CodeCompletionModel::Prefix:
                     return i18nc("programming; %1 is a code statement to be added in the editor", "Add \"%1\"", m_text);
                 default:
-                    return "";
+                    return QString();
             }
     }
     return QVariant();
@@ -51,18 +51,18 @@ void MissingIncludeItem::execute(KTextEditor::View* view, const KTextEditor::Ran
     int insertAt = 0;
     for ( int i = 0; i < view->document()->lines(); i++ ) {
         const QString& line = view->document()->line(i);
-        if ( line.trimmed().startsWith('#') || line.trimmed().isEmpty() ) {
+        if ( line.trimmed().startsWith(QLatin1Char('#')) || line.trimmed().isEmpty() ) {
             continue;
         }
 
-        if (    ( line.startsWith("import") && m_text.startsWith("import") )
-             || ( line.startsWith("from") && m_text.startsWith("from") ) )
+        if (    ( line.startsWith(QStringLiteral("import")) && m_text.startsWith(QStringLiteral("import")) )
+             || ( line.startsWith(QStringLiteral("from")) && m_text.startsWith(QStringLiteral("from")) ) )
         {
             insertAt = i;
             break;
         }
 
-        if ( ! line.startsWith("import") && ! line.startsWith("from") ) {
+        if ( ! line.startsWith(QStringLiteral("import")) && ! line.startsWith(QStringLiteral("from")) ) {
             // non-empty, non-comment, non-import line, so we insert it here; the common
             // situation this occurs in is when there's no imports yet.
             insertAt = i;

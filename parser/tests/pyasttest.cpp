@@ -54,7 +54,7 @@ void PyAstTest::initShell()
 CodeAst::Ptr PyAstTest::getAst(QString code)
 {
     QSharedPointer<AstBuilder> builder(new AstBuilder);
-    CodeAst::Ptr result = builder->parse(QUrl("<empty>"), code);
+    CodeAst::Ptr result = builder->parse(QUrl(QStringLiteral("<empty>")), code);
     qDebug() << result->dump();
     return result;
 }
@@ -87,10 +87,10 @@ void PyAstTest::testCode(QString code)
 
 void PyAstTest::testExceptionHandlers()
 {
-    QString code = "try: pass\n"
+    QString code = QStringLiteral("try: pass\n"
                    "except FooBar as baz: pass\n"
                    "except Cat as baz: pass\n"
-                   "except Dawg as asdf: pass\n";
+                   "except Dawg as asdf: pass\n");
     CodeAst::Ptr ast = getAst(code);
     VerifyVisitor v;
     v.visitCode(ast.data());
@@ -320,7 +320,7 @@ void PyAstTest::testNewPython3_data()
 
 void PyAstTest::testClass()
 {
-    testCode("class c: pass");
+    testCode(QStringLiteral("class c: pass"));
 }
 
 #include "moc_pyasttest.cpp"

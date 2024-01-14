@@ -45,17 +45,17 @@ QVariant KeywordItem::data ( const QModelIndex& index, int role, const KDevelop:
     case Qt::DisplayRole:
         if (index.column() == KTextEditor::CodeCompletionModel::Name) {
             QString kw = m_keyword;
-            return QVariant(kw.replace("\n", ""));
+            return QVariant(kw.replace(QStringLiteral("\n"), QString()));
         }
         else if ( index.column() == KTextEditor::CodeCompletionModel::Prefix ) {
             return QVariant(m_description);
         }
         else {
-            return QVariant("");
+            return QVariant(QString());
         }
         break;
     case KTextEditor::CodeCompletionModel::ItemSelected:
-        return QVariant("");
+        return QVariant(QString());
     case KTextEditor::CodeCompletionModel::InheritanceDepth:
         return QVariant(0);
     case KDevelop::CodeCompletionModel::BestMatchesCount:

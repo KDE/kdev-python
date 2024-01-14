@@ -13,7 +13,7 @@ QString AstTransformer::getattr(PyObject *obj, const char *attr) const
     if (PyUnicode_Check(v))
         return PyUnicodeObjectToQString(v);
     Py_XDECREF(v);
-    return "";
+    return QString();
 }
 
 template <>

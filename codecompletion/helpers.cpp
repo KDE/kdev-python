@@ -36,7 +36,7 @@ QString camelCaseToUnderscore(const QString& camelCase)
     for ( int i = 0; i < camelCase.size(); i++ ) {
         const QChar& c = camelCase.at(i);
         if ( c.isUpper() && i != 0 ) {
-            underscore.append('_');
+            underscore.append(QLatin1Char('_'));
         }
         underscore.append(c.toLower());
     }
@@ -45,8 +45,8 @@ QString camelCaseToUnderscore(const QString& camelCase)
 
 int identifierMatchQuality(const QString& identifier1_, const QString& identifier2_)
 {
-    QString identifier1 = camelCaseToUnderscore(identifier1_).toLower().replace('.', '_');
-    QString identifier2 = camelCaseToUnderscore(identifier2_).toLower().replace('.', '_');
+    QString identifier1 = camelCaseToUnderscore(identifier1_).toLower().replace(QLatin1Char('.'), QLatin1Char('_'));
+    QString identifier2 = camelCaseToUnderscore(identifier2_).toLower().replace(QLatin1Char('.'), QLatin1Char('_'));
 
     if ( identifier1 == identifier2 ) {
         return 3;
@@ -54,10 +54,10 @@ int identifierMatchQuality(const QString& identifier1_, const QString& identifie
     if ( identifier1.contains(identifier2) || identifier2.contains(identifier1) ) {
         return 2;
     }
-    QStringList parts1 = identifier1.split('_');
-    QStringList parts2 = identifier2.split('_');
-    parts1.removeAll("");
-    parts2.removeAll("");
+    QStringList parts1 = identifier1.split(QLatin1Char('_'));
+    QStringList parts2 = identifier2.split(QLatin1Char('_'));
+    parts1.removeAll(QString());
+    parts2.removeAll(QString());
     parts1.removeDuplicates();
     parts2.removeDuplicates();
     if ( parts1.length() > 5 || parts2.length() > 5 ) {
@@ -105,25 +105,28 @@ ExpressionParser::ExpressionParser(QString code)
 {
     keywordPopulationLock.lock();
     if ( supportedKeywords.isEmpty() ) {
-        noCompletionKeywords << "break" << "class" << "continue" << "pass" << "try"
-                             << "else" << "as" << "finally" << "global" << "lambda";
-        miscKeywords << "and" << "assert" << "del" << "elif" << "exec" << "if" << "is" << "not" 
-                     << "or" << "print" << "return" << "while" << "yield" << "with" << "await";
-        supportedKeywords << keyword("import", ExpressionParser::ImportFound);
-        supportedKeywords << keyword("from", ExpressionParser::FromFound);
-        supportedKeywords << keyword("raise", ExpressionParser::RaiseFound);
-        supportedKeywords << keyword("in", ExpressionParser::InFound);
-        supportedKeywords << keyword("for", ExpressionParser::ForFound);
-        supportedKeywords << keyword("class", ExpressionParser::ClassFound);
-        supportedKeywords << keyword("def", ExpressionParser::DefFound);
-        supportedKeywords << keyword("except", ExpressionParser::ExceptFound);
-        controlChars << keyword(":", ExpressionParser::ColonFound);
-        controlChars << keyword(",", ExpressionParser::CommaFound);
-        controlChars << keyword("(", ExpressionParser::InitializerFound);
-        controlChars << keyword("{", ExpressionParser::InitializerFound);
-        controlChars << keyword("[", ExpressionParser::InitializerFound);
-        controlChars << keyword(".", ExpressionParser::MemberAccessFound);
-        controlChars << keyword("=", ExpressionParser::EqualsFound);
+        noCompletionKeywords << QStringLiteral("break") << QStringLiteral("class") << QStringLiteral("continue") << QStringLiteral("pass")
+                             << QStringLiteral("try") << QStringLiteral("else") << QStringLiteral("as") << QStringLiteral("finally")
+                             << QStringLiteral("global") << QStringLiteral("lambda");
+        miscKeywords << QStringLiteral("and") << QStringLiteral("assert") << QStringLiteral("del") << QStringLiteral("elif") << QStringLiteral("exec")
+                     << QStringLiteral("if") << QStringLiteral("is") << QStringLiteral("not")
+                     << QStringLiteral("or") << QStringLiteral("print") << QStringLiteral("return") << QStringLiteral("while")
+                     << QStringLiteral("yield") << QStringLiteral("with") << QStringLiteral("await");
+        supportedKeywords << keyword(QStringLiteral("import"), ExpressionParser::ImportFound);
+        supportedKeywords << keyword(QStringLiteral("from"), ExpressionParser::FromFound);
+        supportedKeywords << keyword(QStringLiteral("raise"), ExpressionParser::RaiseFound);
+        supportedKeywords << keyword(QStringLiteral("in"), ExpressionParser::InFound);
+        supportedKeywords << keyword(QStringLiteral("for"), ExpressionParser::ForFound);
+        supportedKeywords << keyword(QStringLiteral("class"), ExpressionParser::ClassFound);
+        supportedKeywords << keyword(QStringLiteral("def"), ExpressionParser::DefFound);
+        supportedKeywords << keyword(QStringLiteral("except"), ExpressionParser::ExceptFound);
+        controlChars << keyword(QStringLiteral(":"), ExpressionParser::ColonFound);
+        controlChars << keyword(QStringLiteral(","), ExpressionParser::CommaFound);
+        controlChars << keyword(QStringLiteral("("), ExpressionParser::InitializerFound);
+        controlChars << keyword(QStringLiteral("{"), ExpressionParser::InitializerFound);
+        controlChars << keyword(QStringLiteral("["), ExpressionParser::InitializerFound);
+        controlChars << keyword(QStringLiteral("."), ExpressionParser::MemberAccessFound);
+        controlChars << keyword(QStringLiteral("="), ExpressionParser::EqualsFound);
     }
     keywordPopulationLock.unlock();
 }
@@ -212,13 +215,13 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
 {
     const auto remaining = getRemainingCode();
     auto trimmed = remaining.trimmed();
-    auto operatingOn = trimmed.replace('\t', ' ');
+    auto operatingOn = trimmed.replace(QLatin1Char('\t'), QLatin1Char(' '));
     bool lineIsEmpty = false;
     for ( auto it = remaining.constEnd()-1; it != remaining.constEnd(); it-- ) {
         if ( ! it->isSpace() ) {
             break;
         }
-        if ( *it == '\n' ) {
+        if ( *it == QLatin1Char('\n') ) {
             lineIsEmpty = true;
             break;
         }
@@ -230,13 +233,13 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     }
     bool lastCharIsSpace = getRemainingCode().right(1).at(0).isSpace();
     m_cursorPositionInString -= trailingWhitespace();
-    if ( operatingOn.endsWith('(') ) {
+    if ( operatingOn.endsWith(QLatin1Char('(')) ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "eventual call found";
         m_cursorPositionInString -= 1;
         *status = EventualCallFound;
         return QString();
     }
-    foreach ( const keyword& kw, controlChars ) {
+    for ( const keyword& kw : controlChars ) {
         if ( operatingOn.endsWith(kw.first) ) {
             m_cursorPositionInString -= kw.first.length();
             *status = kw.second;
@@ -244,21 +247,21 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         }
     }
     if ( lastCharIsSpace ) {
-        foreach ( const keyword& kw, supportedKeywords ) {
+        for ( const keyword& kw : supportedKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw.first) ) {
                 m_cursorPositionInString -= kw.first.length();
                 *status = kw.second;
                 return QString();
             }
         }
-        foreach ( const QString& kw, miscKeywords ) {
+        for ( const QString& kw : miscKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = MeaninglessKeywordFound;
                 return QString();
             }
         }
-        foreach ( const QString& kw, noCompletionKeywords ) {
+        for ( const QString& kw : noCompletionKeywords ) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = NoCompletionKeywordFound;
@@ -267,7 +270,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         }
     }
     // Otherwise, there's a real expression at the cursor, so scan it.
-    QStringList lines = operatingOn.split('\n');
+    QStringList lines = operatingOn.split(QLatin1Char('\n'));
     Python::TrivialLazyLineFetcher f(lines);
     int lastLine = lines.length()-1;
     KTextEditor::Cursor startCursor;
@@ -306,7 +309,7 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
         if (DUChainUtils::argumentContext(dec))
             parameters = DUChainUtils::argumentContext(dec)->localDeclarations();
 
-        ret = '(';
+        ret = QLatin1Char('(');
         bool first = true;
         int num = 0;
         
@@ -331,7 +334,7 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
             if (first)
                 first = false;
             else
-                ret += ", ";
+                ret += QStringLiteral(", ");
 
             bool doHighlight = false;
             QTextFormat doFormat;
@@ -342,7 +345,7 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
                 doFormat = normalFormat;
             
             if ( num == firstDefaultParam ) {
-                ret += "[";
+                ret += QStringLiteral("[");
                 ++defaultParamNum;
                 disableHighlighting = true;
             }
@@ -354,8 +357,8 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
             if ( includeTypes ) {
                 if (num < functionType->arguments().count()) {
                     if (AbstractType::Ptr type = functionType->arguments().at(num)) {
-                        if ( type->toString() != "<unknown>" ) {
-                            ret += type->toString() + ' ';
+                        if ( type->toString() != QStringLiteral("<unknown>") ) {
+                            ret += type->toString() + QLatin1Char(' ');
                         }
                     }
                 }
@@ -386,9 +389,9 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
             ++num;
         }
         if ( defaultParamNum != 0 ) {
-            ret += "]";
+            ret += QLatin1Char(']');
         }
-        ret += ')';
+        ret += QLatin1Char(')');
 
         if (highlighting && ret.length() != textFormatStart) {
             *highlighting <<  QVariant(textFormatStart);
@@ -404,25 +407,25 @@ StringFormatter::StringFormatter(const QString &string)
     : m_string(string)
 {
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "String being parsed: " << string;
-    QRegExp regex("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}");
-    regex.setMinimal(true);
-    int pos = 0;
-    while ( (pos = regex.indexIn(string, pos)) != -1 ) {
-        QString identifier = regex.cap(1);
-        QString conversionStr = regex.cap(2);
-        QChar conversion = (conversionStr.isNull() || conversionStr.isEmpty()) ? QChar() : conversionStr.at(0);
-        QString formatSpec = regex.cap(3);
+    QRegularExpression regex(QStringLiteral("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}"),
+                             QRegularExpression::InvertedGreedinessOption);
 
-        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "variable: " << regex.cap(0);
+    QRegularExpressionMatchIterator i = regex.globalMatch(string);
+    while (i.hasNext()) {
+        QRegularExpressionMatch match = i.next();
+        QString identifier = match.captured(1);
+        QString conversionStr = match.captured(2);
+        QChar conversion = (conversionStr.isNull() || conversionStr.isEmpty()) ? QChar() : conversionStr.at(0);
+        QString formatSpec = match.captured(3);
+
+        qCDebug(KDEV_PYTHON_CODECOMPLETION) << "variable: " << match.captured(0);
 
         // The regex guarantees that conversion is only a single character
         ReplacementVariable variable(identifier, conversion, formatSpec);
         m_replacementVariables.append(variable);
 
-        RangeInString variablePosition(pos, pos + regex.matchedLength());
+        RangeInString variablePosition(match.capturedStart(1), match.capturedEnd(1));
         m_variablePositions.append(variablePosition);
-
-        pos += regex.matchedLength();
     }
 }
 

@@ -13,7 +13,10 @@
 #include <language/duchain/problem.h>
 #include <language/editor/documentrange.h>
 #include <interfaces/icore.h>
+
 #include <shell/documentcontroller.h>
+
+#include <KTextEditor/Document>
 
 #include "pythondebug.h"
 #include "pythonparsejob.h"
@@ -31,8 +34,8 @@ StyleChecking::StyleChecking(QObject* parent)
             [this]() {
                 qWarning() << "python code checker error:" << m_checkerProcess.readAllStandardError();
             });
-    auto config = KSharedConfig::openConfig("kdevpythonsupportrc");
-    m_pep8Group = config->group("pep8");
+    auto config = KSharedConfig::openConfig(QStringLiteral("kdevpythonsupportrc"));
+    m_pep8Group = config->group(QStringLiteral("pep8"));
 }
 
 StyleChecking::~StyleChecking()
@@ -49,7 +52,7 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
     // start up the server
     if ( m_checkerProcess.state() == QProcess::NotRunning ) {
         auto python = Helper::getPythonExecutablePath(nullptr);
-        auto serverPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/codestyle.py");
+        auto serverPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/codestyle.py"));
         if ( serverPath.isEmpty() ) {
             qWarning() << "setup problem: codestyle.py not found";
             m_mutex.unlock();
@@ -81,7 +84,7 @@ void StyleChecking::startChecker(const QString& text, const QString& select,
 
 void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
 {
-    static QRegularExpression errorFormat("(.*):(\\d*):(\\d*): (.*)", QRegularExpression::CaseInsensitiveOption);
+    static QRegularExpression errorFormat(QStringLiteral("(.*):(\\d*):(\\d*): (.*)"), QRegularExpression::CaseInsensitiveOption);
     DUChainWriteLocker lock;
     auto document = m_currentlyChecking->url();
     for ( const auto& error : errors ) {
@@ -100,7 +103,7 @@ void StyleChecking::addErrorsToContext(const QVector<QString>& errors)
             p->setFinalLocation(DocumentRange(document, KTextEditor::Range(lineno - 1, qMax(colno - 1, 0),
                                                                            lineno - 1, colno)));
             p->setSource(KDevelop::IProblem::Preprocessor);
-            p->setSeverity(error.startsWith('W') ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
+            p->setSeverity(error.startsWith(QLatin1Char('W')) ? KDevelop::IProblem::Hint : KDevelop::IProblem::Warning);
             p->setDescription(i18n("PEP8 checker error: %1", error));
             ProblemPointer ptr(p);
             m_currentlyChecking->addProblem(ptr);
@@ -136,7 +139,7 @@ void StyleChecking::processOutputStarted()
     bool ok;
     auto size = size_d.toInt(&ok);
     if ( !ok || size < 0 ) {
-        addSetupErrorToContext("Got invalid size: " + size_d);
+        addSetupErrorToContext(QStringLiteral("Got invalid size: ") + QString::fromLatin1(size_d));
         m_mutex.unlock();
         return;
     }
@@ -158,10 +161,10 @@ void StyleChecking::processOutputStarted()
     auto ofs = -1;
     auto prev = ofs;
     while ( prev = ofs, (ofs = buf.indexOf('\n', ofs+1)) != -1 ) {
-        errors.append(buf.mid(prev+1, ofs-prev));
+        errors.append(QString::fromLatin1(buf.mid(prev+1, ofs-prev)));
     }
     if ( !t.isActive() ) {
-        addSetupErrorToContext("Output took longer than 100 ms.");
+        addSetupErrorToContext(QStringLiteral("Output took longer than 100 ms."));
     }
     addErrorsToContext(errors);
 
@@ -190,8 +193,8 @@ void StyleChecking::updateStyleChecking(const KDevelop::ReferencedTopDUContext& 
 
     // default empty is ok, it will never be used, because the config has to be written at least once
     // to even enable this feature.
-    auto select = m_pep8Group.readEntry<QString>("enableErrors", "");
-    auto ignore = m_pep8Group.readEntry<QString>("disableErrors", "");
+    auto select = m_pep8Group.readEntry<QString>("enableErrors", QString());
+    auto ignore = m_pep8Group.readEntry<QString>("disableErrors",QString());
     auto maxLineLength = m_pep8Group.readEntry<int>("maxLineLength", 80);
     startChecker(text, select, ignore, maxLineLength);
 }
@@ -203,7 +206,7 @@ void StyleChecking::addSetupErrorToContext(const QString& error)
     p->setFinalLocation(DocumentRange(m_currentlyChecking->url(), KTextEditor::Range(0, 0, 0, 0)));
     p->setSource(KDevelop::IProblem::Preprocessor);
     p->setSeverity(KDevelop::IProblem::Warning);
-    p->setDescription(i18n("The PEP8 syntax checker does not seem to work correctly.") + "\n" + error);
+    p->setDescription(i18n("The PEP8 syntax checker does not seem to work correctly.") + QStringLiteral("\n") + error);
     ProblemPointer ptr(p);
     m_currentlyChecking->addProblem(ptr);
 }

@@ -157,10 +157,10 @@ Helper::FuncInfo Helper::functionForCalled(Declaration* called, bool isAlias)
         return { static_cast<FunctionDeclaration*>( called ), false };
     }
     // If we're calling a type object (isAlias == true), look for a constructor.
-    static const IndexedIdentifier initId(KDevelop::Identifier("__init__"));
+    static const IndexedIdentifier initId(KDevelop::Identifier(QStringLiteral("__init__")));
 
     // Otherwise look for a `__call__()` method.
-    static const IndexedIdentifier callId(KDevelop::Identifier("__call__"));
+    static const IndexedIdentifier callId(KDevelop::Identifier(QStringLiteral("__call__")));
 
     auto attr = accessAttribute(called->abstractType(), (isAlias ? initId : callId), called->topContext());
     return { dynamic_cast<FunctionDeclaration*>(attr), isAlias };
@@ -273,7 +273,7 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
 
 QStringList Helper::getDataDirs() {
     if ( Helper::dataDirs.isEmpty() ) {
-        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
+        Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/documentation_files"), QStandardPaths::LocateDirectory);
     }
     return Helper::dataDirs;
 }
@@ -281,7 +281,7 @@ QStringList Helper::getDataDirs() {
 KDevelop::IndexedString Helper::getDocumentationFile()
 {
     if ( Helper::documentationFile.isEmpty() ) {
-        auto path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files/builtindocumentation.py");
+        auto path = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/documentation_files/builtindocumentation.py"));
         Helper::documentationFile = IndexedString(path);
     }
     return Helper::documentationFile;
@@ -340,11 +340,11 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
 {
     if ( Helper::correctionFileDirs.isEmpty() ) {
         Helper::correctionFileDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation,
-                                                               "kdevpythonsupport/correction_files/",
+                                                               QStringLiteral("kdevpythonsupport/correction_files/"),
                                                                QStandardPaths::LocateDirectory);
     }
 
-    foreach (QString correctionFileDir, correctionFileDirs) {
+    for (QString correctionFileDir : correctionFileDirs) {
         for ( const QUrl& basePath : Helper::getSearchPaths(QUrl()) ) {
             if ( ! basePath.isParentOf(document) ) {
                 continue;
@@ -352,7 +352,7 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
             auto base = basePath.path();
             auto doc = document.path();
             auto relative = _relativePath(base, doc);
-            auto fullPath = correctionFileDir + "/" + relative;
+            QString fullPath = correctionFileDir + QStringLiteral("/") + relative;
             if ( QFile::exists(fullPath) ) {
                 return QUrl::fromLocalFile(fullPath).adjusted(QUrl::NormalizePathSegments);
             }
@@ -364,7 +364,7 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
 QUrl Helper::getLocalCorrectionFile(const QUrl& document)
 {
     if ( Helper::localCorrectionFileDir.isNull() ) {
-        Helper::localCorrectionFileDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + "kdevpythonsupport/correction_files/";
+        Helper::localCorrectionFileDir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QLatin1Char('/') + QStringLiteral("kdevpythonsupport/correction_files/");
     }
 
     auto absolutePath = QUrl();
@@ -382,7 +382,7 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
 QString Helper::getPythonExecutablePath(IProject* project)
 {
     if ( project ) {
-        auto interpreter = project->projectConfiguration()->group("pythonsupport").readEntry("interpreter");
+        auto interpreter = project->projectConfiguration()->group(QStringLiteral("pythonsupport")).readEntry("interpreter");
         if ( !interpreter.isEmpty() ) {
             // we have a user-configured interpreter, try using it
             QFile f(interpreter);
@@ -394,15 +394,15 @@ QString Helper::getPythonExecutablePath(IProject* project)
     }
 
     // Find python 3 (https://www.python.org/dev/peps/pep-0394/)
-    auto result = QStandardPaths::findExecutable("python" PYTHON_VERSION_STR);
+    auto result = QStandardPaths::findExecutable(QStringLiteral("python") + QStringLiteral(PYTHON_VERSION_STR));
     if ( ! result.isEmpty() ) {
         return result;
     }
-    result = QStandardPaths::findExecutable("python" PYTHON_VERSION_MAJOR_STR);
+    result = QStandardPaths::findExecutable(QStringLiteral("python") + QStringLiteral(PYTHON_VERSION_MAJOR_STR));
     if ( ! result.isEmpty() ) {
         return result;
     }
-    result = QStandardPaths::findExecutable("python");
+    result = QStandardPaths::findExecutable(QStringLiteral("python"));
     if ( ! result.isEmpty() ) {
         return result;
     }
@@ -437,7 +437,7 @@ QString Helper::getPythonExecutablePath(IProject* project)
     }
 #endif
     // fallback
-    return PYTHON_EXECUTABLE;
+    return QStringLiteral(PYTHON_EXECUTABLE);
 }
 
 QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
@@ -462,7 +462,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         QVector<QUrl> cachedForProject;
         qCDebug(KDEV_PYTHON_DUCHAIN) << "*** Collecting search paths...";
         QStringList getpath;
-        getpath << "-c" << "import sys; sys.stdout.write('$|$'.join(sys.path))";
+        getpath << QStringLiteral("-c") << QStringLiteral("import sys; sys.stdout.write('$|$'.join(sys.path))");
         
         QProcess python;
         python.start(getPythonExecutablePath(project), getpath);
@@ -470,17 +470,17 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
         QString pythonpath = QString::fromUtf8(python.readAllStandardOutput());
 
         if ( ! pythonpath.isEmpty() ) {
-            const auto paths = pythonpath.split("$|$", SkipEmptyParts);
+            const auto paths = pythonpath.split(QStringLiteral("$|$"), SkipEmptyParts);
             for ( const QString& path : paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }
         }
         else {
             qCWarning(KDEV_PYTHON_DUCHAIN) << "Could not get search paths! Defaulting to stupid stuff.";
-            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python" PYTHON_VERSION_STR));
-            searchPaths.append(QUrl::fromLocalFile("/usr/lib/python" PYTHON_VERSION_STR "/site-packages"));
-            QString path = qgetenv("PYTHONPATH");
-            QStringList paths = path.split(':');
+            searchPaths.append(QUrl::fromLocalFile(QStringLiteral("/usr/lib/python") + QStringLiteral(PYTHON_VERSION_STR)));
+            searchPaths.append(QUrl::fromLocalFile(QStringLiteral("/usr/lib/python") + QStringLiteral(PYTHON_VERSION_STR) + QStringLiteral("/site-packages")));
+            QString pathVal = qEnvironmentVariable("PYTHONPATH");
+            QStringList paths = pathVal.split(QLatin1Char(':'));
             for ( const QString& path : paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }
@@ -510,8 +510,8 @@ AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable, co
     auto types = filterType<StructureType>(iterable,
         [](AbstractType::Ptr t) { return t->whichType() == AbstractType::TypeStructure; } );
 
-    static const IndexedIdentifier iterId(KDevelop::Identifier("__iter__"));
-    static const IndexedIdentifier nextId(KDevelop::Identifier("__next__"));
+    static const IndexedIdentifier iterId(KDevelop::Identifier(QStringLiteral("__iter__")));
+    static const IndexedIdentifier nextId(KDevelop::Identifier(QStringLiteral("__next__")));
     AbstractType::Ptr content(new IntegralType(IntegralType::TypeMixed));
 
     for ( const auto& type: types ) {

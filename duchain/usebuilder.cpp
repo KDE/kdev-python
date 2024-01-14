@@ -140,8 +140,8 @@ void UseBuilder::visitSubscript(SubscriptAst* node) {
     ExpressionVisitor v(context);
     v.visitNode(node->value);
 
-    static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
-    static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier("__setitem__"));
+    static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier(QStringLiteral("__getitem__")));
+    static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier(QStringLiteral("__setitem__")));
 
     bool isAugTarget = (node->parent->astType == Ast::AugmentedAssignmentAstType &&
                         static_cast<AugmentedAssignmentAst*>(node->parent)->target == node);

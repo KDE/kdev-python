@@ -12,7 +12,7 @@
 #include <QReadWriteLock>
 
 #include <KPluginFactory>
-#include <KPluginLoader>
+//#include <KPlugin>
 
 #include <interfaces/icore.h>
 #include <interfaces/ilanguagecontroller.h>
@@ -72,7 +72,7 @@ ContextMenuExtension LanguageSupport::contextMenuExtension(Context* context, QWi
 }
 
 LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-    : KDevelop::IPlugin("pythonlanguagesupport", parent )
+    : KDevelop::IPlugin(QStringLiteral("pythonlanguagesupport"), parent )
     , KDevelop::ILanguageSupport()
     , m_highlighting( new Highlighting( this ) )
     , m_refactoring( new Refactoring( this ) )
@@ -81,7 +81,7 @@ LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ 
     m_self = this;
 
     PythonCodeCompletionModel* codeCompletion = new PythonCodeCompletionModel(this);
-    new KDevelop::CodeCompletion(this, codeCompletion, "Python");
+    new KDevelop::CodeCompletion(this, codeCompletion, QStringLiteral("Python"));
 
     auto assistantsManager = core()->languageController()->staticAssistantsManager();
     assistantsManager->registerAssistant(StaticAssistant::Ptr(new RenameAssistant(this)));
@@ -125,7 +125,7 @@ KDevelop::ParseJob *LanguageSupport::createParseJob( const IndexedString& url )
 
 QString LanguageSupport::name() const
 {
-    return "Python";
+    return QStringLiteral("Python");
 }
 
 LanguageSupport* LanguageSupport::self()
@@ -135,23 +135,23 @@ LanguageSupport* LanguageSupport::self()
 
 SourceFormatterItemList LanguageSupport::sourceFormatterItems() const
 {
-    SourceFormatterStyle autopep8("autopep8");
-    autopep8.setCaption("autopep8");
+    SourceFormatterStyle autopep8(QStringLiteral("autopep8"));
+    autopep8.setCaption(QStringLiteral("autopep8"));
     autopep8.setDescription(i18n("Format source with the autopep8 formatter."));
-    autopep8.setOverrideSample("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
-                               "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)");
+    autopep8.setOverrideSample(QStringLiteral("class klass:\n def method(arg1,arg2):\n  a=3+5\n"
+                               "def function(arg,*vararg,**kwargs): return arg+kwarg[0]\nfunction(3, 5, 7)"));
     using P = SourceFormatterStyle::MimeHighlightPair;
-    autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{"text/x-python", "Python"},
-                                                          P{"text/x-python3", "Python 3"} });
-    QString autopep8path = QStandardPaths::findExecutable("autopep8");
+    autopep8.setMimeTypes(SourceFormatterStyle::MimeList{ P{QStringLiteral("text/x-python"), QStringLiteral("Python")},
+                                                          P{QStringLiteral("text/x-python3"), QStringLiteral("Python 3")} });
+    QString autopep8path = QStandardPaths::findExecutable(QStringLiteral("autopep8"));
     if (autopep8path.isEmpty()) {
         // TODO: proper error handling/user notification
         qCDebug(KDEV_PYTHON) << "Could not find the autopep8 executable";
-        autopep8path = "/usr/bin/autopep8";
+        autopep8path = QStringLiteral("/usr/bin/autopep8");
     }
-    autopep8.setContent(autopep8path + " -i $TMPFILE");
+    autopep8.setContent(autopep8path + QStringLiteral(" -i $TMPFILE"));
 
-    return SourceFormatterItemList{SourceFormatterStyleItem{"customscript", autopep8}};
+    return SourceFormatterItemList{SourceFormatterStyleItem{QStringLiteral("customscript"), autopep8}};
 }
 
 KDevelop::ICodeHighlighting* LanguageSupport::codeHighlighting() const

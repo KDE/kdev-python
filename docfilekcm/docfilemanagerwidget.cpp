@@ -49,7 +49,7 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
     // construct the buttons for up/download
     QVBoxLayout* buttonsLayout = new QVBoxLayout;
     QPushButton* generateButton = new QPushButton(i18n("Generate..."));
-    generateButton->setIcon(QIcon::fromTheme("tools-wizard"));
+    generateButton->setIcon(QIcon::fromTheme(QStringLiteral("tools-wizard")));
     QPushButton* importButton = new QPushButton(i18n("Import From Editor"));
     importButton->setToolTip(i18n("Copy the contents of the active editor window "
                                   "to a new file in the documentation directory"));
@@ -96,11 +96,11 @@ DocfileManagerWidget::DocfileManagerWidget(QWidget* parent)
 
 void DocfileManagerWidget::showSearchPaths()
 {
-    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, "kdevpythonsupport/documentation_files", QStandardPaths::LocateDirectory);
+    QStringList dirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/documentation_files"), QStandardPaths::LocateDirectory);
     QLabel* dirsMessageLabel = new QLabel(i18nc("displays a list of search paths below",
                                                 "Paths searched for documentation by kdev-python (in this order):"));
     QTextEdit* paths = new QTextEdit;
-    paths->setPlainText(dirs.join("\n"));
+    paths->setPlainText(dirs.join(QLatin1Char('\n')));
     paths->setReadOnly(true);
 
     QDialog* message = new QDialog(this);
@@ -108,7 +108,7 @@ void DocfileManagerWidget::showSearchPaths()
     message->layout()->addWidget(dirsMessageLabel);
     message->layout()->addWidget(paths);
     QWidget* closeWidget = new QWidget;
-    QPushButton* closeButton = new QPushButton("Close");
+    QPushButton* closeButton = new QPushButton(QStringLiteral("Close"));
     closeWidget->setLayout(new QHBoxLayout);
     closeWidget->layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding, QSizePolicy::Expanding));
     closeWidget->layout()->addWidget(closeButton);
@@ -147,7 +147,7 @@ void DocfileManagerWidget::copyEditorContents()
             dialog->layout()->addWidget(new QLabel(i18n("After copying, you will be editing the new document.")));
             dialog->layout()->addWidget(buttonbox);
             if ( dialog->exec() == QDialog::Accepted ) {
-                auto target = QUrl::fromLocalFile(docfilePath() + "/" + lineEdit->text());
+                auto target = QUrl::fromLocalFile(docfilePath() + QStringLiteral("/") + lineEdit->text());
                 // TODO QUrl: cleanPath?
                 QDir d(target.url());
                 if ( ! d.exists() ) {
@@ -174,7 +174,7 @@ QString DocfileManagerWidget::docfilePath()
 {
     // finds a local directory which is contained in the dirs searched by the parser, code
     // and creates it if it doesn't exist
-    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/") + QStringLiteral("kdevpythonsupport/documentation_files/");
     QDir dir(path);
     dir.mkpath(path);
     return path;

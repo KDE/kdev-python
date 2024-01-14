@@ -111,16 +111,16 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::shebangItems(
 {
     KeywordItem::Flags f = (KeywordItem::Flags) ( KeywordItem::ForceLineBeginning | KeywordItem::ImportantItem );
     QList<CompletionTreeItemPointer> shebangGroup;
-    if ( m_position.line == 0 && ( m_text.startsWith('#') || m_text.isEmpty() ) ) {
+    if ( m_position.line == 0 && ( m_text.startsWith(QLatin1Char('#')) || m_text.isEmpty() ) ) {
         QString i18ndescr = i18n("insert Shebang line");
         shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                    "#!/usr/bin/env python\n", i18ndescr, f));
+                                                    QStringLiteral("#!/usr/bin/env python\n"), i18ndescr, f));
         shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                    "#!/usr/bin/env python3\n", i18ndescr, f));
+                                                    QStringLiteral("#!/usr/bin/env python3\n"), i18ndescr, f));
     }
-    else if ( m_position.line <= 1 && m_text.endsWith('#') ) {
+    else if ( m_position.line <= 1 && m_text.endsWith(QLatin1Char('#')) ) {
         shebangGroup << CompletionTreeItemPointer(new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
-                                                    "# -*- coding:utf-8 -*-\n\n", i18n("specify document encoding"), f));
+                                                    QStringLiteral("# -*- coding:utf-8 -*-\n\n"), i18n("specify document encoding"), f));
     }
     eventuallyAddGroup(i18n("Add file header"), 1000, shebangGroup);
     return ItemList();
@@ -172,7 +172,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
         for ( unsigned int i = 0; i < functionCalled->defaultParametersSize(); i++ ) {
             QString paramName = args->localDeclarations().at(normalParameters + i)->identifier().toString();
             resultingItems << CompletionTreeItemPointer(new KeywordItem(CodeCompletionContext::Ptr(m_child),
-                                                        paramName + "=", i18n("specify default parameter"),
+                                                        paramName + QStringLiteral("="), i18n("specify default parameter"),
                                                         KeywordItem::ImportantItem));
         }
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "adding " << functionCalled->defaultParametersSize() << "default args";
@@ -247,7 +247,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     if ( !ctx ) {
         return {};
     }
-    QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier("BaseException"));
+    QList< Declaration* > declarations = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("BaseException")));
     if ( declarations.isEmpty() || ! declarations.first()->abstractType() ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "No valid exception classes found, aborting";
         return resultingItems;
@@ -284,7 +284,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::importFileIte
     ItemList resultingItems;
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Preparing to do autocompletion for import...";
     m_maxFolderScanDepth = 1;
-    resultingItems << includeItemsForSubmodule("");
+    resultingItems << includeItemsForSubmodule(QString());
     return resultingItems;
 }
 
@@ -345,10 +345,10 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessI
     bool needDot = true;
     for ( const QChar& c : m_followingText ) {
         if ( needDot ) {
-            m_guessTypeOfExpression.append('.');
+            m_guessTypeOfExpression.append(QLatin1Char('.'));
             needDot = false;
         }
-        if ( c.isLetterOrNumber() || c == '_' ) {
+        if ( c.isLetterOrNumber() || c == QLatin1Char('_') ) {
             m_guessTypeOfExpression.append(c);
         }
     }
@@ -385,7 +385,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         );
 
         resultingItems << CompletionTreeItemPointer(new ReplacementVariableItem(
-            ReplacementVariable("${argument}"),
+            ReplacementVariable(QStringLiteral("${argument}")),
                                 i18n("Insert named variable"), true)
         );
 
@@ -406,8 +406,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
 
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Variable under cursor: " << variable->toString();
     bool hasNumericOnlyOption =     variable->hasPrecision()
-                                || (variable->hasType() && variable->type() != 's')
-                                ||  variable->align() == '=';
+                                || (variable->hasType() && variable->type() != QLatin1Char('s'))
+                                ||  variable->align() == QLatin1Char('=');
 
     auto makeFormattingItem = [&variable, &range](const QChar& conversion, const QString& spec,
                                                   const QString& description, bool useTemplateEngine)
@@ -422,8 +422,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         auto addConversionItem = [&](const QChar& conversion, const QString& title) {
             resultingItems.append(makeFormattingItem(conversion, variable->formatSpec(), title, false));
         };
-        addConversionItem('s', i18n("Format using str()"));
-        addConversionItem('r', i18n("Format using repr()"));
+        addConversionItem(QLatin1Char('s'), i18n("Format using str()"));
+        addConversionItem(QLatin1Char('r'), i18n("Format using repr()"));
     }
 
     if ( ! variable->hasFormatSpec() ) {
@@ -431,20 +431,20 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
         {
             resultingItems.append(makeFormattingItem(variable->conversion(), format, title, useTemplateEngine));
         };
-        addFormatSpec("<${width}", i18n("Format as left-aligned"), true);
-        addFormatSpec(">${width}", i18n("Format as right-aligned"), true);
-        addFormatSpec("^${width}", i18n("Format as centered"), true);
+        addFormatSpec(QStringLiteral("<${width}"), i18n("Format as left-aligned"), true);
+        addFormatSpec(QStringLiteral(">${width}"), i18n("Format as right-aligned"), true);
+        addFormatSpec(QStringLiteral("^${width}"), i18n("Format as centered"), true);
 
         // These options don't make sense if we've set conversion using str() or repr()
         if ( ! variable->hasConversion() ) {
-            addFormatSpec(".${precision}", i18n("Specify precision"), true);
-            addFormatSpec("%", i18n("Format as percentage"), false);
-            addFormatSpec("c", i18n("Format as character"), false);
-            addFormatSpec("b", i18n("Format as binary number"), false);
-            addFormatSpec("o", i18n("Format as octal number"), false);
-            addFormatSpec("x", i18n("Format as hexadecimal number"), false);
-            addFormatSpec("e", i18n("Format in scientific (exponent) notation"), false);
-            addFormatSpec("f", i18n("Format as fixed point number"), false);
+            addFormatSpec(QStringLiteral(".${precision}"), i18n("Specify precision"), true);
+            addFormatSpec(QStringLiteral("%"), i18n("Format as percentage"), false);
+            addFormatSpec(QStringLiteral("c"), i18n("Format as character"), false);
+            addFormatSpec(QStringLiteral("b"), i18n("Format as binary number"), false);
+            addFormatSpec(QStringLiteral("o"), i18n("Format as octal number"), false);
+            addFormatSpec(QStringLiteral("x"), i18n("Format as hexadecimal number"), false);
+            addFormatSpec(QStringLiteral("e"), i18n("Format in scientific (exponent) notation"), false);
+            addFormatSpec(QStringLiteral("f"), i18n("Format as fixed point number"), false);
         }
     }
 
@@ -456,10 +456,11 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::keywordItems(
 {
     ItemList resultingItems;
     QStringList keywordItems;
-    keywordItems << "def" << "class" << "lambda" << "global" << "import"
-                 << "from" << "while" << "for" << "yield" << "return";
-    foreach ( const QString& current, keywordItems ) {
-        KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + " ", "");
+    keywordItems << QStringLiteral("def") << QStringLiteral("class") << QStringLiteral("lambda") << QStringLiteral("global")
+                 << QStringLiteral("import") << QStringLiteral("from") << QStringLiteral("while") << QStringLiteral("for")
+                 << QStringLiteral("yield") << QStringLiteral("return");
+    for ( const QString& current : keywordItems ) {
+        KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + QStringLiteral(" "), QString());
         resultingItems << CompletionTreeItemPointer(k);
     }
     return resultingItems;
@@ -477,14 +478,14 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
     if ( ! args ) {
         return resultingItems;
     }
-    if ( ! decl->isFunctionDeclaration() || decl->identifier() != KDevelop::Identifier("__init__") ) {
+    if ( ! decl->isFunctionDeclaration() || decl->identifier() != KDevelop::Identifier(QStringLiteral("__init__")) ) {
         return resultingItems;
     }
     // the current context actually belongs to a constructor
     for ( const Declaration* argument : args->localDeclarations() ) {
         const QString argName = argument->identifier().toString();
         // Do not suggest "self.self = self"
-        if ( argName == "self" ) {
+        if ( argName == QStringLiteral("self") ) {
             continue;
         }
         bool usedAlready = false;
@@ -500,7 +501,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
         if ( usedAlready ) {
             continue;
         }
-        const QString value = "self." + argName + " = " + argName;
+        const QString value = QStringLiteral("self.") + argName + QStringLiteral(" = ") + argName;
         KeywordItem* item = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this),
                                             value, i18n("Initialize property"),
                                             KeywordItem::ImportantItem);
@@ -523,14 +524,14 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
         // we only take the first two, and only two. It gets too much items otherwise.
         QStringList combinations;
         auto names = v->unknownNames().values();
-        combinations << names.at(0) + ", " + names.at(1);
-        combinations << names.at(1) + ", " + names.at(0);
-        foreach ( const QString& c, combinations ) {
-            items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + c + " in ", "");
+        combinations << names.at(0) + QStringLiteral(", ") + names.at(1);
+        combinations << names.at(1) + QStringLiteral(", ") + names.at(0);
+        for ( const QString& c : combinations ) {
+            items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), QString() + c + QStringLiteral(" in "), QString());
         }
     }
     for ( const QString& n : v->unknownNames() ) {
-        items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), "" + n + " in ", "");
+        items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), QString() + n + QStringLiteral(" in "), QString());
     }
 
     for ( KeywordItem* item : items ) {
@@ -620,7 +621,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     QList<CompletionTreeItemPointer> items;
 
     // Find all the non-empty name components (mainly, remove the last empty one for "sys." or similar)
-    QStringList components = forString.split('.');
+    QStringList components = forString.split(QLatin1Char('.'));
     components.removeAll(QString());
 
     // Check all components are alphanumeric
@@ -642,7 +643,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     }
 
     // See if there's a module called like that.
-    auto found = ContextBuilder::findModulePath(components.join("."), m_workingOnDocument);
+    auto found = ContextBuilder::findModulePath(components.join(QLatin1Char('.')), m_workingOnDocument);
 
     // Check if anything was found
     if ( found.first.isValid() ) {
@@ -650,14 +651,14 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
         if ( components.size() > 1 && found.second.isEmpty() ) {
             // There's something left for X in "from foo import X",
             // and it's not a declaration inside the module so offer that
-            const QString module = QStringList(components.mid(0, components.size() - 1)).join(".");
-            const QString text = QString("from %1 import %2").arg(module, components.last());
+            const QString module = QStringList(components.mid(0, components.size() - 1)).join(QLatin1Char('.'));
+            const QString text = QString(QStringLiteral("from %1 import %2")).arg(module, components.last());
             MissingIncludeItem* item = new MissingIncludeItem(text, components.last(), forString);
             items << CompletionTreeItemPointer(item);
         }
 
-        const QString module = QStringList(components.mid(0, components.size() - found.second.size())).join(".");
-        const QString text = QString("import %1").arg(module);
+        const QString module = QStringList(components.mid(0, components.size() - found.second.size())).join(QLatin1Char('.'));
+        const QString text = QString(QStringLiteral("import %1")).arg(module);
         MissingIncludeItem* item = new MissingIncludeItem(text, components.last());
         items << CompletionTreeItemPointer(item);
     }
@@ -783,7 +784,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         // TODO rework this, it's maybe not the most elegant solution possible
         // TODO rework the magic functions thing, I want them sorted at the end of the list but KTE doesn't seem to allow that
         for ( const DeclarationDepthPair& current : declarations ) {
-            if ( current.first->context() != builtinTopContext && ! current.first->identifier().identifier().str().startsWith("__") ) {
+            if ( current.first->context() != builtinTopContext && ! current.first->identifier().identifier().str().startsWith(QStringLiteral("__")) ) {
                 keepDeclarations.append(current);
             }
             else {
@@ -806,13 +807,13 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     
     if ( item.remainingIdentifiers.isEmpty() ) {
         // check for the __init__ file
-        QFileInfo initFile(item.directory.path(), "__init__.py");
+        QFileInfo initFile(item.directory.path(), QStringLiteral("__init__.py"));
         if ( initFile.exists() ) {
             IncludeItem init;
             init.basePath = item.directory;
             init.isDirectory = true;
-            init.name = "";
-            if ( ! item.directory.fileName().contains('-') ) {
+            init.name = QString();
+            if ( ! item.directory.fileName().contains(QLatin1Char('-')) ) {
                 // Do not include items which contain "-", those are not valid
                 // modules but instead often e.g. .egg directories
                 ImportFileItem* importfile = new ImportFileItem(init);
@@ -823,7 +824,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         }
     }
     else {
-        QFileInfo file(item.directory.path(), item.remainingIdentifiers.first() + ".py");
+        QFileInfo file(item.directory.path(), item.remainingIdentifiers.first() + QStringLiteral(".py"));
         item.remainingIdentifiers.removeFirst();
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << " CHECK:" << file.absoluteFilePath();
         if ( file.exists() ) {
@@ -852,7 +853,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
         for ( QFileInfo file : contents ) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
-                if ( file.fileName().endsWith(".py") || file.fileName().endsWith(".so") ) {
+                if ( file.fileName().endsWith(QStringLiteral(".py")) || file.fileName().endsWith(QStringLiteral(".so")) ) {
                     IncludeItem fileInclude;
                     fileInclude.basePath = item.directory;
                     fileInclude.isDirectory = false;
@@ -862,7 +863,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
                     items << CompletionTreeItemPointer(import);
                 }
             }
-            else if ( ! file.fileName().contains('-') ) {
+            else if ( ! file.fileName().contains(QLatin1Char('-')) ) {
                 IncludeItem dirInclude;
                 dirInclude.basePath = item.directory;
                 dirInclude.isDirectory = true;
@@ -919,10 +920,10 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {
-        subdirs = submodule.split(".");
+        subdirs = submodule.split(QLatin1Char('.'));
     }
     
-    Q_ASSERT(! subdirs.contains(""));
+    Q_ASSERT(! subdirs.contains(QString()));
     
     QList<IncludeSearchTarget> foundPaths;
     
@@ -1056,7 +1057,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     // This will set the line to use for the completion to the beginning of the expression.
     // In reality, the line we're in might mismatch the beginning of the current expression,
     // for example in multi-line list initializers.
-    int currentlyCheckedLine = position.line - text.mid(text.length() - allExpressions.first().charOffset).count('\n');
+    int currentlyCheckedLine = position.line - text.mid(text.length() - allExpressions.first().charOffset).count(QLatin1Char('\n'));
     
     // The following code will check whether the DUContext directly at the cursor should be used, or a previous one.
     // The latter might be the case if there's code like this:
@@ -1152,7 +1153,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
     
     if ( firstStatus == ExpressionParser::DefFound ) {
         if ( context->type() == DUContext::Class ) {
-            m_indent = QString(" ").repeated(indents.indentForLine(indents.linesCount()-1));
+            m_indent = QString(QStringLiteral(" ")).repeated(indents.indentForLine(indents.linesCount()-1));
             m_operation = DefineCompletion;
         }
         else {
@@ -1194,7 +1195,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             offset -= 1;
         }
         if ( ok ) {
-            m_guessTypeOfExpression = exprs.join(",");
+            m_guessTypeOfExpression = exprs.join(QLatin1Char(','));
             m_operation = GeneratorVariableCompletion;
             return;
         }
@@ -1247,7 +1248,7 @@ PythonCodeCompletionContext::PythonCodeCompletionContext(DUContextPointer contex
             m_searchImportItemsInModule = firstPiece;
         }
         else {
-            m_searchImportItemsInModule = firstPiece + "." + secondPiece;
+            m_searchImportItemsInModule = firstPiece + QStringLiteral(".") + secondPiece;
         }
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << firstPiece << secondPiece;
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Got submodule to search:" << m_searchImportItemsInModule << "from text" << textWithoutStrings;

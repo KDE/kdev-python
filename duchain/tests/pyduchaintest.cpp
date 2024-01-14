@@ -50,8 +50,8 @@ using namespace Python;
 
 PyDUChainTest::PyDUChainTest(QObject* parent): QObject(parent)
 {
-    assetsDir = QDir(DUCHAIN_PY_DATA_DIR);
-    if (!assetsDir.cd("data")) {
+    assetsDir = QDir(QStringLiteral(DUCHAIN_PY_DATA_DIR));
+    if (!assetsDir.cd(QStringLiteral("data"))) {
         qFatal("Failed find data directory for test files. Aborting");
     }
 
@@ -66,7 +66,7 @@ QList<QString> PyDUChainTest::FindPyFiles(QDir& rootDir)
 {
     QList<QString> foundfiles;
     rootDir.setFilter(QDir::Files | QDir::Dirs | QDir::NoDot | QDir::NoDotDot);
-    rootDir.setNameFilters(QStringList() << "*.py"); // We only want .py files
+    rootDir.setNameFilters(QStringList() << QStringLiteral("*.py")); // We only want .py files
     
     QDirIterator it(rootDir, QDirIterator::Subdirectories);
     while(it.hasNext()) {
@@ -77,7 +77,7 @@ QList<QString> PyDUChainTest::FindPyFiles(QDir& rootDir)
 
 void PyDUChainTest::init()
 {
-    QString currentTest = QString(QTest::currentTestFunction());
+    QString currentTest = QString::fromLatin1(QTest::currentTestFunction());
     if (lastTest == currentTest) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "Already prepared assets for " << currentTest << ", skipping";
         return;
@@ -98,8 +98,9 @@ void PyDUChainTest::init()
     
     QList<QString> foundfiles = FindPyFiles(assetModuleDir);
 
-    QString correctionFileDir = QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kdevpythonsupport/correction_files", QStandardPaths::LocateDirectory);
-    auto correctionFileUrl = QUrl(QDir::cleanPath(correctionFileDir + "/testCorrectionFiles/example.py"));
+    QString correctionFileDir = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/correction_files"),
+                                                       QStandardPaths::LocateDirectory);
+    auto correctionFileUrl = QUrl(QDir::cleanPath(correctionFileDir + QStringLiteral("/testCorrectionFiles/example.py")));
     foundfiles.prepend(correctionFileUrl.path());
 
     for ( int i = 0; i < 2; i++ ) {
@@ -128,7 +129,7 @@ void PyDUChainTest::initShell()
     core->initialize(KDevelop::Core::NoUi);
     
     auto doc_url = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
-                                          "kdevpythonsupport/documentation_files/builtindocumentation.py");
+                                          QStringLiteral("kdevpythonsupport/documentation_files/builtindocumentation.py"));
     
     qCDebug(KDEV_PYTHON_DUCHAIN) << doc_url;
 
@@ -142,7 +143,7 @@ void PyDUChainTest::initShell()
 
 ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 {
-    TestFile* testfile = new TestFile(code + "\n", "py", nullptr, testDir.absolutePath().append("/"));
+    TestFile* testfile = new TestFile(code + QStringLiteral("\n"), QStringLiteral("py"), nullptr, testDir.absolutePath().append(QLatin1Char('/')));
     createdFiles << testfile;
 
     testfile->parse(TopDUContext::ForceUpdate | TopDUContext::AST);
@@ -171,12 +172,12 @@ void PyDUChainTest::testMultiFromImport()
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainReadLocker lock;
-    QList<Declaration*> a = ctx->findDeclarations(QualifiedIdentifier("a"));
-    QList<Declaration*> b = ctx->findDeclarations(QualifiedIdentifier("b"));
+    QList<Declaration*> a = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("a")));
+    QList<Declaration*> b = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("b")));
     QVERIFY(! a.isEmpty());
     QVERIFY(! b.isEmpty());
-    QVERIFY(a.first()->abstractType()->toString().endsWith("int"));
-    QVERIFY(b.first()->abstractType()->toString().endsWith("int"));
+    QVERIFY(a.first()->abstractType()->toString().endsWith(QStringLiteral("int")));
+    QVERIFY(b.first()->abstractType()->toString().endsWith(QStringLiteral("int")));
 }
 
 void PyDUChainTest::testMultiFromImport_data() {
@@ -213,18 +214,18 @@ void PyDUChainTest::testRelativeImport_data() {
 }
 
 void PyDUChainTest::testImportFiles() {
-    QString code = "import testImportFiles\nk = testImportFiles.fromInit()\np = testImportFiles.other.fromOther()";
-    ReferencedTopDUContext ctx = parse(code.toUtf8());
+    QString code = QStringLiteral("import testImportFiles\nk = testImportFiles.fromInit()\np = testImportFiles.other.fromOther()");
+    ReferencedTopDUContext ctx = parse(code);
     DUChainReadLocker lock;
     QVERIFY(ctx);
 
-    auto k = ctx->findDeclarations(QualifiedIdentifier("k"));
-    auto p = ctx->findDeclarations(QualifiedIdentifier("p"));
+    auto k = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("k")));
+    auto p = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("p")));
     QCOMPARE(k.size(), 1);
     QCOMPARE(p.size(), 1);
     QVERIFY(k.first()->abstractType());
-    QCOMPARE(k.first()->abstractType()->toString(), QString("fromInit"));
-    QCOMPARE(p.first()->abstractType()->toString(), QString("fromOther"));
+    QCOMPARE(k.first()->abstractType()->toString(), QStringLiteral("fromInit"));
+    QCOMPARE(p.first()->abstractType()->toString(), QStringLiteral("fromOther"));
 }
 
 void PyDUChainTest::testCrashes() {
@@ -448,7 +449,7 @@ void PyDUChainTest::testCrashes_data() {
 
 void PyDUChainTest::testClassVariables()
 {
-    ReferencedTopDUContext ctx = parse("class c():\n myvar = 3;\n def meth(self):\n  print(myvar)");
+    ReferencedTopDUContext ctx = parse(QStringLiteral("class c():\n myvar = 3;\n def meth(self):\n  print(myvar)"));
     QVERIFY(ctx.data());
     DUChainWriteLocker lock(DUChain::lock());
     CursorInRevision relevantPosition(3, 10);
@@ -491,7 +492,7 @@ void PyDUChainTest::testBinaryOperatorsUnsure()
 
     ReferencedTopDUContext ctx = parse(code);
     DUChainWriteLocker lock;
-    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("checkme")));
     QVERIFY(!ds.isEmpty());
     Declaration* d = ds.first();
     QVERIFY(d);
@@ -522,7 +523,7 @@ void PyDUChainTest::testFlickering()
     QFETCH(int, before);
     QFETCH(int, after);
     
-    TestFile f(code[0], "py");
+    TestFile f(code[0], QStringLiteral("py"));
     f.parse(TopDUContext::ForceUpdate);
     f.waitForParsed(500);
     
@@ -558,7 +559,7 @@ void PyDUChainTest::testFlickering_data()
     QTest::addColumn<int>("before");
     QTest::addColumn<int>("after");
     
-    QTest::newRow("declaration_flicker") << ( QStringList() << "a=2\n" << "b=3\na=2\n" ) << 1 << 2;
+    QTest::newRow("declaration_flicker") << ( QStringList() << QStringLiteral("a=2\n") << QStringLiteral("b=3\na=2\n") ) << 1 << 2;
 }
 
 void PyDUChainTest::testCannotOverwriteBuiltins()
@@ -568,7 +569,7 @@ void PyDUChainTest::testCannotOverwriteBuiltins()
 
     ReferencedTopDUContext ctx = parse(code);
     DUChainWriteLocker lock;
-    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QList<Declaration*> ds = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("checkme")));
     QVERIFY(!ds.isEmpty());
     Declaration* d = ds.first();
     QVERIFY(d);
@@ -595,17 +596,17 @@ void PyDUChainTest::testCannotOverwriteBuiltins_data()
 
 void PyDUChainTest::testVarKWArgs()
 {
-    ReferencedTopDUContext ctx = parse("def myfun(arg, *vararg, **kwarg):\n pass\n pass");
+    ReferencedTopDUContext ctx = parse(QStringLiteral("def myfun(arg, *vararg, **kwarg):\n pass\n pass"));
     DUChainWriteLocker lock;
     QVERIFY(ctx);
     DUContext* func = ctx->findContextAt(CursorInRevision(1, 0));
     QVERIFY(func);
-    QVERIFY(! func->findDeclarations(QualifiedIdentifier("arg")).isEmpty());
-    QVERIFY(! func->findDeclarations(QualifiedIdentifier("vararg")).isEmpty());
-    QVERIFY(! func->findDeclarations(QualifiedIdentifier("kwarg")).isEmpty());
-    QVERIFY(func->findDeclarations(QualifiedIdentifier("vararg")).first()->abstractType()->toString().startsWith("tuple"));
-    QCOMPARE(func->findDeclarations(QualifiedIdentifier("kwarg")).first()->abstractType()->toString(),
-             QString("dict of str : unknown"));
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier(QStringLiteral("arg"))).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier(QStringLiteral("vararg"))).isEmpty());
+    QVERIFY(! func->findDeclarations(QualifiedIdentifier(QStringLiteral("kwarg"))).isEmpty());
+    QVERIFY(func->findDeclarations(QualifiedIdentifier(QStringLiteral("vararg"))).first()->abstractType()->toString().startsWith(QStringLiteral("tuple")));
+    QCOMPARE(func->findDeclarations(QualifiedIdentifier(QStringLiteral("kwarg"))).first()->abstractType()->toString(),
+             QString(QStringLiteral("dict of str : unknown")));
 }
 
 void PyDUChainTest::testSimple()
@@ -727,9 +728,9 @@ void PyDUChainTest::testRanges()
     QVERIFY(m_ast);
 
     for ( int i = 0; i < column_ranges.length(); i++ ) {
-        int scol = column_ranges.at(i).split(",")[0].toInt();
-        int ecol = column_ranges.at(i).split(",")[1].toInt();
-        QString identifier = column_ranges.at(i).split(",")[2];
+        int scol = column_ranges.at(i).split(QLatin1Char(','))[0].toInt();
+        int ecol = column_ranges.at(i).split(QLatin1Char(','))[1].toInt();
+        QString identifier = column_ranges.at(i).split(QLatin1Char(','))[2];
         auto r = KTextEditor::Range(0, scol, 0, ecol);
 
         AttributeRangeTestVisitor* visitor = new AttributeRangeTestVisitor();
@@ -748,48 +749,48 @@ void PyDUChainTest::testRanges_data()
     QTest::addColumn<int>("expected_amount_of_variables");
     QTest::addColumn<QStringList>("column_ranges");
 
-    QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << "5,8,attr" );
-    QTest::newRow("attr_binary") << "base.attr + base.attr" << 4 << ( QStringList() << "5,8,attr" << "17,20,attr" );
-    QTest::newRow("attr_same") << "aaa.aaa.aaa + aaa.aaa.aaa" << 6 << ( QStringList() << "4,6,aaa" << "8,10,aaa" << "18,20,aaa" << "22,24,aaa" );
-    QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << "5,8,attr" << "10,16,subattr" );
-    QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << "5,8,attr" << "12,18,subattr" );
-    QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << "5,8,attr" << "23,29,subattr" );
-    QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" );
-    QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << "5,8,attr" << "22,28,subattr" << "15,19,parg2" );
-    QTest::newRow("attr_complicated") << "base.attr(arg1.arg2(arg4.arg5, [func(a.b)]).arg3(arg6.arg7)).subattr" << 5 << ( QStringList() << "5,8,attr" << "15,18,arg2" <<
-                                                            "25,28,arg5" << "39,39,b" << "44,47,arg3" << "54,57,arg7" << "61,67,subattr");
-    QTest::newRow("attr_two_in_call") << "func(inst.aaa, inst.bbbb)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,bbbb" );
-    QTest::newRow("attr_two_in_call_same") << "func(inst.aaa, inst.aaaa)" << 2 << ( QStringList() << "10,12,aaa" << "20,23,aaaa" );
-    QTest::newRow("attr_two_in_call_same2") << "func(inst.aaa, inst.aaa)" << 2 << ( QStringList() << "10,12,aaa" << "20,22,aaa" );
-    QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << "4,7,join" );
-    QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << "9,14,format" );
-    QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << "7,12,format" );
-    QTest::newRow("attr_parentheses") << "(\"foo\" + \"foo\").capitalize()" << 1 << ( QStringList() << "16,25,capitalize" );
-    QTest::newRow("attr_commented_name") << "base.attr # attr" << 2 << ( QStringList() << "5,8,attr" );
-    QTest::newRow("attr_name_in_strings") << "'attr' + base['attr'].attr # attr" << 4 << ( QStringList() << "22,25,attr" );
-    QTest::newRow("attr_dot_hash_in_strings") << "'.foo#' + base['.#'].attr # attr" << 4 << ( QStringList() << "21,24,attr" );
-    QTest::newRow("attr_dot_name_hash") << "base['.attr#'].attr" << 4 << ( QStringList() << "15,18,attr" );
+    QTest::newRow("attr_two_attributes") << "base.attr" << 2 << ( QStringList() << QStringLiteral("5,8,attr") );
+    QTest::newRow("attr_binary") << "base.attr + base.attr" << 4 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("17,20,attr") );
+    QTest::newRow("attr_same") << "aaa.aaa.aaa + aaa.aaa.aaa" << 6 << ( QStringList() << QStringLiteral("4,6,aaa") << QStringLiteral("8,10,aaa") << QStringLiteral("18,20,aaa") << QStringLiteral("22,24,aaa") );
+    QTest::newRow("attr_three_attributes") << "base.attr.subattr" << 3 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("10,16,subattr") );
+    QTest::newRow("attr_functionCall") << "base.attr().subattr" << 3 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("12,18,subattr") );
+    QTest::newRow("attr_stringSubscript") << "base.attr[\"a.b.c..de\"].subattr" << 3 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("23,29,subattr") );
+    QTest::newRow("attr_functionCallWithArguments") << "base.attr(arg1, arg2).subattr" << 5 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("22,28,subattr") );
+    QTest::newRow("attr_functionCallWithArgument_withInner") << "base.attr(arg1.parg2).subattr" << 5 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("22,28,subattr") << QStringLiteral("15,19,parg2") );
+    QTest::newRow("attr_complicated") << "base.attr(arg1.arg2(arg4.arg5, [func(a.b)]).arg3(arg6.arg7)).subattr" << 5 << ( QStringList() << QStringLiteral("5,8,attr") << QStringLiteral("15,18,arg2") <<
+                                                            QStringLiteral("25,28,arg5") << QStringLiteral("39,39,b") << QStringLiteral("44,47,arg3") << QStringLiteral("54,57,arg7") << QStringLiteral("61,67,subattr") );
+    QTest::newRow("attr_two_in_call") << "func(inst.aaa, inst.bbbb)" << 2 << ( QStringList() << QStringLiteral("10,12,aaa") << QStringLiteral("20,23,bbbb") );
+    QTest::newRow("attr_two_in_call_same") << "func(inst.aaa, inst.aaaa)" << 2 << ( QStringList() << QStringLiteral("10,12,aaa") << QStringLiteral("20,23,aaaa") );
+    QTest::newRow("attr_two_in_call_same2") << "func(inst.aaa, inst.aaa)" << 2 << ( QStringList() << QStringLiteral("10,12,aaa") << QStringLiteral("20,22,aaa") );
+    QTest::newRow("attr_of_string_slash") << "'/'.join(a)" << 1 << ( QStringList() << QStringLiteral("4,7,join") );
+    QTest::newRow("attr_of_string_in_list") << "[\"*{0}*\".format(foo)]" << 1 << ( QStringList() << QStringLiteral("9,14,format") );
+    QTest::newRow("attr_of_call_in_list") << "[foo().format(foo)]" << 1 << ( QStringList() << QStringLiteral("7,12,format") );
+    QTest::newRow("attr_parentheses") << "(\"foo\" + \"foo\").capitalize()" << 1 << ( QStringList() << QStringLiteral("16,25,capitalize") );
+    QTest::newRow("attr_commented_name") << "base.attr # attr" << 2 << ( QStringList() << QStringLiteral("5,8,attr") );
+    QTest::newRow("attr_name_in_strings") << "'attr' + base['attr'].attr # attr" << 4 << ( QStringList() << QStringLiteral("22,25,attr") );
+    QTest::newRow("attr_dot_hash_in_strings") << "'.foo#' + base['.#'].attr # attr" << 4 << ( QStringList() << QStringLiteral("21,24,attr") );
+    QTest::newRow("attr_dot_name_hash") << "base['.attr#'].attr" << 4 << ( QStringList() << QStringLiteral("15,18,attr") );
 
-    QTest::newRow("string_parentheses") << "(\"asdf\".join())" << 1 << ( QStringList() << "8,11,join" );
-    QTest::newRow("string_parentheses2") << "(\"asdf\").join()" << 1 << ( QStringList() << "9,12,join" );
-    QTest::newRow("string_parentheses3") << "(\"asdf\".join()).join()" << 2 << ( QStringList() << "8,11,join" << "16,19,join" );
-    QTest::newRow("string_parentheses4") << "(\"asdf\".join()+2).join()" << 2 << ( QStringList() << "8,11,join" << "18,21,join" );
-    QTest::newRow("string_parentheses_call") << "f(\"asdf\".join())" << 1 << ( QStringList() << "9,12,join" );
+    QTest::newRow("string_parentheses") << "(\"asdf\".join())" << 1 << ( QStringList() << QStringLiteral("8,11,join") );
+    QTest::newRow("string_parentheses2") << "(\"asdf\").join()" << 1 << ( QStringList() << QStringLiteral("9,12,join") );
+    QTest::newRow("string_parentheses3") << "(\"asdf\".join()).join()" << 2 << ( QStringList() << QStringLiteral("8,11,join") << QStringLiteral("16,19,join") );
+    QTest::newRow("string_parentheses4") << "(\"asdf\".join()+2).join()" << 2 << ( QStringList() << QStringLiteral("8,11,join") << QStringLiteral("18,21,join") );
+    QTest::newRow("string_parentheses_call") << "f(\"asdf\".join())" << 1 << ( QStringList() << QStringLiteral("9,12,join") );
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
-    QTest::newRow("fstring_attr") << "f\"foo{bar.baz}\"" << 1 << ( QStringList() << "10,12,baz" );
+    QTest::newRow("fstring_attr") << "f\"foo{bar.baz}\"" << 1 << ( QStringList() << QStringLiteral("10,12,baz") );
 #endif
 
-    QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << "4,7,func" );
-    QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << "7,10,func" );
-    QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << "6,8,cls" );
-    QTest::newRow("classdef_range_inheritance") << "class cls(parent1, parent2): pass" << 1 << ( QStringList() << "6,8,cls" );
-    QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << "12,14,cls" );
-    QTest::newRow("vararg_kwarg") << "def func(*vararg, **kwargs): pass" << 2 << ( QStringList() << "10,16,vararg" << "20,26,kwargs" );
+    QTest::newRow("funcrange_def") << "def func(): pass" << 1 << ( QStringList() << QStringLiteral("4,7,func") );
+    QTest::newRow("funcrange_spaces_def") << "def    func(): pass" << 1 << ( QStringList() << QStringLiteral("7,10,func") );
+    QTest::newRow("classdef_range") << "class cls(): pass" << 1 << ( QStringList() << QStringLiteral("6,8,cls") );
+    QTest::newRow("classdef_range_inheritance") << "class cls(parent1, parent2): pass" << 1 << ( QStringList() << QStringLiteral("6,8,cls") );
+    QTest::newRow("classdef_range_inheritance_spaces") << "class       cls(  parent1,    parent2     ):pass" << 1 << ( QStringList() << QStringLiteral("12,14,cls") );
+    QTest::newRow("vararg_kwarg") << "def func(*vararg, **kwargs): pass" << 2 << ( QStringList() << QStringLiteral("10,16,vararg") << QStringLiteral("20,26,kwargs") );
 
-    QTest::newRow("import") << "import sys" << 1 << ( QStringList() << "7,10,sys" );
-    QTest::newRow("import2") << "import i.localvar1" << 1 << ( QStringList() << "7,18,i.localvar1" );
-    QTest::newRow("import3") << "import sys as a" << 1 << ( QStringList() << "13,14,a" );
+    QTest::newRow("import") << "import sys" << 1 << ( QStringList() << QStringLiteral("7,10,sys") );
+    QTest::newRow("import2") << "import i.localvar1" << 1 << ( QStringList() << QStringLiteral("7,18,i.localvar1") );
+    QTest::newRow("import3") << "import sys as a" << 1 << ( QStringList() << QStringLiteral("13,14,a") );
 }
 
 class TypeTestVisitor : public AstDefaultVisitor {
@@ -798,7 +799,7 @@ public:
     TopDUContextPointer ctx;
     bool found;
     void visitName(NameAst* node) override {
-        if ( node->identifier->value != "checkme" ) return;
+        if ( node->identifier->value != QStringLiteral("checkme") ) return;
         QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier(node->identifier->value));
         if ( ! decls.length() ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "No declaration found for " << node->identifier->value;
@@ -807,7 +808,7 @@ public:
         Declaration* d = decls.last();
         QVERIFY(d->abstractType());
         qCDebug(KDEV_PYTHON_DUCHAIN) << "found: " << node->identifier->value << "is" << d->abstractType()->toString() << "should be" << searchingForType;
-        if ( d->abstractType()->toString().replace("__kdevpythondocumentation_builtin_", "").startsWith(searchingForType) ) {
+        if ( d->abstractType()->toString().replace(QStringLiteral("__kdevpythondocumentation_builtin_"),QString()).startsWith(searchingForType) ) {
             found = true;
             return;
         }
@@ -820,7 +821,7 @@ void PyDUChainTest::testTypes()
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
 
-    ReferencedTopDUContext ctx = parse(code.toUtf8());
+    ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     QVERIFY(m_ast);
 
@@ -1339,7 +1340,7 @@ void PyDUChainTest::testImportDeclarations() {
     QFETCH(QStringList, expectedDecls);
     QFETCH(bool, shouldBeAliased);
     
-    ReferencedTopDUContext ctx = parse(code.toUtf8());
+    ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     QVERIFY(m_ast);
     
@@ -1353,7 +1354,7 @@ void PyDUChainTest::testImportDeclarations() {
             qCDebug(KDEV_PYTHON_DUCHAIN) << current.first->toString() << current.first->identifier().identifier().byteArray() << name;
         }
         for ( const pair& current : decls ) {
-            if ( ! ( current.first->identifier().identifier().byteArray() == name ) ) continue;
+            if ( ! ( current.first->identifier().identifier().str() == name ) ) continue;
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Found: " << current.first->toString() << " for " << name;
             AliasDeclaration* isAliased = dynamic_cast<AliasDeclaration*>(current.first);
             if ( isAliased && shouldBeAliased ) {
@@ -1410,10 +1411,10 @@ void PyDUChainTest::testImportDeclarations_data() {
     QTest::addColumn<QStringList>("expectedDecls");
     QTest::addColumn<bool>("shouldBeAliased");
     
-    QTest::newRow("from_import") << "from testImportDeclarations.i import checkme" << ( QStringList() << "checkme" ) << true;
-    QTest::newRow("import") << "import testImportDeclarations.i" << ( QStringList() << "testImportDeclarations" ) << false;
-    QTest::newRow("import_as") << "import testImportDeclarations.i as checkme" << ( QStringList() << "checkme" ) << false;
-    QTest::newRow("from_import_as") << "from testImportDeclarations.i import checkme as checkme" << ( QStringList() << "checkme" ) << true;
+    QTest::newRow("from_import") << "from testImportDeclarations.i import checkme" << ( QStringList() << QStringLiteral("checkme") ) << true;
+    QTest::newRow("import") << "import testImportDeclarations.i" << ( QStringList() << QStringLiteral("testImportDeclarations") ) << false;
+    QTest::newRow("import_as") << "import testImportDeclarations.i as checkme" << ( QStringList() << QStringLiteral("checkme") ) << false;
+    QTest::newRow("from_import_as") << "from testImportDeclarations.i import checkme as checkme" << ( QStringList() << QStringLiteral("checkme") ) << true;
     QTest::newRow("from_import_missing") << "from testImportDeclarations.i import missing as checkme" << ( QStringList() ) << true;
 }
 
@@ -1421,7 +1422,7 @@ typedef QPair<Declaration*, int> p;
 
 void PyDUChainTest::testAutocompletionFlickering()
 {
-    TestFile f("foo = 3\nfoo2 = 2\nfo", "py");
+    TestFile f(QStringLiteral("foo = 3\nfoo2 = 2\nfo"), QStringLiteral("py"));
     f.parse(TopDUContext::ForceUpdate);
     f.waitForParsed(500);
     
@@ -1435,7 +1436,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     }
     lock.unlock();
     
-    f.setFileContents("foo = 3\nfoo2 = 2\nfoo");
+    f.setFileContents(QStringLiteral("foo = 3\nfoo2 = 2\nfoo"));
     f.parse(TopDUContext::ForceUpdate);
     f.waitForParsed(500);
     
@@ -1452,7 +1453,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     
     qDebug() << "=========================";
     
-    TestFile g("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo", "py");
+    TestFile g(QStringLiteral("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfo"), QStringLiteral("py"));
     g.parse(TopDUContext::ForceUpdate);
     g.waitForParsed(500);
     
@@ -1467,7 +1468,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     }
     lock.unlock();
     
-    g.setFileContents("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo");
+    g.setFileContents(QStringLiteral("def func():\n\tfoo = 3\n\tfoo2 = 2\n\tfoo"));
     g.parse(TopDUContext::ForceUpdate);
     g.waitForParsed(500);
     
@@ -1491,7 +1492,7 @@ void PyDUChainTest::testFunctionHints()
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainWriteLocker lock;
-    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier("checkme"));
+    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier(QStringLiteral("checkme")));
     QVERIFY(! decls.isEmpty());
     Declaration* d = decls.first();
     QVERIFY(d->abstractType());
@@ -1515,7 +1516,7 @@ void PyDUChainTest::testHintedTypes()
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
     DUChainWriteLocker lock;
-    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier("checkme"));
+    QList< Declaration* > decls = ctx->findDeclarations(KDevelop::Identifier(QStringLiteral("checkme")));
     QVERIFY(! decls.isEmpty());
     Declaration* d = decls.first();
     QVERIFY(d->abstractType());
@@ -1536,7 +1537,7 @@ void PyDUChainTest::testOperators()
 {
     QFETCH(QString, code);
     QFETCH(QString, expectedType);
-    code.prepend("from testOperators.example import *\n\n");
+    code.prepend(QStringLiteral("from testOperators.example import *\n\n"));
     ReferencedTopDUContext ctx = parse(code);
     QVERIFY(ctx);
 
@@ -1569,8 +1570,8 @@ void PyDUChainTest::testOperators_data()
 
 void PyDUChainTest::testFunctionArgs()
 {
-    ReferencedTopDUContext ctx = parse("def ASDF(arg1, arg2):\n"
-                                       "  arg1 = arg2");
+    ReferencedTopDUContext ctx = parse(QStringLiteral("def ASDF(arg1, arg2):\n"
+                                       "  arg1 = arg2"));
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
     QVERIFY(m_ast);
@@ -1605,14 +1606,14 @@ void PyDUChainTest::testInheritance()
     bool found = false;
     bool classDeclFound = false;
     for ( const p& item : decls ) {
-        if ( item.first->identifier().toString() == "B" ) {
+        if ( item.first->identifier().toString() == QStringLiteral("B") ) {
             auto klass = dynamic_cast<ClassDeclaration*>(item.first);
             QVERIFY(klass);
             QCOMPARE(klass->baseClassesSize(), static_cast<unsigned int>(expectedBaseClasses));
             classDeclFound = true;
         }
-        if ( item.first->identifier().toString() == "checkme" ) {
-            QCOMPARE(item.first->abstractType()->toString(), QString("int"));
+        if ( item.first->identifier().toString() == QStringLiteral("checkme") ) {
+            QCOMPARE(item.first->abstractType()->toString(), QStringLiteral("int"));
             found = true;
         }
     }
@@ -1634,7 +1635,7 @@ void PyDUChainTest::testInheritance_data()
 
 void PyDUChainTest::testClassContextRanges()
 {
-    QString code = "class my_class():\n pass\n \n \n \n \n";
+    QString code = QStringLiteral("class my_class():\n pass\n \n \n \n \n");
     ReferencedTopDUContext ctx = parse(code);
     DUChainWriteLocker lock;
     DUContext* classContext = ctx->findContextAt(CursorInRevision(5, 0));
@@ -1651,7 +1652,7 @@ void PyDUChainTest::testContainerTypes()
     QVERIFY(ctx);
     
     DUChainReadLocker lock(DUChain::lock());
-    QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier("checkme"));
+    QList<Declaration*> decls = ctx->findDeclarations(QualifiedIdentifier(QStringLiteral("checkme")));
     QVERIFY(decls.length() > 0);
     QVERIFY(decls.first()->abstractType());
     if ( ! use_type ) {
@@ -1786,48 +1787,48 @@ void PyDUChainTest::testVariableCreation_data()
     QTest::addColumn<QStringList>("expected_local_declarations");
     QTest::addColumn<QStringList>("expected_types");
 
-    QTest::newRow("simple") << "a = 3" << QStringList{"a"} << QStringList{"int"};
-    QTest::newRow("tuple_wrong") << "a, b = 3" << QStringList{"a", "b"} << QStringList{"mixed", "mixed"};
-    QTest::newRow("tuple_unpack_inplace") << "a, b = 3, 5.5" << QStringList{"a", "b"} << QStringList{"int", "float"};
-    QTest::newRow("tuple_unpack_indirect") << "c = 3, 3.5\na, b = c" << QStringList{"a", "b"} << QStringList{"int", "float"};
-    QTest::newRow("tuple_unpack_stacked_inplace") << "a, (b, c) = 1, (2, 3.5)" << QStringList{"a", "b", "c"}
-                                                                             << QStringList{"int", "int", "float"};
+    QTest::newRow("simple") << "a = 3" << QStringList{QStringLiteral("a")} << QStringList{QStringLiteral("int")};
+    QTest::newRow("tuple_wrong") << "a, b = 3" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("mixed"), QStringLiteral("mixed")};
+    QTest::newRow("tuple_unpack_inplace") << "a, b = 3, 5.5" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("int"), QStringLiteral("float")};
+    QTest::newRow("tuple_unpack_indirect") << "c = 3, 3.5\na, b = c" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("int"), QStringLiteral("float")};
+    QTest::newRow("tuple_unpack_stacked_inplace") << "a, (b, c) = 1, (2, 3.5)" << QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")}
+                                                                             << QStringList{QStringLiteral("int"), QStringLiteral("int"), QStringLiteral("float")};
     QTest::newRow("tuple_unpack_stacked_indirect") << "d = 3.5, (3, 1)\na, (b, c) = d"
-                                                   << QStringList{"a", "b", "c"} << QStringList{"float", "int", "int"};
-    QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{"a", "b"} << QStringList{"int", "int"};
-    QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{"a", "b"}
-                                                                            << QStringList{"int", "int"};
+                                                   << QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")} << QStringList{QStringLiteral("float"), QStringLiteral("int"), QStringLiteral("int")};
+    QTest::newRow("unpack_from_list_inplace") << "a, b = [1, 2, 3]" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("int"), QStringLiteral("int")};
+    QTest::newRow("unpack_from_list_indirect") << "c = [1, 2, 3]\na, b = c" << QStringList{QStringLiteral("a"), QStringLiteral("b")}
+                                                                            << QStringList{QStringLiteral("int"), QStringLiteral("int")};
     QTest::newRow("unpack_custom_iterable") <<
         "class Foo:\n"
         "    def __iter__(self): return self\n"
         "    def __next__(self): return 1.5\n"
-        "a, *b = Foo()" << QStringList{"a", "b"} << QStringList {"float", "list of float"};
-    QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{"i"} << QStringList{"int"};
-    QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{"a", "b"}
-                                                                       << QStringList{"int", "float"};
-    QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, (2, 3.5))]: pass" << QStringList{"a", "b", "c"}
-                                                                                << QStringList{"int", "int", "float"};
-    QTest::newRow("for_loop_tuple") << "for a in 1, 2: pass" << QStringList{"a"} << QStringList{"int"};
-    QTest::newRow("for_loop_dict") << "for a in {'foo': 1}: pass" << QStringList{"a"} << QStringList{"str"};
+        "a, *b = Foo()" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList {QStringLiteral("float"), QStringLiteral("list of float")};
+    QTest::newRow("for_loop_simple") << "for i in range(3): pass" << QStringList{QStringLiteral("i")} << QStringList{QStringLiteral("int")};
+    QTest::newRow("for_loop_unpack") << "for a, b in [(3, 5.1)]: pass" << QStringList{QStringLiteral("a"), QStringLiteral("b")}
+                                                                       << QStringList{QStringLiteral("int"), QStringLiteral("float")};
+    QTest::newRow("for_loop_stacked") << "for a, (b, c) in [(1, (2, 3.5))]: pass" << QStringList{QStringLiteral("a"), QStringLiteral("b"), QStringLiteral("c")}
+                                                                                << QStringList{QStringLiteral("int"), QStringLiteral("int"), QStringLiteral("float")};
+    QTest::newRow("for_loop_tuple") << "for a in 1, 2: pass" << QStringList{QStringLiteral("a")} << QStringList{QStringLiteral("int")};
+    QTest::newRow("for_loop_dict") << "for a in {'foo': 1}: pass" << QStringList{QStringLiteral("a")} << QStringList{QStringLiteral("str")};
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 8, 0)
-    QTest::newRow("assignment_expr") << "a = (b := 10)" << QStringList{"a", "b"} << QStringList{"int", "int"};
+    QTest::newRow("assignment_expr") << "a = (b := 10)" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("int"), QStringLiteral("int")};
 #endif
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
-    QTest::newRow("match") << "match 'x'.split():\n case [a, b]: pass" << QStringList{"a", "b"} << QStringList{"str", "str"};
-    QTest::newRow("match_as") << "match 'x'.split():\n case [a, b] as w: pass" << QStringList{"w"} << QStringList{"list of str"};
+    QTest::newRow("match") << "match 'x'.split():\n case [a, b]: pass" << QStringList{QStringLiteral("a"), QStringLiteral("b")} << QStringList{QStringLiteral("str"), QStringLiteral("str")};
+    QTest::newRow("match_as") << "match 'x'.split():\n case [a, b] as w: pass" << QStringList{QStringLiteral("w")} << QStringList{QStringLiteral("list of str")};
 #endif
 }
 
 void PyDUChainTest::testCleanupMultiplePasses()
 {
     for ( int j = 0; j < 20; j++ ) {
-        ReferencedTopDUContext top = parse("from testCleanupMultiplePasses import foo\ndef fonc(): return 3+2j\nfoo.foo.func = fonc");
+        ReferencedTopDUContext top = parse(QStringLiteral("from testCleanupMultiplePasses import foo\ndef fonc(): return 3+2j\nfoo.foo.func = fonc"));
     }
 }
 
 void PyDUChainTest::testManyDeclarations()
 {
-    ReferencedTopDUContext top = parse("from testManyDeclarations import test\nk=test.Foo()");
+    ReferencedTopDUContext top = parse(QStringLiteral("from testManyDeclarations import test\nk=test.Foo()"));
 }
 
 void PyDUChainTest::testComments()
@@ -1838,14 +1839,14 @@ void PyDUChainTest::testComments()
     QVERIFY(top);
     DUChainReadLocker lock;
 
-    auto decls = top->findDeclarations(QualifiedIdentifier("a"));
+    auto decls = top->findDeclarations(QualifiedIdentifier(QStringLiteral("a")));
     QCOMPARE(decls.size(), 1);
     auto a = decls.first();
     QCOMPARE(a->comment(), QByteArray("comment"));
 
-    decls = top->findDeclarations(QualifiedIdentifier("b"));
+    decls = top->findDeclarations(QualifiedIdentifier(QStringLiteral("b")));
     if ( decls.isEmpty() ) {
-        decls = top->childContexts().last()->findDeclarations(QualifiedIdentifier("b"));
+        decls = top->childContexts().last()->findDeclarations(QualifiedIdentifier(QStringLiteral("b")));
     }
     auto b = decls.first();
     QCOMPARE(b->comment(), QByteArray());

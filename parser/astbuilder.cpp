@@ -20,6 +20,7 @@
 #include "rangefixvisitor.h"
 
 #include <QDebug>
+#include <QMutexLocker>
 #include "parserdebug.h"
 
 using namespace KDevelop;
@@ -50,7 +51,7 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     Q_UNREACHABLE();
 }
 
-struct PythonParser : private QMutexLocker
+struct PythonParser : private QMutexLocker<QMutex>
 {
     PyObject* m_parser_mod = nullptr;
     PyObject* m_parse_func = nullptr;
@@ -106,7 +107,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     Py_NoSiteFlag = 1;
 #endif
 
-    contents.append('\n');
+    contents.append(QLatin1Char('\n'));
     
     PythonParser py_parser(pyInitLock);
 
@@ -157,7 +158,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         int currentLine = 0;
         QString currentLineContents;
         QChar c;
-        QChar newline('\n');
+        QChar newline(QLatin1Char('\n'));
         int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine = 0;
         unsigned short currentLineIndent = 0;
         bool atLineBeginning = true;
@@ -198,20 +199,20 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
                 // so context ranges for autocompletion stay intact.
-                if ( contents[emptySince] == QChar(':') ) {
+                if ( contents[emptySince] == QLatin1Char(':') ) {
                     qCDebug(KDEV_PYTHON_PARSER) << indents.length() << emptySinceLine + 1 << indents;
                     if ( indents.length() > emptySinceLine + 1 && indents.at(emptySinceLine) < indents.at(emptySinceLine + 1) ) {
                         qCDebug(KDEV_PYTHON_PARSER) << indents.at(emptySinceLine) << indents.at(emptySinceLine + 1);
-                        contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), "\tpass#");
+                        contents.insert(emptyLinesSince + 1 + indents.at(emptyLinesSinceLine), QStringLiteral("\tpass#"));
                     }
                     else {
-                        contents.insert(emptySince + 1, "\tpass#");
+                        contents.insert(emptySince + 1, QStringLiteral("\tpass#"));
                     }
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
                     qCDebug(KDEV_PYTHON_PARSER) << indents << currentLine;
-                    contents[i+1+indents.at(currentLine - 1)] = QChar('#');
-                    contents.insert(i+1+indents.at(currentLine - 1), "pass");
+                    contents[i+1+indents.at(currentLine - 1)] = QLatin1Char('#');
+                    contents.insert(i+1+indents.at(currentLine - 1), QStringLiteral("pass"));
                 }
                 break;
             }
@@ -236,7 +237,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
             for ( int i = currentLineBeginning; i < len; i++ ) {
                 c = contents.at(i);
                 qCDebug(KDEV_PYTHON_PARSER) << c;
-                if ( c == '\n' ) {
+                if ( c == QLatin1Char('\n') ) {
                     if ( currentIndent <= indentAtError && currentIndent != -1 ) {
                         qCDebug(KDEV_PYTHON_PARSER) << "Start of error code: " << currentLineBeginning;
                         qCDebug(KDEV_PYTHON_PARSER) << "End of error block (current position): " << currentLineBeginning_end;
@@ -245,7 +246,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 //                         contents.remove(currentLineBeginning, currentLineBeginning_end-currentLineBeginning);
                         break;
                     }
-                    contents.insert(currentLineContentBeginning - 1, "pass#");
+                    contents.insert(currentLineContentBeginning - 1, QStringLiteral("pass#"));
                     i += 5;
                     i = qMin(i, contents.length());
                     len = contents.length();
@@ -272,7 +273,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
     qCDebug(KDEV_PYTHON_PARSER) << "Got syntax tree from python parser:" << kind;
 
     AstTransformer t;
-    t.run(syntaxtree, filename.fileName().replace(".py", ""));
+    t.run(syntaxtree, filename.fileName().replace(QStringLiteral(".py"), QString()));
     Py_DECREF(syntaxtree);
 
     RangeFixVisitor fixVisitor(contents);

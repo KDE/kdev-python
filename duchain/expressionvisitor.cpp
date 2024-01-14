@@ -150,7 +150,7 @@ void ExpressionVisitor::visitCall(CallAst* node)
         if ( ! docstring.isEmpty() ) {
             // Our documentation data uses special docstrings that override the return type
             //  of some functions (including constructors).
-            type = docstringTypeOverride(node, type, docstring);
+            type = docstringTypeOverride(node, type, QString::fromUtf8(docstring));
         }
     }
     encounter(type, DeclarationPointer(decl));
@@ -161,8 +161,8 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
 {
     auto docstringType = normalType;
     auto listOfTuples = [&](AbstractType::Ptr key, AbstractType::Ptr value) {
-        auto newType = typeObjectForIntegralType<ListType>("list");
-        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>("tuple");
+        auto newType = typeObjectForIntegralType<ListType>(QStringLiteral("list"));
+        IndexedContainer::Ptr newContents = typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
         if ( ! newType || ! newContents ) {
             return AbstractType::Ptr(new IntegralType(IntegralType::TypeMixed));
         }
@@ -179,7 +179,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
     };
 
     QHash< QString, std::function<bool(QStringList, QString)> > knownDocstringHints;
-    knownDocstringHints["getsType"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+    knownDocstringHints[QStringLiteral("getsType")] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -193,7 +193,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return false;
     };
 
-    knownDocstringHints["getsList"] = [&](QStringList /*arguments*/, QString currentHint) {
+    knownDocstringHints[QStringLiteral("getsList")] = [&](QStringList /*arguments*/, QString currentHint) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -202,12 +202,12 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         baseTypeVisitor.visitNode(static_cast<AttributeAst*>(node->function)->value);
         DUChainReadLocker lock;
         if ( auto t = baseTypeVisitor.lastType().dynamicCast<ListType>() ) {
-            auto newType = typeObjectForIntegralType<ListType>("list");
+            auto newType = typeObjectForIntegralType<ListType>(QStringLiteral("list"));
             if ( ! newType ) {
                 return false;
             }
             AbstractType::Ptr contentType;
-            if ( currentHint == "getsList" ) {
+            if ( currentHint == QStringLiteral("getsList") ) {
                 contentType = t->contentType().abstractType();
             }
             else if ( auto map = t.dynamicCast<MapType>() ) {
@@ -219,9 +219,9 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         }
         return false;
     };
-    knownDocstringHints["getListOfKeys"] = knownDocstringHints["getsList"];
+    knownDocstringHints[QStringLiteral("getListOfKeys")] = knownDocstringHints[QStringLiteral("getsList")];
 
-    knownDocstringHints["enumerate"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+    knownDocstringHints[QStringLiteral("enumerate")] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::NameAstType || node->arguments.size() < 1 ) {
             return false;
         }
@@ -229,13 +229,13 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         enumeratedTypeVisitor.visitNode(node->arguments.first());
 
         DUChainReadLocker lock;
-        auto intType = typeObjectForIntegralType<AbstractType>("int");
+        auto intType = typeObjectForIntegralType<AbstractType>(QStringLiteral("int"));
         auto enumerated = enumeratedTypeVisitor.lastType();
         docstringType = listOfTuples(intType, Helper::contentOfIterable(enumerated, topContext()));
         return true;
     };
 
-    knownDocstringHints["getsListOfBoth"] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
+    knownDocstringHints[QStringLiteral("getsListOfBoth")] = [&](QStringList /*arguments*/, QString /*currentHint*/) {
         if ( node->function->astType != Ast::AttributeAstType ) {
             return false;
         }
@@ -250,7 +250,7 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return false;
     };
 
-    knownDocstringHints["returnContentEqualsContentOf"] = [&](QStringList arguments, QString /*currentHint*/) {
+    knownDocstringHints[QStringLiteral("returnContentEqualsContentOf")] = [&](QStringList arguments, QString /*currentHint*/) {
         const int argNum = ! arguments.isEmpty() ? (int) arguments.at(0).toUInt() : 0;
         if ( argNum >= node->arguments.length() ) {
             return false;
@@ -330,7 +330,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
             auto slice = static_cast<SliceAst*>(node->slice);
             if ( auto tupleType = type.dynamicCast<IndexedContainer>() ) {
                 DUChainReadLocker lock;
-                auto newTuple = typeObjectForIntegralType<IndexedContainer>("tuple");
+                auto newTuple = typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
                 if ( ! newTuple ) {
                     continue;
                 }
@@ -373,7 +373,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
         else {
             // Type wasn't one with custom handling, so use return type of __getitem__().
             DUChainReadLocker lock;
-            static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
+            static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier(QStringLiteral("__getitem__")));
             auto function = Helper::accessAttribute(type, getitemIdentifier, topContext());
             if ( function && function->isFunctionDeclaration() ) {
                 if ( FunctionType::Ptr functionType = function->type<FunctionType>() ) {
@@ -400,7 +400,7 @@ void ExpressionVisitor::visitLambda(LambdaAst* node)
 void ExpressionVisitor::visitList(ListAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list");
+    auto type = typeObjectForIntegralType<ListType>(QStringLiteral("list"));
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -425,7 +425,7 @@ void ExpressionVisitor::visitList(ListAst* node)
 void ExpressionVisitor::visitDictionaryComprehension(DictionaryComprehensionAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict");
+    auto type = typeObjectForIntegralType<MapType>(QStringLiteral("dict"));
     if ( type ) {
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol));
         lock.unlock();
@@ -452,7 +452,7 @@ void ExpressionVisitor::visitSetComprehension(SetComprehensionAst* node)
 {
     Python::AstDefaultVisitor::visitSetComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set");
+    auto type = typeObjectForIntegralType<ListType>(QStringLiteral("set"));
     if ( type ) {
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol), true);
         lock.unlock();
@@ -470,7 +470,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 {
     AstDefaultVisitor::visitListComprehension(node);
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("list");
+    auto type = typeObjectForIntegralType<ListType>(QStringLiteral("list"));
     if ( type && ! m_forceGlobalSearching ) { // TODO fixme
         DUContext* comprehensionContext = context()->findContextAt(CursorInRevision(node->startLine, node->startCol), true);
         lock.unlock();
@@ -489,7 +489,7 @@ void ExpressionVisitor::visitListComprehension(ListComprehensionAst* node)
 
 void ExpressionVisitor::visitTuple(TupleAst* node) {
     DUChainReadLocker lock;
-    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>("tuple");
+    IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
     if ( type ) {
         lock.unlock();
         for ( ExpressionAst* expr : node->elements ) {
@@ -530,7 +530,7 @@ void ExpressionVisitor::visitIfExpression(IfExpressionAst* node)
 void ExpressionVisitor::visitSet(SetAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<ListType>("set");
+    auto type = typeObjectForIntegralType<ListType>(QStringLiteral("set"));
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
@@ -551,7 +551,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
 void ExpressionVisitor::visitDict(DictAst* node)
 {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<MapType>("dict");
+    auto type = typeObjectForIntegralType<MapType>(QStringLiteral("dict"));
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     ExpressionVisitor keyVisitor(this);
@@ -579,10 +579,10 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
     AbstractType::Ptr type;
     DUChainReadLocker lock;
     if ( number->isInt ) {
-        type = typeObjectForIntegralType<AbstractType>("int");
+        type = typeObjectForIntegralType<AbstractType>(QStringLiteral("int"));
     }
     else {
-        type = typeObjectForIntegralType<AbstractType>("float");
+        type = typeObjectForIntegralType<AbstractType>(QStringLiteral("float"));
     }
     encounter(type);
 }
@@ -590,20 +590,20 @@ void ExpressionVisitor::visitNumber(Python::NumberAst* number)
 void ExpressionVisitor::visitString(Python::StringAst* )
 {
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>(QStringLiteral("str"));
     encounter(type);
 }
 
 void ExpressionVisitor::visitBytes(Python::BytesAst* ) {
     DUChainReadLocker lock;
-    auto type = typeObjectForIntegralType<StructureType>("bytes");
+    auto type = typeObjectForIntegralType<StructureType>(QStringLiteral("bytes"));
     encounter(type);
 }
 
 void ExpressionVisitor::visitFormattedValue(Python::FormattedValueAst* node) {
     AstDefaultVisitor::visitFormattedValue(node);
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>(QStringLiteral("str"));
     encounter(type);
 }
 
@@ -611,7 +611,7 @@ void ExpressionVisitor::visitJoinedString(Python::JoinedStringAst* node)
 {
     AstDefaultVisitor::visitJoinedString(node);
     DUChainReadLocker lock;
-    StructureType::Ptr type = typeObjectForIntegralType<StructureType>("str");
+    StructureType::Ptr type = typeObjectForIntegralType<StructureType>(QStringLiteral("str"));
     encounter(type);
 }
 
@@ -688,7 +688,7 @@ AbstractType::Ptr ExpressionVisitor::fromBinaryOperator(AbstractType::Ptr lhs, A
         DUChainReadLocker lock;
         auto context = Helper::getDocumentationFileContext();
         if ( context ) {
-            auto object_decl = context->findDeclarations(QualifiedIdentifier("object"));
+            auto object_decl = context->findDeclarations(QualifiedIdentifier(QStringLiteral("object")));
             if ( ! object_decl.isEmpty() && object_decl.first()->internalContext() == func->context() ) {
                 // if the operator is only declared in object(), do not include its type (which is void).
                 return AbstractType::Ptr();

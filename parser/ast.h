@@ -234,17 +234,17 @@ public:
 
     virtual QString dump() const
     {
-        QString r = "Ast(astType=";
-        r.append(astType);
-        r.append(", startLine=");
-        r.append(startLine);
-        r.append(", startCol=");
-        r.append(startCol);
-        r.append(", endCol=");
-        r.append(endCol);
-        r.append(", endLine=");
-        r.append(endLine);
-        r.append(")");
+        QString r = QStringLiteral("Ast(astType=");
+        r.append(QString::number(astType));
+        r.append(QStringLiteral(", startLine="));
+        r.append(QString::number(startLine));
+        r.append(QStringLiteral(", startCol="));
+        r.append(QString::number(startCol));
+        r.append(QStringLiteral(", endCol="));
+        r.append(QString::number(endCol));
+        r.append(QStringLiteral(", endLine="));
+        r.append(QString::number(endLine));
+        r.append(QStringLiteral(")"));
         return r;
     };
 
@@ -471,25 +471,25 @@ public:
 class KDEVPYTHONPARSER_EXPORT BreakAst : public StatementAst {
 public:
     BreakAst(Ast* parent);
-    QString dump() const override { return "Break()"; }
+    QString dump() const override { return QStringLiteral("Break()"); }
 };
 
 class KDEVPYTHONPARSER_EXPORT ContinueAst : public StatementAst {
 public:
     ContinueAst(Ast* parent);
-    QString dump() const override { return "Continue()"; }
+    QString dump() const override { return QStringLiteral("Continue()"); }
 };
 
 class KDEVPYTHONPARSER_EXPORT PassAst : public StatementAst {
 public:
     PassAst(Ast* parent);
-    QString dump() const override { return "Pass()"; }
+    QString dump() const override { return QStringLiteral("Pass()"); }
 };
 
 class KDEVPYTHONPARSER_EXPORT NonlocalAst : public StatementAst {
 public:
     NonlocalAst(Ast* parent);
-    QString dump() const override { return "Nonlocal()"; }
+    QString dump() const override { return QStringLiteral("Nonlocal()"); }
 };
 
 
@@ -674,9 +674,9 @@ public:
 class KDEVPYTHONPARSER_EXPORT StringAst : public ConstantAst {
 public:
     StringAst(Ast* parent) : ConstantAst(parent, Ast::StringAstType) {}
-    QString value = "";
+    QString value = QString();
     bool usedAsComment = false;
-    QString dump() const override { return "Str('" + value + "')"; }
+    QString dump() const override { return QStringLiteral("Str('") + value + QStringLiteral("')"); }
 };
 
 class KDEVPYTHONPARSER_EXPORT JoinedStringAst : public ExpressionAst {
@@ -696,7 +696,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT BytesAst : public ConstantAst {
 public:
     BytesAst(Ast* parent) : ConstantAst(parent, Ast::BytesAstType) {};
-    QString value = "";
+    QString value = QString();
 };
 
 class KDEVPYTHONPARSER_EXPORT YieldAst : public ExpressionAst {
@@ -782,7 +782,7 @@ public:
 class KDEVPYTHONPARSER_EXPORT EllipsisAst : public ConstantAst {
 public:
     EllipsisAst(Ast* parent) : ConstantAst(parent, Ast::EllipsisAstType) {};
-    QString dump() const override { return "Ellipsis()"; }
+    QString dump() const override { return QStringLiteral("Ellipsis()"); }
 };
 
 class KDEVPYTHONPARSER_EXPORT SliceAst : public ExpressionAst {

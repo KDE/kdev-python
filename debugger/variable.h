@@ -15,7 +15,7 @@ class Variable : public KDevelop::Variable
 {
 Q_OBJECT
 public:
-    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = "");
+    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = QString());
     
     /**
      * @brief Fetch this variable's value, and notify callback::callbackMethod when done.

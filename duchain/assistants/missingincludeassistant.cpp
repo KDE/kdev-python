@@ -11,8 +11,6 @@
 #include <interfaces/ilanguagecontroller.h>
 #include <language/backgroundparser/backgroundparser.h>
 
-#include <iostream>
-
 #include <QDebug>
 #include <QStandardPaths>
 #include <duchaindebug.h>
@@ -53,7 +51,7 @@ QString DocumentationGeneratorAction::description() const
 void DocumentationGeneratorAction::execute()
 {
     // yes, it's duplicate from the doc file widget, but it's too painful to share it
-    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/" + "kdevpythonsupport/documentation_files/";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/") + QStringLiteral("kdevpythonsupport/documentation_files/");
     QDir dir(path);
     dir.mkpath(path);
     auto wizard = new DocfileWizard(path);
@@ -72,7 +70,7 @@ void DocumentationGeneratorAction::execute()
         }
     );
 
-    emit executed(this);
+    /*emit */executed(this);
 }
 
 void MissingIncludeAssistant::createActions()

@@ -312,7 +312,7 @@ public:
         m_type = InvalidType;
     };
     void run(DebugSession* session) override {
-        Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
+        Q_ASSERT(m_command.endsWith(QLatin1Char('\n')) && "command must end with a newline");
         qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command<< m_notifyMethod;
         session->write(m_command.toUtf8());
     }

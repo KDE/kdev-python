@@ -31,19 +31,19 @@ void DumpChain::dump( DUContext * context, bool imported )
 {
     if( !context )
         return;
-    qCDebug(KDEV_PYTHON_DUCHAIN) << QString( indent*2, ' ' ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->transformFromLocalRevision(context->range()) << " " << context << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
+    qCDebug(KDEV_PYTHON_DUCHAIN) << QString( indent*2, QLatin1Char(' ') ) << (imported ? "==import==> Context " : "New Context ") << context->scopeIdentifier(true) << context->transformFromLocalRevision(context->range()) << " " << context << " " << (dynamic_cast<TopDUContext*>(context) ? "top-context" : "");
     if (!imported)
     {
         for (Declaration* dec : context->localDeclarations())
         {
             const auto uses = dec->uses();
-            qCDebug(KDEV_PYTHON_DUCHAIN) << QString( (indent+1)*2, ' ' ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()) << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << uses.count() << "use(s)";
+            qCDebug(KDEV_PYTHON_DUCHAIN) << QString( (indent+1)*2, QLatin1Char(' ') ) << "Declaration: " << dec->toString() << " [" << dec->qualifiedIdentifier() << "]  "<< dec << "(internal ctx" << dec->internalContext() << ")" << context->transformFromLocalRevision(dec->range()) << ", "<< ( dec->isDefinition() ? "definition, " : "declaration, " ) << uses.count() << "use(s)";
             for (auto it = uses.constBegin(); it != uses.constEnd(); ++it)
             {
-                qCDebug(KDEV_PYTHON_DUCHAIN) << QString((indent+1)*2, ' ') << "File:" << it.key().str();
+                qCDebug(KDEV_PYTHON_DUCHAIN) << QString((indent+1)*2, QLatin1Char(' ')) << "File:" << it.key().str();
                 for (const RangeInRevision& r : it.value())
                 {
-                    qCDebug(KDEV_PYTHON_DUCHAIN) << QString((indent+2)*2, ' ') << "Use:" << context->transformFromLocalRevision(r);
+                    qCDebug(KDEV_PYTHON_DUCHAIN) << QString((indent+2)*2, QLatin1Char(' ')) << "Use:" << context->transformFromLocalRevision(r);
                 }
             }
         }

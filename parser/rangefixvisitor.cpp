@@ -62,12 +62,12 @@ void RangeFixVisitor::visitCode(CodeAst* node) {
 }
 
 void RangeFixVisitor::visitFunctionDefinition(FunctionDefinitionAst* node) {
-    cutDefinitionPreamble(node->name, node->async ? "asyncdef" : "def");
+    cutDefinitionPreamble(node->name, node->async ? QStringLiteral("asyncdef") : QStringLiteral("def"));
     AstDefaultVisitor::visitFunctionDefinition(node);
 };
 
 void RangeFixVisitor::visitClassDefinition(ClassDefinitionAst* node) {
-    cutDefinitionPreamble(node->name, "class");
+    cutDefinitionPreamble(node->name, QStringLiteral("class"));
     AstDefaultVisitor::visitClassDefinition(node);
 };
 
@@ -79,7 +79,7 @@ void RangeFixVisitor::visitAttribute(AttributeAst* node) {
     auto next_start = v.findNext(node);
     if ( ! next_start.isValid() ) {
         // use end of document as reference
-        next_start = {lines.size() - 1, lines.last().size() - 1};
+        next_start = {static_cast<int>(lines.size() - 1), static_cast<int>(lines.last().size() - 1)};
     }
 
     // take only the portion of the line up to that next expression
@@ -107,7 +107,7 @@ void RangeFixVisitor::visitAttribute(AttributeAst* node) {
             // The real attr name can never be before a dot.
             // Nor can the start of a comment.
             // (Don't be misled by `foo["bar"].bar` or `foo["#"].bar`)
-            pos = line.indexOf('.', pos);
+            pos = line.indexOf(QLatin1Char('.'), pos);
             if ( pos == -1 ) continue;
             dotFound = true;
         }
@@ -120,7 +120,7 @@ void RangeFixVisitor::visitAttribute(AttributeAst* node) {
             nameFound = true;
         }
         if ( dotFound && nameFound &&
-                (pos = line.indexOf('#', pos + name.length())) != -1) {
+                (pos = line.indexOf(QLatin1Char('#'), pos + name.length())) != -1) {
             // Remove the comment after a '#' iff we're certain it can't
             //  be inside a string literal (e.g. `foo["#"].bar`).
             line = line.left(pos);
@@ -167,7 +167,7 @@ void RangeFixVisitor::visitExceptionHandler(ExceptionHandlerAst* node) {
         return;
     }
     const QString& line = lines.at(node->startLine);
-    const int end = line.count() - 1;
+    const int end = line.size() - 1;
     int back = backtrackDottedName(line, end);
     node->name->startCol = end - back;
     node->name->endCol = end;
@@ -241,7 +241,7 @@ void RangeFixVisitor::cutDefinitionPreamble(Ast* fixNode, const QString& defKeyw
 
     // cut away decorators
     while ( currentLine < lines.size() ) {
-        if ( lines.at(currentLine).trimmed().remove(' ').remove('\t').startsWith(defKeyword) ) {
+        if ( lines.at(currentLine).trimmed().remove(QLatin1Char(' ')).remove(QLatin1Char('\t')).startsWith(defKeyword) ) {
             // it's not a decorator, so stop skipping lines.
             break;
         }
@@ -289,11 +289,11 @@ int RangeFixVisitor::backtrackDottedName(const QString& data, const int start) {
             previousWasSpace = true;
             continue;
         }
-        if ( data.at(i) == ':' ) {
+        if ( data.at(i) == QLatin1Char(':') ) {
             // excepthandler
             continue;
         }
-        if ( data.at(i) == '.' ) {
+        if ( data.at(i) == QLatin1Char('.') ) {
             haveDot = true;
         }
         else if ( haveDot ) {
@@ -317,7 +317,7 @@ void RangeFixVisitor::fixAlias(Ast* dotted, Ast* asname, const int startLine, in
     int lineno = startLine;
     for ( int i = 0; i < line.size(); i++ ) {
         const QChar& current = line.at(i);
-        if ( current == '\\' ) {
+        if ( current == QLatin1Char('\\') ) {
             // line continuation character
             // splitting like "import foo as \ \n bar" is not supported.
             lineno += 1;
@@ -325,7 +325,7 @@ void RangeFixVisitor::fixAlias(Ast* dotted, Ast* asname, const int startLine, in
             i = 0;
             continue;
         }
-        if ( current == ',' ) {
+        if ( current == QLatin1Char(',') ) {
             if ( aliasIndex == 0 ) {
                 // nothing found, continue below
                 line = line.left(i);
@@ -337,7 +337,7 @@ void RangeFixVisitor::fixAlias(Ast* dotted, Ast* asname, const int startLine, in
         if ( i > line.length() - 3 ) {
             continue;
         }
-        if ( current.isSpace() && line.mid(i+1).startsWith("as") && ( line.at(i+3).isSpace() || line.at(i+3) == '\\' ) ) {
+        if ( current.isSpace() && line.mid(i+1).startsWith(QStringLiteral("as")) && ( line.at(i+3).isSpace() || line.at(i+3) == QLatin1Char('\\') ) ) {
             // there's an "as"
             if ( aliasIndex == 0 ) {
                 // it's the one we're looking for
@@ -372,7 +372,7 @@ void RangeFixVisitor::fixAlias(Ast* dotted, Ast* asname, const int startLine, in
         }
     }
     // no "as" found, use last dotted name in line
-    const int end = line.count() - whitespaceAtEnd(line);
+    const int end = line.size() - whitespaceAtEnd(line);
     int back = backtrackDottedName(line, end);
     dotted->startLine = lineno;
     dotted->endLine = lineno;
@@ -391,8 +391,8 @@ int RangeFixVisitor::whitespaceAtEnd(const QString& line) {
 
 // FIXME This doesn't work for triple-quoted strings
 //  (it gives length 2, which is no worse than before).
-const QRegularExpression RangeFixVisitor::findString("\\G(['\"]).*?(?<!\\\\)\\g1");
+const QRegularExpression RangeFixVisitor::findString(QStringLiteral("\\G(['\"]).*?(?<!\\\\)\\g1"));
 // Looser than the real spec, but since we know there *is* a valid number it finds the end ok.
-const QRegularExpression RangeFixVisitor::findNumber("\\G(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*");
+const QRegularExpression RangeFixVisitor::findNumber(QStringLiteral("\\G(?:[\\d_\\.bjoxBJOX]|[eE][+-]?)*"));
 
 }

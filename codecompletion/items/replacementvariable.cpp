@@ -34,7 +34,7 @@ void ReplacementVariableItem::execute(View* view, const Range &word)
 
     Cursor removeUntil = m_position.start();
     Range removeRange(m_position.start(), removeUntil);
-    if ( document->text(m_position).lastIndexOf('{') != -1 ) {
+    if ( document->text(m_position).lastIndexOf(QLatin1Char('{')) != -1 ) {
         // remove the whole existing expression
         removeRange.setEnd({removeRange.end().line(), m_position.end().column()});
     }
@@ -43,7 +43,7 @@ void ReplacementVariableItem::execute(View* view, const Range &word)
         removeRange= {m_position.end(), m_position.end()};
 
         Range previousCharacter(word.start() - Cursor(0, 1), word.start());
-        if ( document->text(previousCharacter) == "{" ) {
+        if ( document->text(previousCharacter) == QStringLiteral("{") ) {
             removeRange.setStart(removeRange.start() - Cursor(0, 1));
         }
     }
@@ -71,11 +71,11 @@ QVariant ReplacementVariableItem::data(const QModelIndex &index, int role, const
             return QVariant(m_description);
         }
         else {
-            return QVariant("");
+            return QVariant(QString());
         }
         break;
     case KTextEditor::CodeCompletionModel::ItemSelected:
-        return QVariant("");
+        return QVariant(QString());
     case KTextEditor::CodeCompletionModel::InheritanceDepth:
         return QVariant(0);
     case KDevelop::CodeCompletionModel::BestMatchesCount:

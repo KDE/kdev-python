@@ -20,7 +20,10 @@
 #include "rangefixvisitor.h"
 
 #include <QDebug>
+#if QT_VERSION >= 0x060000
 #include <QMutexLocker>
+#endif
+
 #include "parserdebug.h"
 
 using namespace KDevelop;
@@ -51,7 +54,11 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     Q_UNREACHABLE();
 }
 
+#if QT_VERSION >= 0x060000
 struct PythonParser : private QMutexLocker<QMutex>
+#else
+struct PythonParser : private QMutexLocker
+#endif
 {
     PyObject* m_parser_mod = nullptr;
     PyObject* m_parse_func = nullptr;

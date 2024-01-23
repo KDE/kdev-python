@@ -69,7 +69,6 @@
         "Description[zh_CN]": "Python 语言支持",
         "Description[zh_TW]": "Python 語言支援",
         "Icon": "text-x-python",
-        "Id": "kdevpythonsupport",
         "Name": "Python Support",
         "Name[ca@valencia]": "Implementació de Python",
         "Name[ca]": "Implementació de Python",

@@ -142,10 +142,10 @@
     <category>IDE</category>
   </categories>
   <releases>
+    <release version="5.7.240200" date="2024-02-28"/>
     <release version="5.7.230805" date="2024-02-15"/>
     <release version="5.7.230804" date="2023-12-07"/>
     <release version="5.7.230803" date="2023-11-09"/>
-    <release version="5.7.230802" date="2023-10-12"/>
   </releases>
   <update_contact>mail@svenbrauch.de</update_contact>
 </component>

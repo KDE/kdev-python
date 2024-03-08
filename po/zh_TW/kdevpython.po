@@ -2,31 +2,32 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Frank Weng (a.k.a. Franklin) <franklin at goodhorse dot idv dot tw>, 2009, 2013, 2014.
+# SPDX-FileCopyrightText: 2024 Kisaragi Hiu <mail@kisaragi-hiu.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-11-05 12:27+0000\n"
-"PO-Revision-Date: 2014-04-23 15:03+0800\n"
-"Last-Translator: Franklin Weng <franklin at goodhorse dot idv dot tw>\n"
-"Language-Team: Chinese Traditional <kde-tw@googlegroups.com>\n"
+"PO-Revision-Date: 2024-03-07 20:13+0900\n"
+"Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
+"Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "dot tw>\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 24.04.70\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Franklin Weng"
+msgstr "Franklin Weng, Kisaragi Hiu"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "franklin@goodhorse.idv.tw"
+msgstr "franklin@goodhorse.idv.tw, mail@kisaragi-hiu.com"
 
 #: codecompletion/context.cpp:115
 #, kde-format
@@ -222,10 +223,9 @@ msgid "A plugin to debug Python applications with pdb."
 msgstr "用 pdb 除錯 Python 應用程式的外掛程式。"
 
 #: debugger/pdblauncher.cpp:77
-#, fuzzy, kde-format
-#| msgid "Sorry, debugging is only supported for Python 2.x applications."
+#, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
-msgstr "抱歉，除錯器只支援除錯 Python 2.x 的應用程式。"
+msgstr "抱歉，除錯器只支援除錯 Python 3.x 的應用程式。"
 
 #: debugger/pdblauncher.cpp:78
 #, kde-format
@@ -243,8 +243,7 @@ msgid "Generate..."
 msgstr "產生..."
 
 #: docfilekcm/docfilemanagerwidget.cpp:53
-#, fuzzy, kde-format
-#| msgid "Import from editor"
+#, kde-format
 msgid "Import From Editor"
 msgstr "從編輯器匯入"
 
@@ -256,22 +255,18 @@ msgid ""
 msgstr "將目前作用中的編輯器視窗的內容複製到文件目錄中的一個新檔案"
 
 #: docfilekcm/docfilemanagerwidget.cpp:66
-#, fuzzy, kde-format
-#| msgid "Open file manager"
+#, kde-format
 msgid "Open File Manager"
 msgstr "開啟檔案管理員"
 
 #: docfilekcm/docfilemanagerwidget.cpp:68
-#, fuzzy, kde-format
-#| msgctxt "Edit selected files"
-#| msgid "Edit selected"
+#, kde-format
 msgctxt "Edit selected files"
 msgid "Edit Selected"
-msgstr "編輯選取的項目"
+msgstr "編輯選取的"
 
 #: docfilekcm/docfilemanagerwidget.cpp:70
-#, fuzzy, kde-format
-#| msgid "Search paths..."
+#, kde-format
 msgid "Search Paths..."
 msgstr "搜尋路徑..."
 
@@ -389,21 +384,7 @@ msgid ""
 msgstr "輸出檔 <br/>%1<br/> 已存在，您要覆寫它嗎？"
 
 #: docfilekcm/docfilewizard.cpp:201
-#, fuzzy, kde-format
-#| msgid ""
-#| "This file contains auto-generated documentation extracted\n"
-#| "from python run-time information. It is analyzed by KDevelop\n"
-#| "to offer features such as code-completion and syntax highlighting.\n"
-#| "If you discover errors in KDevelop's support for this module,\n"
-#| "you can edit this file to correct the errors, e.g. you can add\n"
-#| "additional return statements to functions to control the return\n"
-#| "type to be used for that function by the analyzer.\n"
-#| "Make sure to keep a copy of your changes so you don't accidentally\n"
-#| "overwrite them by re-generating the file.\n"
-#| "If you do significant improvements, consider sharing the file\n"
-#| "with others through the Settings -> Configure KDevelop -> Python "
-#| "Documentation data\n"
-#| "module!"
+#, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
 "from python run-time information. It is analyzed by KDevelop\n"
@@ -422,19 +403,16 @@ msgstr ""
 "來控制用於分析器的傳回型態。\n"
 "請確定在您變更完成後做好備份，以免不小心被自動產生的檔案\n"
 "給覆寫掉了。\n"
-"如果您做了很大幅度的改善，請考慮將您修改的檔案分享出來。\n"
-"您可以在「設定」─「設定 KDevelop」─「Python 文件資料模組」\n"
-"中做分享。"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
 msgid "Manage Documentation Files Used by the Python Plugin"
-msgstr ""
+msgstr "管理 Python 外掛程式所用的說明文件檔案"
 
 #: docfilekcm/kcm_docfiles.cpp:58
 #, kde-format
 msgid "Python Documentation"
-msgstr ""
+msgstr "Python 說明文件"
 
 #: duchain/assistants/missingincludeassistant.cpp:50
 #, kde-format
@@ -490,7 +468,7 @@ msgstr "%2 的 %1"
 #, kde-format
 msgctxt "some object that can be called, in programming"
 msgid "<callable>"
-msgstr ""
+msgstr "<可呼叫物件>"
 
 #: duchain/types/unsuretype.cpp:106
 #, kde-format
@@ -521,49 +499,45 @@ msgid "Attribute \"%1\" not found on accessed object"
 msgstr "屬性 \"%1\" 在存取的物件中找不到"
 
 #: pep8kcm/kcm_pep8.cpp:63
-#, fuzzy, kde-format
-#| msgid "Configure the Python interpreter to use"
+#, kde-format
 msgid "Configure Python Style Checking"
-msgstr "設定使用的 Python 直譯器"
+msgstr "設定 Python 風格檢查"
 
 #: pep8kcm/kcm_pep8.cpp:73
-#, fuzzy, kde-format
-#| msgid "Configure the Python interpreter to use"
+#, kde-format
 msgid "Python Style Checking"
-msgstr "設定使用的 Python 直譯器"
+msgstr "Python 風格檢查"
 
 #. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
 #: pep8kcm/pep8.ui:29
-#, fuzzy, kde-format
-#| msgid "Enable PEP8 checking:"
+#, kde-format
 msgid "Enable Style Checking"
-msgstr "開啟 PEP8 檢查："
+msgstr "啟用風格檢查"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
 #: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
-#, fuzzy, kde-format
-#| msgid "A comma separated list of modules required for the type"
+#, kde-format
 msgid "Comma-separated list of error codes"
-msgstr "此型態需要的模組清單，以逗號分隔"
+msgstr "錯誤代碼的清單，以逗號分隔"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: pep8kcm/pep8.ui:51
 #, kde-format
 msgid "Enable these errors and warnings:"
-msgstr ""
+msgstr "啟用這些錯誤和警告："
 
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: pep8kcm/pep8.ui:65
 #, kde-format
 msgid "Maximum line length:"
-msgstr ""
+msgstr "每行最大長度："
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: pep8kcm/pep8.ui:88
 #, kde-format
 msgid "Disable these errors and warnings:"
-msgstr ""
+msgstr "停用這些錯誤和警告："
 
 #. i18n: ectx: property (text), widget (QLabel, label_4)
 #: pep8kcm/pep8.ui:100
@@ -571,32 +545,29 @@ msgstr ""
 msgid ""
 "The `pycodestyle` Python module must be installed in order to use style "
 "checking."
-msgstr ""
+msgstr "必須安裝 `pycodestyle` Python 模組才能使用風格檢查。"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19
-#, fuzzy, kde-format
-#| msgid "Unsupported interpreter"
+#, kde-format
 msgid "Python interpreter:"
-msgstr "未支援的直譯器"
+msgstr "Python 直譯器："
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
 #: projectconfig/projectconfig.ui:26
 #, kde-format
 msgid "Full path to python interpreter, leave empty for default"
-msgstr ""
+msgstr "Python 直譯器的完整路徑，留空來使用預設值"
 
 #: projectconfig/projectconfigpage.cpp:47
-#, fuzzy, kde-format
-#| msgid "Configure the Python interpreter to use"
+#, kde-format
 msgid "Python Settings"
-msgstr "設定使用的 Python 直譯器"
+msgstr "Python 設定"
 
 #: pythonlanguagesupport.cpp:140
-#, fuzzy, kde-format
-#| msgid "Format source with the pep8ify formatter."
+#, kde-format
 msgid "Format source with the autopep8 formatter."
-msgstr "用 pep8ify 格式器將源碼格式化。"
+msgstr "使用 autopep8 格式化工具將原始碼格式化。"
 
 #: pythonstylechecking.cpp:104
 #, kde-format
@@ -604,8 +575,6 @@ msgid "PEP8 checker error: %1"
 msgstr "PEP8 檢查器發生錯誤：%1"
 
 #: pythonstylechecking.cpp:206
-#, fuzzy, kde-format
-#| msgid ""
-#| "The selected PEP8 syntax checker \"%1\" does not seem to work correctly."
+#, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
-msgstr "選取的 PEP8 語法檢查器 \"%1\" 似乎無法正確運作。"
+msgstr "PEP 語法檢查器似乎無法正常運作。"

@@ -3,9 +3,9 @@
 
 Dependencies:
 - 'on': ['Linux/Qt6', 'FreeBSD/Qt6']
-    'require':
-      'frameworks/extra-cmake-modules': '@latest-kf6'
-      'frameworks/ki18n': '@latest-kf6'
-      'frameworks/threadweaver': '@latest-kf6'
-      'frameworks/ktexteditor': '@latest-kf6'
-      'kdevelop/kdevelop': 'work/apol/kf6'
+  'require':
+    'frameworks/extra-cmake-modules': '@latest-kf6'
+    'frameworks/ki18n': '@latest-kf6'
+    'frameworks/threadweaver': '@latest-kf6'
+    'frameworks/ktexteditor': '@latest-kf6'
+    'kdevelop/kdevelop': 'work/apol/kf6'

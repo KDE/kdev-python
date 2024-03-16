@@ -69,7 +69,6 @@
         "Description[zh_CN]": "插件提供了 PDB 前端",
         "Description[zh_TW]": "此外掛程式提供了 PDB 的前端",
         "Icon": "text-x-python",
-        "Id": "kdevpdb",
         "License": "GPL",
         "Name": "Python Debugger (PDB) support",
         "Name[ca@valencia]": "Implementació del depurador de Python (PDB)",

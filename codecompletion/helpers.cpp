@@ -424,7 +424,7 @@ StringFormatter::StringFormatter(const QString &string)
         ReplacementVariable variable(identifier, conversion, formatSpec);
         m_replacementVariables.append(variable);
 
-        RangeInString variablePosition(match.capturedStart(1), match.capturedEnd(1));
+        RangeInString variablePosition(match.capturedStart(), match.capturedEnd());
         m_variablePositions.append(variablePosition);
     }
 }

@@ -455,13 +455,15 @@ void PyCompletionTest::testAutoBrackets()
         }
     }
     QVERIFY(item);
-    KService::Ptr documentService = KService::serviceByDesktopPath(QStringLiteral("katepart.desktop"));
-    QVERIFY(documentService);
-    // KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
-    // auto view = document->createView(nullptr);
-    // QVERIFY(document);
-    // item->execute(view, KTextEditor::Range(0, 0, 0, 0));
-    // QCOMPARE(document->text(), QLatin1String("myprop"));
+    // get access to the global editor singleton
+    auto editor = KTextEditor::Editor::instance();
+    auto document = editor->createDocument(this);
+
+    // create a widget to display the document
+    auto view = document->createView(nullptr);
+    QVERIFY(document);
+    item->execute(view, KTextEditor::Range(0, 0, 0, 0));
+    QCOMPARE(document->text(), QLatin1String("myprop"));
 }
 
 void PyCompletionTest::testExceptionCompletion()

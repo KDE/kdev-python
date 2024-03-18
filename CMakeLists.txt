@@ -26,10 +26,8 @@ if (BUILD_WITH_QT6)
 else()
     set(KF_MAJOR_VERSION "5")
     set(QT_MIN_VERSION "5.15.2")
-    set(KF_MIN_VERSION "5.91.0")
+    set(KF_MIN_VERSION "5.78.0")
 endif()
-
-#set(KF5_DEP_VERSION "5.78.0")
 
 find_package (ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
@@ -59,7 +57,7 @@ configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpython
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
-find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
+find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Core5Compat Widgets Test)
 
 find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
     I18n

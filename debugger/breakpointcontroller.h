@@ -19,6 +19,13 @@ class BreakpointController : public KDevelop::IBreakpointController
 Q_OBJECT
 public:
     BreakpointController(IDebugSession* parent);
+
+    void breakpointAdded(int row) override;
+
+    void breakpointModelChanged(int row, BreakpointModel::ColumnFlags columns) override;
+
+    void breakpointAboutToBeDeleted(int row) override;
+
 public Q_SLOTS:
     /**
      * @brief Handles events in the debug session.
@@ -30,13 +37,14 @@ public Q_SLOTS:
     void slotEvent(IDebugSession::event_t evt);
 protected:
     /**
-     * @brief Notify the debugger about a breakpoint update.
-     * This is triggered if the user clicks the breakpoint bar.
-     * Deleting breakpoints is also handled here.
-     * 
-     * @param breakpoint The breakpoint to update.
+     * Note: this method exists solely to full fill KDevelop::IBreakpointController
+     *       interface to ease the API transition; it should be removed at once
+     *       when KDevelop::IBreakpointController no longer requires the override.
      **/
-    void sendMaybe(KDevelop::Breakpoint* breakpoint) override;
+    void sendMaybe(KDevelop::Breakpoint* breakpoint) override
+    {
+        Q_UNUSED(breakpoint);
+    }
     DebugSession* session();
 };
 

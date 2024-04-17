@@ -25,29 +25,37 @@ DebugSession* BreakpointController::session()
 
 void BreakpointController::slotEvent(IDebugSession::event_t evt)
 {
-    qCDebug(KDEV_PYTHON_DEBUGGER) << evt;
     if ( evt == IDebugSession::connected_to_program ) {
         const auto breakpoints = breakpointModel()->breakpoints();
-        for (Breakpoint* bp : breakpoints) {
-            if ( bp->deleted() ) {
-                continue;
-            }
-            session()->addBreakpoint(bp);
+        for (Breakpoint* const bp : breakpoints) {
+            // TODO
         }
     }
 }
 
-void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
+void BreakpointController::breakpointAdded(int row)
 {
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "sending breakpoint: " << breakpoint << "( deleted:" << breakpoint->deleted() << ")";
-    if ( breakpoint->deleted() ) {
-        session()->removeBreakpoint(breakpoint);
-    }
-    else {
-        session()->addBreakpoint(breakpoint);
-    }
+    auto* modelBreakpoint = breakpointModel()->breakpoint(row);
+
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "adding breakpoint: " << modelBreakpoint << "( line:" << modelBreakpoint->line()
+                                  << ")";
+    // TODO
 }
 
+void BreakpointController::breakpointModelChanged(int row, BreakpointModel::ColumnFlags columns)
+{
+    // TODO
+    Q_UNUSED(row);
+    Q_UNUSED(columns);
+}
+
+void BreakpointController::breakpointAboutToBeDeleted(int row)
+{
+    auto* modelBreakpoint = breakpointModel()->breakpoint(row);
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "removing breakpoint: " << modelBreakpoint << "( line:" << modelBreakpoint->line()
+                                  << ")";
+    // TODO
+}
 }
 
 #include "moc_breakpointcontroller.cpp"

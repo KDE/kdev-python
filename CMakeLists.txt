@@ -57,7 +57,11 @@ configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpython
 find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
-find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Core5Compat Widgets Test)
+if(QT_MAJOR_VERSION STREQUAL 6)
+    find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Core5Compat Widgets Test)
+else()
+    find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
+endif()
 
 find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
     I18n
@@ -69,7 +73,7 @@ find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
 if(QT_MAJOR_VERSION STREQUAL 6)
     find_package(Qt6Core5Compat ${QT_MIN_VERSION} CONFIG REQUIRED)
     find_package(KF6TextWidgets ${KF_MIN_VERSION} CONFIG REQUIRED)
-    endif()
+endif()
 
 if(NOT CMAKE_VERSION VERSION_LESS "3.10.0" AND KF5_VERSION VERSION_LESS "5.42.0")
     # Avoids bogus warnings with CMake 3.10+, KF5.42+ has workaround

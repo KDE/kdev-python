@@ -26,7 +26,7 @@ if (BUILD_WITH_QT6)
 else()
     set(KF_MAJOR_VERSION "5")
     set(QT_MIN_VERSION "5.15.2")
-    set(KF_MIN_VERSION "5.78.0")
+    set(KF_MIN_VERSION "5.91.0")
 endif()
 
 find_package (ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)

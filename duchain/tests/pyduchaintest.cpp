@@ -1371,7 +1371,6 @@ void PyDUChainTest::testProblemCount()
     QVERIFY(ctx);
 
     DUChainReadLocker lock;
-    QEXPECT_FAIL("fstring_visit_inside", "Ranges are broken so we don't visit the expression", Continue);
     QCOMPARE(ctx->problems().size(), problemsCount);
 }
 

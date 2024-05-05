@@ -2,6 +2,9 @@
 <component type="addon">
   <id>org.kde.kdev-python</id>
   <extends>org.kde.kdevelop.desktop</extends>
+  <developer id="org.kde">
+    <name translate="no">KDE</name>
+  </developer>
   <name>KDevelop Python Support</name>
   <name xml:lang="ca">Implementació de Python al KDevelop</name>
   <name xml:lang="ca-valencia">Implementació de Python a KDevelop</name>
@@ -94,36 +97,6 @@
     <p xml:lang="zh-CN">向 KDevelop 添加 Python 支持。包括代码高亮、代码完成、构建系统支持、文档链接和调试支持的集成。</p>
     <p xml:lang="zh-TW">對 KDevelop 增加 Python 支援。包含增加程式碼突顯、程式碼自動完成、編譯系統支援、文件連結及除錯支援整合。</p>
   </description>
-  <developer_name>Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ca">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ca-valencia">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="cs">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="de">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="en-GB">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="eo">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="es">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="et">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="eu">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="fi">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="fr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="gl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="it">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ka">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ko">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="nl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="nn">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="pl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="pt">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="pt-BR">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="ru">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="sk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="sl">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="sv">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="tr">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="uk">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="x-test">xxSven Brauch &lt;mail@svenbrauch.de&gt;xx</developer_name>
-  <developer_name xml:lang="zh-CN">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
-  <developer_name xml:lang="zh-TW">Sven Brauch &lt;mail@svenbrauch.de&gt;</developer_name>
   <project_license>GPL-2.0+</project_license>
   <metadata_license>CC0-1.0</metadata_license>
   <url type="homepage">https://kdevelop.org</url>

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-11-05 12:27+0000\n"
-"PO-Revision-Date: 2024-03-07 20:13+0900\n"
+"PO-Revision-Date: 2024-05-09 16:37+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
 "Language: zh_TW\n"
@@ -474,7 +474,7 @@ msgstr "<可呼叫物件>"
 #, kde-format
 msgctxt "a set with some elements"
 msgid "<iterable>"
-msgstr ""
+msgstr "<iterable>"
 
 #: duchain/types/unsuretype.cpp:127
 #, kde-format

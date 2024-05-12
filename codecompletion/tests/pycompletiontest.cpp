@@ -532,16 +532,13 @@ void PyCompletionTest::testFunctionDeclarationCompletion()
 
     QVERIFY( ! completionItems.isEmpty() );
 
-    // KService::Ptr documentService = KService::serviceByDesktopPath(QStringLiteral("katepart.desktop"));
-    // QVERIFY(documentService);
-    // KTextEditor::Document* document = documentService->createInstance<KTextEditor::Document>(this);
-    // QVERIFY(document);
-    // document->setText(documentCode);
-    //
-    // auto view = document->createView(nullptr);
-    //
-    // completionItems.first()->execute(view, executeRange);
-    // QCOMPARE(document->text(), expectedCode);
+    auto editor = KTextEditor::Editor::instance();
+    auto document = editor->createDocument(this);
+    document->setText(documentCode);
+
+    auto view = document->createView(nullptr);
+    completionItems.first()->execute(view, executeRange);
+    QCOMPARE(document->text(), expectedCode);
 }
 
 void PyCompletionTest::testFunctionDeclarationCompletion_data()

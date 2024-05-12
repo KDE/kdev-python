@@ -46,9 +46,9 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
         case PyUnicode_1BYTE_KIND:
             return QString::fromLatin1((const char*)PyUnicode_1BYTE_DATA(str), length);
         case PyUnicode_2BYTE_KIND:
-            return QString::fromUtf16(PyUnicode_2BYTE_DATA(str), length);
+            return QString::fromUtf16((char16_t*)PyUnicode_2BYTE_DATA(str), length);
         case PyUnicode_4BYTE_KIND:
-            return QString::fromUcs4(PyUnicode_4BYTE_DATA(str), length);
+            return QString::fromUcs4((char32_t*)PyUnicode_4BYTE_DATA(str), length);
     }
     qCritical("PyUnicode_KIND(%p) returned an unexpected value, this should not happen!", (void*)str);
     Q_UNREACHABLE();

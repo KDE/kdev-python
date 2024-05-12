@@ -178,6 +178,11 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     QList<Declaration*> remainingDeclarations;
     *ok = nullptr;
     for ( Declaration* d : declarations ) {
+        if ( ! d ) {
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "null declaration in candidate list";
+            continue;
+        }
+
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
             // Only use a declaration if the type matches

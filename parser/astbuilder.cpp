@@ -37,21 +37,15 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     auto pyObjectCleanup = [](PyObject* o) { if (o) Py_DECREF(o); };
     const auto strOwner = std::unique_ptr<PyObject, decltype(pyObjectCleanup)>(PyObject_Str(obj), pyObjectCleanup);
     const auto str = strOwner.get();
-    if (PyUnicode_READY(str) < 0) {
-        qWarning("PyUnicode_READY(%p) returned false!", (void*)str);
-        return QString();
+
+    Py_ssize_t size;
+    const char *ptr = PyUnicode_AsUTF8AndSize(str, &size);
+    if (!ptr) {
+        qCWarning(KDEV_PYTHON_PARSER) << "failed to convert python string to unicode";
+        return {};
     }
-    const auto length = PyUnicode_GET_LENGTH(str);
-    switch(PyUnicode_KIND(str)) {
-        case PyUnicode_1BYTE_KIND:
-            return QString::fromLatin1((const char*)PyUnicode_1BYTE_DATA(str), length);
-        case PyUnicode_2BYTE_KIND:
-            return QString::fromUtf16((char16_t*)PyUnicode_2BYTE_DATA(str), length);
-        case PyUnicode_4BYTE_KIND:
-            return QString::fromUcs4((char32_t*)PyUnicode_4BYTE_DATA(str), length);
-    }
-    qCritical("PyUnicode_KIND(%p) returned an unexpected value, this should not happen!", (void*)str);
-    Q_UNREACHABLE();
+
+    return QString::fromUtf8(ptr, size);
 }
 
 #if QT_VERSION >= 0x060000

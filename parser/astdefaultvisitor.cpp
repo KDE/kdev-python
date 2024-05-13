@@ -35,7 +35,7 @@ void AstDefaultVisitor::visitBytes(BytesAst* node) { Q_UNUSED(node); }
 void AstDefaultVisitor::visitIdentifier(Identifier* node) { Q_UNUSED(node); }
 
 void AstDefaultVisitor::visitJoinedString(JoinedStringAst* node) {
-    foreach (Ast* value, node->values) {
+    for (Ast* value: node->values) {
         visitNode(value);
     }
 }

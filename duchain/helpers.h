@@ -167,7 +167,7 @@ public:
             result = Helper::mergeTypes(result, transform ? transform(type) : type);
         }
         return result;
-    };
+    }
 
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);

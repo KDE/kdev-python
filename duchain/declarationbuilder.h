@@ -254,7 +254,7 @@ private:
                                                              editorFindRange(name, name), flags);
         decl->setAlwaysForceDirect(true);
         return decl;
-    };
+    }
     void closeDeclaration() override;
 
 private:

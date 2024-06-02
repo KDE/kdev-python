@@ -34,11 +34,13 @@
 #define INTERRUPT_DEBUGGER kill(m_debuggerProcess->processId(), SIGINT)
 #endif
 
-using namespace KDevelop;
+namespace {
+static const QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
+static const QByteArray debuggerOutputBegin = "__KDEVPYTHON_BEGIN_DEBUGGER_OUTPUT>>>";
+static const QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
+}
 
-static QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
-static QByteArray debuggerOutputBegin = "__KDEVPYTHON_BEGIN_DEBUGGER_OUTPUT>>>";
-static QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
+using namespace KDevelop;
 
 namespace Python {
 
@@ -118,7 +120,8 @@ void DebugSession::debuggerQuit(int )
 
 QStringList byteArrayToStringList(const QByteArray& r) {
     QStringList items;
-    for ( const QByteArray& item : r.split('\n') ) {
+    const auto list = r.split('\n');
+    for ( const QByteArray& item : list ) {
         items << QString::fromLatin1(item);
     }
     if ( r.endsWith('\n') ) {
@@ -160,7 +163,7 @@ void DebugSession::dataAvailable()
         if ( m_inDebuggerData == 1 ) {
             m_buffer.append(data.mid(i, nextChangeAt - i));
             if ( data.indexOf("Uncaught exception. Entering post mortem debugging") != -1 ) {
-                /*emit*/ realDataReceived(QStringList() << QStringLiteral("*****")
+                Q_EMIT realDataReceived(QStringList() << QStringLiteral("*****")
                                                     << QStringLiteral("  ") + i18n("The program being debugged raised an uncaught exception.")
                                                     << QStringLiteral("  ") + i18n("You can now inspect the status of the program after it exited.")
                                                     << QStringLiteral("  ") + i18n("The debugger will silently stop when the next command is triggered.")
@@ -191,7 +194,7 @@ void DebugSession::dataAvailable()
     if ( ! realData.isEmpty() ) {
         // FIXME this is not very elegant.
         QStringList items = byteArrayToStringList(realData);
-        /*emit*/ realDataReceived(items);
+        Q_EMIT realDataReceived(items);
     }
     
     // Although unbuffered, it seems guaranteed that the debugger prompt is written at once.
@@ -210,12 +213,12 @@ void DebugSession::dataAvailable()
             }
         }
         m_processBusy = false;
-        /*emit*/ debuggerReady();
+        Q_EMIT debuggerReady();
     }
     
     data = m_debuggerProcess->readAllStandardError();
     if ( ! data.isEmpty() ) {
-        /*emit*/ stderrReceived(byteArrayToStringList(data));
+        Q_EMIT stderrReceived(byteArrayToStringList(data));
     }
 }
 
@@ -274,7 +277,7 @@ void DebugSession::setState(DebuggerState state)
     m_state = state;
     if ( m_state == EndedState ) {
         raiseEvent(debugger_exited);
-        /*emit*/ finished();
+        Q_EMIT finished();
     }
     else if ( m_state == ActiveState || m_state == StartingState || m_state == StoppingState ) {
         raiseEvent(debugger_busy);
@@ -282,13 +285,13 @@ void DebugSession::setState(DebuggerState state)
     else if ( m_state == PausedState ) {
         raiseEvent(debugger_ready);
         if ( currentUrl().isValid() ) {
-            /*emit*/ showStepInSource(currentUrl(), currentLine(), currentAddr());
+            Q_EMIT showStepInSource(currentUrl(), currentLine(), currentAddr());
         }
     }
     
     qCDebug(KDEV_PYTHON_DEBUGGER) << "debugger state changed to" << m_state;
     raiseEvent(program_state_changed);
-    /*emit*/ stateChanged(m_state);
+    Q_EMIT stateChanged(m_state);
 }
 
 void DebugSession::write(const QByteArray& cmd)
@@ -372,7 +375,7 @@ void DebugSession::addCommand(PdbCommand* cmd)
         // this is queued and will run after the command is executed.
         updateLocation();
     }
-    /*emit*/ commandAdded();
+    Q_EMIT commandAdded();
 }
 
 void DebugSession::checkCommandQueue()

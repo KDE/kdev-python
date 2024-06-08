@@ -57,7 +57,16 @@ struct PythonParser : private QMutexLocker
 
     PythonParser(QMutex& lock): QMutexLocker(&lock)
     {
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 12, 0)
         Py_InitializeEx(0);
+#else
+        PyConfig config;
+        PyConfig_InitPythonConfig(&config);
+        config.site_import = 0;
+        config.install_signal_handlers = 0;
+        Py_InitializeFromConfig(&config);
+#endif
+
         Q_ASSERT(Py_IsInitialized());
         m_parser_mod = PyImport_ImportModule("ast");
         Q_ASSERT(m_parser_mod); // parser import error
@@ -92,9 +101,11 @@ struct PythonParser : private QMutexLocker
 CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
 {
     qCDebug(KDEV_PYTHON_PARSER) << " ====> AST     ====>     building abstract syntax tree for " << filename.path();
-    
+
+#if PYTHON_VERSION < QT_VERSION_CHECK(3, 12, 0)
     Py_NoSiteFlag = 1;
-    
+#endif
+
     contents.append('\n');
     
     PythonParser py_parser(pyInitLock);

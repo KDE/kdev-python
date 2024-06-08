@@ -137,6 +137,7 @@ public:
         ExceptionHandlerAstType,
         AliasAstType, // for imports
         IdentifierAstType,
+        TypeAliasType, // for types
         LastAstType // the largest one, not valid!
     };
     
@@ -435,6 +436,11 @@ public:
     QList<ExceptionHandlerAst*> handlers;
     QList<Ast*> orelse;
     QList<Ast*> finally;
+};
+
+class KDEVPYTHONPARSER_EXPORT TypeAliasAst : public StatementAst {
+public:
+    TypeAliasAst(Ast* parent);
 };
 
 class KDEVPYTHONPARSER_EXPORT ImportAst : public StatementAst {

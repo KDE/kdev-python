@@ -104,6 +104,7 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::LastStatementType:                            Q_ASSERT(false); break;
         case Ast::LastExpressionType:                           Q_ASSERT(false); break;
         case Ast::LastPatternType:                              Q_ASSERT(false); break;
+        case Ast::TypeAliasType:                                break;
     }
 }
 

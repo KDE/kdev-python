@@ -765,6 +765,9 @@ QString TryAst::dump() const
     return r;
 }
 
+TypeAliasAst::TypeAliasAst(Ast* parent): StatementAst(parent, Ast::TypeAliasType)
+{
+}
 
 WhileAst::WhileAst(Ast* parent): StatementAst(parent, Ast::WhileAstType), condition(nullptr)
 {

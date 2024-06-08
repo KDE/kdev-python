@@ -45,6 +45,10 @@ public:
     PyObject* ast_Pass;
     PyObject* ast_Break;
     PyObject* ast_Continue;
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
+    // type
+    PyObject* ast_TypeAlias;
+#endif
 
     // expr
     PyObject* ast_expr;
@@ -330,6 +334,10 @@ public:
         Py_GRAMMAR_GET(mod, Bytes);
 #endif
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
+        Py_GRAMMAR_GET(mod, TypeAlias);
+#endif
+
         Py_DECREF(mod);
     }
 
@@ -471,6 +479,13 @@ public:
         Py_XDECREF(ast_Num);
         Py_XDECREF(ast_Str);
         Py_XDECREF(ast_Bytes);
+#endif
+
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
+        Py_XDECREF(ast_TryStar);
+#endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
+        Py_XDECREF(ast_TypeAlias);
 #endif
     }
 };

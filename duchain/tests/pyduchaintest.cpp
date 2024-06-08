@@ -439,6 +439,11 @@ void PyDUChainTest::testCrashes_data() {
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 11, 0)
     QTest::newRow("except_star") << "try: pass\nexcept* (IndexError, ValueError): pass";
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
+    QTest::newRow("type_alias") << "type Point = tuple[float, float]";
+    QTest::newRow("generic_function") << "def func[T](arg: T): pass";
+    QTest::newRow("generic_class") << "class Bag[T]: pass";
+#endif
 }
 
 void PyDUChainTest::testClassVariables()

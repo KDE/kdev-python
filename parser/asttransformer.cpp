@@ -1247,6 +1247,12 @@ Ast* AstTransformer::visitStmtNode(PyObject* node, Ast* parent)
         result = v;
     }
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
+    else if (PyObject_IsInstance(node, grammar.ast_TypeAlias)) {
+        TypeAliasAst* v = new TypeAliasAst(parent);
+        result = v;
+    }
+#endif
     else {
         qWarning() << "Unsupported _stmt AST type: " << PyUnicodeObjectToQString(PyObject_Str(node));
         Q_ASSERT(false);

@@ -46,8 +46,8 @@ using namespace KDevelop;
 
 namespace Python {
 
-QMap<IProject*, QVector<QUrl>> Helper::cachedCustomIncludes;
-QMap<IProject*, QVector<QUrl>> Helper::cachedSearchPaths;
+QHash<IProject*, QVector<QUrl>> Helper::cachedCustomIncludes;
+QHash<IProject*, QVector<QUrl>> Helper::cachedSearchPaths;
 QVector<QUrl> Helper::projectSearchPaths;
 QStringList Helper::dataDirs;
 IndexedString Helper::documentationFile;

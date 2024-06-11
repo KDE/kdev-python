@@ -48,8 +48,8 @@ public:
     static QUrl getLocalCorrectionFile(const QUrl& document);
 
     static QMutex cacheMutex;
-    static QMap<IProject*, QVector<QUrl>> cachedCustomIncludes;
-    static QMap<IProject*, QVector<QUrl>> cachedSearchPaths;
+    static QHash<IProject*, QVector<QUrl>> cachedCustomIncludes;
+    static QHash<IProject*, QVector<QUrl>> cachedSearchPaths;
 
     static QMutex projectPathLock;
     static QVector<QUrl> projectSearchPaths;

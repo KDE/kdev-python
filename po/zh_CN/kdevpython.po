@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:27+0000\n"
+"POT-Creation-Date: 2024-06-11 01:49+0000\n"
 "PO-Revision-Date: 2024-04-23 19:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -122,7 +122,7 @@ msgstr "格式化为科学 (指数) 符号"
 msgid "Format as fixed point number"
 msgstr "格式化为定点数"
 
-#: codecompletion/context.cpp:505
+#: codecompletion/context.cpp:506
 #, kde-format
 msgid "Initialize property"
 msgstr "初始化属性"
@@ -200,17 +200,17 @@ msgstr "需要模块："
 msgid "A comma separated list of modules required for the type"
 msgstr "类型所需模块的逗号分隔列表"
 
-#: debugger/debugsession.cpp:163
+#: debugger/debugsession.cpp:164
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "正在调试的程序引发了一个未被捕获的异常。"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:165
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "您现在可以在退出后检查程序的状态。"
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:166
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "当下一个命令被触发时，调试器将静默停止。"
@@ -298,90 +298,90 @@ msgstr "复制后，您将编辑新文档。"
 msgid "Please select at least one file from the list for editing."
 msgstr "请从列表中选择至少一个文件进行编辑。"
 
-#: docfilekcm/docfilewizard.cpp:40
+#: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
 msgstr "配置要使用的 Python 解释器"
 
-#: docfilekcm/docfilewizard.cpp:43
+#: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
 msgstr "Python 可执行文件"
 
-#: docfilekcm/docfilewizard.cpp:48
+#: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
 msgstr "选择一个 Python 模块来生成文档"
 
-#: docfilekcm/docfilewizard.cpp:52
+#: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
 msgstr "目标模块 (例如 math)"
 
-#: docfilekcm/docfilewizard.cpp:54
+#: docfilekcm/docfilewizard.cpp:55
 #, kde-format
 msgid "Output filename"
 msgstr "输出文件名"
 
-#: docfilekcm/docfilewizard.cpp:60
+#: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
 msgstr "状态和输出"
 
-#: docfilekcm/docfilewizard.cpp:62 docfilekcm/docfilewizard.cpp:68
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
 msgstr "进程尚未运行。"
 
-#: docfilekcm/docfilewizard.cpp:74
+#: docfilekcm/docfilewizard.cpp:75
 #, kde-format
 msgid "Script output"
 msgstr "脚本输出"
 
-#: docfilekcm/docfilewizard.cpp:75
+#: docfilekcm/docfilewizard.cpp:76
 #, kde-format
 msgid "Results"
 msgstr "结果"
 
-#: docfilekcm/docfilewizard.cpp:81
+#: docfilekcm/docfilewizard.cpp:82
 #, kde-format
 msgid "Close"
 msgstr "关闭"
 
-#: docfilekcm/docfilewizard.cpp:83
+#: docfilekcm/docfilewizard.cpp:84
 #, kde-format
 msgid "Save and close"
 msgstr "保存并关闭"
 
-#: docfilekcm/docfilewizard.cpp:86
+#: docfilekcm/docfilewizard.cpp:87
 #, kde-format
 msgid "Generate"
 msgstr "生成"
 
-#: docfilekcm/docfilewizard.cpp:137
+#: docfilekcm/docfilewizard.cpp:138
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
 msgstr "找不到 introspect.py 脚本；请检查您的安装！"
 
-#: docfilekcm/docfilewizard.cpp:141
+#: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr "找不到有效的 kdev-python 数据目录；请检查您的安装！"
 
-#: docfilekcm/docfilewizard.cpp:147
+#: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
 msgstr "无效的输出文件名"
 
-#: docfilekcm/docfilewizard.cpp:186
+#: docfilekcm/docfilewizard.cpp:189
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "输出文件<br/>%1<br/>已存在，是否要覆盖它？"
 
-#: docfilekcm/docfilewizard.cpp:201
+#: docfilekcm/docfilewizard.cpp:204
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -410,38 +410,38 @@ msgstr "管理 Python 插件使用的文档文件"
 msgid "Python Documentation"
 msgstr "Python 文档"
 
-#: duchain/assistants/missingincludeassistant.cpp:50
+#: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
 msgstr "正在为模块“%1”生成文档..."
 
-#: duchain/declarationbuilder.cpp:699
+#: duchain/declarationbuilder.cpp:704
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "找不到模块 “%1”"
 
-#: duchain/declarationbuilder.cpp:770
+#: duchain/declarationbuilder.cpp:775
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "在指定模块中找不到 %1 的声明"
 
-#: duchain/declarationbuilder.cpp:1578
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "__new__ 方法的第一个参数不叫 cls，这是不推荐使用的"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1588
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "类方法的第一个参数不叫 self，这是不推荐使用的"
 
-#: duchain/declarationbuilder.cpp:1603
+#: duchain/declarationbuilder.cpp:1608
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "没有参数的非静态类方法，必须至少有一个参数 (self)"
 
-#: duchain/declarationbuilder.cpp:1764
+#: duchain/declarationbuilder.cpp:1769
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "返回语句不在函数声明内"
@@ -565,12 +565,12 @@ msgstr "Python 设置"
 msgid "Format source with the autopep8 formatter."
 msgstr "使用 autopep8 格式化程序格式化源代码。"
 
-#: pythonstylechecking.cpp:104
+#: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
 msgstr "PEP8 检查器错误：%1"
 
-#: pythonstylechecking.cpp:206
+#: pythonstylechecking.cpp:209
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 语法检查器似乎无法正常工作。"

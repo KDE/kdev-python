@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:27+0000\n"
+"POT-Creation-Date: 2024-06-11 01:49+0000\n"
 "PO-Revision-Date: 2017-06-08 08:36+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -125,7 +125,7 @@ msgstr "Форматування у інженерному позначенні 
 msgid "Format as fixed point number"
 msgstr "Форматувати як число з нерухомою крапкою"
 
-#: codecompletion/context.cpp:505
+#: codecompletion/context.cpp:506
 #, kde-format
 msgid "Initialize property"
 msgstr "Ініціалізувати властивість"
@@ -206,18 +206,18 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Список відокремлених комами записів модулів, потрібних для роботи з типом."
 
-#: debugger/debugsession.cpp:163
+#: debugger/debugsession.cpp:164
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Під час діагностичного запуску програми сталося невідоме виключення."
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:165
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr ""
 "Тепер можна ознайомитися зі станом програми після завершення її роботи."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:166
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
@@ -312,75 +312,75 @@ msgstr "Після копіювання ви редагуватимете нов
 msgid "Please select at least one file from the list for editing."
 msgstr "Будь ласка, позначте у списку хоча б один документ для редагування."
 
-#: docfilekcm/docfilewizard.cpp:40
+#: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
 msgstr "Налаштуйте інтерпретатор Python, який слід використовувати"
 
-#: docfilekcm/docfilewizard.cpp:43
+#: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
 msgstr "Виконуваний файл Python"
 
-#: docfilekcm/docfilewizard.cpp:48
+#: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
 msgstr "Виберіть модуль python для створення документації"
 
-#: docfilekcm/docfilewizard.cpp:52
+#: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
 msgstr "Модуль призначення (наприклад «math»)"
 
-#: docfilekcm/docfilewizard.cpp:54
+#: docfilekcm/docfilewizard.cpp:55
 #, kde-format
 msgid "Output filename"
 msgstr "Назва файла результатів"
 
-#: docfilekcm/docfilewizard.cpp:60
+#: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
 msgstr "Стан і результат"
 
-#: docfilekcm/docfilewizard.cpp:62 docfilekcm/docfilewizard.cpp:68
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
 msgstr "Процес ще не запущено."
 
-#: docfilekcm/docfilewizard.cpp:74
+#: docfilekcm/docfilewizard.cpp:75
 #, kde-format
 msgid "Script output"
 msgstr "Дані, виведені скриптами"
 
-#: docfilekcm/docfilewizard.cpp:75
+#: docfilekcm/docfilewizard.cpp:76
 #, kde-format
 msgid "Results"
 msgstr "Результати"
 
-#: docfilekcm/docfilewizard.cpp:81
+#: docfilekcm/docfilewizard.cpp:82
 #, kde-format
 msgid "Close"
 msgstr "Закрити"
 
-#: docfilekcm/docfilewizard.cpp:83
+#: docfilekcm/docfilewizard.cpp:84
 #, kde-format
 msgid "Save and close"
 msgstr "Зберегти і закрити"
 
-#: docfilekcm/docfilewizard.cpp:86
+#: docfilekcm/docfilewizard.cpp:87
 #, kde-format
 msgid "Generate"
 msgstr "Створити"
 
-#: docfilekcm/docfilewizard.cpp:137
+#: docfilekcm/docfilewizard.cpp:138
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
 msgstr ""
 "Не вдалося знайти скрипт introspect.py. Перевірте, чи належним чином "
 "встановлено програми!"
 
-#: docfilekcm/docfilewizard.cpp:141
+#: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
@@ -388,18 +388,18 @@ msgstr ""
 "Не вдалося знайти коректний каталог даних kdev-python. Перевірте, чи "
 "належним чином встановлено програму!"
 
-#: docfilekcm/docfilewizard.cpp:147
+#: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
 msgstr "Некоректна назва файл результатів"
 
-#: docfilekcm/docfilewizard.cpp:186
+#: docfilekcm/docfilewizard.cpp:189
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "Файл результатів <br/>%1<br/> вже існує. Хочете його перезаписати?"
 
-#: docfilekcm/docfilewizard.cpp:201
+#: docfilekcm/docfilewizard.cpp:204
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -434,36 +434,36 @@ msgstr "Керування файлами документації, що вик�
 msgid "Python Documentation"
 msgstr "Документація з Python"
 
-#: duchain/assistants/missingincludeassistant.cpp:50
+#: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Створити документацію для модуля «%1»…"
 
-#: duchain/declarationbuilder.cpp:699
+#: duchain/declarationbuilder.cpp:704
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "Не знайдено модуля «%1»"
 
-#: duchain/declarationbuilder.cpp:770
+#: duchain/declarationbuilder.cpp:775
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "У вказаному модулі не знайдено оголошення «%1»"
 
-#: duchain/declarationbuilder.cpp:1578
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "Перший аргумент методу __new__ не названо cls. Такий варіант коду вважається "
 "застарілим."
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1588
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "Перший аргумент методу класу не викликається автономно (self), такі "
 "синтаксичні конструкції вважаються застарілими"
 
-#: duchain/declarationbuilder.cpp:1603
+#: duchain/declarationbuilder.cpp:1608
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -471,7 +471,7 @@ msgstr ""
 "Нестатичний метод класу без аргументів. Має бути принаймні один аргумент "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1764
+#: duchain/declarationbuilder.cpp:1769
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Інструкція return поза межами оголошення функції"
@@ -597,12 +597,12 @@ msgstr "Параметри Python"
 msgid "Format source with the autopep8 formatter."
 msgstr "Форматування коду за допомогою засобу форматування autopep8."
 
-#: pythonstylechecking.cpp:104
+#: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
 msgstr "Помилка під час перевірки PEP8: %1"
 
-#: pythonstylechecking.cpp:206
+#: pythonstylechecking.cpp:209
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""

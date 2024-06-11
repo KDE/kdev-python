@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:27+0000\n"
+"POT-Creation-Date: 2024-06-11 01:49+0000\n"
 "PO-Revision-Date: 2021-04-04 07:55+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
@@ -123,7 +123,7 @@ msgstr "Formatuj w zapisie naukowym (z wykładnikiem)"
 msgid "Format as fixed point number"
 msgstr "Formatuj jako liczbę stałoprzecinkową"
 
-#: codecompletion/context.cpp:505
+#: codecompletion/context.cpp:506
 #, kde-format
 msgid "Initialize property"
 msgstr "Inicjuj właściwość"
@@ -203,17 +203,17 @@ msgstr "Wymagane moduły:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Wykaz modułów wymaganych dla tego rodzaju oddzielony przecinkami"
 
-#: debugger/debugsession.cpp:163
+#: debugger/debugsession.cpp:164
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Debugowany program zgłosił niezłapany wyjątek."
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:165
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Teraz możesz przejrzeć stan programu po jego wyjściu."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:166
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
@@ -306,90 +306,90 @@ msgstr "Po skopiowaniu rozpoczniesz edycję nowego dokumentu."
 msgid "Please select at least one file from the list for editing."
 msgstr "Wybierz co najmniej jeden plik z listy do edytowania."
 
-#: docfilekcm/docfilewizard.cpp:40
+#: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
 msgstr "Ustaw interpreter Pythona"
 
-#: docfilekcm/docfilewizard.cpp:43
+#: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
 msgstr "Pliki wykonywalny Python"
 
-#: docfilekcm/docfilewizard.cpp:48
+#: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
 msgstr "Wybierz, do którego modułu pythona utworzyć dokumentację"
 
-#: docfilekcm/docfilewizard.cpp:52
+#: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
 msgstr "Moduł docelowy (np. \"matematyka\")"
 
-#: docfilekcm/docfilewizard.cpp:54
+#: docfilekcm/docfilewizard.cpp:55
 #, kde-format
 msgid "Output filename"
 msgstr "Nazwa pliku wyjściowego"
 
-#: docfilekcm/docfilewizard.cpp:60
+#: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
 msgstr "Stan i wyjście"
 
-#: docfilekcm/docfilewizard.cpp:62 docfilekcm/docfilewizard.cpp:68
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
 msgstr "Proces nie został jeszcze uruchomiony."
 
-#: docfilekcm/docfilewizard.cpp:74
+#: docfilekcm/docfilewizard.cpp:75
 #, kde-format
 msgid "Script output"
 msgstr "Wynik działania skryptu"
 
-#: docfilekcm/docfilewizard.cpp:75
+#: docfilekcm/docfilewizard.cpp:76
 #, kde-format
 msgid "Results"
 msgstr "Wyniki"
 
-#: docfilekcm/docfilewizard.cpp:81
+#: docfilekcm/docfilewizard.cpp:82
 #, kde-format
 msgid "Close"
 msgstr "Zamknij"
 
-#: docfilekcm/docfilewizard.cpp:83
+#: docfilekcm/docfilewizard.cpp:84
 #, kde-format
 msgid "Save and close"
 msgstr "Zapisz i zamknij"
 
-#: docfilekcm/docfilewizard.cpp:86
+#: docfilekcm/docfilewizard.cpp:87
 #, kde-format
 msgid "Generate"
 msgstr "Utwórz"
 
-#: docfilekcm/docfilewizard.cpp:137
+#: docfilekcm/docfilewizard.cpp:138
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
 msgstr "Nie można znaleźć skryptu introspect.py; sprawdź swój system!"
 
-#: docfilekcm/docfilewizard.cpp:141
+#: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr "Nie można znaleźć katalogu danych kdev-python; sprawdź swój system!"
 
-#: docfilekcm/docfilewizard.cpp:147
+#: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
 msgstr "Nieprawidłowa nazwa pliku wyjściowego"
 
-#: docfilekcm/docfilewizard.cpp:186
+#: docfilekcm/docfilewizard.cpp:189
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "Plik wyjściowy <br/>%1<br/> już istnieje, czy chcesz go zastąpić?"
 
-#: docfilekcm/docfilewizard.cpp:201
+#: docfilekcm/docfilewizard.cpp:204
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -423,41 +423,41 @@ msgstr "Pliki dokumentacji dla wtyczki Pythona"
 msgid "Python Documentation"
 msgstr "Dokumentacja Pythona"
 
-#: duchain/assistants/missingincludeassistant.cpp:50
+#: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Utwórz dokumentację dla modułu \"%1\"..."
 
-#: duchain/declarationbuilder.cpp:699
+#: duchain/declarationbuilder.cpp:704
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "Nie znaleziono modułu \"%1\""
 
-#: duchain/declarationbuilder.cpp:770
+#: duchain/declarationbuilder.cpp:775
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Nie znaleziono deklaracji dla \"%1\" w podanym module"
 
-#: duchain/declarationbuilder.cpp:1578
+#: duchain/declarationbuilder.cpp:1583
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "Pierwszy argument metody __new__ nie jest nazywany cls, jest to przestarzałe"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1588
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "Pierwszy argument metody klasy nie jest nazywany self, jest to przestarzałe"
 
-#: duchain/declarationbuilder.cpp:1603
+#: duchain/declarationbuilder.cpp:1608
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Niestatyczna metoda klasy bez argumentów, musi mieć co najmniej jedno (self)"
 
-#: duchain/declarationbuilder.cpp:1764
+#: duchain/declarationbuilder.cpp:1769
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Instrukcja powrotu nie jest wewnątrz deklaracji funkcji"
@@ -582,12 +582,12 @@ msgstr "Ustawienia Pythona"
 msgid "Format source with the autopep8 formatter."
 msgstr "Sformatuj źródło przy użyciu formatowania autopep8."
 
-#: pythonstylechecking.cpp:104
+#: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
 msgstr "Błąd sprawdzania PEP8: %1"
 
-#: pythonstylechecking.cpp:206
+#: pythonstylechecking.cpp:209
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Wybrany program sprawdzający składnię PEP8 nie działa poprawnie."

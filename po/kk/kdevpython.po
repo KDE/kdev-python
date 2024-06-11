@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:27+0000\n"
+"POT-Creation-Date: 2024-06-11 01:49+0000\n"
 "PO-Revision-Date: 2013-11-15 05:35+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -125,7 +125,7 @@ msgstr ""
 msgid "Format as fixed point number"
 msgstr ""
 
-#: codecompletion/context.cpp:505
+#: codecompletion/context.cpp:506
 #, kde-format
 msgid "Initialize property"
 msgstr "Қасиетін бастау күйіне келтіру"
@@ -203,17 +203,17 @@ msgstr ""
 msgid "A comma separated list of modules required for the type"
 msgstr ""
 
-#: debugger/debugsession.cpp:163
+#: debugger/debugsession.cpp:164
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Бағдарламаны жөндеу мақсатпен жібергенде беймәлім ерекшелік орын алды."
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:165
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Енді бағдарламаның доғарылғаннан кейінгі күй-жайын білуге болады."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:166
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Келесі командаға ауысқанда жөндегіш үндемей тоқтатады."
@@ -309,90 +309,90 @@ msgstr "Көшірмелеген соң, жаңа құжатты өңдейсі�
 msgid "Please select at least one file from the list for editing."
 msgstr "Өңдеу үшін тізімінен кемінде бір файлды таңдаңыз."
 
-#: docfilekcm/docfilewizard.cpp:40
+#: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
 msgstr "Қолданатын Python интерпретаторын баптау"
 
-#: docfilekcm/docfilewizard.cpp:43
+#: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
 msgstr "Python-ның орындалатын файлы"
 
-#: docfilekcm/docfilewizard.cpp:48
+#: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
 msgstr "Қай python модулі үшін құжаттама жасалмақ, таңдаңыз"
 
-#: docfilekcm/docfilewizard.cpp:52
+#: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
 msgstr "Мақсатты модулі (мысалы, \"math\")"
 
-#: docfilekcm/docfilewizard.cpp:54
+#: docfilekcm/docfilewizard.cpp:55
 #, kde-format
 msgid "Output filename"
 msgstr "Шығыс файл атауы"
 
-#: docfilekcm/docfilewizard.cpp:60
+#: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
 msgstr "Күй-жайы және шығысы"
 
-#: docfilekcm/docfilewizard.cpp:62 docfilekcm/docfilewizard.cpp:68
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
 msgstr "Процес әлі жегілмеген"
 
-#: docfilekcm/docfilewizard.cpp:74
+#: docfilekcm/docfilewizard.cpp:75
 #, kde-format
 msgid "Script output"
 msgstr "Скрипттің шығысы"
 
-#: docfilekcm/docfilewizard.cpp:75
+#: docfilekcm/docfilewizard.cpp:76
 #, kde-format
 msgid "Results"
 msgstr "Нәтижелер"
 
-#: docfilekcm/docfilewizard.cpp:81
+#: docfilekcm/docfilewizard.cpp:82
 #, kde-format
 msgid "Close"
 msgstr "Жабу"
 
-#: docfilekcm/docfilewizard.cpp:83
+#: docfilekcm/docfilewizard.cpp:84
 #, kde-format
 msgid "Save and close"
 msgstr "Сақтап жабу"
 
-#: docfilekcm/docfilewizard.cpp:86
+#: docfilekcm/docfilewizard.cpp:87
 #, kde-format
 msgid "Generate"
 msgstr "Жасау"
 
-#: docfilekcm/docfilewizard.cpp:137
+#: docfilekcm/docfilewizard.cpp:138
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
 msgstr "introspect.py скрипті табылмады; орнатылымын түгелдеңіз!"
 
-#: docfilekcm/docfilewizard.cpp:141
+#: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr "kdev-python деректер қапшығы табылмады; орнатылымын түгелдеңіз!"
 
-#: docfilekcm/docfilewizard.cpp:147
+#: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
 msgstr "Жарамсыз шығыс файл атауы"
 
-#: docfilekcm/docfilewizard.cpp:186
+#: docfilekcm/docfilewizard.cpp:189
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "<br/>%1<br/> шығыс файлы бар екен. Үстінен жаза берейік пе?"
 
-#: docfilekcm/docfilewizard.cpp:201
+#: docfilekcm/docfilewizard.cpp:204
 #, fuzzy, kde-format
 #| msgid ""
 #| "This file contains auto-generated documentation extracted\n"
@@ -441,22 +441,22 @@ msgstr ""
 msgid "Python Documentation"
 msgstr ""
 
-#: duchain/assistants/missingincludeassistant.cpp:50
+#: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
 msgstr "\"%1\" модулі үшін құжаттама жасау..."
 
-#: duchain/declarationbuilder.cpp:699
+#: duchain/declarationbuilder.cpp:704
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "\"%1\" модулі табылмады"
 
-#: duchain/declarationbuilder.cpp:770
+#: duchain/declarationbuilder.cpp:775
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Келтірілген модулінде \"%1\" үшін мәлімдеме жоқ"
 
-#: duchain/declarationbuilder.cpp:1578
+#: duchain/declarationbuilder.cpp:1583
 #, fuzzy, kde-format
 #| msgid ""
 #| "First argument of class method is not called self, this is deprecated"
@@ -465,20 +465,20 @@ msgstr ""
 "Клас әдісінің бірінші аргументі өзі бөлек (self) шақырылмады. Ол ескірген "
 "тәсіл."
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1588
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "Клас әдісінің бірінші аргументі өзі бөлек (self) шақырылмады. Ол ескірген "
 "тәсіл."
 
-#: duchain/declarationbuilder.cpp:1603
+#: duchain/declarationbuilder.cpp:1608
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Статикалық емес әдіс аргументсіз, кемінде біреуі (self) болу тиіс"
 
-#: duchain/declarationbuilder.cpp:1764
+#: duchain/declarationbuilder.cpp:1769
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return нұсқасы функция мәлімдемеден тыс жерде"
@@ -607,12 +607,12 @@ msgstr "Қолданатын Python интерпретаторын баптау"
 msgid "Format source with the autopep8 formatter."
 msgstr ""
 
-#: pythonstylechecking.cpp:104
+#: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
 msgstr "PEP8 тексергіш қатесі: %1"
 
-#: pythonstylechecking.cpp:206
+#: pythonstylechecking.cpp:209
 #, fuzzy, kde-format
 #| msgid ""
 #| "The selected PEP8 syntax checker \"%1\" does not seem to work correctly."

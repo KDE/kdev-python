@@ -102,19 +102,19 @@ Declaration* Helper::accessAttribute(const AbstractType::Ptr accessed,
         return nullptr;
     }
     // if the type is unsure, search all the possibilities (but return the first match)
-    auto structureTypes = Helper::filterType<StructureType>(accessed,
+    const auto structureTypes = Helper::filterType<StructureType>(
+        accessed,
         [](AbstractType::Ptr toFilter) {
             auto type = Helper::resolveAliasType(toFilter);
             return type && type->whichType() == AbstractType::TypeStructure;
         },
         [](AbstractType::Ptr toMap) {
             return Helper::resolveAliasType(toMap).staticCast<StructureType>();
-        }
-    );
+        });
     auto docFileContext = Helper::getDocumentationFileContext();
 
     for ( const auto& type: structureTypes ) {
-        auto searchContexts = Helper::internalContextsForClass(type, topContext);
+        const auto searchContexts = Helper::internalContextsForClass(type, topContext);
         for ( const auto ctx: searchContexts ) {
             auto found = ctx->findDeclarations(attribute, CursorInRevision::invalid(),
                                                topContext, DUContext::DontSearchInParent);
@@ -179,7 +179,7 @@ Declaration* Helper::declarationForName(const QString& name, const CursorInRevis
             CursorInRevision findUntil = findBeyondUse ? currentContext->topContext()->range().end : location;
             declarations = currentContext->findDeclarations(identifier, findUntil);
 
-            for (Declaration* declaration: declarations) {
+            for (Declaration* declaration : std::as_const(declarations)) {
                 if (declaration->context()->type() != DUContext::Class ||
                     (currentContext->type() == DUContext::Function && declaration->context() == currentContext->parentContext())) {
                      // Declarations from class decls must be referenced through `self.<foo>`, except
@@ -265,7 +265,8 @@ Declaration* Helper::resolveAliasDeclaration(Declaration* decl)
         return decl;
 }
 
-QStringList Helper::getDataDirs() {
+const QStringList Helper::getDataDirs()
+{
     if ( Helper::dataDirs.isEmpty() ) {
         Helper::dataDirs = QStandardPaths::locateAll(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/documentation_files"), QStandardPaths::LocateDirectory);
     }
@@ -338,8 +339,9 @@ QUrl Helper::getCorrectionFile(const QUrl& document)
                                                                QStandardPaths::LocateDirectory);
     }
 
-    for (QString correctionFileDir : correctionFileDirs) {
-        for ( const QUrl& basePath : Helper::getSearchPaths(QUrl()) ) {
+    for (QString correctionFileDir : std::as_const(correctionFileDirs)) {
+        const auto searchPaths = Helper::getSearchPaths(QUrl());
+        for (const QUrl& basePath : searchPaths) {
             if ( ! basePath.isParentOf(document) ) {
                 continue;
             }
@@ -362,7 +364,8 @@ QUrl Helper::getLocalCorrectionFile(const QUrl& document)
     }
 
     auto absolutePath = QUrl();
-    for ( const auto& basePath : Helper::getSearchPaths(QUrl()) ) {
+    const auto searchPaths = Helper::getSearchPaths(QUrl());
+    for (const auto& basePath : searchPaths) {
         if ( ! basePath.isParentOf(document) ) {
             continue;
         }
@@ -474,7 +477,7 @@ QVector<QUrl> Helper::getSearchPaths(const QUrl& workingOnDocument)
             searchPaths.append(QUrl::fromLocalFile(QStringLiteral("/usr/lib/python") + QStringLiteral(PYTHON_VERSION_STR)));
             searchPaths.append(QUrl::fromLocalFile(QStringLiteral("/usr/lib/python") + QStringLiteral(PYTHON_VERSION_STR) + QStringLiteral("/site-packages")));
             QString pathVal = qEnvironmentVariable("PYTHONPATH");
-            QStringList paths = pathVal.split(QLatin1Char(':'));
+            const QStringList paths = pathVal.split(QLatin1Char(':'));
             for ( const QString& path : paths ) {
                 cachedForProject.append(QUrl::fromLocalFile(path));
             }
@@ -501,14 +504,15 @@ bool Helper::isUsefulType(AbstractType::Ptr type)
 
 AbstractType::Ptr Helper::contentOfIterable(const AbstractType::Ptr iterable, const TopDUContext* topContext)
 {
-    auto types = filterType<StructureType>(iterable,
-        [](AbstractType::Ptr t) { return t->whichType() == AbstractType::TypeStructure; } );
+    const auto types = filterType<StructureType>(iterable, [](AbstractType::Ptr t) {
+        return t->whichType() == AbstractType::TypeStructure;
+    });
 
     static const IndexedIdentifier iterId(KDevelop::Identifier(QStringLiteral("__iter__")));
     static const IndexedIdentifier nextId(KDevelop::Identifier(QStringLiteral("__next__")));
     AbstractType::Ptr content(new IntegralType(IntegralType::TypeMixed));
 
-    for ( const auto& type: types ) {
+    for (const auto& type : std::as_const(types)) {
         if ( auto map = type.dynamicCast<MapType>() ) {
             // Iterating over dicts gets keys, not values
             content = mergeTypes(content, map->keyType().abstractType());

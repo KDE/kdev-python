@@ -147,7 +147,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::functionCallI
         calltips << current;
     }
 
-    auto calltipItems = declarationListToItemList(calltips);
+    const auto calltipItems = declarationListToItemList(calltips);
     for ( CompletionTreeItemPointer current : calltipItems ) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Adding calltip item, at argument:" << m_alreadyGivenParametersCount+1;
         FunctionDeclarationCompletionItem* item = static_cast<FunctionDeclarationCompletionItem*>(current.data());
@@ -205,7 +205,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
     QList<IndexedString> existingIdentifiers;
 
     bool isOwnContext = true;
-    for ( DUContext* c : baseClassContexts ) {
+    for (DUContext* c : std::as_const(baseClassContexts)) {
         const auto declarations = c->allDeclarations(
             CursorInRevision::invalid(), m_duContext->topContext(), false
         );
@@ -224,7 +224,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::defineItems()
                 QStringList argumentNames;
                 DUContext* argumentsContext = DUChainUtils::argumentContext(funcDecl);
                 if ( argumentsContext ) {
-                    for ( Declaration* argument : argumentsContext->localDeclarations() ) {
+                    const auto localDeclarations = argumentsContext->localDeclarations();
+                    for (Declaration* argument : localDeclarations) {
                         argumentNames << argument->identifier().toString();
                     }
                     resultingItems << CompletionTreeItemPointer(new ImplementFunctionCompletionItem(
@@ -257,7 +258,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::raiseItems()
     QVector<DeclarationDepthPair> validDeclarations;
     ClassDeclaration* current = nullptr;
     StructureType::Ptr type;
-    auto decls = m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
+    const auto decls =
+        m_duContext->topContext()->allDeclarations(CursorInRevision::invalid(), m_duContext->topContext());
     for ( const DeclarationDepthPair& d : decls ) {
         current = dynamic_cast<ClassDeclaration*>(d.first);
         if ( ! current || ! current->baseClassesSize() ) {
@@ -310,7 +312,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::inheritanceIt
         declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
     }
     QVector<DeclarationDepthPair> remainingDeclarations;
-    for ( const DeclarationDepthPair& d : declarations ) {
+    for (const DeclarationDepthPair& d : std::as_const(declarations)) {
         Declaration* r = Helper::resolveAliasDeclaration(d.first);
         if ( r && r->topContext() == Helper::getDocumentationFileContext() ) {
             continue;
@@ -343,7 +345,7 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::memberAccessI
 
     // append eventually stripped postfix, for e.g. os.chdir|
     bool needDot = true;
-    for ( const QChar& c : m_followingText ) {
+    for (const QChar& c : std::as_const(m_followingText)) {
         if ( needDot ) {
             m_guessTypeOfExpression.append(QLatin1Char('.'));
             needDot = false;
@@ -455,10 +457,10 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::stringFormatt
 PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::keywordItems()
 {
     ItemList resultingItems;
-    QStringList keywordItems;
-    keywordItems << QStringLiteral("def") << QStringLiteral("class") << QStringLiteral("lambda") << QStringLiteral("global")
-                 << QStringLiteral("import") << QStringLiteral("from") << QStringLiteral("while") << QStringLiteral("for")
-                 << QStringLiteral("yield") << QStringLiteral("return");
+    const QStringList keywordItems = {QStringLiteral("def"),    QStringLiteral("class"),  QStringLiteral("lambda"),
+                                      QStringLiteral("global"), QStringLiteral("import"), QStringLiteral("from"),
+                                      QStringLiteral("while"),  QStringLiteral("for"),    QStringLiteral("yield"),
+                                      QStringLiteral("return")};
     for ( const QString& current : keywordItems ) {
         KeywordItem* k = new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), current + QStringLiteral(" "), QString());
         resultingItems << CompletionTreeItemPointer(k);
@@ -482,7 +484,8 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::classMemberIn
         return resultingItems;
     }
     // the current context actually belongs to a constructor
-    for ( const Declaration* argument : args->localDeclarations() ) {
+    const auto localDeclarations = args->localDeclarations();
+    for (const Declaration* argument : localDeclarations) {
         const QString argName = argument->identifier().toString();
         // Do not suggest "self.self = self"
         if ( argName == QStringLiteral("self") ) {
@@ -526,15 +529,16 @@ PythonCodeCompletionContext::ItemList PythonCodeCompletionContext::generatorItem
         auto names = v->unknownNames().values();
         combinations << names.at(0) + QStringLiteral(", ") + names.at(1);
         combinations << names.at(1) + QStringLiteral(", ") + names.at(0);
-        for ( const QString& c : combinations ) {
+        for (const QString& c : std::as_const(combinations)) {
             items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), QString() + c + QStringLiteral(" in "), QString());
         }
     }
-    for ( const QString& n : v->unknownNames() ) {
+    const auto unknowns = v->unknownNames();
+    for (const QString& n : unknowns) {
         items << new KeywordItem(KDevelop::CodeCompletionContext::Ptr(this), QString() + n + QStringLiteral(" in "), QString());
     }
 
-    for ( KeywordItem* item : items ) {
+    for (KeywordItem* item : std::as_const(items)) {
         resultingItems << CompletionTreeItemPointer(item);
     }
     return resultingItems;
@@ -602,7 +606,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::completionItems(bo
         }
         DUChainReadLocker lock;
         auto declarations = m_duContext->allDeclarations(m_position, m_duContext->topContext());
-        for ( const DeclarationDepthPair& d : declarations ) {
+        for (const DeclarationDepthPair& d : std::as_const(declarations)) {
             if ( d.first && d.first->context()->type() == DUContext::Class ) {
                 declarations.removeAll(d);
             }
@@ -625,7 +629,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     components.removeAll(QString());
 
     // Check all components are alphanumeric
-    static QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
+    QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
     for ( const QString& component : std::as_const(components) ) {
         QRegularExpressionMatch match = alnum.match(component);
         if ( ! match.hasMatch() ) return items;
@@ -770,9 +774,9 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getCompletionItems
         return QList<CompletionTreeItemPointer>();
     }
     // the PublicOnly will filter out non-explictly defined __get__ etc. functions inherited from object
-    auto searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
+    const auto searchContexts = Helper::internalContextsForClass(cls, m_duContext->topContext(), Helper::PublicOnly);
     QVector<DeclarationDepthPair> keepDeclarations;
-    for ( const DUContext* currentlySearchedContext : searchContexts ) {
+    for (const DUContext* currentlySearchedContext : std::as_const(searchContexts)) {
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "searching context " << currentlySearchedContext->scopeIdentifier() << "for autocompletion items";
         const auto declarations = currentlySearchedContext->allDeclarations(CursorInRevision::invalid(),
                                                                                                 m_duContext->topContext(),
@@ -799,7 +803,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
 {
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "TARGET:" << item.directory.path() << item.remainingIdentifiers;
     QDir currentDirectory(item.directory.path());
-    QFileInfoList contents = currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
+    const QFileInfoList contents =
+        currentDirectory.entryInfoList(QStringList(), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
     bool atBottom = item.remainingIdentifiers.isEmpty();
     QList<CompletionTreeItemPointer> items;
     
@@ -850,7 +855,7 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::findIncludeItems(I
     
     if ( atBottom ) {
         // append all python files in the directory
-        for ( QFileInfo file : contents ) {
+        for (QFileInfo file : std::as_const(contents)) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << " > CONTENT:" << file.absolutePath() << file.fileName();
             if ( file.isFile() ) {
                 if ( file.fileName().endsWith(QStringLiteral(".py")) || file.fileName().endsWith(QStringLiteral(".so")) ) {
@@ -916,8 +921,8 @@ DUContext* PythonCodeCompletionContext::internalContextForDeclaration(TopDUConte
 
 QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSubmodule(QString submodule)
 {
-    auto searchPaths = Helper::getSearchPaths(m_workingOnDocument);
-    
+    const auto searchPaths = Helper::getSearchPaths(m_workingOnDocument);
+
     QStringList subdirs;
     if ( ! submodule.isEmpty() ) {
         subdirs = submodule.split(QLatin1Char('.'));
@@ -932,12 +937,12 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::includeItemsForSub
     // we also need paths like /foo.py, because then bar is probably a module in that file.
     // Thus, we first generate a list of possible paths, then match them against those which actually exist
     // and then gather all the items in those paths.
-    
-    for ( QUrl currentPath : searchPaths ) {
+
+    for (QUrl currentPath : std::as_const(searchPaths)) {
         auto d = QDir(currentPath.path());
         qCDebug(KDEV_PYTHON_CODECOMPLETION) << "Searching: " << currentPath << subdirs;
         int identifiersUsed = 0;
-        for ( const QString& subdir : subdirs ) {
+        for (const QString& subdir : std::as_const(subdirs)) {
             qCDebug(KDEV_PYTHON_CODECOMPLETION) << "changing into subdir" << subdir;
             if ( ! d.cd(subdir) ) {
                 break;

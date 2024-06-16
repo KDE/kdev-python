@@ -65,7 +65,8 @@ ParseJob::ParseJob(const IndexedString &url, ILanguageSupport* languageSupport)
     IDefinesAndIncludesManager* iface = IDefinesAndIncludesManager::manager();
     auto project = ICore::self()->projectController()->findProjectForUrl(url.toUrl());
     if ( project ) {
-        for (Path path : iface->includes(project->projectItem(), IDefinesAndIncludesManager::UserDefined)) {
+        const auto pathList = iface->includes(project->projectItem(), IDefinesAndIncludesManager::UserDefined);
+        for (const Path& path : std::as_const(pathList)) {
             m_cachedCustomIncludes.append(path.toUrl());
         }
         QMutexLocker lock(&Helper::cacheMutex);
@@ -95,7 +96,8 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     {
         QMutexLocker l(&Helper::projectPathLock);
         Helper::projectSearchPaths.clear();
-        for (IProject* project : ICore::self()->projectController()->projects() ) {
+        const auto projects = ICore::self()->projectController()->projects();
+        for (IProject* project : projects) {
             Helper::projectSearchPaths.append(QUrl::fromLocalFile(project->path().path()));
         }
     }
@@ -109,7 +111,8 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     if ( !(minimumFeatures() & TopDUContext::ForceUpdate || minimumFeatures() & Rescheduled) ) {
         DUChainReadLocker lock(DUChain::lock());
         static const IndexedString langString("python");
-        for (const ParsingEnvironmentFilePointer &file : DUChain::self()->allEnvironmentFiles(document())) {
+        const auto environmentFiles = DUChain::self()->allEnvironmentFiles(document());
+        for (const ParsingEnvironmentFilePointer& file : environmentFiles) {
             if ( file->language() != langString ) {
                 continue;
             }
@@ -174,7 +177,8 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
             // it's also ok if the duchain is now available (and thus has been parsed before already)
             bool dependencyInQueue = false;
             DUChainWriteLocker lock;
-            for ( const IndexedString& url : builder.unresolvedImports() ) {
+            const auto unresolvedUrls = builder.unresolvedImports();
+            for (const IndexedString& url : std::as_const(unresolvedUrls)) {
                 dependencyInQueue = KDevelop::ICore::self()->languageController()->backgroundParser()->isQueued(url);
                 dependencyInQueue = dependencyInQueue || DUChain::self()->chainForDocument(url);
                 if ( dependencyInQueue ) {
@@ -243,7 +247,7 @@ void ParseJob::run(ThreadWeaver::JobPointer /*self*/, ThreadWeaver::Thread* /*th
     
     // The parser might have given us some syntax errors, which are now added to the document.
     DUChainWriteLocker lock;
-    for ( const ProblemPointer& p : m_currentSession->m_problems ) {
+    for (const ProblemPointer& p : std::as_const(m_currentSession->m_problems)) {
         m_duContext->addProblem(p);
     }
 

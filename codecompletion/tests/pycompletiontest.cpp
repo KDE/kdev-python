@@ -226,7 +226,8 @@ const QList<CompletionTreeItem*> PyCompletionTest::runCompletion(const Completio
     PythonCodeCompletionContext* context = new PythonCodeCompletionContext(parameters.contextAtCursor, parameters.snip, parameters.remaining, parameters.cursorAt, 0, nullptr);
     bool abort = false;
     QList<CompletionTreeItem*> items;
-    for ( CompletionTreeItemPointer ptr : context->completionItems(abort, true) ) {
+    const auto completionItems = context->completionItems(abort, true);
+    for (const CompletionTreeItemPointer& ptr : completionItems) {
         items << ptr.data();
         // those are leaked, but it's only a few kb while the tests are running. who cares.
         m_ptrs << ptr;

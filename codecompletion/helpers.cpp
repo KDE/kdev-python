@@ -66,8 +66,8 @@ int identifierMatchQuality(const QString& identifier1_, const QString& identifie
         // more than 5 words for their variable names
         return 0;
     }
-    for ( const QString& part1 : parts1 ) {
-        for ( const QString& part2 : parts2 ) {
+    for (const QString& part1 : std::as_const(parts1)) {
+        for (const QString& part2 : std::as_const(parts2)) {
             // Don't take very short name parts into account,
             // those are not very descriptive eventually
             if ( part1.size() < 3 || part2.size() < 3 ) {
@@ -239,7 +239,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         *status = EventualCallFound;
         return QString();
     }
-    for ( const keyword& kw : controlChars ) {
+    for (const keyword& kw : std::as_const(controlChars)) {
         if ( operatingOn.endsWith(kw.first) ) {
             m_cursorPositionInString -= kw.first.length();
             *status = kw.second;
@@ -247,21 +247,21 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
         }
     }
     if ( lastCharIsSpace ) {
-        for ( const keyword& kw : supportedKeywords ) {
+        for (const keyword& kw : std::as_const(supportedKeywords)) {
             if ( endsWithSeperatedKeyword(operatingOn, kw.first) ) {
                 m_cursorPositionInString -= kw.first.length();
                 *status = kw.second;
                 return QString();
             }
         }
-        for ( const QString& kw : miscKeywords ) {
+        for (const QString& kw : std::as_const(miscKeywords)) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = MeaninglessKeywordFound;
                 return QString();
             }
         }
-        for ( const QString& kw : noCompletionKeywords ) {
+        for (const QString& kw : std::as_const(noCompletionKeywords)) {
             if ( endsWithSeperatedKeyword(operatingOn, kw) ) {
                 m_cursorPositionInString -= kw.length();
                 *status = NoCompletionKeywordFound;
@@ -324,8 +324,8 @@ void createArgumentList(Declaration* dec_, QString& ret, QList< QVariant >* high
 
         // disable highlighting when in default arguments, it doesn't make much sense then
         bool disableHighlighting = false;
-        
-        for (Declaration* dec : parameters) {
+
+        for (Declaration* dec : std::as_const(parameters)) {
             if ( skipFirst ) {
                 skipFirst = false;
                 continue;

@@ -106,12 +106,12 @@ void PyDUChainTest::init()
     for ( int i = 0; i < 2; i++ ) {
         // Parse each file twice, to ensure no parsing-order related bugs appear.
         // Such bugs will need separate unit tests and should not influence these.
-        for (const QString &filename : foundfiles) {
+        for (const QString& filename : std::as_const(foundfiles)) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Parsing asset: " << filename;
             DUChain::self()->updateContextForUrl(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
             ICore::self()->languageController()->backgroundParser()->parseDocuments();
         }
-        for (const QString &filename: foundfiles) {
+        for (const QString& filename : std::as_const(foundfiles)) {
             DUChain::self()->waitForUpdate(IndexedString(filename), KDevelop::TopDUContext::AllDeclarationsContextsAndUses);
         }
         while ( ICore::self()->languageController()->backgroundParser()->queuedCount() > 0 ) {
@@ -160,7 +160,7 @@ ReferencedTopDUContext PyDUChainTest::parse(const QString& code)
 
 PyDUChainTest::~PyDUChainTest()
 {
-    for ( TestFile* f : createdFiles ) {
+    for (TestFile* f : std::as_const(createdFiles)) {
         delete f;
     }
     testDir.rmdir(testDir.absolutePath());
@@ -548,8 +548,8 @@ void PyDUChainTest::testFlickering()
     count = ctx->localDeclarations().size();
     qDebug() << "Declaration count afterwards: " << count;
     QVERIFY(count == after);
-    
-    for (Declaration* dec : ctx->localDeclarations()) {
+    const auto localDelarations = ctx->localDeclarations();
+    for (Declaration* dec : localDelarations) {
         qDebug() << dec->toString() << dec->range();
         qDebug() << dec->uses().size();
     }
@@ -620,18 +620,18 @@ void PyDUChainTest::testSimple()
     ReferencedTopDUContext ctx = parse(code);
     DUChainWriteLocker lock(DUChain::lock());
     QVERIFY(ctx);
-    
-    QVector< Declaration* > declarations = ctx->localDeclarations();
-    
+
+    const QVector<Declaration*> declarations = ctx->localDeclarations();
+
     QCOMPARE(declarations.size(), decls);
     
     int usesCount = 0;
-    for (Declaration* d : declarations) {
+    for (Declaration* d : std::as_const(declarations)) {
         usesCount += d->uses().size();
         
         QVERIFY(d->abstractType());
     }
-    
+
     QCOMPARE(usesCount, uses);
 }
 
@@ -698,7 +698,7 @@ public:
         AstDefaultVisitor::visitClassDefinition(node);
     }
     void visitImport(ImportAst* node) override {
-        for ( const AliasAst* name : node->names ) {
+        for (const AliasAst* name : std::as_const(node->names)) {
             if ( name->name ) {
                 qDebug() << "found import" << name->name->value << name->name->range();
             }
@@ -1433,7 +1433,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     QVERIFY(ctx1);
     auto decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
     QList<DeclarationId> declIds;
-    for ( p d : decls1 ) {
+    for (p d : std::as_const(decls1)) {
         declIds << d.first->id();
     }
     lock.unlock();
@@ -1446,7 +1446,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     QVERIFY(ctx2);
     lock.lock();
     auto decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
-    for ( p d2 : decls2 ) {
+    for (p d2 : std::as_const(decls2)) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "@1: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
@@ -1465,7 +1465,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     decls1 = ctx1->allDeclarations(CursorInRevision::invalid(), ctx1->topContext(), false).first().first->internalContext()
                  ->allDeclarations(CursorInRevision::invalid(), ctx1->topContext());
     declIds.clear();
-    for ( p d : decls1 ) {
+    for (p d : std::as_const(decls1)) {
         declIds << d.first->id();
     }
     lock.unlock();
@@ -1479,7 +1479,7 @@ void PyDUChainTest::testAutocompletionFlickering()
     lock.lock();
     decls2 = ctx2->allDeclarations(CursorInRevision::invalid(), ctx2->topContext(), false).first().first->internalContext()
                  ->allDeclarations(CursorInRevision::invalid(), ctx2->topContext());
-    for ( p d2 : decls2 ) {
+    for (p d2 : std::as_const(decls2)) {
         qCDebug(KDEV_PYTHON_DUCHAIN) << "@2: " << d2.first->toString() << "::" << d2.first->id().hash() << "<>" << declIds.first().hash();
         QVERIFY(d2.first->id() == declIds.first());
         declIds.removeFirst();
@@ -1607,7 +1607,7 @@ void PyDUChainTest::testInheritance()
     auto decls = ctx->allDeclarations(CursorInRevision::invalid(), ctx->topContext(), false);
     bool found = false;
     bool classDeclFound = false;
-    for ( const p& item : decls ) {
+    for (const p& item : std::as_const(decls)) {
         if ( item.first->identifier().toString() == QStringLiteral("B") ) {
             auto klass = dynamic_cast<ClassDeclaration*>(item.first);
             QVERIFY(klass);
@@ -1769,7 +1769,7 @@ void PyDUChainTest::testVariableCreation()
     DUChainReadLocker lock;
     auto localDecls = top->localDeclarations();
     QVector<QString> localDeclNames;
-    for ( const Declaration* d: localDecls ) {
+    for (const Declaration* d : std::as_const(localDecls)) {
         localDeclNames.append(d->identifier().toString());
     }
     Q_ASSERT(expected_types.size() == expected_local_declarations.size());

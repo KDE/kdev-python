@@ -68,7 +68,7 @@ ReferencedTopDUContext DUChainBench::parse(const QString& code)
 
 DUChainBench::~DUChainBench()
 {
-    for ( TestFile* f : createdFiles ) {
+    for (TestFile* f : std::as_const(createdFiles)) {
         delete f;
     }
     testDir.rmdir(testDir.absolutePath());

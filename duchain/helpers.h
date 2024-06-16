@@ -40,7 +40,7 @@ public:
     static QString localCorrectionFileDir;
     static DUChainPointer<TopDUContext> documentationFileContext;
 
-    static QStringList getDataDirs();
+    static const QStringList getDataDirs();
     static IndexedString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
 

@@ -170,7 +170,7 @@ void ContextBuilder::addImportedContexts()
     if ( compilingContexts() && !m_importedParentContexts.isEmpty() )
     {
         DUChainWriteLocker lock( DUChain::lock() );
-        for ( DUContext* imported : m_importedParentContexts )
+        for (DUContext* imported : std::as_const(m_importedParentContexts))
             currentContext()->addImportedParentContext( imported );
 
         m_importedParentContexts.clear();
@@ -317,9 +317,9 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
          * we need to take current doc path and run "cd .." enough times
          */
         nameComponents.removeFirst();
-        QString tname = name.mid(1); // remove first dot
+        const QString tname = name.mid(1); // remove first dot
         QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
-        for (QString c : tname) {
+        for (QString c : std::as_const(tname)) {
             if (c != QLatin1Char('.'))
                 break;
             curPathDir.cdUp();
@@ -336,10 +336,10 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     // Loop over all the name components, and find matching folders or files.
     QDir tmp;
     QStringList leftNameComponents;
-    for ( const QUrl& currentPath : searchPaths ) {
+    for (const QUrl& currentPath : std::as_const(searchPaths)) {
         tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
-        for ( QString component : nameComponents ) {
+        for (QString component : std::as_const(nameComponents)) {
             if ( component == QLatin1Char('*') ) {
                 // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = QStringLiteral("__init__");

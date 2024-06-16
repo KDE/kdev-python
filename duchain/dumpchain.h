@@ -29,7 +29,7 @@ class KDEVPYTHONDUCHAIN_EXPORT DumpChain
 public:
     DumpChain();
     virtual ~DumpChain();
-    void dump(KDevelop::DUContext* context, bool imported = false);
+    void dump(const KDevelop::DUContext* context, bool imported = false);
 
 private:
     int indent;

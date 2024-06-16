@@ -151,7 +151,6 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
         // * If both fails, everything including the first non-empty line before the one with the error will be deleted.
         int len = contents.length();
         int currentLine = 0;
-        QString currentLineContents;
         QChar c;
         QChar newline(QLatin1Char('\n'));
         int emptySince = 0; int emptySinceLine = 0; int emptyLinesSince = 0; int emptyLinesSinceLine = 0;

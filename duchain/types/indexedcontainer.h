@@ -56,7 +56,7 @@ public:
     IndexedContainer(IndexedContainerData& data);
     void addEntry(AbstractType::Ptr typeToAdd);
     AbstractType* clone() const override;
-    uint hash() const override;
+    size_t hash() const override;
     int typesCount() const;
     const IndexedType& typeAt(int index) const;
     void replaceType(int index, AbstractType::Ptr newType);

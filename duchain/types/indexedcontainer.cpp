@@ -120,7 +120,7 @@ bool IndexedContainer::equals(const AbstractType* rhs) const
     return true;
 }
 
-uint IndexedContainer::hash() const
+size_t IndexedContainer::hash() const
 {
     uint h = StructureType::hash();
     for ( uint i = 0; i < d_func()->m_valuesSize(); i++ ) {

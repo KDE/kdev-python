@@ -97,7 +97,7 @@ bool HintedType::equals(const AbstractType* rhs) const
     return true;
 }
 
-uint HintedType::hash() const
+size_t HintedType::hash() const
 {
     return AbstractType::hash() + 1 + ( type() ? type()->hash() : 0 ) + d_func()->m_createdByContext.index()
                                 + d_func()->m_modificationRevision.modificationTime % 17 + (d_func()->m_modificationRevision.revision * 19) % 13;

@@ -239,7 +239,7 @@ bool UnsureType::equals(const AbstractType* rhs) const
     return true;
 }
 
-uint UnsureType::hash() const
+size_t UnsureType::hash() const
 {
     return KDevelop::UnsureType::hash() + 1;
 }

@@ -35,7 +35,7 @@ public:
     WhichType whichType() const override;
 
     AbstractType* clone() const override;
-    uint hash() const override;
+    size_t hash() const override;
     QString toString() const override;
 
     void addType(const IndexedType& type) override;

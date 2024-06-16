@@ -69,7 +69,7 @@ public:
     /** @return the creating TopDUContext for this type hint. */
     IndexedTopDUContext createdBy() const;
     AbstractType* clone() const override;
-    uint hash() const override;
+    size_t hash() const override;
 
     /**
      * @brief Checks whether this hint is still valid, and returns false if it is not

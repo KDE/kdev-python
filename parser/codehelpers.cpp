@@ -122,7 +122,7 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
         if ( max_len - atChar > 2 ) {
             t = QStringView{code}.mid(atChar, 3);
         }
-        for ( const QString& check : stringDelimiters ) {
+        for (const QString& check : std::as_const(stringDelimiters)) {
             if ( t != check && ! ( check.size() == 1 && c == check.at(0) ) ) {
                 continue;
             }

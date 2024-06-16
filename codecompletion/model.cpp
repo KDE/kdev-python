@@ -30,8 +30,8 @@ PythonCodeCompletionModel::~PythonCodeCompletionModel() { }
 bool PythonCodeCompletionModel::shouldStartCompletion(KTextEditor::View* view, const QString& inserted,
                                                 bool userInsertion, const KTextEditor::Cursor& position)
 {
-    QList<QString> words;
-    words << QStringLiteral("for") << QStringLiteral("raise") << QStringLiteral("except") << QStringLiteral("in");
+    const QList<QString> words = {QStringLiteral("for"), QStringLiteral("raise"), QStringLiteral("except"),
+                                  QStringLiteral("in")};
     for ( const QString& word : words ) {
         if ( view->document()->line(position.line()).mid(0, position.column()).endsWith(word + QStringLiteral(" ")) ) {
             return true;

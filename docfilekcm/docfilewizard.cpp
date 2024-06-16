@@ -166,12 +166,11 @@ bool DocfileWizard::run()
 
     // can never have too many slashes
     outputFile.setFileName(workingDirectory + QStringLiteral("/") + outputFilename);
-    
-    QList<KDevelop::IProject*> projs = KDevelop::ICore::self()->projectController()->projects();
+
+    const QList<KDevelop::IProject*> projs = KDevelop::ICore::self()->projectController()->projects();
     QStringList args;
     args << scriptUrl;
-    for (const KDevelop::IProject* proj : projs)
-    {
+    for (const KDevelop::IProject* proj : std::as_const(projs)) {
         if ( proj )
             args << proj->path().toLocalFile();
     }

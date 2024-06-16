@@ -154,7 +154,7 @@ void RangeFixVisitor::visitAttribute(AttributeAst* node) {
 void RangeFixVisitor::visitImport(ImportAst* node) {
     AstDefaultVisitor::visitImport(node);
     int aliasIndex = 0;
-    for ( AliasAst* alias: node->names ) {
+    for (AliasAst* alias : std::as_const(node->names)) {
         fixAlias(alias->name, alias->asName, node->startLine, aliasIndex);
         aliasIndex += 1;
     }

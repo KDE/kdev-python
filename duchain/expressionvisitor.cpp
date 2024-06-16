@@ -280,7 +280,8 @@ AbstractType::Ptr ExpressionVisitor::docstringTypeOverride(
         return true;
     };
 
-    for ( const QString& currentHint : knownDocstringHints.keys() ) {
+    const auto hints = knownDocstringHints.keys();
+    for (const QString& currentHint : hints) {
         QStringList arguments;
         if ( ! Helper::docstringContainsHint(docstring, currentHint, &arguments) ) {
             continue;
@@ -325,7 +326,7 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
     auto valueTypes = Helper::filterType<AbstractType>(lastType(), [](AbstractType::Ptr) { return true; });
     AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
 
-    for (const auto& type : valueTypes) {
+    for (const auto& type : std::as_const(valueTypes)) {
         if ( node->slice->astType == Ast::SliceAstType ) {
             auto slice = static_cast<SliceAst*>(node->slice);
             if ( auto tupleType = type.dynamicCast<IndexedContainer>() ) {
@@ -404,7 +405,7 @@ void ExpressionVisitor::visitList(ListAst* node)
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
-        for ( ExpressionAst* content : node->elements ) {
+        for (ExpressionAst* content : std::as_const(node->elements)) {
             contentVisitor.visitNode(content);
             if ( content->astType == Ast::StarredAstType ) {
                 auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());
@@ -492,7 +493,7 @@ void ExpressionVisitor::visitTuple(TupleAst* node) {
     IndexedContainer::Ptr type = typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
     if ( type ) {
         lock.unlock();
-        for ( ExpressionAst* expr : node->elements ) {
+        for (ExpressionAst* expr : std::as_const(node->elements)) {
             ExpressionVisitor v(this);
             v.visitNode(expr);
             if ( expr->astType == Ast::StarredAstType ) {
@@ -534,7 +535,7 @@ void ExpressionVisitor::visitSet(SetAst* node)
     lock.unlock();
     ExpressionVisitor contentVisitor(this);
     if ( type ) {
-        for ( ExpressionAst* content : node->elements ) {
+        for (ExpressionAst* content : std::as_const(node->elements)) {
             contentVisitor.visitNode(content);
             if ( content->astType == Ast::StarredAstType ) {
                 auto contentType = Helper::contentOfIterable(contentVisitor.lastType(), topContext());
@@ -737,7 +738,7 @@ void ExpressionVisitor::visitBooleanOperation(Python::BooleanOperationAst* node)
     ExpressionVisitor v(this);
     AbstractType::Ptr result;
 
-    for (const auto& expr : node->values) {
+    for (const auto& expr : std::as_const(node->values)) {
         v.visitNode(expr);
         result = Helper::mergeTypes(result, v.lastType());
     }

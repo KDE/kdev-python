@@ -58,7 +58,7 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
     if ( ! m_scheduledForDeletion.isEmpty() ) {
         DUChainWriteLocker lock;
-        for ( DUChainBase* d : m_scheduledForDeletion ) {
+        for (DUChainBase* d : std::as_const(m_scheduledForDeletion)) {
             delete d;
         }
         m_scheduledForDeletion.clear();
@@ -431,7 +431,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     QString moduleName;
     QString declarationName;
-    for ( AliasAst* name : node->names ) {
+    for (AliasAst* name : std::as_const(node->names)) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
         Identifier* declarationIdentifier = nullptr;
         declarationName.clear();
@@ -476,7 +476,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
     DUChainWriteLocker lock;
-    for ( AliasAst* name : node->names ) {
+    for (AliasAst* name : std::as_const(node->names)) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
@@ -624,7 +624,8 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other, &contextIdentifier);
         openedContexts.append(moduleContext);
 
-        for ( Declaration* local : currentContext()->localDeclarations() ) {
+        const auto localDeclarations = currentContext()->localDeclarations();
+        for (Declaration* local : localDeclarations) {
             // keep all the declarations until the builder finished
             // kdevelop would otherwise delete them as soon as the context is closed
             if ( ! wasEncountered(local) ) {
@@ -726,7 +727,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             QDir dir(path.left(path.size() - initFile.size()));
             dir.setNameFilters({QStringLiteral("*.py")});
             dir.setFilter(QDir::Files);
-            auto files = dir.entryList();
+            const auto files = dir.entryList();
             for ( const auto& file : files ) {
                 if ( file == QStringLiteral("__init__.py") ) {
                     continue;
@@ -827,7 +828,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    for ( ArgAst* argument : node->arguments->arguments ) {
+    for (ArgAst* argument : std::as_const(node->arguments->arguments)) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
     visitNodeList(node->arguments->defaultValues);
@@ -891,9 +892,9 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     };
     auto docstring = QString::fromLatin1(function->comment());
     if ( ! docstring.isEmpty() ) {
-        for ( const auto& key : items.keys() ) {
-            if ( Helper::docstringContainsHint(docstring, key, &args) ) {
-                items[key]();
+        for (auto i = items.cbegin(), end = items.cend(); i != end; ++i) {
+            if (Helper::docstringContainsHint(docstring, i.key(), &args)) {
+                items[i.key()]();
             }
         }
     }
@@ -1017,7 +1018,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     }
     lock.unlock();
     DUChainWriteLocker wlock;
-    for ( KeywordAst* keyword : node->keywords ) {
+    for (KeywordAst* keyword : std::as_const(node->keywords)) {
         wlock.unlock();
         ExpressionVisitor argumentVisitor(currentContext());
         argumentVisitor.visitNode(keyword->value);
@@ -1068,7 +1069,7 @@ void DeclarationBuilder::visitMatch(MatchAst* node)
     ExpressionVisitor subjectVisitor(currentContext());
     subjectVisitor.visitNode(node->subject);
 
-    for (auto* matchCase: node->cases) {
+    for (auto* matchCase : std::as_const(node->cases)) {
         if (!matchCase || !matchCase->pattern) {
             continue;
         }
@@ -1077,7 +1078,7 @@ void DeclarationBuilder::visitMatch(MatchAst* node)
         switch (matchCase->pattern->astType) {
             case Ast::MatchSequenceAstType: {
                 auto* seq = static_cast<MatchSequenceAst*>(matchCase->pattern);
-                for (auto* element: seq->patterns) {
+                for (auto* element : std::as_const(seq->patterns)) {
                     if (element->astType != Ast::MatchAsAstType) {
                         continue;
                     }
@@ -1373,7 +1374,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         v.isAlias()
     };
 
-    for (ExpressionAst* target : node->targets) {
+    for (ExpressionAst* target : std::as_const(node->targets)) {
         assignToUnknown(target, sourceType);
     }
 }
@@ -1434,7 +1435,7 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
         }
     }
     lock.unlock();
-    for ( ExpressionAst* c : node->baseClasses ) {
+    for (ExpressionAst* c : std::as_const(node->baseClasses)) {
         // Iterate over all the base classes, and add them to the duchain.
         ExpressionVisitor v(currentContext());
         v.visitNode(c);
@@ -1516,7 +1517,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setStatic(false);
     dec->setClassMethod(false);
     dec->setProperty(false);
-    for ( auto decorator : node->decorators) {
+    for (auto decorator : std::as_const(node->decorators)) {
         visitNode(decorator);
         switch (decorator->astType) {
           case Ast::AttributeAstType: {
@@ -1795,7 +1796,8 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int totalArgCount = parametersCount + posonlyCount + kwonlyCount;
     int firstDefaultKwParameterOffset = totalArgCount - defaultKwParametersCount;
     int currentIndex = 0;
-    for ( ArgAst* arg : node->posonlyargs + node->arguments + node->kwonlyargs ) {
+    for (ArgAst* arg :
+         std::as_const(node->posonlyargs) + std::as_const(node->arguments) + std::as_const(node->kwonlyargs)) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
         currentIndex += 1;
@@ -1876,7 +1878,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         // inject the vararg at the correct place
         int atIndex = 0;
         int useIndex = -1;
-        for ( ArgAst* arg : node->arguments ) {
+        for (ArgAst* arg : std::as_const(node->arguments)) {
             if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
                 useIndex = atIndex;
             }
@@ -1928,7 +1930,7 @@ void DeclarationBuilder::visitNode(Ast* node) {
 void DeclarationBuilder::visitGlobal(GlobalAst* node)
 {
     TopDUContext* top = topContext();
-    for ( Identifier *id : node->names ) {
+    for (Identifier* id : std::as_const(node->names)) {
         QualifiedIdentifier qid = identifierForNode(id);
         DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());

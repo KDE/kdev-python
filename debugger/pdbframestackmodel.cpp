@@ -50,7 +50,7 @@ void PdbFrameStackModel::framesFetched(QByteArray framelist)
             framesCount++;
         }
         else if ( parsingLocation ) {
-            QRegularExpression location(QStringLiteral("(\\>?)\\s*(.*)\\(([0-9]+)\\)(.*)"));
+            static QRegularExpression location(QStringLiteral("(\\>?)\\s*(.*)\\(([0-9]+)\\)(.*)"));
             // version 1 has some *really* weird "greedy" ruleset which makes no sense at all for me
             //location.setPatternSyntax(QRegExp::RegExp2);
             const auto match = location.match(line);

@@ -73,8 +73,8 @@ void Variable::moreChildrenFetched(QByteArray rawData)
     data.removeLast();
     int i = 0;
     int initialLength = data.length();
-    QRegularExpression formatExtract(QStringLiteral("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$"),
-                                     QRegularExpression::InvertedGreedinessOption);
+    static QRegularExpression formatExtract(QStringLiteral("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$"),
+                                            QRegularExpression::InvertedGreedinessOption);
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
         // sort magic functions at the end of the list, they're not too interesting usually

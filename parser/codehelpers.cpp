@@ -155,8 +155,8 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
 
 QString CodeHelpers::killStrings(QString stringWithStrings)
 {
-    QRegularExpression replaceStrings(QStringLiteral("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')"),
-                                      QRegularExpression::InvertedGreedinessOption);
+    static QRegularExpression replaceStrings(QStringLiteral("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')"),
+                                             QRegularExpression::InvertedGreedinessOption);
     QString stripped = stringWithStrings.replace(replaceStrings, QStringLiteral("\"S\""));
     return stripped;
 }

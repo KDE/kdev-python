@@ -235,7 +235,7 @@ public:
 
     bool hasAlign() const
     {
-        QRegularExpression regex(QStringLiteral("^.?[<>\\^=]"));
+        static QRegularExpression regex(QStringLiteral("^.?[<>\\^=]"));
         return m_formatSpec.contains(regex);
     }
 

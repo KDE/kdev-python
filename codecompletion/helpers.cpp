@@ -407,8 +407,8 @@ StringFormatter::StringFormatter(const QString &string)
     : m_string(string)
 {
     qCDebug(KDEV_PYTHON_CODECOMPLETION) << "String being parsed: " << string;
-    QRegularExpression regex(QStringLiteral("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}"),
-                             QRegularExpression::InvertedGreedinessOption);
+    static QRegularExpression regex(QStringLiteral("\\{(\\w+)(?:!([rs]))?(?:\\:(.*))?\\}"),
+                                    QRegularExpression::InvertedGreedinessOption);
 
     QRegularExpressionMatchIterator i = regex.globalMatch(string);
     while (i.hasNext()) {

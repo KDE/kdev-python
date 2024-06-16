@@ -625,8 +625,8 @@ QList<CompletionTreeItemPointer> PythonCodeCompletionContext::getMissingIncludeI
     components.removeAll(QString());
 
     // Check all components are alphanumeric
-    QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
-    for ( const QString& component : components ) {
+    static QRegularExpression alnum(QRegularExpression::anchoredPattern(QStringLiteral("\\w*")));
+    for ( const QString& component : std::as_const(components) ) {
         QRegularExpressionMatch match = alnum.match(component);
         if ( ! match.hasMatch() ) return items;
     }

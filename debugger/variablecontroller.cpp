@@ -95,7 +95,8 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
 
 void VariableController::localsUpdateReady(QByteArray rawData)
 {
-    QRegularExpression formatExtract( QRegularExpression::anchoredPattern(QStringLiteral("([a-zA-Z0-9_]+) \\=\\> (.*)")));
+    static QRegularExpression formatExtract(
+        QRegularExpression::anchoredPattern(QStringLiteral("([a-zA-Z0-9_]+) \\=\\> (.*)")));
     QList<QByteArray> data = rawData.split('\n');
     data.removeAll({});
     qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;

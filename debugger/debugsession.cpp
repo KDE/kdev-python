@@ -465,8 +465,8 @@ void DebugSession::locationUpdateReady(QByteArray data) {
         lines.removeLast(); // source line
         QString where = QString::fromUtf8(lines.last());
         // > /bar/baz/foo.py(123)<module>()
-        QRegularExpression m(QRegularExpression::anchoredPattern(QStringLiteral("^> (/.*\\.py)\\((\\d*)\\).*$")),
-                             QRegularExpression::InvertedGreedinessOption);
+        static QRegularExpression m(QRegularExpression::anchoredPattern(QStringLiteral("^> (/.*\\.py)\\((\\d*)\\).*$")),
+                                    QRegularExpression::InvertedGreedinessOption);
         auto match = m.match(where);
         setCurrentPosition(QUrl::fromLocalFile(match.captured(1)), match.captured(2).toInt() - 1 , QStringLiteral("<unknown>"));
         qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << match.captured(1) << match.captured(2).toInt() - 1 << match.capturedTexts() << where;

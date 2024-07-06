@@ -4,6 +4,7 @@ import socket
 import threading
 import struct
 import os
+import sys
 from enum import IntEnum
 
 # This module provides a few things:
@@ -52,6 +53,10 @@ class kdevPdbConnection:
         listensocket.bind(socket_addr)
         self.server_address = listensocket.getsockname()
         listensocket.listen(0)
+        # Print the socket file to stdout.
+        # The host process must wait for "socket:" line to be printed, and discard this line.
+        sys.stdout.write("socket:"+self.server_address+"\n")
+        sys.stdout.flush()
         self.socket, _ = listensocket.accept()
         listensocket.close()
         self.recv_thread = threading.Thread(target=self._recv)

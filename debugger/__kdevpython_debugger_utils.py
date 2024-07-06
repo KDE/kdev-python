@@ -5,6 +5,8 @@
 
 from kdevpdb import kdevOutputFormatter
 
+# TODO: FIXME: Variable info should be reported via the kdevPdb.pdbsrv.sendDataFrame(),
+#              and not with print(). This module won't work any more with the out-of-band communication.
 import sys
 
 __kdevpython_builtin_locals = locals

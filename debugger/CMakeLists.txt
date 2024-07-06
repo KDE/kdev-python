@@ -33,4 +33,5 @@ target_link_libraries(kdevpdb
 
 install(FILES __kdevpython_debugger_utils.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdb.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
+install(FILES kdevpdbmain.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdbconn.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)

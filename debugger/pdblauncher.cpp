@@ -64,7 +64,10 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         Q_ASSERT(iface);
         QString err;
         QString interpreter = iface->interpreter(cfg, err);
-        
+
+        // TODO: Forward arguments which we can support to the interpreter. (can't be passed via job->m_args)
+        interpreter = interpreter.split(u' ', Qt::SkipEmptyParts).first();
+
         // check the interpreter
         QProcess p;
         p.setProcessChannelMode(QProcess::MergedChannels);

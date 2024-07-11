@@ -7,6 +7,8 @@ set(kdevpdb_PART_SRCS
     debugjob.cpp
     debugsession.cpp
     pdbdebuggerplugin.cpp
+    pdbprocess.cpp
+    pdbinterrupt.cpp
 )
 ecm_qt_declare_logging_category(kdevpdb_PART_SRCS
     HEADER debuggerdebug.h

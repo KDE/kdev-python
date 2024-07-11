@@ -43,7 +43,9 @@ class kdevPdb(pdb.Pdb):
         # - Disable tab complete
         # - Use sys.stdin and sys.stdout
         # - nosigint=True, we install our own SIGINT handler.
-        super().__init__(completekey=None, stdin=None, stdout=None, skip=None, nosigint=True)
+        # - readrc=False, don't read the user's Pdb configuration since this can interfere
+        #   with the initialization of kdevPdb.
+        super().__init__(completekey=None, stdin=None, stdout=None, skip=None, nosigint=True, readrc=False)
         self.prompt = ""
         signal.signal(signal.SIGINT, self.sigint_handler)
         self.interrupted_return_quirk = False

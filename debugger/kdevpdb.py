@@ -15,7 +15,7 @@ class kdevPdb(pdb.Pdb):
         * kdevPdb replaces a few of key methods from Pdb to implement the out-of-band
           communication, and to structure command output into JSON data.
     '''
-    def __init__(self, kdevpath):
+    def __init__(self, kdevpath, socketpath="/tmp/"):
         # Pin down the required modules as member attributes:
         self.json = json
         self.kdevpdbconn = kdevpdbconn
@@ -24,7 +24,7 @@ class kdevPdb(pdb.Pdb):
         preinit = {"seq": -1, "input": f"import sys; sys.path.append({kdevpath!r})\n"}
         self.pdbsrv.dataframes.append(self.json.dumps(preinit).encode())
         # Connect to a client.
-        self.pdbsrv.establish()
+        self.pdbsrv.establish(socketpath)
         # The command's output is associated with it by the command sequence number. The
         # seqnro begins from -1, because of the above preinit request.
         # * cmdloop() receives the command sequence number "seq" (seqnro) from the client. The
@@ -163,14 +163,15 @@ def main():
         sys.exit(2)
 
     split = split[0]
-    opts, args = getopt.getopt(sys.argv[1:split], 'd:mc:', ['command='])
+    opts, args = getopt.getopt(sys.argv[1:split], 'd:s:mc:', ['command='])
 
-    if len(opts) < 1 or args:
+    if len(opts) < 2 or args:
         sys.exit(2)
 
     commands = [optarg for opt, optarg in opts if opt in ['-c', '--command']]
     module_indicated = any(opt in ['-m'] for opt, optarg in opts)
     kdevpath = [optarg for opt, optarg in opts if opt == '-d'][0]
+    socketpath = [optarg for opt, optarg in opts if opt == '-s'][0]
 
     cls = pdb._ModuleTarget if module_indicated else pdb._ScriptTarget
     args = sys.argv[split+1:]
@@ -181,7 +182,7 @@ def main():
     # modified by the script being debugged. It's a bad idea when it was
     # changed by the user from the command line. There is a "restart" command
     # which allows explicit specification of command line arguments.
-    debugger = kdevPdb(kdevpath)
+    debugger = kdevPdb(kdevpath, socketpath)
     debugger.rcLines.extend(commands)
 
     exitcode = 0

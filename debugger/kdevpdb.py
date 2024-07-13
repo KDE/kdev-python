@@ -5,6 +5,7 @@ import sys
 import traceback
 import pdb
 import json
+import signal
 import kdevpdbconn
 
 # pylint: disable=C0103, R0903
@@ -39,8 +40,45 @@ class kdevPdb(pdb.Pdb):
         self.debugger_initialized = False
         # Init the super class:
         # - Disable tab complete
-        super().__init__(None)
+        # - Use sys.stdin and sys.stdout
+        # - nosigint=True, we install our own SIGINT handler.
+        super().__init__(completekey=None, stdin=None, stdout=None, skip=None, nosigint=True)
         self.prompt = ""
+        self.sigint_triggered = False
+        signal.signal(signal.SIGINT, self.sigint_handler)
+
+    def sigint_handler(self, signum, frame):
+        '''Augmented version of pdb.sigint_handler(...)
+           JSON: "halt" : True
+        '''
+        if self.sigint_triggered:
+            return
+        self.sigint_triggered = True
+        # temporarily disable tracing.
+        sys.settrace(None)
+        # Tell the client the current request was interrupted.
+        self.append_response({"halt": True})
+        # Ensure we will stop in the most recent inferior frame only.
+        stop_frame = None
+        f = sys._getframe().f_back
+        f_prev = f
+        while f is not None:
+            if f_prev.f_code is self.trace_dispatch.__code__:
+                # f is the most recent inferior frame.
+                stop_frame = f
+            f.f_trace = None if stop_frame is None else self.trace_dispatch
+            self.botframe = f
+            f_prev = f
+            f = f.f_back
+        self.set_next(stop_frame)
+        sys.settrace(self.trace_dispatch)
+
+    def do_return(self, arg):
+        """Augmented version of pdb.do_return(...)"""
+        # TODO: this needs *more* improvements.
+        self.set_return(self.curframe)
+        return 1
+    do_r = do_return
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -91,6 +129,7 @@ class kdevPdb(pdb.Pdb):
                 else:
                     if self.debugger_initialized:
                         self.send_response()
+                    self.sigint_triggered = False
                     # Wait for a request.
                     request = json.loads(self.pdbsrv.getDataFrame().decode())
                     assert "seq" in request

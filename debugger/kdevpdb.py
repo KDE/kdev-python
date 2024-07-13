@@ -4,6 +4,7 @@
 import pdb
 import json
 import getopt
+import signal
 import kdevpdbconn
 
 
@@ -40,8 +41,34 @@ class kdevPdb(pdb.Pdb):
         self.debugger_initialized = False
         # Init the super class:
         # - Disable tab complete
-        super().__init__(None)
+        # - Use sys.stdin and sys.stdout
+        # - nosigint=True, we install our own SIGINT handler.
+        super().__init__(completekey=None, stdin=None, stdout=None, skip=None, nosigint=True)
         self.prompt = ""
+        signal.signal(signal.SIGINT, self.sigint_handler)
+        self.interrupted_return_quirk = False
+
+    def sigint_handler(self, signum, frame):
+        '''Augmented version of pdb.sigint_handler(...)
+           JSON: "halt" : True
+        '''
+        self.append_response({"halt": True})
+        if self.interrupted_return_quirk:
+            # Interrupting 'return' has a quirk that set_trace() must not be called,
+            # or we stop *in* the set_trace(). However, otherwise set_trace() must
+            # be called or we don't stop at all.
+            self.interrupted_return_quirk = False
+            self.set_step()
+            return
+        self.set_step()
+        self.set_trace(frame)
+
+    def do_return(self, arg):
+        """Augmented version of pdb.sigint_handler(...)"""
+        self.interrupted_return_quirk = True
+        self.set_return(self.curframe)
+        return 1
+    do_r = do_return
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -70,6 +97,7 @@ class kdevPdb(pdb.Pdb):
 
     def preloop(self):
         pass
+        self.interrupted_return_quirk = False
 
     def cmdloop(self, intro=None):
         """Process the kdevPdbConnection received commands.
@@ -144,6 +172,7 @@ class kdevPdb(pdb.Pdb):
         # dump using same scheme as with do_where(): the list just has a single entry.
         entry = self.make_frame_entry(frame_lineno)
         self.append_response({"frames": [entry]})
+
 
 def main():
     """Kdevelop python debugger main, based on pdb.main()"""

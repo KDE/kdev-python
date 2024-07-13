@@ -1,9 +1,11 @@
 # SPDX-FileCopyrightText: 2014 Sven Brauch <svenbrauch@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import sys
 import pdb
 import json
 import getopt
+import signal
 import kdevpdbconn
 
 
@@ -40,8 +42,43 @@ class kdevPdb(pdb.Pdb):
         self.debugger_initialized = False
         # Init the super class:
         # - Disable tab complete
-        super().__init__(None)
+        # - Use sys.stdin and sys.stdout
+        # - nosigint=True, we install our own SIGINT handler.
+        super().__init__(completekey=None, stdin=None, stdout=None, skip=None, nosigint=True)
         self.prompt = ""
+        self.sigint_triggered = False
+        signal.signal(signal.SIGINT, self.sigint_handler)
+
+    def sigint_handler(self, signum, frame):
+        '''Augmented version of pdb.sigint_handler(...)
+           JSON: "halt" : True
+        '''
+        if self.sigint_triggered:
+            return
+        self.sigint_triggered = True
+        # temporarily disable tracing...
+        sys.settrace(None)
+        # Tell the client the current request was interrupted.
+        self.append_response({"halt": True})
+        # Ensure we will stop in the most recent inferior frame only.
+        stop_frame = None
+        f = sys._getframe().f_back
+        while f is not None:
+            filename = self.canonic(f.f_code.co_filename)
+            if stop_frame is None and not filename.endswith(('bdb.py', 'pdb.py')):
+                stop_frame = f
+            f.f_trace = None if stop_frame is None else self.trace_dispatch
+            self.botframe = f
+            f = f.f_back
+        self.set_next(stop_frame)
+        sys.settrace(self.trace_dispatch)
+
+    def do_return(self, arg):
+        """Augmented version of pdb.do_return(...)"""
+        # TODO: this needs *more* improvements.
+        self.set_return(self.curframe)
+        return 1
+    do_r = do_return
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -92,6 +129,7 @@ class kdevPdb(pdb.Pdb):
                 else:
                     if self.debugger_initialized:
                         self.send_response()
+                    self.sigint_triggered = False
                     # Wait for a request.
                     request = self.json.loads(self.pdbsrv.getDataFrame().decode())
                     assert "seq" in request
@@ -149,6 +187,7 @@ class kdevPdb(pdb.Pdb):
         # dump using same scheme as with do_where(): the list just has a single entry.
         entry = self.make_frame_entry(frame_lineno)
         self.append_response({"frames": [entry]})
+
 
 def main():
     """Kdevelop python debugger main, based on pdb.main()"""

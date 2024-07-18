@@ -20,9 +20,7 @@
 #include "rangefixvisitor.h"
 
 #include <QDebug>
-#if QT_VERSION >= 0x060000
 #include <QMutexLocker>
-#endif
 
 #include "parserdebug.h"
 
@@ -48,11 +46,7 @@ QString PyUnicodeObjectToQString(PyObject* obj) {
     return QString::fromUtf8(ptr, size);
 }
 
-#if QT_VERSION >= 0x060000
 struct PythonParser : private QMutexLocker<QMutex>
-#else
-struct PythonParser : private QMutexLocker
-#endif
 {
     PyObject* m_parser_mod = nullptr;
     PyObject* m_parse_func = nullptr;

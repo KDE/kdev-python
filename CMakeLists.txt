@@ -17,19 +17,11 @@ project(kdevpython VERSION "6.0.${RELEASE_SERVICE_BASED_PATCHLEVEL}")
 # KDevplatform dependency version
 set(KDEVPLATFORM_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}")
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED YES)
-if (BUILD_WITH_QT6)
-    set(KF_MAJOR_VERSION "6")
-    set(QT_MIN_VERSION "6.4.0")
-    set(KF_MIN_VERSION "5.240.0")
-else()
-    set(KF_MAJOR_VERSION "5")
-    set(QT_MIN_VERSION "5.15.2")
-    set(KF_MIN_VERSION "5.91.0")
-endif()
+set(KDE_COMPILERSETTINGS_LEVEL 6.0)
+set(QT_MIN_VERSION "6.5.0")
+set(KF_MIN_VERSION "6.0.0")
 
-find_package (ECM ${KF_MIN_VERSION} REQUIRED NO_MODULE)
+find_package(ECM ${KF_MIN_VERSION} REQUIRED)
 set(CMAKE_MODULE_PATH ${kdevpython_SOURCE_DIR}/cmake/modules ${CMAKE_MODULE_PATH} ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -54,27 +46,24 @@ find_package(Python3 3.4.3...<3.13 COMPONENTS Interpreter Development REQUIRED)
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 
-find_package(KDevPlatform ${KDEVPLATFORM_VERSION} CONFIG REQUIRED)
+find_package(KDevPlatform ${KDEVPLATFORM_VERSION} REQUIRED)
 find_package(KDevelop ${KDEVPLATFORM_VERSION} REQUIRED)
 
-if(QT_MAJOR_VERSION STREQUAL 6)
-    find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Core5Compat Widgets WebEngineWidgets Test)
-    find_package(KF6TextWidgets ${KF_MIN_VERSION} CONFIG REQUIRED)
-else()
-    find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED Core Widgets Test)
-endif()
+find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
+    Core
+    Core5Compat
+    Widgets
+    WebEngineWidgets
+    Test
+)
 
-find_package(KF${KF_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED
+find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
     I18n
     Service
     ThreadWeaver
     TextEditor
+    TextWidgets
 )
-
-if(NOT CMAKE_VERSION VERSION_LESS "3.10.0" AND KF5_VERSION VERSION_LESS "5.42.0")
-    # Avoids bogus warnings with CMake 3.10+, KF5.42+ has workaround
-    list(APPEND CMAKE_AUTOMOC_MACRO_NAMES "K_PLUGIN_FACTORY_WITH_JSON")
-endif()
 
 if ( NOT WIN32 )
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wfatal-errors -Wall")
@@ -138,9 +127,9 @@ target_link_libraries(kdevpythonlanguagesupport
     KDev::Interfaces
     KDev::Language
     KDev::Util
-    KF${KF_MAJOR_VERSION}::Service
-    KF${KF_MAJOR_VERSION}::ThreadWeaver
-    KF${KF_MAJOR_VERSION}::TextEditor
+    KF6::Service
+    KF6::ThreadWeaver
+    KF6::TextEditor
     kdevpythoncompletion
     kdevpythonparser
     kdevpythonduchain

@@ -28,8 +28,6 @@
 #include "../astbuilder.h"
 #include "../parserdebug.h"
 
-#include <ktexteditor_version.h>
-
 #include <QDebug>
 #include <QtTest>
 

@@ -16,7 +16,6 @@
 #include <tests/testcore.h>
 #include <tests/autotestshell.h>
 
-#include <ktexteditor_version.h>
 #include <KTextEditor/Editor>
 #include <KService>
 

@@ -18,7 +18,7 @@ target_link_libraries(pyduchaintest
     kdevpythonduchain
     kdevpythonparser
     ${kdevpythonparser_LIBRARIES}
-    Qt${QT_MAJOR_VERSION}::Test
+    Qt6::Test
     KDev::Tests
 )
 
@@ -26,6 +26,6 @@ target_link_libraries(duchainbench
     kdevpythonduchain
     kdevpythonparser
     ${kdevpythonparser_LIBRARIES}
-    Qt${QT_MAJOR_VERSION}::Test
+    Qt6::Test
     KDev::Tests
 )

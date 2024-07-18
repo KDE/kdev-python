@@ -28,12 +28,6 @@
 #include <QStack>
 #include "codegendebug.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-#define SkipEmptyParts Qt::SkipEmptyParts
-#else
-#define SkipEmptyParts QString::SkipEmptyParts
-#endif
-
 using namespace KDevelop;
 
 namespace Python {
@@ -157,7 +151,7 @@ void TypeCorrection::accepted()
 
     CorrectionFileGenerator::HintType hintType = dialog->hintType();
 
-    generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(QLatin1Char(','), SkipEmptyParts), decl.data(), hintType);
+    generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(QLatin1Char(','), Qt::SkipEmptyParts), decl.data(), hintType);
 
     qCDebug(KDEV_PYTHON_CODEGEN) << "Forcing a reparse on " << decl.data()->topContext()->url();
     ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(decl.data()->topContext()->url()),

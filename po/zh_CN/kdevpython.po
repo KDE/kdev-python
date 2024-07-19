@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-06-11 01:49+0000\n"
+"POT-Creation-Date: 2024-07-19 00:38+0000\n"
 "PO-Revision-Date: 2024-04-23 19:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: kdeorg\n"
 "X-Crowdin-Project-ID: 269464\n"
 "X-Crowdin-Language: zh-CN\n"
-"X-Crowdin-File: /kf5-trunk/messages/kdev-python/kdevpython.pot\n"
-"X-Crowdin-File-ID: 4880\n"
+"X-Crowdin-File: /kf6-trunk/messages/kdev-python/kdevpython.pot\n"
+"X-Crowdin-File-ID: 54620\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -138,22 +138,22 @@ msgctxt "programming; %1 is a code statement to be added in the editor"
 msgid "Add \"%1\""
 msgstr "添加“%1”"
 
-#: codegen/correctionfilegenerator.cpp:64
+#: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
 msgstr "为“%1”指定类型..."
 
-#: codegen/correctionfilegenerator.cpp:114
+#: codegen/correctionfilegenerator.cpp:108
 #, kde-format
 msgid "Function return type"
 msgstr "函数返回类型"
 
-#: codegen/correctionfilegenerator.cpp:117
+#: codegen/correctionfilegenerator.cpp:111
 #, kde-format
 msgid "Local variable"
 msgstr "局部变量"
 
-#: codegen/correctionfilegenerator.cpp:153
+#: codegen/correctionfilegenerator.cpp:147
 #, kde-format
 msgid "Sorry, cannot create hints for files which are not part of a project."
 msgstr "抱歉，无法未非工程内文件创建提示。"

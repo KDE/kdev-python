@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-06-11 01:49+0000\n"
+"POT-Creation-Date: 2024-07-19 00:38+0000\n"
 "PO-Revision-Date: 2009-01-25 22:33+0200\n"
 "Last-Translator: Andrius Štikonas <andrius@stikonas.eu>\n"
 "Language-Team: Lithuanian <kde-i18n-lt@kde.org>\n"
@@ -139,22 +139,22 @@ msgctxt "programming; %1 is a code statement to be added in the editor"
 msgid "Add \"%1\""
 msgstr ""
 
-#: codegen/correctionfilegenerator.cpp:64
+#: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
 msgstr ""
 
-#: codegen/correctionfilegenerator.cpp:114
+#: codegen/correctionfilegenerator.cpp:108
 #, kde-format
 msgid "Function return type"
 msgstr ""
 
-#: codegen/correctionfilegenerator.cpp:117
+#: codegen/correctionfilegenerator.cpp:111
 #, kde-format
 msgid "Local variable"
 msgstr ""
 
-#: codegen/correctionfilegenerator.cpp:153
+#: codegen/correctionfilegenerator.cpp:147
 #, kde-format
 msgid "Sorry, cannot create hints for files which are not part of a project."
 msgstr ""

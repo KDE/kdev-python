@@ -396,6 +396,8 @@ void PyDUChainTest::testCrashes_data() {
                  "class Client(tcp.Client):\n"
                  "  pass\n";
     QTest::newRow("comprehension_as_default_crash") << "def foo(bar = [item for (_, item) in items()]):\n return";
+    QTest::newRow("comprehension_lambda_call") << "[ c for c in 'abc' ].sort(key=lambda c: c)";
+
     QTest::newRow("try_except") << "try: pass\nexcept: pass";
     QTest::newRow("try_except_type") << "try: pass\nexcept FooException: pass";
     QTest::newRow("try_except_type_as") << "try: pass\nexcept FooException as bar: pass";

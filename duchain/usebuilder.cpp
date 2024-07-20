@@ -94,7 +94,7 @@ void UseBuilder::visitName(NameAst* node)
 void UseBuilder::visitCall(CallAst* node)
 {
     UseBuilderBase::visitCall(node);
-    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node->function));
     ExpressionVisitor v(context);
     v.visitNode(node->function);
     if ( auto classType = v.lastType().dynamicCast<StructureType>() ) {

@@ -41,7 +41,7 @@ class LanguageSupport
     Q_INTERFACES( KDevelop::ILanguageCheckProvider )
 
 public:
-    LanguageSupport( QObject *parent, const QVariantList& args = QVariantList() );
+    LanguageSupport(QObject* parent, const KPluginMetaData& metaData, const QVariantList& args = QVariantList());
     ~LanguageSupport() override;
     /*Name Of the Language*/
     QString name() const override;

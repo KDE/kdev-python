@@ -71,8 +71,8 @@ ContextMenuExtension LanguageSupport::contextMenuExtension(Context* context, QWi
     return cm;
 }
 
-LanguageSupport::LanguageSupport( QObject* parent, const QVariantList& /*args*/ )
-    : KDevelop::IPlugin(QStringLiteral("pythonlanguagesupport"), parent )
+LanguageSupport::LanguageSupport(QObject* parent, const KPluginMetaData& metaData, const QVariantList& /*args*/)
+    : KDevelop::IPlugin(QStringLiteral("pythonlanguagesupport"), parent , metaData)
     , KDevelop::ILanguageSupport()
     , m_highlighting( new Highlighting( this ) )
     , m_refactoring( new Refactoring( this ) )

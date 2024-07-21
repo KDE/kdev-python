@@ -53,16 +53,19 @@ find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS
     Core
     Core5Compat
     Widgets
-    WebEngineWidgets
     Test
 )
 
 find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
+    Config
+    CoreAddons
     I18n
+    Parts
     Service
-    ThreadWeaver
     TextEditor
-    TextWidgets
+    ThreadWeaver
+    WidgetsAddons
+    XmlGui
 )
 
 if ( NOT WIN32 )

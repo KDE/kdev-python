@@ -166,7 +166,12 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
 {
     startCursor = cursor;
     QString line = lineFetcher.fetchLine(cursor.line());
-    int index = cursor.column();
+    // Don't crash: the valid range for a non-empty line is [0, line.length())
+    if (line.isEmpty()) {
+        return line;
+    }
+    int index = std::clamp<qsizetype>(cursor.column(), 0, line.length() - 1);
+
     QChar c = line[index];
     
     int end = index;

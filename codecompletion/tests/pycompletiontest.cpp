@@ -23,6 +23,8 @@
 #include "codecompletion/helpers.h"
 #include "codecompletiondebug.h"
 
+#include "../../parser/codehelpers.h"
+
 #include <QDebug>
 #include <QStandardPaths>
 #include <QTest>
@@ -656,6 +658,48 @@ void PyCompletionTest::testStringFormatter_data()
                                        << (QList<RangeInString>() << RangeInString(7, 10) << RangeInString(15, 18)
                                            << RangeInString(18, 21) << RangeInString(31, 34) << RangeInString(35, 40)
                                            << RangeInString(46, 49));
+}
+
+void PyCompletionTest::testExpressionUnderCursor()
+{
+    QFETCH(QStringList, source);
+    QFETCH(bool, forceScan);
+
+    const int maxrows = source.size();
+    const int maxcolumn = std::max_element(source.begin(), source.end(), [](const QString& a, const QString& b) {
+                              return a.size() < b.size();
+                          })->size();
+
+    Python::TrivialLazyLineFetcher lineFetcher(source);
+
+    // Check all cursor positions within a Range{{0,-1}, {maxrows-1,maxcolumn}} rectangle.
+    // This test passes simply if we don't *crash*.
+    KTextEditor::Cursor cursor;
+    for (; cursor.line() < maxrows; cursor.setLine(cursor.line() + 1)) {
+        for (cursor.setColumn(-1); cursor.column() <= maxcolumn; cursor.setColumn(cursor.column() + 1)) {
+            KTextEditor::Cursor start;
+            auto expr = CodeHelpers::expressionUnderCursor(lineFetcher, cursor, start, forceScan);
+            qDebug() << cursor << "=>" << start << expr;
+        }
+    }
+}
+
+void PyCompletionTest::testExpressionUnderCursor_data()
+{
+    QTest::addColumn<QStringList>("source");
+    QTest::addColumn<bool>("forceScan");
+
+    for (int i = 0; i < 2; ++i) {
+        using namespace Qt::Literals::StringLiterals;
+        QTest::addRow("emptyline, forceScan=%s", i ? "true" : "false")
+            << (QStringList() << "import sys\n"_L1
+                              << "x = {'1':'Hello','2':'world!'}\n"_L1
+                              << "\n"_L1
+                              << "for i in x.items():\n"_L1
+                              << "  print(i)\n"_L1
+                              << "  \n"_L1)
+            << bool(i);
+    }
 }
 
 QString repeat_distinct(const QString& code, int count) {

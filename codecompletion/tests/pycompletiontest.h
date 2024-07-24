@@ -79,6 +79,9 @@ class PyCompletionTest : public QObject
         void testStringFormattingCompletion_data();
         void testStringFormatter();
         void testStringFormatter_data();
+        // misc tests
+        void testExpressionUnderCursor();
+        void testExpressionUnderCursor_data();
         // benchmarks
         void completionBenchTest();
         void completionBenchTest_data();

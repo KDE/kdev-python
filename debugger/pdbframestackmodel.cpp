@@ -30,15 +30,43 @@ void PdbFrameStackModel::setDebuggerAtFrame(int newFrame)
     m_debuggerAtFrame = newFrame;
 }
 
-void PdbFrameStackModel::framesFetched(QByteArray framelist)
+void PdbFrameStackModel::framesFetched(const ResponseData& data)
 {
+    const auto framelist = responseArray(data, QStringLiteral("frames"));
+
     QList<FrameItem> frames;
-    // TODO
+
+    // The most recent frame is first, but it's not necessarily the current one.
+    for (const auto& obj : framelist) {
+        const auto frame = obj.toObject();
+        if (frame.value(QStringLiteral("current")).toBool()) {
+            m_debuggerAtFrame = frames.size();
+        }
+
+        const auto file = frame.value(QStringLiteral("filename")).toString();
+        if (file == QStringLiteral("<string>")) {
+            // End of frames. (server sends us extra frames which we must ignore.
+            // "<string>" is magic from depths of Bdb)
+            break;
+        }
+
+        auto& item = frames.emplace_back();
+        item.nr = frames.size() - 1;
+        item.file = QUrl::fromLocalFile(file);
+        item.line = frame.value(QStringLiteral("line")).toInt() - 1;
+        // Extract the function/name part between the first ')' and subsequent '\n' char.
+        const QString location = frame.value(QStringLiteral("location")).toString();
+        const auto k = location.indexOf(QLatin1Char(')'));
+        auto j = location.indexOf(QLatin1Char('\n'), k);
+        j = j < k ? location.size() : j; // Some frames don't have a '\n' appended.
+        item.name = location.sliced(k + 1, j - (k + 1));
+    }
+
     qCDebug(KDEV_PYTHON_DEBUGGER) << "at frame:" << m_debuggerAtFrame;
     setFrames(0, frames);
 }
 
-void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
+void PdbFrameStackModel::threadsFetched()
 {
     // TODO: Implement me: Thread debugging is not supported by pdb.
     qCDebug(KDEV_PYTHON_DEBUGGER) << "threads fetched";
@@ -54,13 +82,17 @@ void PdbFrameStackModel::threadsFetched(QByteArray threadsData)
 void PdbFrameStackModel::fetchFrames(int /*threadNumber*/, int /*from*/, int /*to*/)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "frames requested";
-    // TODO
+    auto* const debugger = static_cast<DebugSession*>(QObject::parent())->debugger();
+    debugger->request(QStringLiteral("where"), [this](const ResponseData& d) {
+        framesFetched(d);
+    });
 }
 
 void PdbFrameStackModel::fetchThreads()
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "threads requested";
-    // TODO
+    // TODO: pdb doesn't support threads, so no point doing a round-trip to the server yet.
+    threadsFetched();
 }
 
 }

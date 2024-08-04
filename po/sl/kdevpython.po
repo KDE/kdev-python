@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-07-19 00:38+0000\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
 "PO-Revision-Date: 2022-11-08 10:52+0100\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -48,82 +48,82 @@ msgstr "Dodaj glavo datoteke"
 msgid "specify default parameter"
 msgstr "podajte privzeti parameter"
 
-#: codecompletion/context.cpp:384
+#: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
 msgstr "Vstavi naslednjo položajno spremenljivko"
 
-#: codecompletion/context.cpp:389
+#: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
 msgstr "Vstavi poimenovano spremenljivko"
 
-#: codecompletion/context.cpp:425
+#: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
 msgstr "Oblikuj z uporabo str()"
 
-#: codecompletion/context.cpp:426
+#: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
 msgstr "Oblikuj z uporabo repr()"
 
-#: codecompletion/context.cpp:434
+#: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
 msgstr "Oblikuj kot levo poravnano"
 
-#: codecompletion/context.cpp:435
+#: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
 msgstr "Oblikuj kot desno poravnano"
 
-#: codecompletion/context.cpp:436
+#: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
 msgstr "Oblikuj kot usredinjeno"
 
-#: codecompletion/context.cpp:440
+#: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
 msgstr "Navedite natančnost"
 
-#: codecompletion/context.cpp:441
+#: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
 msgstr "Oblikuj kot odstotek"
 
-#: codecompletion/context.cpp:442
+#: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
 msgstr "Oblikuj kot znak"
 
-#: codecompletion/context.cpp:443
+#: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
 msgstr "Oblikuj kot dvojiško število"
 
-#: codecompletion/context.cpp:444
+#: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
 msgstr "Oblikuj kot osmiško število"
 
-#: codecompletion/context.cpp:445
+#: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
 msgstr "Oblikuj kot šestnajstiško število"
 
-#: codecompletion/context.cpp:446
+#: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
 msgstr "Oblikuj kot znanstveni (eksponentni) zapis"
 
-#: codecompletion/context.cpp:447
+#: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
 msgstr "Oblikuj kot število z nespremenljivo vejico"
 
-#: codecompletion/context.cpp:506
+#: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
 msgstr "Nastavi začetne vrednosti lastnosti"
@@ -201,17 +201,17 @@ msgstr "Zahtevani moduli:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Z vejico ločen seznam modulov, ki jih vrsta zahteva"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Program, ki ga razhroščujete, je povzročil neujeto izjemo."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Sedaj lahko preučite stanje programa, potem ko se konča."
 
-#: debugger/debugsession.cpp:166
+#: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Razhroščevalnik se bo potiho zaustavil, ko bo sprožen naslednji ukaz."
@@ -381,13 +381,13 @@ msgstr ""
 msgid "Invalid output filename"
 msgstr "Neveljavno izhodno ime datoteke"
 
-#: docfilekcm/docfilewizard.cpp:189
+#: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "Izhodna datoteka <br/>%1<br/> že obstaja, ali jo želite prepisati?"
 
-#: docfilekcm/docfilewizard.cpp:204
+#: docfilekcm/docfilewizard.cpp:203
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -426,34 +426,34 @@ msgstr "Dokumentacija za Python"
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Ustvari dokumentacijo za modul \"%1\" ..."
 
-#: duchain/declarationbuilder.cpp:704
+#: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "Modula \"%1\" ni bilo mogoče najti"
 
-#: duchain/declarationbuilder.cpp:775
+#: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaracija za \"%1\" ni bila najdena v podanem modulu"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "Prvi argument metode __new__ se ne imenuje cls, to je opuščeno"
 
-#: duchain/declarationbuilder.cpp:1588
+#: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "Prvi argument metode razreda se ne imenuje self, to je opuščeno"
 
-#: duchain/declarationbuilder.cpp:1608
+#: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Ne-statična metoda razreda brez argumentov mora imeti vsaj enega (self)"
 
-#: duchain/declarationbuilder.cpp:1769
+#: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Vrnitvena izjava ni znotraj deklaracije funkcije"

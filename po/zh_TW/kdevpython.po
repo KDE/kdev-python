@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-07-19 00:38+0000\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
 "PO-Revision-Date: 2024-05-09 16:37+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
@@ -49,82 +49,82 @@ msgstr "新增檔案標頭"
 msgid "specify default parameter"
 msgstr "指定預設參數"
 
-#: codecompletion/context.cpp:384
+#: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
 msgstr "插入下一個位置變數"
 
-#: codecompletion/context.cpp:389
+#: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
 msgstr "插入已命名變數"
 
-#: codecompletion/context.cpp:425
+#: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
 msgstr "使用 str() 格式化"
 
-#: codecompletion/context.cpp:426
+#: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
 msgstr "使用 repr() 格式化"
 
-#: codecompletion/context.cpp:434
+#: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
 msgstr "格式化成靠左對齊"
 
-#: codecompletion/context.cpp:435
+#: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
 msgstr "格式化成靠右對齊"
 
-#: codecompletion/context.cpp:436
+#: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
 msgstr "格式化成置中對齊"
 
-#: codecompletion/context.cpp:440
+#: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
 msgstr "指定精確度"
 
-#: codecompletion/context.cpp:441
+#: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
 msgstr "格式化為百分比"
 
-#: codecompletion/context.cpp:442
+#: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
 msgstr "格式化為字元"
 
-#: codecompletion/context.cpp:443
+#: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
 msgstr "格式化為二進位數字"
 
-#: codecompletion/context.cpp:444
+#: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
 msgstr "格式化為八進位數字"
 
-#: codecompletion/context.cpp:445
+#: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
 msgstr "格式化為十六進位數字"
 
-#: codecompletion/context.cpp:446
+#: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
 msgstr "格式化為科學（指數）表示法"
 
-#: codecompletion/context.cpp:447
+#: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
 msgstr "格式化為固定位小數"
 
-#: codecompletion/context.cpp:506
+#: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
 msgstr "初始化屬性"
@@ -202,17 +202,17 @@ msgstr "需要的模組："
 msgid "A comma separated list of modules required for the type"
 msgstr "此型態需要的模組清單，以逗號分隔"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "除錯中的程式發出了未捕捉到的例外。"
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "您現在可以在程式離開後檢查其狀態。"
 
-#: debugger/debugsession.cpp:166
+#: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "在下個指令觸發後，除錯器會無聲地停止。"
@@ -377,13 +377,13 @@ msgstr "找不到合法的 kdev-python 資料目錄。請檢查您的安裝。"
 msgid "Invalid output filename"
 msgstr "不合法的輸出檔名"
 
-#: docfilekcm/docfilewizard.cpp:189
+#: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "輸出檔 <br/>%1<br/> 已存在，您要覆寫它嗎？"
 
-#: docfilekcm/docfilewizard.cpp:204
+#: docfilekcm/docfilewizard.cpp:203
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -419,33 +419,33 @@ msgstr "Python 說明文件"
 msgid "Generate documentation for module \"%1\"..."
 msgstr "產生模組 \"%1\" 的文件..."
 
-#: duchain/declarationbuilder.cpp:704
+#: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "找不到模組 \"%1\""
 
-#: duchain/declarationbuilder.cpp:775
+#: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "在指定的模組找不到宣告 \"%1\""
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "__new__ 方法的第一個參數非 cls，這種方式已被廢棄"
 
-#: duchain/declarationbuilder.cpp:1588
+#: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "類別方法的第一個參數非 self，這種方式已被廢棄"
 
-#: duchain/declarationbuilder.cpp:1608
+#: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "非靜態類別方法沒有參數。您必須至少指定一個參數（self）"
 
-#: duchain/declarationbuilder.cpp:1769
+#: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return 敘述不在函式宣告內"

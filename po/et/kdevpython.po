@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-07-19 00:38+0000\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
 "PO-Revision-Date: 2020-01-15 14:53+0200\n"
 "Last-Translator: Marek Laane <qiilaq69@gmail.com>\n"
 "Language-Team: Estonian <kde-et@lists.linux.ee>\n"
@@ -48,82 +48,82 @@ msgstr "Lisa failipäis"
 msgid "specify default parameter"
 msgstr "vaikeparameetri määramine"
 
-#: codecompletion/context.cpp:384
+#: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
 msgstr "Lisa järgmine positsiooniline muutuja"
 
-#: codecompletion/context.cpp:389
+#: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
 msgstr "Lisa nimega muutuja"
 
-#: codecompletion/context.cpp:425
+#: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
 msgstr "Vorminda str() abil"
 
-#: codecompletion/context.cpp:426
+#: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
 msgstr "Vorminda repr() abil"
 
-#: codecompletion/context.cpp:434
+#: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
 msgstr "Vorminda vasakjoondatuna"
 
-#: codecompletion/context.cpp:435
+#: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
 msgstr "Vorminda paremjoondatuna"
 
-#: codecompletion/context.cpp:436
+#: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
 msgstr "Vorminda keskjoondatuna"
 
-#: codecompletion/context.cpp:440
+#: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
 msgstr "Määra täpsus"
 
-#: codecompletion/context.cpp:441
+#: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
 msgstr "Vorminda protsendina"
 
-#: codecompletion/context.cpp:442
+#: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
 msgstr "Vorminda tähena"
 
-#: codecompletion/context.cpp:443
+#: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
 msgstr "Vorminda kahendarvuna"
 
-#: codecompletion/context.cpp:444
+#: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
 msgstr "Vorminda kaheksandarvuna"
 
-#: codecompletion/context.cpp:445
+#: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
 msgstr "Vorminda kuueteistkümnendarvuna"
 
-#: codecompletion/context.cpp:446
+#: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
 msgstr "Vorminda teaduslikus (astendus)tähistuses"
 
-#: codecompletion/context.cpp:447
+#: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
 msgstr "Vorminda püsikomaarvuna"
 
-#: codecompletion/context.cpp:506
+#: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
 msgstr "Omaduse initsialiseerimine"
@@ -201,17 +201,17 @@ msgstr "Nõutavad moodulid:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Tüübile vajalike moodulite komadega eraldatud loend"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Silutav programm tekitas tabamata erindi."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Pärast programmi töö lõppemist võib nüüd uurida selle olekut."
 
-#: debugger/debugsession.cpp:166
+#: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Silur peatub vaikselt, kui käivitatakse järgmine käsk."
@@ -379,13 +379,13 @@ msgstr ""
 msgid "Invalid output filename"
 msgstr "Vigane väljundfaili nimi"
 
-#: docfilekcm/docfilewizard.cpp:189
+#: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "Väljundfail <br/>%1<br/> on juba olemas, kas kirjutada see üle?"
 
-#: docfilekcm/docfilewizard.cpp:204
+#: docfilekcm/docfilewizard.cpp:203
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -424,27 +424,27 @@ msgstr "Pythoni dokumentatsioon"
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Mooduli \"%1\" dokumentatsiooni genereerimine..."
 
-#: duchain/declarationbuilder.cpp:704
+#: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "Moodulit \"%1\" ei leitud."
 
-#: duchain/declarationbuilder.cpp:775
+#: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "\"%1\" deklaratsiooni määratud moodulis ei leitud"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr "__new__ meetodi esimeseks argumendiks ei ole cls, see on iganenud"
 
-#: duchain/declarationbuilder.cpp:1588
+#: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr "Klassi meetodi esimeseks argumendiks ei ole self, see on iganenud"
 
-#: duchain/declarationbuilder.cpp:1608
+#: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -452,7 +452,7 @@ msgstr ""
 "Mittestaatiline klassi meetod ilma argumentidega, peab olema vähemalt üks "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1769
+#: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Funktsiooni deklaratsioonis mitteleiduva lause tagastamine"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-07-19 00:38+0000\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
 "PO-Revision-Date: 2017-06-08 11:11+0100\n"
 "Last-Translator: José Nuno Coelho Pires <zepires@gmail.com>\n"
 "Language-Team: Portuguese <kde-i18n-pt@kde.org>\n"
@@ -46,82 +46,82 @@ msgstr "Adicionar um cabeçalho ao ficheiro"
 msgid "specify default parameter"
 msgstr "indicar o parâmetro predefinido"
 
-#: codecompletion/context.cpp:384
+#: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
 msgstr "Inserir a variável de posição seguinte"
 
-#: codecompletion/context.cpp:389
+#: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
 msgstr "Inserir uma variável com nome"
 
-#: codecompletion/context.cpp:425
+#: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
 msgstr "Formatar com o str()"
 
-#: codecompletion/context.cpp:426
+#: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
 msgstr "Formatar com o repr()"
 
-#: codecompletion/context.cpp:434
+#: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
 msgstr "Formatar alinhado à esquerda"
 
-#: codecompletion/context.cpp:435
+#: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
 msgstr "Formatar alinhado à direita"
 
-#: codecompletion/context.cpp:436
+#: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
 msgstr "Formatar de forma centrada"
 
-#: codecompletion/context.cpp:440
+#: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
 msgstr "Indicar a precisão"
 
-#: codecompletion/context.cpp:441
+#: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
 msgstr "Formatar como percentagem"
 
-#: codecompletion/context.cpp:442
+#: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
 msgstr "Formatar como um carácter"
 
-#: codecompletion/context.cpp:443
+#: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
 msgstr "Formatar como um número binário"
 
-#: codecompletion/context.cpp:444
+#: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
 msgstr "Formatar como um número octal"
 
-#: codecompletion/context.cpp:445
+#: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
 msgstr "Formatar como um número hexadecimal"
 
-#: codecompletion/context.cpp:446
+#: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
 msgstr "Formatar na notação científica"
 
-#: codecompletion/context.cpp:447
+#: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
 msgstr "Formatar como um número de vírgula fixa"
 
-#: codecompletion/context.cpp:506
+#: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
 msgstr "Inicializar a propriedade"
@@ -201,17 +201,17 @@ msgstr "Módulos necessários:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Uma lista, separada por vírgulas, de módulos necessários para o tipo"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "O programa em depuração emitiu uma excepção não capturada."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Poderá agora inspeccionar o estado do programa depois de ter saído."
 
-#: debugger/debugsession.cpp:166
+#: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
@@ -387,13 +387,13 @@ msgstr ""
 msgid "Invalid output filename"
 msgstr "Nome do ficheiro de saída inválido"
 
-#: docfilekcm/docfilewizard.cpp:189
+#: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
 msgstr "O ficheiro de saída <br/>%1<br/> já existe; deseja substituí-lo?"
 
-#: docfilekcm/docfilewizard.cpp:204
+#: docfilekcm/docfilewizard.cpp:203
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -431,31 +431,31 @@ msgstr "Documentação de Python"
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Gerar a documentação do módulo \"%1\"..."
 
-#: duchain/declarationbuilder.cpp:704
+#: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "O módulo \"%1\" não foi encontrado"
 
-#: duchain/declarationbuilder.cpp:775
+#: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "A declaração de \"%1\" não foi encontrada no módulo indicado"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "O primeiro argumento do método __new__ da classe não se chama 'cls'; isso "
 "está descontinuado"
 
-#: duchain/declarationbuilder.cpp:1588
+#: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "O primeiro argumento do método da classe não se chama 'self'; isso está "
 "descontinuado"
 
-#: duchain/declarationbuilder.cpp:1608
+#: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -463,7 +463,7 @@ msgstr ""
 "Um método da classe não estático e sem argumentos deverá ter pelo menos um "
 "(o 'self')"
 
-#: duchain/declarationbuilder.cpp:1769
+#: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "A instrução 'return' está fora de uma declaração de função"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-07-19 00:38+0000\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
 "PO-Revision-Date: 2017-11-26 17:10+0100\n"
 "Last-Translator: Burkhard Lück <lueck@hube-lueck.de>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
@@ -44,82 +44,82 @@ msgstr "Datei-Vorspann hinzufügen"
 msgid "specify default parameter"
 msgstr "Standard-Parameter angeben"
 
-#: codecompletion/context.cpp:384
+#: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
 msgstr "Nächste Positions-Ersetzungsvariable einfügen"
 
-#: codecompletion/context.cpp:389
+#: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
 msgstr "Benannte Variable einfügen"
 
-#: codecompletion/context.cpp:425
+#: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
 msgstr "Formatieren mit str()"
 
-#: codecompletion/context.cpp:426
+#: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
 msgstr "Formatieren mit repr()"
 
-#: codecompletion/context.cpp:434
+#: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
 msgstr "Linksbündig ausgerichtet formatieren"
 
-#: codecompletion/context.cpp:435
+#: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
 msgstr "Rechtsbündig ausgerichtet formatieren"
 
-#: codecompletion/context.cpp:436
+#: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
 msgstr "Zentriert formatieren"
 
-#: codecompletion/context.cpp:440
+#: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
 msgstr "Genauigkeit angeben"
 
-#: codecompletion/context.cpp:441
+#: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
 msgstr "Als Prozentwert formatieren"
 
-#: codecompletion/context.cpp:442
+#: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
 msgstr "Als Zeichen formatieren"
 
-#: codecompletion/context.cpp:443
+#: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
 msgstr "Als binäre Zahl formatieren"
 
-#: codecompletion/context.cpp:444
+#: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
 msgstr "Als oktale Zahl formatieren"
 
-#: codecompletion/context.cpp:445
+#: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
 msgstr "Als hexadezimale Zahl formatieren"
 
-#: codecompletion/context.cpp:446
+#: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
 msgstr "In wissenschaftlicher Schreibweise (Exponent) formatieren"
 
-#: codecompletion/context.cpp:447
+#: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
 msgstr "Als Zahl mit fester Dezimalstelle formatieren"
 
-#: codecompletion/context.cpp:506
+#: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
 msgstr "Eigenschaft initialisieren"
@@ -200,20 +200,20 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Durch Komma getrennte Liste von Modulen, die für diesen Typ erforderlich sind"
 
-#: debugger/debugsession.cpp:164
+#: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr ""
 "Das im Debugger ausgeführte Programm hat eine nicht behandelte "
 "Ausnahmebedingung ausgelöst."
 
-#: debugger/debugsession.cpp:165
+#: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr ""
 "Sie können jetzt den Status des Programms nach den Beenden untersuchen."
 
-#: debugger/debugsession.cpp:166
+#: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
@@ -392,7 +392,7 @@ msgstr ""
 msgid "Invalid output filename"
 msgstr "Ungültiger Ausgabedateiname"
 
-#: docfilekcm/docfilewizard.cpp:189
+#: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
@@ -400,7 +400,7 @@ msgstr ""
 "Die Ausgabedatei <br/>%1<br/> existiert bereits. Möchten Sie sie "
 "überschreiben?"
 
-#: docfilekcm/docfilewizard.cpp:204
+#: docfilekcm/docfilewizard.cpp:203
 #, kde-format
 msgid ""
 "This file contains auto-generated documentation extracted\n"
@@ -439,30 +439,30 @@ msgstr "Python-Dokumentation"
 msgid "Generate documentation for module \"%1\"..."
 msgstr "Die Dokumentation für das Modul „%1“ wird generiert ..."
 
-#: duchain/declarationbuilder.cpp:704
+#: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
 msgstr "Das Modul „%1“ wurde nicht gefunden"
 
-#: duchain/declarationbuilder.cpp:775
+#: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Die Deklaration für „%1“ wurde im angegebenen Modul nicht gefunden"
 
-#: duchain/declarationbuilder.cpp:1583
+#: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
 "Das erste Argument der Methode „__new__“ heißt nicht „cls“. Dies ist "
 "veraltet."
 
-#: duchain/declarationbuilder.cpp:1588
+#: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
 "Das erste Argument der Klassenmethode heißt nicht „self“. Dies ist veraltet."
 
-#: duchain/declarationbuilder.cpp:1608
+#: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -470,7 +470,7 @@ msgstr ""
 "Nichtstatische Klassenmethode ohne Argumente. Es muss mindestens eines "
 "verwendet werden („self“)."
 
-#: duchain/declarationbuilder.cpp:1769
+#: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return-Anweisung nicht innerhalb der Funktionsdeklaration"

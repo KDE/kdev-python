@@ -9,9 +9,13 @@
 
 #include <debugger/framestack/framestackmodel.h>
 
+#include "pdbdebuggerinstance.h"
+
 using namespace KDevelop;
 
 namespace Python {
+
+class DebugSession;
 
 /**
 * @brief The Frame Stack Model, which contains and controls the frame stack ("backtrace").
@@ -30,8 +34,9 @@ public:
 private:
     int m_debuggerAtFrame = 0;
 
-    void framesFetched(QByteArray frames);
-    void threadsFetched(QByteArray threads);
+    void framesFetched(const ResponseData& frames);
+    void threadsFetched();
+    void frameSelected(const ResponseData& data);
 };
 
 }

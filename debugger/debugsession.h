@@ -8,6 +8,7 @@
 #define PDBDEBUGSESSION_H
 
 #include <QPointer>
+#include <QTimer>
 
 #include <QDebug>
 #include "debuggerdebug.h"
@@ -15,6 +16,7 @@
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/interfaces/ibreakpointcontroller.h>
+#include "pdbdebuggerinstance.h"
 #include "variable.h"
 
 using namespace KDevelop;
@@ -35,6 +37,11 @@ public:
      * @brief Start the debugger.
      **/
     void start();
+
+    /**
+     * @brief Get the PdbDebuggerInstance i.e. the debugger.
+     */
+    PdbDebuggerInstance* debugger() const;
 
     /**
      * @brief Access this session's variable controller
@@ -68,7 +75,7 @@ public:
     void stopDebugger() override;
 
     /**
-     * @brief Kill the debugger process synchronously
+     * @brief Kill the debugger process synchronously.
      **/
     void killDebuggerNow() override;
 
@@ -81,11 +88,9 @@ public:
      **/
     IDebugSession::DebuggerState state() const override;
 
-    /**
-     */
-    void updateLocation();
-
 public Q_SLOTS:
+    void debuggerInit();
+
     /**
      * @brief Emitted when new data has been received from the debugger process (via stdout)
      **/
@@ -93,10 +98,24 @@ public Q_SLOTS:
     void stderrData(QByteArray data);
 
     /**
-     * @brief Emitted once when the debugger process has exited.
-     * @todo
+     * @brief Emitted once each time the debugger has started running commands.
+     */
+    void debuggerBusy();
+
+    /**
+     * @brief Emitted once each time when the debugger has run out of commands to process.
+     */
+    void inferiorSuspended();
+
+    /**
+     * @brief Called once when the debugger process has exited.
      */
     void finalizeState();
+
+    /**
+     * Straight up kill the debugger process.
+     */
+    void killDebugger();
 
 Q_SIGNALS:
     /// Emitted when real data from the program is received
@@ -112,12 +131,17 @@ private:
     QStringList m_program;
     const QUrl& m_workingDirectory;
     const QString m_envProfileName;
+    PdbDebuggerInstance* m_debugger = nullptr;
+    QTimer m_killTimer;
+    bool m_sessionStarted = false;
+    /// Must be set to true before running a command that would resume running the inferior's code.
+    bool m_resumingRequest = false;
+    const PdbDebuggerInstance::CmdCallback m_resumingFinished;
 
     /**
-     * @brief Performs a location update.
-     * This is used by updateLocation().
+     * @brief Handler for debugger requests, which continued to execute inferior's code.
      **/
-    void locationUpdateReady(QByteArray data);
+    void resumingFinished(const ResponseData& data);
 };
 
 }

@@ -7,14 +7,15 @@ msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-08-04 00:38+0000\n"
-"PO-Revision-Date: 2024-08-10 22:30+0300\n"
+"PO-Revision-Date: 2024-08-11 15:02+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: צוות התרגום של KDE ישראל\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
+"n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Lokalize 24.05.2\n"
 
 #, kde-format
@@ -198,32 +199,32 @@ msgstr "מודולים נדרשים:"
 #: codegen/correctionwidget.ui:77
 #, kde-format
 msgid "A comma separated list of modules required for the type"
-msgstr ""
+msgstr "רשימה מופרדת בפסיקים של מודולים שנחוצים לסוג"
 
 #: debugger/debugsession.cpp:167
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
-msgstr ""
+msgstr "התוכנית בניתוח לניפוי שגיאות הרימה חריגה שלא נתפסה."
 
 #: debugger/debugsession.cpp:168
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
-msgstr ""
+msgstr "עכשיו ניתן לחקור את מצב התוכנית לאחר יציאתה."
 
 #: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
-msgstr ""
+msgstr "מנפה השגיאות ייעצר בשקט עם הזנקת הפקודה הבאה."
 
 #: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
-msgstr ""
+msgstr "תוסף לניפוי שגיאות ביישומי Python עם pdb."
 
 #: debugger/pdblauncher.cpp:77
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
-msgstr ""
+msgstr "ניפוי שגיאות נתמך ביישומי Python 3.x ואילך בלבד, עמך הסליחה."
 
 #: debugger/pdblauncher.cpp:78
 #, kde-format
@@ -233,7 +234,7 @@ msgstr "מפענח לא נתמך"
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
 msgid "Failed to find a valid data directory for kdevpythonsupport."
-msgstr ""
+msgstr "איתור תיקיית נתונים תקפה ל־kdevpythonsupport נכשל."
 
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
@@ -285,37 +286,39 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
+"הנתיב הזה חייה להיות תואם למה שמשמש אותך ב־Python לייבוא (import) המודול "
+"הזה. למשל: יש למלא \"numpy/fft.py\" בשביל numpy.fft"
 
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
 msgid "After copying, you will be editing the new document."
-msgstr ""
+msgstr "לאחר העתקה, ייפתח עורך עם המסמך החדש."
 
 #: docfilekcm/docfilemanagerwidget.cpp:166
 #, kde-format
 msgid "Please select at least one file from the list for editing."
-msgstr ""
+msgstr "נא לבחור לפחות קובץ אחד מהרשימה לעריכה."
 
 #: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
-msgstr ""
+msgstr "הגדרת מפענח ה־Python לשימוש"
 
 #: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
-msgstr ""
+msgstr "קובץ הפעלה של Python"
 
 #: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
-msgstr ""
+msgstr "נא לבחור מודול Python עבורו לייצר תיעוד"
 
 #: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr ""
+msgstr "מודול יעד (למשל: „math” - פונקציות וקבועים מתמטיים)"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
@@ -372,13 +375,13 @@ msgstr ""
 #: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
-msgstr ""
+msgstr "שם קובץ פלט שגוי"
 
 #: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
-msgstr ""
+msgstr "קובץ הפלט <br/>%1<br/> כבר קיים, לכתוב עליו?"
 
 #: docfilekcm/docfilewizard.cpp:203
 #, kde-format
@@ -397,48 +400,51 @@ msgstr ""
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
 msgid "Manage Documentation Files Used by the Python Plugin"
-msgstr ""
+msgstr "ניהול קובצי תיעוד בהם משתמש תוסף ה־Python"
 
 #: docfilekcm/kcm_docfiles.cpp:58
 #, kde-format
 msgid "Python Documentation"
-msgstr ""
+msgstr "תיעוד Python"
 
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr ""
+msgstr "יצירת תיעוד למודול „%1”…"
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
-msgstr ""
+msgstr "המודול „%1” לא נמצא"
 
 #: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
-msgstr ""
+msgstr "ההכרזה עבור „%1” לא נמצא במודול שצוין"
 
 #: duchain/declarationbuilder.cpp:1584
 #, kde-format
 msgid "First argument of __new__ method is not called cls, this is deprecated"
 msgstr ""
+"הארגומנט הראשון של מתודת __new__ לא נקרא cls, ההתנהגות הזאת לא תקפה עוד"
 
 #: duchain/declarationbuilder.cpp:1589
 #, kde-format
 msgid "First argument of class method is not called self, this is deprecated"
 msgstr ""
+"הארגומנט הראשון של מתודת מחלקה (class) לא נקרא self, ההתנהגות הזאת לא תקפה "
+"עוד"
 
 #: duchain/declarationbuilder.cpp:1609
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
-msgstr ""
+msgstr "מתודת מחלקה (class) ללא ארגומנטים, חייב להיות לה לפחות אחד (self)"
 
 #: duchain/declarationbuilder.cpp:1770
 #, kde-format
 msgid "Return statement not within function declaration"
-msgstr ""
+msgstr "הצהרת החזרה (Return) לא בתוך הכרזת הפונקציה"
 
 #: duchain/navigation/declarationnavigationcontext.cpp:67
 #, kde-format
@@ -486,7 +492,7 @@ msgstr "משתנה לא מוגדר: %1"
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr ""
+msgstr "המאפיין „%1” לא נמצא בעצם המפוענח"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format

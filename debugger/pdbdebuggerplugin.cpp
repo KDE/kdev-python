@@ -24,8 +24,8 @@ namespace Python {
 
 K_PLUGIN_FACTORY_WITH_JSON(PdbDebuggerPluginFactory, "kdevpdb.json", registerPlugin<PdbDebuggerPlugin>(); )
 
-PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const QVariantList&) 
-    : IPlugin(QStringLiteral("kdevpdbsupport"), parent)
+PdbDebuggerPlugin::PdbDebuggerPlugin(QObject* parent, const KPluginMetaData& metaData, const QVariantList&)
+    : IPlugin(QStringLiteral("kdevpdbsupport"), parent, metaData)
 {
     IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
                             ->pluginForExtension(QStringLiteral("org.kdevelop.IExecuteScriptPlugin"))->extension<IExecuteScriptPlugin>();

@@ -5,7 +5,13 @@ Dependencies:
 - 'on': ['@all']
   'require':
     'frameworks/extra-cmake-modules': '@latest-kf6'
+    'frameworks/kconfig': '@latest-kf6'
+    'frameworks/kcoreaddons': '@latest-kf6'
     'frameworks/ki18n': '@latest-kf6'
-    'frameworks/threadweaver': '@latest-kf6'
+    'frameworks/kparts': '@latest-kf6'
+    'frameworks/kservice': '@latest-kf6'
     'frameworks/ktexteditor': '@latest-kf6'
+    'frameworks/kwidgetsaddons': '@latest-kf6'
+    'frameworks/kxmlgui': '@latest-kf6'
+    'frameworks/threadweaver': '@latest-kf6'
     'kdevelop/kdevelop': '@same'

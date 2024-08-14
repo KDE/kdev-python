@@ -17,7 +17,7 @@ class PdbDebuggerPlugin : public KDevelop::IPlugin
 {
 Q_OBJECT
 public:
-    PdbDebuggerPlugin(QObject* parent, const QVariantList& = QVariantList());
+    PdbDebuggerPlugin(QObject* parent, const KPluginMetaData& metaData, const QVariantList& = QVariantList());
     ~PdbDebuggerPlugin() override;
 };
 

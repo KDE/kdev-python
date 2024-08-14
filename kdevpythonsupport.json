@@ -4,6 +4,7 @@
             {
                 "Email": "svenbrauch@googlemail.com",
                 "Name": "Sven Brauch",
+                "Name[he]": "סוון בראוך",
                 "Name[x-test]": "xxSven Brauchxx"
             }
         ],
@@ -21,6 +22,7 @@
         "Description[fi]": "Python-kielituki",
         "Description[fr]": "Prise en charge du langage Python",
         "Description[gl]": "Compatibilidade coa linguaxe Python.",
+        "Description[he]": "תמיכה בשפת Python",
         "Description[it]": "Supporto per il linguaggio Python",
         "Description[ka]": "Python ენის მხარდაჭერა",
         "Description[ko]": "파이썬 언어 지원",
@@ -52,6 +54,7 @@
         "Name[fi]": "Python-tuki",
         "Name[fr]": "Prise en charge de Python",
         "Name[gl]": "Compatibilidade con Python",
+        "Name[he]": "תמיכה ב־Python",
         "Name[it]": "Supporto per Python",
         "Name[ka]": "Python -ის მხარდაჭერა",
         "Name[ko]": "파이썬 지원",

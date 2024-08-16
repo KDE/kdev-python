@@ -36,6 +36,7 @@ private:
 
     void framesFetched(const ResponseData& frames);
     void threadsFetched();
+    void frameSelected(const ResponseData& data);
 };
 
 }

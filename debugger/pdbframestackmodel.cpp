@@ -26,8 +26,18 @@ int PdbFrameStackModel::debuggerAtFrame() const
 
 void PdbFrameStackModel::setDebuggerAtFrame(int newFrame)
 {
-    // FIXME: actually change the current frame in PDB.
-    m_debuggerAtFrame = newFrame;
+    // Stack-frame selection needs a round trip to the server to be reliable.
+    auto* const debugger = static_cast<DebugSession*>(QObject::parent())->debugger();
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "selecting stack-frame" << newFrame;
+    debugger->request(QStringLiteral("selectframe %1").arg(newFrame), [this](const ResponseData& d) {
+        frameSelected(d);
+    });
+}
+
+void PdbFrameStackModel::frameSelected(const ResponseData& data)
+{
+    m_debuggerAtFrame = responseValue(data, QStringLiteral("activeframe")).toInt();
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "active stack-frame:" << m_debuggerAtFrame;
 }
 
 void PdbFrameStackModel::framesFetched(const ResponseData& data)

@@ -237,6 +237,17 @@ class kdevPdb(pdb.Pdb):
         entry = self.make_frame_entry(frame_lineno)
         self.append_response({"frames": [entry]})
 
+    def do_selectframe(self, arg):
+        '''Select the active stack-frame.
+           JSON: "activeframe" : <int>
+        '''
+        # KDevelop expects most recent frame to be at index zero,
+        # which is reversed to what we have in self.stack.
+        kdevframe = max(min(int(arg), len(self.stack) - 1), 0)
+        nro = len(self.stack) - 1 - int(kdevframe)
+        self._select_frame(nro)
+        self.responses.setdefault(self.command_seqnro, []).append({"activeframe": kdevframe})
+
 
 def main():
     """Kdevelop python debugger main, based on pdb.main()"""

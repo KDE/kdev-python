@@ -119,6 +119,37 @@ class kdevPdb(pdb.Pdb):
             traceback.print_exc(None, file=sys.stderr)
             raise self.kdevpdbconn.Stop()
 
+    def make_frame_entry(self, frame_lineno):
+        frame, lineno = frame_lineno
+        filename = self.canonic(frame.f_code.co_filename)
+        entry = {"current": (frame is self.curframe), "filename": filename, "line": lineno,
+                 # Separate source line contents with '\n' which should be easier to parse.
+                 # After the first ')' char is the function info, and
+                 # after '\n' is the source line contents)
+                 "location": self.format_stack_entry(frame_lineno, '\n')}
+        return entry
+
+    def do_where(self, arg):
+        '''w(here)
+           Report a stack trace, with the most recent frame at the front of the list.
+           Augmented version from Pdb.do_where() to better match what Kdevelop wants.
+           JSON: "frames" : [{},...]
+        '''
+        # Dump the frame info.
+        framelist = [self.make_frame_entry(i) for i in self.stack]
+        # NOTE: Some entries likely refer into bdb.py, which the kdevelop should filter out.
+        self.append_response({"frames": list(reversed(framelist))})
+    do_w = do_where
+    do_bt = do_where
+
+    def print_stack_entry(self, frame_lineno, prompt_prefix=""):
+        '''Augmented version of pdb.print_stack_entry() to report in JSON.
+           JSON: "frames": [{}]
+        '''
+        # dump using same scheme as with do_where(): the list just has a single entry.
+        entry = self.make_frame_entry(frame_lineno)
+        self.append_response({"frames": [entry]})
+
 def main():
     """Kdevelop python debugger main, based on pdb.main()"""
     # Pin down pdb.Restart pdb.traceback from pdb, and import sys

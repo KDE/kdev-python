@@ -162,6 +162,10 @@ private Q_SLOTS:
     void processIoReady(int channel);
 
 private:
+    /// How large a received data-frame can be before we warn.
+    static constexpr int32_t WARN_TOO_BIG_FRAMESIZE = 1024 * 1024 * 128;
+    /// How large a received data-frame can be before we kill the connection.
+    static constexpr int32_t DIE_TOO_BIG_FRAMESIZE = 1024 * 1024 * 512;
     QTemporaryDir m_socketdir;
     KProcess* m_debuggerProcess = nullptr;
     int m_exitCode = -1;

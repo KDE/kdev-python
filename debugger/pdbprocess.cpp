@@ -237,6 +237,17 @@ void PdbProcess::tryRecvFrame()
             //       Thus, don't bother scheduling a further read.
             return;
         }
+        // Limit the size of a received data-frames.
+        if (frameHdr > WARN_TOO_BIG_FRAMESIZE) {
+            qCWarning(KDEV_PYTHON_DEBUGGER) << "Received data-frame size" << frameHdr << "is greater than"
+                                            << WARN_TOO_BIG_FRAMESIZE << "bytes. This is likely a bug!";
+        } else if (frameHdr > DIE_TOO_BIG_FRAMESIZE) {
+            qCCritical(KDEV_PYTHON_DEBUGGER) << "Received data-frame size" << frameHdr << "is greater than"
+                                             << DIE_TOO_BIG_FRAMESIZE << "bytes. This is a bug!";
+            // End the connection.
+            m_socket->disconnectFromServer();
+            return;
+        }
         // Prepare receiving the data-frame payload.
         m_frameRecv = 0;
         m_frameBuf.resize(frameHdr);
@@ -254,7 +265,7 @@ void PdbProcess::tryRecvFrame()
     }
     if (m_frameRecv != m_frameBuf.size()) {
         // Received a partial data-frame.
-        // Since m_frameRecv >= 0, just return now and continue the reading on next tryRecvFrame() invocation.
+        // Since m_frameRecv >= 0, just return now and continue reading on the next tryRecvFrame() invocation.
         return;
     }
     // Received a complete data-frame.

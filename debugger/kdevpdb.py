@@ -41,6 +41,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
+        # TODO: Check that the data-frame size does not grow past WARN_TOO_BIG_FRAMESIZE.
+        #       We should consider an mechanism to report a such event as an error to the client.
         self.responses.setdefault(self.command_seqnro, []).append(obj)
 
     def send_response(self):

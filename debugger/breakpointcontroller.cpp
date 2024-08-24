@@ -40,6 +40,15 @@ void BreakpointController::breakpointAdded(int row)
     qCDebug(KDEV_PYTHON_DEBUGGER) << "adding breakpoint: " << modelBreakpoint << "( line:" << modelBreakpoint->line()
                                   << ")";
     // TODO
+
+    // A test.
+    session()->debugger()->defer([](const ResponseData&) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "Testing 1st";
+    });
+    session()->debugger()->defer([](const ResponseData&) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "Testing 2nd.";
+    });
+    session()->flushCommands();
 }
 
 void BreakpointController::breakpointModelChanged(int row, BreakpointModel::ColumnFlags columns)

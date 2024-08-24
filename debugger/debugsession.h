@@ -44,6 +44,12 @@ public:
     PdbDebuggerInstance* debugger() const;
 
     /**
+     * flushCommands() interrupts the debugger, so any requests queued up to this point can be processed
+     * immediately, after which the interrupted user action is re-issued.
+     */
+    void flushCommands();
+
+    /**
      * @brief Access this session's variable controller
      **/
     IVariableController* variableController() const override;
@@ -139,9 +145,23 @@ private:
     PdbDebuggerInstance* m_debugger = nullptr;
     QTimer m_killTimer;
     bool m_sessionStarted = false;
-    /// Must be set to true before running a command that would resume running the inferior's code.
-    bool m_resumingRequest = false;
     const PdbDebuggerInstance::CmdCallback m_locationUpdate;
+    enum class RunAction {
+        None,
+        Unspecified,
+        StepOut,
+        StepOverInstruction,
+        StepInto,
+        StepIntoInstruction,
+        StepOver,
+        JumpToCursor,
+        RunToCursor,
+        Run
+    };
+    /// Must be set before running a command that would resume running the inferior's code.
+    RunAction m_resumingRequest = RunAction::None;
+    bool m_flushInProgress = false;
+    int m_flushSeqNro = -1;
 
     /**
      * @brief Performs a location update.

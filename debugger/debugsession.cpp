@@ -100,7 +100,7 @@ void DebugSession::debuggerInit()
     // debuggerBusy() slot was skipped since we haven't actually sent any commands
     // yet. Thus, set up the states such that inferiorSuspended() brings us into
     // PausedState, once the initial response is processed after this slot.
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::Unspecified;
     m_state = ActiveState;
     Q_EMIT stateChanged(m_state);
 }
@@ -134,19 +134,22 @@ void DebugSession::debuggerBusy()
     // Switch to active state if we are running user commands. Such commands are those
     // that would resume running the inferior's code. Other commands shouldn't switch
     // between the PausedState or ActiveState.
-    if (!m_resumingRequest || m_state != PausedState) {
+    if (m_resumingRequest == RunAction::None || m_state != PausedState) {
         return;
     }
     m_state = ActiveState;
     qCDebug(KDEV_PYTHON_DEBUGGER) << PausedState << "==>" << m_state;
-    raiseEvent(debugger_busy);
-    raiseEvent(program_running);
+
+    if (!m_flushInProgress) {
+        raiseEvent(debugger_busy);
+        raiseEvent(program_running);
+    }
     Q_EMIT stateChanged(m_state);
 }
 
 void DebugSession::inferiorSuspended()
 {
-    if (!m_resumingRequest || m_state != ActiveState) {
+    if (m_resumingRequest == RunAction::None || m_state != ActiveState) {
         return;
     }
     qCDebug(KDEV_PYTHON_DEBUGGER) << m_state << "==>" << PausedState;
@@ -157,47 +160,52 @@ void DebugSession::inferiorSuspended()
         raiseEvent(connected_to_program);
     }
 
-    m_resumingRequest = false;
     m_state = PausedState;
     Q_EMIT stateChanged(m_state);
-    raiseEvent(debugger_ready);
-    // Program state has changed.
-    raiseEvent(program_state_changed);
+
+    // Don't raise debugger_ready nor program_state_changed, or reset m_resumingRequest
+    // if flushCommands() is in progress.
+    if (!m_flushInProgress) {
+        m_resumingRequest = RunAction::None;
+        raiseEvent(debugger_ready);
+        // Program state has changed.
+        raiseEvent(program_state_changed);
+    }
 }
 
 void DebugSession::stepOut()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::StepOut;
     m_debugger->request({QStringLiteral("stepout")}, m_resumingFinished);
 }
 
 void DebugSession::stepOverInstruction()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::StepOverInstruction;
     m_debugger->request({QStringLiteral("steppast")}, m_resumingFinished);
 }
 
 void DebugSession::stepInto()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::StepInto;
     m_debugger->request({QStringLiteral("step")}, m_resumingFinished);
 }
 
 void DebugSession::stepIntoInstruction()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::StepIntoInstruction;
     m_debugger->request({QStringLiteral("step")}, m_resumingFinished);
 }
 
 void DebugSession::stepOver()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::StepOver;
     m_debugger->request({QStringLiteral("next")}, m_resumingFinished);
 }
 
 void DebugSession::jumpToCursor()
 {
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::JumpToCursor;
     if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
@@ -210,7 +218,7 @@ void DebugSession::jumpToCursor()
 void DebugSession::runToCursor()
 {
     // Would be a resuming request, but this method can't be implemented yet...
-    // m_resumingRequest = true;
+    // m_resumingRequest = RunAction::RunToCursor;
     if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
@@ -226,7 +234,7 @@ void DebugSession::run()
     // The m_resumingRequest is set here (and this applies to other such stepping commands also)
     // to trigger entering into ActiveState. debuggerBusy() then disables the debugger UI controls,
     // and thus prevents the user from trying again until we reach PausedState.
-    m_resumingRequest = true;
+    m_resumingRequest = RunAction::Run;
     m_debugger->request({QStringLiteral("continue")}, m_resumingFinished);
 }
 
@@ -235,11 +243,72 @@ void DebugSession::interruptDebugger()
     m_debugger->instance()->tryInterrupt();
 }
 
+void DebugSession::flushCommands()
+{
+    if (m_resumingRequest == RunAction::None) {
+        return;
+    }
+
+    if (m_flushInProgress) {
+        // A flush is already in progress.
+        // Cancel our handler from the last time flushCommands() was issued.
+        m_debugger->setMethod(m_flushSeqNro, {});
+    } else {
+        // Switch silently to PausedState, if we actually do interrupt the debugger.
+        m_flushInProgress = true;
+        if (!m_debugger->instance()->tryInterrupt()) {
+            m_flushInProgress = false;
+            return;
+        }
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "starting immediate flushing of commands";
+    }
+
+    // Queue a no-op with a handler that resumes the interrupted operation.
+    auto action = m_resumingRequest;
+    m_flushSeqNro = m_debugger->currentSeqnro();
+    m_debugger->defer([this, action](const ResponseData&) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "immediate flushing completed, resuming last action";
+        m_flushInProgress = false;
+        m_flushSeqNro = -1;
+        // Re-issue the interrupted action's command.
+        resumeAction(action);
+    });
+}
+
+void DebugSession::resumeAction(RunAction action)
+{
+    switch (action) {
+    case RunAction::Run:
+        run();
+        break;
+    case RunAction::StepInto:
+    case RunAction::StepIntoInstruction:
+        stepInto();
+        break;
+    case RunAction::StepOver:
+        stepOver();
+        break;
+    case RunAction::StepOverInstruction:
+        stepOverInstruction();
+        break;
+    case RunAction::StepOut:
+        stepOut();
+        break;
+    default:
+        break;
+    }
+}
+
 void DebugSession::resumingFinished(const ResponseData& data)
 {
     // Update execution location.
     // This handler is invoked by any of the resuming actions, and
     // the "frames" field contains just the most recent frame. (this response is guaranteed)
+
+    if (m_flushInProgress) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "not updating position due to flushCommands() in progress";
+        return;
+    }
 
     const auto frame = responseArray(data, QStringLiteral("frames")).at(0).toObject();
     const auto file = frame.value(QStringLiteral("filename")).toString();

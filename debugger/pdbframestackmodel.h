@@ -23,16 +23,15 @@ public:
     PdbFrameStackModel(IDebugSession* session);
     void fetchFrames(int threadNumber, int from, int to) override;
     void fetchThreads() override;
-    
-    /// pdb does not support "select-frame n", so we have to use "up" and "down" repeatedly
-    /// to select frames. Those two functions tell at which frame the debugger is internally.
+
     int debuggerAtFrame() const;
     void setDebuggerAtFrame(int newFrame);
-public Q_SLOTS:
+
+private:
+    int m_debuggerAtFrame = 0;
+
     void framesFetched(QByteArray frames);
     void threadsFetched(QByteArray threads);
-private:
-    int m_debuggerAtFrame;
 };
 
 }

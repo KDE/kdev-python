@@ -47,23 +47,6 @@ void VariableController::addWatchpoint(KDevelop::Variable* /*variable*/)
     qCWarning(KDEV_PYTHON_DEBUGGER) << "addWatchpoint requested (not implemented)";
 }
 
-void VariableController::handleEvent(IDebugSession::event_t event)
-{
-    if ( event == IDebugSession::thread_or_frame_changed ) {
-        DebugSession* s = static_cast<DebugSession*>(session());
-        PdbFrameStackModel* model = static_cast<PdbFrameStackModel*>(s->frameStackModel());
-        int delta = model->currentFrame() - model->debuggerAtFrame();
-        model->setDebuggerAtFrame(model->currentFrame());
-        bool positive = delta > 0;
-        qCDebug(KDEV_PYTHON_DEBUGGER) << "changing frame by" << delta;
-        for ( int i = delta; i != 0; i += ( positive ? -1 : 1 ) ) {
-            qCDebug(KDEV_PYTHON_DEBUGGER) << ( positive ? "up" : "down" ) << model->currentFrame() << model->debuggerAtFrame();
-            s->addSimpleInternalCommand(positive ? QStringLiteral("up") : QStringLiteral("down"));
-        }
-    }
-    KDevelop::IVariableController::handleEvent(event);
-}
-
 KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display)
 {
     return new Variable(model, parent, expression, display);
@@ -95,49 +78,7 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
 
 void VariableController::localsUpdateReady(QByteArray rawData)
 {
-    static QRegularExpression formatExtract(
-        QRegularExpression::anchoredPattern(QStringLiteral("([a-zA-Z0-9_]+) \\=\\> (.*)")));
-    QList<QByteArray> data = rawData.split('\n');
-    data.removeAll({});
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "locals update:" << data;
-
-    int i = 0;
-    QStringList vars;
-    QMap<QString, QString> values;
-    while ( i < data.length() ) {
-        QByteArray d = data.at(i);
-        auto match = formatExtract.match(QString::fromLatin1(d));
-        if ( match.hasMatch() ) {
-            QString key = match.captured(1);
-            vars << key;
-            values[key] = match.captured(2);
-        }
-        else qCWarning(KDEV_PYTHON_DEBUGGER) << "mismatch:" << d;
-        i++;
-    }
-
-    QList<KDevelop::Variable*> variableObjects = KDevelop::ICore::self()->debugController()->variableCollection()
-                                                 ->locals()->updateLocals(vars);
-    for ( int i = 0; i < variableObjects.length(); i++ ) {
-        KDevelop::Variable* v = variableObjects[i];
-
-        auto model = v->model();
-        auto parent = model->indexForItem(v, 0);
-        auto childCount = v->model()->rowCount(parent);
-        qCDebug(KDEV_PYTHON_DEBUGGER) << "updating:" << v->expression() << "active children:" << childCount;
-        for ( int j = 0; j < childCount; j++ ) {
-            auto index = model->index(j, 0, parent);
-            auto child = static_cast<KDevelop::TreeItem*>(index.internalPointer());
-            if ( auto childVariable = qobject_cast<Variable*>(child) ) {
-                qCDebug(KDEV_PYTHON_DEBUGGER) << "   got child var:" << childVariable->expression();
-                v->fetchMoreChildren();
-                break;
-            }
-        }
-
-        v->setValue(values[v->expression()]);
-        v->setHasMoreInitial(true);
-    }
+    // TODO
 }
 
 void VariableController::update() {
@@ -153,12 +94,7 @@ void VariableController::_update()
     }
 
    if (autoUpdate() & UpdateLocals) {
-        // TODO find a more elegant solution for this import!
-        InternalPdbCommand* import = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));
-        InternalPdbCommand* cmd = new InternalPdbCommand(this, "localsUpdateReady",
-                                  QStringLiteral("__kdevpython_debugger_utils.format_locals(__kdevpython_debugger_utils.__kdevpython_builtin_locals())\n"));
-        d->addCommand(import);
-        d->addCommand(cmd);
+       // TODO
    }
 }
 

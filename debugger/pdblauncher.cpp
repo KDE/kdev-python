@@ -22,6 +22,7 @@
 #include <KParts/MainWindow>
 #include <KConfigGroup>
 #include <QFileInfo>
+#include <QProcess>
 
 #include <QDebug>
 #include "debuggerdebug.h"

@@ -25,11 +25,10 @@ namespace Python {
 void DebugJob::start()
 {
     QStringList program;
-    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/debugger"), QStandardPaths::LocateDirectory) + QStringLiteral("/kdevpdb.py");
-    program << m_interpreter << QStringLiteral("-u") << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
+    program << m_scriptUrl.toLocalFile() << m_args;
     // Inject environment
-    m_session = new DebugSession(program, m_workingDirectory, m_envProfileName);
-    
+    m_session = new DebugSession(m_interpreter, program, m_workingDirectory, m_envProfileName);
+
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
     OutputModel* pyOutputModel = new KDevelop::OutputModel();

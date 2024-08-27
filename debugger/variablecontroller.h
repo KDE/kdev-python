@@ -46,12 +46,6 @@ public:
      * @brief Update locals and/or watches, as indicated by autoUpdate().
      **/
     void update() override;
-protected:
-    /**
-     * @brief Overridden to handle frame change events (when the user clicks the frame list).
-     * This then enqueues many "up" or "down" commands to react to the frame change.
-     **/
-    void handleEvent(IDebugSession::event_t event) override;
 
 private:
     QTimer m_updateTimer;

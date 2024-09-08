@@ -63,7 +63,15 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         '''
         self.append_response({"error": msg + lnend})
 
+    def postloop(self):
+        # About to return from enter_debugger(), thus allow the client to
+        # interrupt the current operation.
+        self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptAllowed)
+
     def preloop(self):
+        # Disallow interrupting.
+        self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptDisallowed)
+
         if not self.debugger_initialized:
             # Complete the preinit handshake with the client.
             _, self.debugger_initialized = self.get_next_request()
@@ -112,6 +120,7 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
                 method_args = tuple(cmd_and_args[1:])
                 if cmd_dispatch(*method_args):
                     # The command needs to resume the inferior.
+                    self.postloop()
                     return
             except (AttributeError, TypeError):
                 self.error(f"Invalid command: '{cmd_and_args}'")

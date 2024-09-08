@@ -93,8 +93,9 @@ void PdbProcess::killNow()
 
 bool PdbProcess::tryInterrupt()
 {
-    // Interrupting the debugger process is only possible when we are missing responses.
-    if (m_recvFrames < m_sentFrames) {
+    // Interrupting the debugger process is only possible when we are missing responses,
+    // and the debugger has explicitly allowed the interruption.
+    if (m_allowInterrupt && m_recvFrames < m_sentFrames) {
         interruptProcess(m_debuggerProcess);
         return true;
     } else {
@@ -237,17 +238,32 @@ void PdbProcess::tryRecvFrame()
             return;
         }
 
-        if (frameHdr <= 0) {
-            // A escape code was received.
-            if (frameHdr == ControlCommand::Terminate) {
-                // End connection.
-                m_socket->disconnectFromServer();
-            }
-            m_recvFrames++;
-            // Note: Receiving a escape code usually means the connection is, or will be dead.
-            //       Thus, don't bother scheduling a further read.
+        // Check for an escape frame:
+        switch (frameHdr) {
+        case ControlCommand::DoNothing:
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "received empty frame";
+            QMetaObject::invokeMethod(this, &PdbProcess::tryRecvFrame, Qt::QueuedConnection);
             return;
+        case ControlCommand::Terminate:
+            // End connection. Since the connection will be dead soon don't bother scheduling a further read.
+            m_socket->disconnectFromServer();
+            return;
+        case ControlCommand::InterruptDisallowed:
+            // Notification from the debugger that we are forbidden to interrupt it.
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting was disabled";
+            m_allowInterrupt = false;
+            QMetaObject::invokeMethod(this, &PdbProcess::tryRecvFrame, Qt::QueuedConnection);
+            return;
+        case ControlCommand::InterruptAllowed:
+            // Notification from the debugger that it is possible to interrupt it.
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "interrupting possible";
+            m_allowInterrupt = true;
+            QMetaObject::invokeMethod(this, &PdbProcess::tryRecvFrame, Qt::QueuedConnection);
+            return;
+        default:
+            break;
         }
+
         // Limit the size of a received data-frames.
         if (frameHdr > WARN_TOO_BIG_FRAMESIZE) {
             qCWarning(KDEV_PYTHON_DEBUGGER) << "Received data-frame size" << frameHdr << "is greater than"

@@ -61,8 +61,10 @@ public:
     void sendCommand(const QByteArray data);
 
     enum ControlCommand : int32_t {
-        Terminate = -1,
-        DoNothing = 0
+        DoNothing = 0,
+        Terminate = -1, //!< Request the server to close it's connection and quit.
+        InterruptDisallowed = -2, //!< Internal to PdbProcess, cannot be sent.
+        InterruptAllowed = -3, //!< Internal to PdbProcess, cannot be sent.
     };
     /**
      * Enqueue a escape frame.
@@ -192,6 +194,7 @@ private:
     int m_recvFrames = 0;
     int m_sentFrames = FRAMES_BEFORE_READY;
     bool m_debuggerBusy = true;
+    bool m_allowInterrupt = false;
 
     void connectToServer();
     void trySendFrame();

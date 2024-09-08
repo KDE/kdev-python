@@ -149,10 +149,15 @@ class kdevPdb(pdb.Pdb):
         self.append_response({"error": msg})
 
     def postcmd(self, stop, line):
+        if stop:
+            # About to return from cmdloop(), thus allow the client to
+            # interrupt the current operation.
+            self.pdbsrv.sendCmdFrame(self.kdevpdbconn.Cmd.InterruptAllowed)
         return stop
 
     def preloop(self):
-        pass
+        # Disallow interrupting.
+        self.pdbsrv.sendCmdFrame(self.kdevpdbconn.Cmd.InterruptDisallowed)
 
     def cmdloop(self, intro=None):
         """Process the kdevPdbConnection received commands.

@@ -25,6 +25,8 @@ class Stop(BaseException):
 class Cmd(IntEnum):
     DoNothing = 0
     Terminate = -1
+    InterruptDisallowed = -2
+    InterruptAllowed = -3
 
 
 class kdevPdbConnection:

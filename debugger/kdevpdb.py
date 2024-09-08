@@ -152,9 +152,15 @@ class kdevPdb(pdb.Pdb):
         self.append_response({"error": msg})
 
     def postcmd(self, stop, line):
+        if stop:
+            # About to return from cmdloop(), thus allow the client to
+            # interrupt the current operation.
+            self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptAllowed)
         return stop
 
     def preloop(self):
+        # Disallow interrupting.
+        self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptDisallowed)
         # Update the frame index of the bottom most inferior frame.
         # Unfortunately, this cannot be hard-coded since the count of frames which
         # can precede the call to self.interaction() can vary.

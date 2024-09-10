@@ -1,3 +1,5 @@
+#include <sys/types.h>
+
 #include "asttransformer.h"
 #include "astbuilder.h"
 

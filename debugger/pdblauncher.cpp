@@ -47,20 +47,20 @@ QString PdbLauncher::description() const
 
 QString PdbLauncher::id()
 {
-    return "pdbdebugger";
+    return QStringLiteral("pdbdebugger");
 }
 
 QString PdbLauncher::name() const
 {
-    return "pdbdebugger";
+    return QStringLiteral("pdbdebugger");
 }
 
 KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfiguration* cfg)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "start of debugger process requested";
-    if ( launchMode == "debug" ) {
+    if ( launchMode == QStringLiteral("debug") ) {
         IExecuteScriptPlugin* iface = KDevelop::ICore::self()->pluginController()
-                                      ->pluginForExtension("org.kdevelop.IExecuteScriptPlugin")->extension<IExecuteScriptPlugin>();
+                                      ->pluginForExtension(QStringLiteral("org.kdevelop.IExecuteScriptPlugin"))->extension<IExecuteScriptPlugin>();
         Q_ASSERT(iface);
         QString err;
         QString interpreter = iface->interpreter(cfg, err);
@@ -68,7 +68,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         // check the interpreter
         QProcess p;
         p.setProcessChannelMode(QProcess::MergedChannels);
-        p.start(interpreter, QStringList() << "--version");
+        p.start(interpreter, QStringList() << QStringLiteral("--version"));
         p.waitForFinished(500);
         QByteArray version = p.readAll();
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interpreter version:" << version;
@@ -125,7 +125,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
 
 QStringList PdbLauncher::supportedModes() const
 {
-    return QStringList() << "debug";
+    return QStringList() << QStringLiteral("debug");
 }
 
 }

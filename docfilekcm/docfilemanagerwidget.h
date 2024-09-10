@@ -20,7 +20,7 @@ public:
     const QList<QUrl> selectedItems() const;
     static QString docfilePath();
 
-public slots:
+public Q_SLOTS:
     void openDocfilePath();
     void openSelectedInTextEditor();
     void runWizard();

@@ -40,7 +40,7 @@ public:
     static QString localCorrectionFileDir;
     static DUChainPointer<TopDUContext> documentationFileContext;
 
-    static QStringList getDataDirs();
+    static const QStringList getDataDirs();
     static IndexedString getDocumentationFile();
     static ReferencedTopDUContext getDocumentationFileContext();
 
@@ -48,8 +48,8 @@ public:
     static QUrl getLocalCorrectionFile(const QUrl& document);
 
     static QMutex cacheMutex;
-    static QMap<IProject*, QVector<QUrl>> cachedCustomIncludes;
-    static QMap<IProject*, QVector<QUrl>> cachedSearchPaths;
+    static QHash<IProject*, QVector<QUrl>> cachedCustomIncludes;
+    static QHash<IProject*, QVector<QUrl>> cachedSearchPaths;
 
     static QMutex projectPathLock;
     static QVector<QUrl> projectSearchPaths;
@@ -102,16 +102,16 @@ public:
             return types;
         }
         if ( type->whichType() == KDevelop::AbstractType::TypeUnsure ) {
-            UnsureType::Ptr unsure(type.cast<UnsureType>());
+            auto unsure = type.staticCast<UnsureType>();
             for ( unsigned int i = 0; i < unsure->typesSize(); i++ ) {
                 AbstractType::Ptr t = unsure->types()[i].abstractType();
                 if ( accept(t) ) {
-                    types << ( map ? map(t) : t.cast<T>() );
+                    types << ( map ? map(t) : t.dynamicCast<T>() );
                 }
             }
         }
         else if ( accept(type) ) {
-            types << ( map ? map(type) : type.cast<T>() );
+            types << ( map ? map(type) : type.dynamicCast<T>() );
         }
         return types;
     }
@@ -134,14 +134,14 @@ public:
 
     static bool docstringContainsHint(const QString& comment, const QString& hintName, QStringList* args = nullptr) {
         // TODO cache types! this is horribly inefficient
-        const QString search = "! " + hintName + " !";
+        const QString search = QStringLiteral("! ") + hintName + QStringLiteral(" !");
         int index = comment.indexOf(search);
         if ( index >= 0 ) {
             if ( args ) {
-                int eol = comment.indexOf('\n', index);
+                int eol = comment.indexOf(QLatin1Char('\n'), index);
                 int start = index+search.size()+1;
                 QString decl = comment.mid(start, eol-start);
-                *args = decl.split(' ');
+                *args = decl.split(QLatin1Char(' '));
             }
             return true;
         }
@@ -164,10 +164,10 @@ public:
     {
         AbstractType::Ptr result(new IntegralType(IntegralType::TypeMixed));
         for ( T type : types ) {
-            result = Helper::mergeTypes(result, transform ? transform(type) : AbstractType::Ptr::staticCast(type));
+            result = Helper::mergeTypes(result, transform ? transform(type) : type);
         }
         return result;
-    };
+    }
 
     /** check whether the argument is a null, mixed, or none integral type **/
     static bool isUsefulType(AbstractType::Ptr type);

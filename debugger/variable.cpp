@@ -9,6 +9,7 @@
 #include <interfaces/icore.h>
 
 #include <QDebug>
+#include <QRegularExpression>
 #include "debuggerdebug.h"
 
 namespace Python {
@@ -26,10 +27,10 @@ void Variable::dataFetched(QByteArray rawData)
     QList<QByteArray> data = rawData.split('\n');
     data.removeLast();
     QByteArray value;
-    foreach ( const QByteArray& item, data ) {
+    for (const QByteArray& item : std::as_const(data)) {
         value.append(item);
     }
-    setValue(value);
+    setValue(QString::fromLatin1(value));
     setHasMore(true);
     qCDebug(KDEV_PYTHON_DEBUGGER) << "value set to" << value << ", calling update method";
     if ( m_notifyCreated ) {
@@ -50,10 +51,10 @@ void Variable::fetchMoreChildren()
 {
     QString cmd;
     if ( m_pythonPtr ) {
-        cmd = "__kdevpython_debugger_utils.format_ptr_children("+QString::number(m_pythonPtr)+")\n";
+        cmd = QStringLiteral("__kdevpython_debugger_utils.format_ptr_children(") + QString::number(m_pythonPtr) + QStringLiteral(")\n");
     }
     else {
-        cmd = "__kdevpython_debugger_utils.format_object_children("+expression()+")\n";
+        cmd = QStringLiteral("__kdevpython_debugger_utils.format_object_children(") + expression() + QStringLiteral(")\n");
     }
     InternalPdbCommand* fetchChildrenScript = new InternalPdbCommand(this, "moreChildrenFetched", cmd);
     static_cast<DebugSession*>(ICore::self()->debugController()->currentSession())->addCommand(fetchChildrenScript);
@@ -72,9 +73,8 @@ void Variable::moreChildrenFetched(QByteArray rawData)
     data.removeLast();
     int i = 0;
     int initialLength = data.length();
-    QRegExp formatExtract("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$");
-    formatExtract.setPatternSyntax(QRegExp::RegExp2);
-    formatExtract.setMinimal(true);
+    static QRegularExpression formatExtract(QStringLiteral("(ptr:<(\\d*)>\\s)?([\\[\\]\\.a-zA-Z0-9_]+) \\=\\> (.*)$"),
+                                            QRegularExpression::InvertedGreedinessOption);
     while ( i < data.length() ) {
         QByteArray d = data.at(i);
         // sort magic functions at the end of the list, they're not too interesting usually
@@ -88,14 +88,15 @@ void Variable::moreChildrenFetched(QByteArray rawData)
         QString realValue;
         QString prettyName;
         unsigned long int pythonId = 0;
-        if ( formatExtract.exactMatch(d) ) {
-            QString id = formatExtract.capturedTexts().at(2);
+        auto match = formatExtract.match(QString::fromLatin1(d));
+        if ( match.hasMatch() ) {
+            QString id = match.captured(2);
             if ( ! id.isEmpty() ) {
                 pythonId = id.toLong();
             }
-            childName = expression() + formatExtract.capturedTexts().at(3);
-            prettyName = formatExtract.capturedTexts().at(3);
-            realValue = formatExtract.capturedTexts().at(4);
+            childName = expression() + match.captured(3);
+            prettyName = match.captured(3);
+            realValue = match.captured(4);
         }
         else {
             i++;
@@ -113,3 +114,4 @@ void Variable::moreChildrenFetched(QByteArray rawData)
 
 }
 
+#include "moc_variable.cpp"

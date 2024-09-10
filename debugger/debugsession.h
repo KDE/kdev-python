@@ -168,7 +168,7 @@ public:
      **/
     void write(const QByteArray& cmd);
 
-public slots:
+public Q_SLOTS:
     /**
      * @brief Emitted when new data has been received from the debugger process (via stdout)
      **/
@@ -194,7 +194,7 @@ public slots:
     void locationUpdateReady(QByteArray data);
     void debuggerQuit(int);
 
-signals:
+Q_SIGNALS:
     /// Emitted when the debugger becomes ready to process a new command, i.e. shows its prompt
     void debuggerReady();
     /// Emitted when a new command is added to the queue
@@ -312,7 +312,7 @@ public:
         m_type = InvalidType;
     };
     void run(DebugSession* session) override {
-        Q_ASSERT(m_command.endsWith('\n') && "command must end with a newline");
+        Q_ASSERT(m_command.endsWith(QLatin1Char('\n')) && "command must end with a newline");
         qCDebug(KDEV_PYTHON_DEBUGGER) << "running command:" << m_command<< m_notifyMethod;
         session->write(m_command.toUtf8());
     }

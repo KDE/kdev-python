@@ -39,7 +39,7 @@ target_link_libraries(kdevpythoncompletion LINK_PRIVATE
     kdevpythonparser
 )
 
-install(TARGETS kdevpythoncompletion DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythoncompletion DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 if (BUILD_TESTING)
     add_subdirectory(tests)

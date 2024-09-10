@@ -33,7 +33,7 @@ public:
 
     Python::CodeAst::Ptr m_ast;
 
-private slots:
+private Q_SLOTS:
     void benchSimpleStatements();
     void benchSimpleStatements_data();
 

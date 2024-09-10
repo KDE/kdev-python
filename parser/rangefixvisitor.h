@@ -21,7 +21,7 @@ namespace Python {
  */
 class KDEVPYTHONPARSER_NO_EXPORT RangeFixVisitor : public AstDefaultVisitor {
 public:
-    RangeFixVisitor(const QString& contents) : lines(contents.split('\n')) {};
+    RangeFixVisitor(const QString& contents) : lines(contents.split(QLatin1Char('\n'))) {};
     void visitNode(Ast* node) override;
     void visitCode(Python::CodeAst* node) override;
     void visitFunctionDefinition(FunctionDefinitionAst* node) override;

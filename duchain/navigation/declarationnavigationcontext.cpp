@@ -38,11 +38,11 @@ QString DeclarationNavigationContext::getLink(const QString& name, DeclarationPo
 
 void DeclarationNavigationContext::htmlClass()
 {
-    StructureType::Ptr klass = declaration()->abstractType().cast<StructureType>();
-    Q_ASSERT(klass);
+    Q_ASSERT(declaration()->abstractType());
+    auto klass = declaration()->abstractType().staticCast<StructureType>();
 
     modifyHtml() += QStringLiteral("class ");
-    eventuallyMakeTypeLinks( klass.cast<AbstractType>() );
+    eventuallyMakeTypeLinks( klass );
 
     auto classDecl = dynamic_cast<ClassDeclaration*>(klass->declaration(topContext().data()));
     if ( classDecl && classDecl->baseClassesSize() ) {
@@ -70,19 +70,19 @@ QString DeclarationNavigationContext::typeLinkOrString(const AbstractType::Ptr t
 void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, const IdentifiedType* idType)
 {
     // TODO this code is duplicate of variablelengthcontainer::toString, resolve that somehow
-    if ( auto listType = type.cast<ListType>() ) {
+    if ( auto listType = type.dynamicCast<ListType>() ) {
         QString contentType;
         const QString containerType = getLink(listType->containerToString(),
                                               DeclarationPointer(idType->declaration(topContext().data())),
                                               NavigationAction::NavigateDeclaration );
-        if ( auto map = listType.cast<MapType>() ) {
+        if ( auto map = listType.dynamicCast<MapType>() ) {
             contentType.append(typeLinkOrString(map->keyType().abstractType()));
-            contentType.append(" : ");
+            contentType.append(QStringLiteral(" : "));
         }
         contentType.append(typeLinkOrString(listType->contentType().abstractType()));
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }
-    else if (auto indexedContainer = type.cast<IndexedContainer>()) {
+    else if (auto indexedContainer = type.dynamicCast<IndexedContainer>()) {
         const QString containerType = getLink(indexedContainer->containerToString(),
                                               DeclarationPointer(idType->declaration(topContext().data())),
                                               NavigationAction::NavigateDeclaration );
@@ -90,12 +90,12 @@ void DeclarationNavigationContext::htmlIdentifiedType(AbstractType::Ptr type, co
         for ( int i = 0; i < indexedContainer->typesCount(); i++ ) {
             if ( i >= 5 ) {
                 // Don't print more than five types explicitly
-                typesArray << "...";
+                typesArray << QStringLiteral("...");
                 break;
             }
             typesArray << typeLinkOrString(indexedContainer->typeAt(i).abstractType());
         }
-        const QString contentType = QStringLiteral("(") + typesArray.join(", ") + ")";
+        const QString contentType = QStringLiteral("(") + typesArray.join(QStringLiteral(", ")) + QStringLiteral(")");
         modifyHtml() += i18nc("as in list of int, set of string", "%1 of %2", containerType, contentType);
     }
     else {
@@ -109,3 +109,5 @@ void DeclarationNavigationContext::eventuallyMakeTypeLinks(AbstractType::Ptr typ
 }
 
 }
+
+#include "moc_declarationnavigationcontext.cpp"

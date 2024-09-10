@@ -15,7 +15,7 @@ class Variable : public KDevelop::Variable
 {
 Q_OBJECT
 public:
-    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = "");
+    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = QString());
     
     /**
      * @brief Fetch this variable's value, and notify callback::callbackMethod when done.
@@ -35,7 +35,7 @@ public:
     
     QObject* m_notifyCreated;
     const char* m_notifyCreatedMethod;
-public slots:
+public Q_SLOTS:
     /**
      * @brief Parse the debugger output and update this variable's value.
      **/

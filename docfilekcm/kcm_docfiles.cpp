@@ -58,4 +58,4 @@ QString DocfilesKCModule::name() const
     return i18n("Python Documentation");
 }
 
-
+#include "moc_kcm_docfiles.cpp"

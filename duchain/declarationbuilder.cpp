@@ -58,7 +58,7 @@ DeclarationBuilder:: ~DeclarationBuilder()
 {
     if ( ! m_scheduledForDeletion.isEmpty() ) {
         DUChainWriteLocker lock;
-        foreach ( DUChainBase* d, m_scheduledForDeletion ) {
+        for (DUChainBase* d : std::as_const(m_scheduledForDeletion)) {
             delete d;
         }
         m_scheduledForDeletion.clear();
@@ -177,7 +177,12 @@ template<typename T> QList<Declaration*> DeclarationBuilder::reopenFittingDeclar
     // Search for a declaration from a previous parse pass which should be re-used
     QList<Declaration*> remainingDeclarations;
     *ok = nullptr;
-    foreach ( Declaration* d, declarations ) {
+    for ( Declaration* d : declarations ) {
+        if ( ! d ) {
+            qCWarning(KDEV_PYTHON_DUCHAIN) << "null declaration in candidate list";
+            continue;
+        }
+
         Declaration* fitting = dynamic_cast<T*>(d);
         if ( ! fitting ) {
             // Only use a declaration if the type matches
@@ -289,7 +294,7 @@ template<typename T> T* DeclarationBuilder::visitVariableDeclaration(Identifier*
         if ( currentContext()->type() == DUContext::Function ) {
             // check for argument type hints (those are created when calling functions)
             AbstractType::Ptr hints = Helper::extractTypeHints(dec->abstractType());
-            if ( hints.cast<IndexedContainer>() || hints.cast<ListType>() ) {
+            if ( hints.dynamicCast<IndexedContainer>() || hints.dynamicCast<ListType>() ) {
                 // This only happens when the type hint is a tuple, which means the vararg/kwarg of a function is being processed.
                 newType = hints;
             }
@@ -353,7 +358,7 @@ void DeclarationBuilder::visitWithItem(WithItemAst* node)
         auto mgrType = v.lastType();
         auto enterType = mgrType; // If we can't find __enter__(), assume it returns `self` like file objects.
 
-        static const IndexedIdentifier enterId(KDevelop::Identifier("__enter__"));
+        static const IndexedIdentifier enterId(KDevelop::Identifier(QStringLiteral("__enter__")));
 
         DUChainReadLocker lock;
         if ( auto enterFunc = dynamic_cast<FunctionDeclaration*>(
@@ -387,7 +392,7 @@ Declaration* DeclarationBuilder::findDeclarationInContext(QStringList dottedName
     Declaration* lastAccessedDeclaration = nullptr;
     int i = 0;
     int identifierCount = dottedNameIdentifier.length();
-    foreach ( const QString& currentIdentifier, dottedNameIdentifier ) {
+    for ( const QString& currentIdentifier : dottedNameIdentifier ) {
         Q_ASSERT(currentContext);
         i++;
         QList<Declaration*> declarations = currentContext->findDeclarations(QualifiedIdentifier(currentIdentifier).first(),
@@ -410,14 +415,14 @@ QString DeclarationBuilder::buildModuleNameFromNode(ImportFromAst* node, AliasAs
 {
     QString moduleName = alias->name->value;
     if ( ! intermediate.isEmpty() ) {
-        moduleName.prepend('.').prepend(intermediate);
+        moduleName.prepend(QLatin1Char('.')).prepend(intermediate);
     }
     if ( node->module ) {
-        moduleName.prepend('.').prepend(node->module->value);
+        moduleName.prepend(QLatin1Char('.')).prepend(node->module->value);
     }
     // To handle relative imports correctly, add node level in the beginning of the path
     // This will allow findModulePath to deduce module search direcotry properly
-    moduleName.prepend(QString(node->level, '.'));
+    moduleName.prepend(QString(node->level, QLatin1Char('.')));
     return moduleName;
 }
 
@@ -426,7 +431,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
     Python::AstDefaultVisitor::visitImportFrom(node);
     QString moduleName;
     QString declarationName;
-    foreach ( AliasAst* name, node->names ) {
+    for (AliasAst* name : std::as_const(node->names)) {
         // iterate over all the names that are imported, like "from foo import bar as baz, bang as asdf"
         Identifier* declarationIdentifier = nullptr;
         declarationName.clear();
@@ -448,7 +453,7 @@ void DeclarationBuilder::visitImportFrom(ImportFromAst* node)
         Declaration* success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem);
         if ( ! success && (node->module || node->level) ) {
             ProblemPointer problem_init(nullptr);
-            intermediate = QString("__init__");
+            intermediate = QStringLiteral("__init__");
             moduleName = buildModuleNameFromNode(node, name, intermediate);
             success = createModuleImportDeclaration(moduleName, declarationName, declarationIdentifier, problem_init);
         }
@@ -471,7 +476,7 @@ void DeclarationBuilder::visitImport(ImportAst* node)
 {
     Python::ContextBuilder::visitImport(node);
     DUChainWriteLocker lock;
-    foreach ( AliasAst* name, node->names ) {
+    for (AliasAst* name : std::as_const(node->names)) {
         QString moduleName = name->name->value;
         // use alias if available, name otherwise
         Identifier* declarationIdentifier = name->asName ? name->asName : name->name;
@@ -619,7 +624,8 @@ Declaration* DeclarationBuilder::createDeclarationTree(const QStringList& nameCo
         auto moduleContext = openContext(declarationIdentifier, KDevelop::DUContext::Other, &contextIdentifier);
         openedContexts.append(moduleContext);
 
-        foreach ( Declaration* local, currentContext()->localDeclarations() ) {
+        const auto localDeclarations = currentContext()->localDeclarations();
+        for (Declaration* local : localDeclarations) {
             // keep all the declarations until the builder finished
             // kdevelop would otherwise delete them as soon as the context is closed
             if ( ! wasEncountered(local) ) {
@@ -712,22 +718,22 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     }
     if ( moduleInfo.second.isEmpty() ) {
         // import the whole module
-        resultingDeclaration = createDeclarationTree(declarationName.split("."),
+        resultingDeclaration = createDeclarationTree(declarationName.split(QLatin1Char('.')),
                                                      declarationIdentifier, moduleContext, nullptr, range);
         auto initFile = QStringLiteral("/__init__.py");
         auto path = moduleInfo.first.path();
         if ( path.endsWith(initFile) ) {
             // if the __init__ file is imported, import all the other files in that directory as well
             QDir dir(path.left(path.size() - initFile.size()));
-            dir.setNameFilters({"*.py"});
+            dir.setNameFilters({QStringLiteral("*.py")});
             dir.setFilter(QDir::Files);
-            auto files = dir.entryList();
-            foreach ( const auto& file, files ) {
+            const auto files = dir.entryList();
+            for ( const auto& file : files ) {
                 if ( file == QStringLiteral("__init__.py") ) {
                     continue;
                 }
-                const auto filePath = declarationName.split(".") << file.left(file.lastIndexOf(".py"));
-                const auto fileUrl = QUrl::fromLocalFile(dir.path() + "/" + file);
+                const auto filePath = declarationName.split(QLatin1Char('.')) << file.left(file.lastIndexOf(QStringLiteral(".py")));
+                const auto fileUrl = QUrl::fromLocalFile(dir.path() + QLatin1Char('/') + file);
                 ReferencedTopDUContext fileContext;
                 {
                     DUChainReadLocker lock;
@@ -735,7 +741,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 }
                 if ( fileContext ) {
                     Identifier id = *declarationIdentifier;
-                    id.value.append(".").append(filePath.last());
+                    id.value.append(QLatin1Char('.')).append(filePath.last());
                     createDeclarationTree(filePath,
                                           &id, fileContext, nullptr);
                 }
@@ -749,7 +755,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
     else {
         // import a specific declaration from the given file
         lock.lock();
-        if ( declarationIdentifier->value == "*" ) {
+        if ( declarationIdentifier->value == QLatin1Char('*') ) {
             qCDebug(KDEV_PYTHON_DUCHAIN) << "Importing * from module";
             currentContext()->addImportedParentContext(moduleContext);
         }
@@ -758,7 +764,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
             Declaration* originalDeclaration = findDeclarationInContext(moduleInfo.second, moduleContext);
             if ( originalDeclaration ) {
                 DUChainWriteLocker lock(DUChain::lock());
-                resultingDeclaration = createDeclarationTree(declarationName.split("."), declarationIdentifier,
+                resultingDeclaration = createDeclarationTree(declarationName.split(QLatin1Char('.')), declarationIdentifier,
                                                              ReferencedTopDUContext(nullptr), originalDeclaration,
                                                              editorFindRange(declarationIdentifier, declarationIdentifier));
             }
@@ -767,7 +773,7 @@ Declaration* DeclarationBuilder::createModuleImportDeclaration(QString moduleNam
                 p->setFinalLocation(DocumentRange(currentlyParsedDocument(), range.castToSimpleRange())); // TODO ok?
                 p->setSource(KDevelop::IProblem::SemanticAnalysis);
                 p->setSeverity(KDevelop::IProblem::Warning);
-                p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(".")));
+                p->setDescription(i18n("Declaration for \"%1\" not found in specified module", moduleInfo.second.join(QLatin1Char('.'))));
                 problemEncountered = p;
             }
         }
@@ -796,21 +802,21 @@ void DeclarationBuilder::visitYield(YieldAst* node)
     if ( ! t ) {
         return;
     }
-    if ( auto previous = t->returnType().cast<ListType>() ) {
+    if ( auto previous = t->returnType().dynamicCast<ListType>() ) {
         // If the return type of the function already is set to a list, *add* the encountered type
         // to its possible content types.
         DUChainWriteLocker lock;
         previous->addContentType<Python::UnsureType>(encountered);
-        t->setReturnType(previous.cast<AbstractType>());
+        t->setReturnType(previous);
     }
     else {
         // Otherwise, create a new container type, and set it as the function's return type.
         DUChainWriteLocker lock;
-        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+        auto container = ExpressionVisitor::typeObjectForIntegralType<ListType>(QStringLiteral("list"));
         if ( container ) {
-            openType<ListType>(container);
+            openType(container);
             container->addContentType<Python::UnsureType>(encountered);
-            t->setReturnType(Helper::mergeTypes(t->returnType(), container.cast<AbstractType>()));
+            t->setReturnType(Helper::mergeTypes(t->returnType(), container));
             closeType();
         }
     }
@@ -822,7 +828,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
     openContext(node, editorFindRange(node, node->body), DUContext::Other);
-    foreach ( ArgAst* argument, node->arguments->arguments ) {
+    for (ArgAst* argument : std::as_const(node->arguments->arguments)) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
     visitNodeList(node->arguments->defaultValues);
@@ -842,7 +848,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     v.visitNode(static_cast<AttributeAst*>(node->function)->value);
 
     // Don't do anything if the object the function is being called on is not a container.
-    auto container = v.lastType().cast<ListType>();
+    auto container = v.lastType().dynamicCast<ListType>();
     if ( ! container || ! function ) {
         return;
     }
@@ -853,7 +859,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
     // Check for the different types of modifiers such a function can have
     QStringList args;
     QHash< QString, std::function<void()> > items;
-    items["addsTypeOfArg"] = [&]() {
+    items[QStringLiteral("addsTypeOfArg")] = [&]() {
         const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
@@ -870,7 +876,7 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
         container->addContentType<Python::UnsureType>(argVisitor.lastType());
         v.lastDeclaration()->setType(container);
     };
-    items["addsTypeOfArgContent"] = [&]() {
+    items[QStringLiteral("addsTypeOfArgContent")] = [&]() {
         const int offset = ! args.isEmpty() ? (int) args.at(0).toUInt() : 0;
         if ( node->arguments.length() <= offset ) {
             return;
@@ -884,11 +890,11 @@ void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration:
             v.lastDeclaration()->setType(container);
         }
     };
-    auto docstring = function->comment();
+    auto docstring = QString::fromLatin1(function->comment());
     if ( ! docstring.isEmpty() ) {
-        foreach ( const auto& key, items.keys() ) {
-            if ( Helper::docstringContainsHint(docstring, key, &args) ) {
-                items[key]();
+        for (auto i = items.cbegin(), end = items.cend(); i != end; ++i) {
+            if (Helper::docstringContainsHint(docstring, i.key(), &args)) {
+                items[i.key()]();
             }
         }
     }
@@ -984,22 +990,22 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
             if ( ! varargContainer ) continue;
             if ( varargContainer->typesCount() > indexInVararg ) {
                 AbstractType::Ptr oldType = varargContainer->typeAt(indexInVararg).abstractType();
-                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType.cast<AbstractType>());
+                AbstractType::Ptr newType = Helper::mergeTypes(oldType, addType);
                 varargContainer->replaceType(indexInVararg, newType);
             }
             else {
-                varargContainer->addEntry(addType.cast<AbstractType>());
+                varargContainer->addEntry(addType);
             }
-            parameter->setAbstractType(varargContainer.cast<AbstractType>());
+            parameter->setAbstractType(varargContainer);
         }
         else {
             if ( ! argumentType ) continue;
             AbstractType::Ptr newType = Helper::mergeTypes(parameters.at(currentParamIndex)->abstractType(),
-                                                           addType.cast<AbstractType>());
+                                                           addType);
             // TODO this does not correctly update the types in quickopen! Investigate why.
             functionType->removeArgument(currentParamIndex);
             functionType->addArgument(newType, currentParamIndex);
-            function->setAbstractType(functionType.cast<AbstractType>());
+            function->setAbstractType(functionType);
             parameters.at(currentParamIndex)->setType(newType);
             currentParamIndex++;
         }
@@ -1008,11 +1014,11 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
     // **kwargs is always the last parameter
     MapType::Ptr kwargsDict;
     if ( function->kwarg() != -1 ) {
-        kwargsDict = parameters.last()->abstractType().cast<MapType>();
+        kwargsDict = parameters.last()->abstractType().dynamicCast<MapType>();
     }
     lock.unlock();
     DUChainWriteLocker wlock;
-    foreach ( KeywordAst* keyword, node->keywords ) {
+    for (KeywordAst* keyword : std::as_const(node->keywords)) {
         wlock.unlock();
         ExpressionVisitor argumentVisitor(currentContext());
         argumentVisitor.visitNode(keyword->value);
@@ -1038,7 +1044,7 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
                 parameters.at(ip)->setType(newType);
             }
         }
-        else if ( auto unpackedDict = argumentVisitor.lastType().cast<MapType>() ) {
+        else if ( auto unpackedDict = argumentVisitor.lastType().dynamicCast<MapType>() ) {
             // 'keyword is actually an unpacked dict: `foo(**{'a': 12}).
             openType(addType);
             addType->setType(unpackedDict->contentType().abstractType());
@@ -1055,6 +1061,49 @@ void DeclarationBuilder::addArgumentTypeHints(CallAst* node, DeclarationPointer 
         }
     }
     function->setAbstractType(functionType);
+}
+
+void DeclarationBuilder::visitMatch(MatchAst* node)
+{
+    // What are we matching?
+    ExpressionVisitor subjectVisitor(currentContext());
+    subjectVisitor.visitNode(node->subject);
+
+    for (auto* matchCase : std::as_const(node->cases)) {
+        if (!matchCase || !matchCase->pattern) {
+            continue;
+        }
+        DUChainWriteLocker lock;
+        // We only support some forms for now.
+        switch (matchCase->pattern->astType) {
+            case Ast::MatchSequenceAstType: {
+                auto* seq = static_cast<MatchSequenceAst*>(matchCase->pattern);
+                for (auto* element : std::as_const(seq->patterns)) {
+                    if (element->astType != Ast::MatchAsAstType) {
+                        continue;
+                    }
+                    auto* asElement = static_cast<MatchAsAst*>(element);
+                    auto type = Helper::contentOfIterable(subjectVisitor.lastType(), topContext());
+                    visitVariableDeclaration<Declaration>(asElement->name, nullptr, type);
+                }
+                break;
+            }
+
+            case Ast::MatchAsAstType: {
+                auto* as = static_cast<MatchAsAst*>(matchCase->pattern);
+                if (!as->name) {
+                    break;
+                }
+                visitVariableDeclaration<Declaration>(as->name, nullptr, subjectVisitor.lastType());
+                break;
+            }
+
+            default:
+                break;
+        }
+    }
+
+    Python::AstDefaultVisitor::visitMatch(node);
 }
 
 void DeclarationBuilder::visitCall(CallAst* node)
@@ -1120,12 +1169,12 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     }
     ExpressionVisitor targetVisitor(currentContext());
     targetVisitor.visitNode(v);
-    auto list = ListType::Ptr::dynamicCast(targetVisitor.lastType());
+    auto list = targetVisitor.lastType().dynamicCast<ListType>();
     if ( list ) {
         DUChainWriteLocker lock;
         list->addContentType<Python::UnsureType>(element.type);
     }
-    auto map = MapType::Ptr::dynamicCast(list);
+    auto map = list.dynamicCast<MapType>();
     if ( map ) {
         if ( subscript->slice && subscript->slice->astType != Ast::SliceAstType) {
             ExpressionVisitor keyVisitor(currentContext());
@@ -1139,7 +1188,7 @@ void DeclarationBuilder::assignToSubscript(SubscriptAst* subscript, const Declar
     DeclarationPointer lastDecl = targetVisitor.lastDeclaration();
     if ( list && lastDecl ) {
         DUChainWriteLocker lock;
-        lastDecl->setAbstractType(list.cast<AbstractType>());
+        lastDecl->setAbstractType(list);
     }
 }
 
@@ -1163,7 +1212,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
     // while this is like A = foo(); A.bar = 3
     else {
         DUChainReadLocker lock;
-        StructureType::Ptr structure(parentObjectDeclaration->abstractType().cast<StructureType>());
+        auto structure = parentObjectDeclaration->abstractType().dynamicCast<StructureType>();
         if ( ! structure || ! structure->declaration(topContext()) ) {
             return;
         }
@@ -1220,7 +1269,7 @@ void DeclarationBuilder::assignToAttribute(AttributeAst* attrib, const Declarati
 }
 
 void DeclarationBuilder::tryUnpackType(AbstractType::Ptr sourceType, QVector<AbstractType::Ptr>& outTypes, int starred) {
-    if ( const auto indexed = sourceType.cast<IndexedContainer>() ) {
+    if ( const auto indexed = sourceType.dynamicCast<IndexedContainer>() ) {
         int spare = indexed->typesCount() - outTypes.length();
         if ( spare < -1 || (starred == -1 && spare != 0) ) {
             return; // Wrong number of elements to unpack.
@@ -1259,7 +1308,7 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
 
     QVector<AbstractType::Ptr> outTypes(tuple->elements.length());
 
-    if ( auto unsure = element.type.cast<UnsureType>() ) {
+    if ( auto unsure = element.type.dynamicCast<UnsureType>() ) {
         FOREACH_FUNCTION ( const auto& type, unsure->types ) {
             tryUnpackType(type.abstractType(), outTypes, starred);
         }
@@ -1272,7 +1321,7 @@ void DeclarationBuilder::assignToTuple(TupleAst* tuple, const SourceType& elemen
         auto target = tuple->elements.at(ii);
         if ( target->astType == Ast::StarredAstType ) {
             DUChainReadLocker lock;
-            auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>("list");
+            auto listType = ExpressionVisitor::typeObjectForIntegralType<ListType>(QStringLiteral("list"));
             lock.unlock();
             if (listType) {
                 listType->addContentType<Python::UnsureType>(sourceType);
@@ -1325,7 +1374,7 @@ void DeclarationBuilder::visitAssignment(AssignmentAst* node)
         v.isAlias()
     };
 
-    foreach(ExpressionAst* target, node->targets) {
+    for (ExpressionAst* target : std::as_const(node->targets)) {
         assignToUnknown(target, sourceType);
     }
 }
@@ -1370,9 +1419,9 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     dec->setComment(docstring);
     if ( ! docstring.isEmpty() ) {
         // check whether this is a type container (list, dict, ...) or just a "normal" class
-        if ( Helper::docstringContainsHint(docstring, "TypeContainer") ) {
+        if ( Helper::docstringContainsHint(docstring, QStringLiteral("TypeContainer")) ) {
             ListType* container = nullptr;
-            if ( Helper::docstringContainsHint(docstring, "hasTypedKeys") ) {
+            if ( Helper::docstringContainsHint(docstring, QStringLiteral("hasTypedKeys")) ) {
                 container = new MapType();
             }
             else {
@@ -1380,18 +1429,18 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
             }
             type = StructureType::Ptr(container);
         }
-        if ( Helper::docstringContainsHint(docstring, "IndexedTypeContainer") ) {
+        if ( Helper::docstringContainsHint(docstring, QStringLiteral("IndexedTypeContainer")) ) {
             IndexedContainer* container = new IndexedContainer();
             type = StructureType::Ptr(container);
         }
     }
     lock.unlock();
-    foreach ( ExpressionAst* c, node->baseClasses ) {
+    for (ExpressionAst* c : std::as_const(node->baseClasses)) {
         // Iterate over all the base classes, and add them to the duchain.
         ExpressionVisitor v(currentContext());
         v.visitNode(c);
         if ( v.lastType() && v.lastType()->whichType() == AbstractType::TypeStructure ) {
-            StructureType::Ptr baseClassType = v.lastType().cast<StructureType>();
+            auto baseClassType = v.lastType().staticCast<StructureType>();
             BaseClassInstance base;
             base.baseClass = baseClassType->indexed();
             base.access = KDevelop::Declaration::Public;
@@ -1403,12 +1452,12 @@ void DeclarationBuilder::visitClassDefinition( ClassDefinitionAst* node )
     lock.lock();
     // every python class inherits from "object".
     // We use this to add all the __str__, __get__, ... methods.
-    if ( dec->baseClassesSize() == 0 && node->name->value != "object" ) {
+    if ( dec->baseClassesSize() == 0 && node->name->value != QStringLiteral("object") ) {
         DUChainWriteLocker wlock;
         ReferencedTopDUContext docContext = Helper::getDocumentationFileContext();
         if ( docContext ) {
             QList<Declaration*> object = docContext->findDeclarations(
-                QualifiedIdentifier("object")
+                QualifiedIdentifier(QStringLiteral("object"))
             );
             if ( ! object.isEmpty() && object.first()->abstractType() ) {
                 Declaration* objDecl = object.first();
@@ -1468,7 +1517,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
     dec->setStatic(false);
     dec->setClassMethod(false);
     dec->setProperty(false);
-    foreach ( auto decorator, node->decorators) {
+    for (auto decorator : std::as_const(node->decorators)) {
         visitNode(decorator);
         switch (decorator->astType) {
           case Ast::AttributeAstType: {
@@ -1566,7 +1615,7 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
 
     if ( AbstractType::Ptr hint = m_correctionHelper->returnTypeHint() ) {
         type->setReturnType(hint);
-        dec->setType<FunctionType>(type);
+        dec->setType(type);
     }
     
     // check for (python3) function annotations
@@ -1740,8 +1789,15 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
     int defaultParametersCount = node->defaultValues.length();
     int parametersCount = node->arguments.length();
     int firstDefaultParameterOffset = parametersCount - defaultParametersCount;
+
+    int defaultKwParametersCount = node->defaultKwValues.length();
+    int kwonlyCount = node->kwonlyargs.length();
+    int posonlyCount = node->posonlyargs.length();
+    int totalArgCount = parametersCount + posonlyCount + kwonlyCount;
+    int firstDefaultKwParameterOffset = totalArgCount - defaultKwParametersCount;
     int currentIndex = 0;
-    foreach ( ArgAst* arg, node->posonlyargs + node->arguments + node->kwonlyargs ) {
+    for (ArgAst* arg :
+         std::as_const(node->posonlyargs) + std::as_const(node->arguments) + std::as_const(node->kwonlyargs)) {
         // Iterate over all the function's arguments, create declarations, and add the arguments
         // to the functions FunctionType.
         currentIndex += 1;
@@ -1792,11 +1848,23 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             // TODO add the real expression from the document here as default value
             workingOnDeclaration->addDefaultParameter(IndexedString("..."));
         }
+        else if ( currentIndex > firstDefaultKwParameterOffset && currentIndex <= totalArgCount ) {
+            // Handle kw only arguments with default values, like def foo(*, bar = 3): pass
+            // Find type of given default value, and assign it to the declaration
+            ExpressionVisitor v(currentContext());
+            v.visitNode(node->defaultKwValues.at(currentIndex - firstDefaultKwParameterOffset - 1));
+            if ( v.lastType() ) {
+                argumentType = v.lastType();
+            }
+            // TODO add the real expression from the document here as default value
+            workingOnDeclaration->addDefaultParameter(IndexedString("..."));
+        }
+
 
         if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
-                argumentType = m_currentClassTypes.last().cast<AbstractType>();
+                argumentType = m_currentClassTypes.last();
                 isFirst = false;
             }
         }
@@ -1810,7 +1878,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         // inject the vararg at the correct place
         int atIndex = 0;
         int useIndex = -1;
-        foreach ( ArgAst* arg, node->arguments ) {
+        for (ArgAst* arg : std::as_const(node->arguments)) {
             if ( node->vararg && workingOnDeclaration->vararg() == -1 && node->vararg->appearsBefore(arg) ) {
                 useIndex = atIndex;
             }
@@ -1822,24 +1890,24 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
             useIndex = type->arguments().size();
         }
         DUChainReadLocker lock;
-        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>("tuple");
+        IndexedContainer::Ptr tupleType = ExpressionVisitor::typeObjectForIntegralType<IndexedContainer>(QStringLiteral("tuple"));
         lock.unlock();
         if ( tupleType ) {
-            visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->vararg->argumentName, nullptr, tupleType);
             workingOnDeclaration->setVararg(atIndex);
-            type->addArgument(tupleType.cast<AbstractType>(), useIndex);
+            type->addArgument(tupleType, useIndex);
         }
     }
 
     if ( node->kwarg ) {
         DUChainReadLocker lock;
-        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>("str");
-        auto dictType = ExpressionVisitor::typeObjectForIntegralType<MapType>("dict");
+        AbstractType::Ptr stringType = ExpressionVisitor::typeObjectForIntegralType<AbstractType>(QStringLiteral("str"));
+        auto dictType = ExpressionVisitor::typeObjectForIntegralType<MapType>(QStringLiteral("dict"));
         lock.unlock();
         if ( dictType && stringType ) {
             dictType->addKeyType<Python::UnsureType>(stringType);
-            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, nullptr, dictType.cast<AbstractType>());
-            type->addArgument(dictType.cast<AbstractType>());
+            visitVariableDeclaration<Declaration>(node->kwarg->argumentName, nullptr, dictType);
+            type->addArgument(dictType);
             workingOnDeclaration->setKwarg(type->arguments().size() - 1);
         }
     }
@@ -1862,7 +1930,7 @@ void DeclarationBuilder::visitNode(Ast* node) {
 void DeclarationBuilder::visitGlobal(GlobalAst* node)
 {
     TopDUContext* top = topContext();
-    foreach ( Identifier *id, node->names ) {
+    for (Identifier* id : std::as_const(node->names)) {
         QualifiedIdentifier qid = identifierForNode(id);
         DUChainWriteLocker lock;
         QList< Declaration* > existing = top->findLocalDeclarations(qid.first());

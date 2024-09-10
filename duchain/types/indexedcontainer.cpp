@@ -69,12 +69,12 @@ QString IndexedContainer::toString() const
     for ( int i = 0; i < typesCount(); i++ ) {
         if ( i >= 5 ) {
             // Don't print more than five types explicitly
-            typesArray << "...";
+            typesArray << QStringLiteral("...");
             break;
         }
         typesArray << typeAt(i).abstractType()->toString();
     }
-    const QString contentType = QStringLiteral("(") + typesArray.join(", ") + ")";
+    const QString contentType = QStringLiteral("(") + typesArray.join(QStringLiteral(", ")) + QStringLiteral(")");
     return i18nc("as in list of int, set of string", "%1 of %2", prefix, contentType);
 }
 

@@ -28,12 +28,6 @@
 #include <QStack>
 #include "codegendebug.h"
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-#define SkipEmptyParts Qt::SkipEmptyParts
-#else
-#define SkipEmptyParts QString::SkipEmptyParts
-#endif
-
 using namespace KDevelop;
 
 namespace Python {
@@ -63,7 +57,7 @@ void TypeCorrection::doContextMenu(ContextMenuExtension &extension, Context *con
                                  && declaration->abstractType()->whichType() == AbstractType::TypeFunction)) ) {
             QAction* action = new QAction(i18n("Specify type for \"%1\"...", declaration->qualifiedIdentifier().toString()), nullptr);
             action->setData(QVariant::fromValue(IndexedDeclaration(declaration)));
-            action->setIcon(QIcon::fromTheme("code-class"));
+            action->setIcon(QIcon::fromTheme(QStringLiteral("code-class")));
             connect(action, &QAction::triggered, this, &TypeCorrection::executeSpecifyTypeAction);
 
             extension.addAction(ContextMenuExtension::ExtensionGroup, action);
@@ -104,7 +98,7 @@ void TypeCorrection::executeSpecifyTypeAction()
 
     CorrectionAssistant *dialog = new CorrectionAssistant(decl, hintType);
     dialog->setAttribute(Qt::WA_DeleteOnClose);
-    dialog->setWindowTitle("Specify type for " + decl.data()->identifier().toString());
+    dialog->setWindowTitle(QStringLiteral("Specify type for ") + decl.data()->identifier().toString());
     connect(dialog, &QDialog::accepted, this, &TypeCorrection::accepted);
 
     m_ui->setupUi(dialog);
@@ -157,7 +151,7 @@ void TypeCorrection::accepted()
 
     CorrectionFileGenerator::HintType hintType = dialog->hintType();
 
-    generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(',', SkipEmptyParts), decl.data(), hintType);
+    generator.addHint(m_ui->typeText->text(), m_ui->importsText->text().split(QLatin1Char(','), Qt::SkipEmptyParts), decl.data(), hintType);
 
     qCDebug(KDEV_PYTHON_CODEGEN) << "Forcing a reparse on " << decl.data()->topContext()->url();
     ICore::self()->languageController()->backgroundParser()->addDocument(IndexedString(decl.data()->topContext()->url()),
@@ -181,7 +175,7 @@ CorrectionFileGenerator::CorrectionFileGenerator(const QString &filePath)
 
     m_file.open(QFile::ReadWrite);
 
-    m_code = QString(m_file.readAll()).split('\n');
+    m_code = QString::fromUtf8(m_file.readAll()).split(QLatin1Char('\n'));
     m_oldContents = m_code;
     m_fileIndents.reset(new FileIndentInformation(m_code));
 }
@@ -190,7 +184,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
                                       CorrectionFileGenerator::HintType hintType)
 {
     if ( ! forDeclaration || ! forDeclaration->context() ) {
-        qCWarning(KDEV_PYTHON_CODEGEN) << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : "");
+        qCWarning(KDEV_PYTHON_CODEGEN) << "Declaration does not have context!" << (forDeclaration ? forDeclaration->toString() : QString());
         return;
     }
 
@@ -281,7 +275,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     if ( inClass ) {
         if ( ! foundClassDeclaration ) {
             QString classDeclaration = createStructurePart(enclosingClassIdentifier, ClassType);
-            classDeclaration.prepend(QString(indentsForNextStatement, ' '));
+            classDeclaration.prepend(QString(indentsForNextStatement, QLatin1Char(' ')));
 
             newCode.append(classDeclaration);
             indentsForNextStatement += DEFAULT_INDENT_LEVEL;
@@ -300,7 +294,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
             else {
                 functionDeclaration = createStructurePart(functionIdentifier, FunctionType);
             }
-            functionDeclaration.prepend(QString(indentsForNextStatement, ' '));
+            functionDeclaration.prepend(QString(indentsForNextStatement, QLatin1Char(' ')));
 
             newCode.append(functionDeclaration);
             indentsForNextStatement += DEFAULT_INDENT_LEVEL;
@@ -315,13 +309,13 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     }
     QString hintCode;
     if ( hintType == FunctionReturnHint ) {
-        hintCode = "returns = " + typeCode;
+        hintCode = QStringLiteral("returns = ") + typeCode;
     }
     else if ( hintType == LocalVariableHint ) {
-        hintCode = "l_" + declarationIdentifier + " = " + typeCode;
+        hintCode = QStringLiteral("l_") + declarationIdentifier + QStringLiteral(" = ") + typeCode;
     }
     qCDebug(KDEV_PYTHON_CODEGEN) << "Hint code: " << hintCode;
-    hintCode.prepend(QString(indentsForNextStatement, ' '));
+    hintCode.prepend(QString(indentsForNextStatement, QLatin1Char(' ')));
     newCode.append(hintCode);
 
     for ( int i = 0; i < newCode.length(); i++ ) {
@@ -329,21 +323,21 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
     }
 
     // We safely insert any import declaration at the top
-    foreach ( const QString &moduleName, modules ) {
+    for ( const QString &moduleName : modules ) {
         bool importExists = false;
-        foreach (const QString &line, m_code) {
-            if ( ! line.startsWith("import") && ! line.startsWith("from") && ! line.isEmpty() ) {
+        for (const QString& line : std::as_const(m_code)) {
+            if ( ! line.startsWith(QStringLiteral("import")) && ! line.startsWith(QStringLiteral("from")) && ! line.isEmpty() ) {
                 break;
             }
 
             // In both import ... and from ... import ..., the second part is what we want
-            if ( line.section(' ', 1, 1, QString::SectionSkipEmpty) == moduleName.trimmed() ) {
+            if ( line.section(QLatin1Char(' '), 1, 1, QString::SectionSkipEmpty) == moduleName.trimmed() ) {
                 importExists = true;
             }
         }
 
         if ( ! importExists ) {
-            m_code.prepend("import " + moduleName.trimmed());
+            m_code.prepend(QStringLiteral("import ") + moduleName.trimmed());
         }
     }
 
@@ -352,7 +346,7 @@ void CorrectionFileGenerator::addHint(const QString &typeCode, const QStringList
         qCDebug(KDEV_PYTHON_CODEGEN) << "File path: " << m_file.fileName();
         qCDebug(KDEV_PYTHON_CODEGEN) << "Temporary file path: " << temp.fileName();
         QTextStream stream(&temp);
-        stream << m_code.join("\n");
+        stream << m_code.join(QLatin1Char('\n'));
         m_fileIndents.reset(new FileIndentInformation(m_code));
         stream.flush();
 
@@ -434,13 +428,13 @@ int CorrectionFileGenerator::findStructureFor(const QString &klass, const QStrin
     }
 
     ParseSession parseSession;
-    parseSession.setContents(m_code.join("\n"));
+    parseSession.setContents(m_code.join(QLatin1Char('\n')));
     parseSession.setCurrentDocument(IndexedString(m_filePath));
 
     QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
 
-    QString classIdentifier = ( ! klass.isNull() ) ? "class_" + klass : QString();
-    QString functionIdentifier = ( ! function.isNull() ) ? "function_" + function : QString();
+    QString classIdentifier = ( ! klass.isNull() ) ? QStringLiteral("class_") + klass : QString();
+    QString functionIdentifier = ( ! function.isNull() ) ? QStringLiteral("function_") + function : QString();
 
     StructureFindVisitor visitor(classIdentifier, functionIdentifier);
     visitor.visitCode(parsed.first.data());
@@ -455,13 +449,13 @@ QString CorrectionFileGenerator::createStructurePart(const QString &identifierSu
 
     switch ( type ) {
     case ClassType:
-        code = "class class_" + identifierSuffix + ":";
+        code = QStringLiteral("class class_") + identifierSuffix + QLatin1Char(':');
         break;
     case MemberFunctionType:
-        params = "self";
+        params = QStringLiteral("self");
         // Fall through
     case FunctionType:
-        code = "def function_" + identifierSuffix + "(" + params + "):";
+        code = QStringLiteral("def function_") + identifierSuffix + QLatin1Char('(') + params + QStringLiteral("):");
         break;
     }
 
@@ -471,7 +465,7 @@ QString CorrectionFileGenerator::createStructurePart(const QString &identifierSu
 bool CorrectionFileGenerator::checkForValidSyntax()
 {
     ParseSession parseSession;
-    parseSession.setContents(m_code.join("\n"));
+    parseSession.setContents(m_code.join(QLatin1Char('\n')));
     parseSession.setCurrentDocument(IndexedString(m_filePath));
 
     QPair<CodeAst::Ptr, bool> parsed = parseSession.parse();
@@ -498,3 +492,5 @@ CorrectionFileGenerator::HintType CorrectionAssistant::hintType() const
 }
 
 }
+
+#include "moc_correctionfilegenerator.cpp"

@@ -5,7 +5,7 @@ set(parser_STAT_SRCS
     astdefaultvisitor.cpp
     astvisitor.cpp
     astbuilder.cpp
-    cythonsyntaxremover.cpp
+    asttransformer.cpp
     rangefixvisitor.cpp
 )
 ecm_qt_declare_logging_category(parser_STAT_SRCS
@@ -16,7 +16,7 @@ ecm_qt_declare_logging_category(parser_STAT_SRCS
     EXPORT KDEVPYTHON
 )
 
-include_directories(${PYTHON_INCLUDE_DIRS})
+include_directories(${Python3_INCLUDE_DIRS})
 
 add_library( kdevpythonparser SHARED ${parser_STAT_SRCS} )
 
@@ -25,11 +25,11 @@ generate_export_header(kdevpythonparser EXPORT_MACRO_NAME KDEVPYTHONPARSER_EXPOR
 
 target_link_libraries(kdevpythonparser LINK_PRIVATE
     KDev::Language
-    Qt5::Core
-    ${PYTHON_LIBRARIES}
+    Python3::Python
+    Qt6::Core
 )
 
-install(TARGETS kdevpythonparser DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonparser DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 if (BUILD_TESTING)
     add_subdirectory(tests)

@@ -33,3 +33,5 @@ NavigationWidget::NavigationWidget(const IncludeItem &/*includeItem*/, TopDUCont
 }
 
 }
+
+#include "moc_navigationwidget.cpp"

@@ -1,0 +1,668 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: desktop files\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"PO-Revision-Date: 2014-11-27 13:41+0000\n"
+"Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
+"Language-Team: bs <bs@kde.org>\n"
+"Language: bs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Launchpad (build 17341)\n"
+"X-Launchpad-Export-Date: 2015-02-15 06:23+0000\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Samir Ribić,Mirza Bulbulusic,Nermina Ahmić"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "Samir.ribic@etf.unsa.ba,mbulbulusic@gmail.com,nahmic1@etf.unsa.ba"
+
+#: codecompletion/context.cpp:115
+#, kde-format
+msgid "insert Shebang line"
+msgstr "umetni  Shebangovu liniju"
+
+#: codecompletion/context.cpp:123
+#, kde-format
+msgid "specify document encoding"
+msgstr "navedite kodiranje dokumenta"
+
+#: codecompletion/context.cpp:125
+#, kde-format
+msgid "Add file header"
+msgstr "Dodajte header fajla"
+
+#: codecompletion/context.cpp:175
+#, kde-format
+msgid "specify default parameter"
+msgstr "navedi podrazumijevani parametar"
+
+#: codecompletion/context.cpp:386
+#, kde-format
+msgid "Insert next positional variable"
+msgstr "Ubacite sljedeću pozicionu varijablu"
+
+#: codecompletion/context.cpp:391
+#, kde-format
+msgid "Insert named variable"
+msgstr "Ubacite imenovanu varijablu"
+
+#: codecompletion/context.cpp:427
+#, kde-format
+msgid "Format using str()"
+msgstr "Formatirajte koristeći str()"
+
+#: codecompletion/context.cpp:428
+#, kde-format
+msgid "Format using repr()"
+msgstr "Formatirajte koristeći repr()"
+
+#: codecompletion/context.cpp:436
+#, kde-format
+msgid "Format as left-aligned"
+msgstr "Poravnajte ulijevo"
+
+#: codecompletion/context.cpp:437
+#, kde-format
+msgid "Format as right-aligned"
+msgstr "Poravnajte udesno"
+
+#: codecompletion/context.cpp:438
+#, kde-format
+msgid "Format as centered"
+msgstr "Centrirajte"
+
+#: codecompletion/context.cpp:442
+#, kde-format
+msgid "Specify precision"
+msgstr "Odredite preciznost"
+
+#: codecompletion/context.cpp:443
+#, kde-format
+msgid "Format as percentage"
+msgstr "Formatirajte kao postotak"
+
+#: codecompletion/context.cpp:444
+#, kde-format
+msgid "Format as character"
+msgstr "Formatirajte kao simbol"
+
+#: codecompletion/context.cpp:445
+#, kde-format
+msgid "Format as binary number"
+msgstr "Formatirajte kao binarni broj"
+
+#: codecompletion/context.cpp:446
+#, kde-format
+msgid "Format as octal number"
+msgstr "Formatirajte kao oktalni broj"
+
+#: codecompletion/context.cpp:447
+#, kde-format
+msgid "Format as hexadecimal number"
+msgstr "Formatirajte kao heksadecimalni broj"
+
+#: codecompletion/context.cpp:448
+#, kde-format
+msgid "Format in scientific (exponent) notation"
+msgstr "Formatirajte  u naučnoj (eksponencijalnoj) notaciji"
+
+#: codecompletion/context.cpp:449
+#, kde-format
+msgid "Format as fixed point number"
+msgstr "Formatirajte kao broj s fisknim zarezom"
+
+#: codecompletion/context.cpp:509
+#, kde-format
+msgid "Initialize property"
+msgstr "Inicijaliziraj svojstvo"
+
+#: codecompletion/items/functiondeclaration.cpp:81
+#, kde-format
+msgid "function"
+msgstr "funkcija"
+
+#: codecompletion/items/missingincludeitem.cpp:38
+#, kde-format
+msgctxt "programming; %1 is a code statement to be added in the editor"
+msgid "Add \"%1\""
+msgstr "Dodaj \"%1\""
+
+#: codegen/correctionfilegenerator.cpp:58
+#, kde-format
+msgid "Specify type for \"%1\"..."
+msgstr "Specificirajte tip za \"%1\"..."
+
+#: codegen/correctionfilegenerator.cpp:108
+#, kde-format
+msgid "Function return type"
+msgstr "Funkcijski povratni tip"
+
+#: codegen/correctionfilegenerator.cpp:111
+#, kde-format
+msgid "Local variable"
+msgstr "Lokalna varijabla"
+
+#: codegen/correctionfilegenerator.cpp:147
+#, kde-format
+msgid "Sorry, cannot create hints for files which are not part of a project."
+msgstr ""
+"Oprostite, savjeti za fajlove koji nisu dio projekta ne mogu biti kreirani."
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
+#: codegen/correctionwidget.ui:20
+#, kde-format
+msgid "Specify correct type"
+msgstr "Navedite korektni tip"
+
+#. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
+#: codegen/correctionwidget.ui:28
+#, kde-format
+msgid "Kind:"
+msgstr "Vrsta:"
+
+#. i18n: ectx: property (text), widget (QLabel, givenIdentifierLabel)
+#: codegen/correctionwidget.ui:42
+#, kde-format
+msgid "Identifier:"
+msgstr "Identifikator:"
+
+#. i18n: ectx: property (text), widget (QLabel, typeLabel)
+#: codegen/correctionwidget.ui:56
+#, kde-format
+msgid "Correct type:"
+msgstr "Korektni tip:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
+#: codegen/correctionwidget.ui:63
+#, kde-format
+msgid "Code which evaluates to the type, e.g. int()"
+msgstr "Kod koji je procijenjen na tip, e.g. int()"
+
+#. i18n: ectx: property (text), widget (QLabel, importsLabel)
+#: codegen/correctionwidget.ui:70
+#, kde-format
+msgid "Required modules:"
+msgstr "Potrebni moduli:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
+#: codegen/correctionwidget.ui:77
+#, kde-format
+msgid "A comma separated list of modules required for the type"
+msgstr "Zarez je odvojio listu modula potrebnih za ovaj tip"
+
+#: debugger/debugsession.cpp:167
+#, kde-format
+msgid "The program being debugged raised an uncaught exception."
+msgstr "Program koji se debagira je aktivirao neobrađeni izuzetak."
+
+#: debugger/debugsession.cpp:168
+#, kde-format
+msgid "You can now inspect the status of the program after it exited."
+msgstr "Možete istražiti status programa nakon što je izašao."
+
+#: debugger/debugsession.cpp:169
+#, kde-format
+msgid "The debugger will silently stop when the next command is triggered."
+msgstr "Debager će tiho stati kada se pokrene naredna komanda."
+
+#: debugger/pdblauncher.cpp:45
+#, kde-format
+msgid "A plugin to debug Python applications with pdb."
+msgstr "Dodatak za traženje grešaka u Python programima koristeći pdb."
+
+#: debugger/pdblauncher.cpp:77
+#, fuzzy, kde-format
+msgid "Sorry, debugging is only supported for Python 3.x applications."
+msgstr "Nažalost, praćenje grešaka je podržano samo za Python 2.x aplikacije."
+
+#: debugger/pdblauncher.cpp:78
+#, kde-format
+msgid "Unsupported interpreter"
+msgstr "Nepodržan interpreter"
+
+#: docfilekcm/docfilemanagerwidget.cpp:37
+#, kde-format
+msgid "Failed to find a valid data directory for kdevpythonsupport."
+msgstr "Neuspjeh u nalaženju važećeg direktorija podataka s kdevpythonsupport."
+
+#: docfilekcm/docfilemanagerwidget.cpp:51
+#, kde-format
+msgid "Generate..."
+msgstr "Generiši..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:53
+#, fuzzy, kde-format
+#| msgid "Import from editor"
+msgid "Import From Editor"
+msgstr "Uvezi iz editora"
+
+#: docfilekcm/docfilemanagerwidget.cpp:54
+#, kde-format
+msgid ""
+"Copy the contents of the active editor window to a new file in the "
+"documentation directory"
+msgstr ""
+"Kopiraj sadržaj aktivnog editorskog prozora u novu datoteku u "
+"dokumentacijskom direktoriju"
+
+#: docfilekcm/docfilemanagerwidget.cpp:66
+#, fuzzy, kde-format
+#| msgid "Open file manager"
+msgid "Open File Manager"
+msgstr "Otvori menadžer datoteka"
+
+#: docfilekcm/docfilemanagerwidget.cpp:68
+#, fuzzy, kde-format
+#| msgctxt "Edit selected files"
+#| msgid "Edit selected"
+msgctxt "Edit selected files"
+msgid "Edit Selected"
+msgstr "Izmijeni izabrano"
+
+#: docfilekcm/docfilemanagerwidget.cpp:70
+#, fuzzy, kde-format
+#| msgid "Search paths..."
+msgid "Search Paths..."
+msgstr "Putanje za pretragu..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:101
+#, kde-format
+msgctxt "displays a list of search paths below"
+msgid "Paths searched for documentation by kdev-python (in this order):"
+msgstr ""
+"Putevi koji su traženi za dokumentaciju od strane kdev-python (ovim "
+"redoslijedom):"
+
+#: docfilekcm/docfilemanagerwidget.cpp:141
+#, kde-format
+msgid "Enter a relative target path to copy %1 to:"
+msgstr "Unesite relativni put odredišta za kopiranje %1 u:"
+
+#: docfilekcm/docfilemanagerwidget.cpp:145
+#, kde-format
+msgid ""
+"This path must match what you use in Python to import this module. For "
+"example, enter \"numpy/fft.py\" for numpy.fft"
+msgstr ""
+"Ova staza mora odgovarati onome što koristite u jeziku Python da uvezete "
+"ovaj modul. Na primjer, unesite \"numpy/fft.py\" za numpy.fft"
+
+#: docfilekcm/docfilemanagerwidget.cpp:147
+#, kde-format
+msgid "After copying, you will be editing the new document."
+msgstr "Nakon kopiranja, uređivaćete novi dokument."
+
+#: docfilekcm/docfilemanagerwidget.cpp:166
+#, kde-format
+msgid "Please select at least one file from the list for editing."
+msgstr "Molim odaberite bar jednu datoteku iz liste za uređivanje."
+
+#: docfilekcm/docfilewizard.cpp:41
+#, kde-format
+msgid "Configure the Python interpreter to use"
+msgstr "Konfiguriši Python interpreter za korištenje"
+
+#: docfilekcm/docfilewizard.cpp:44
+#, kde-format
+msgid "Python executable"
+msgstr "Python izvršni program:"
+
+#: docfilekcm/docfilewizard.cpp:49
+#, kde-format
+msgid "Select a python module to generate documentation for"
+msgstr "Odaberite Python modul za koga se generiše dokumentacija"
+
+#: docfilekcm/docfilewizard.cpp:53
+#, kde-format
+msgctxt "refers to selecting a python module to perform some operation on"
+msgid "Target module (e.g. \"math\")"
+msgstr "Odredišni modul (npr. \"math\")"
+
+#: docfilekcm/docfilewizard.cpp:55
+#, kde-format
+msgid "Output filename"
+msgstr "Ime izlazne datoteke"
+
+#: docfilekcm/docfilewizard.cpp:61
+#, kde-format
+msgid "Status and output"
+msgstr "Status i izlaz"
+
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
+#, kde-format
+msgid "The process has not been run yet."
+msgstr "Proces još nije bio pokrenut."
+
+#: docfilekcm/docfilewizard.cpp:75
+#, kde-format
+msgid "Script output"
+msgstr "Skriptni izlaz"
+
+#: docfilekcm/docfilewizard.cpp:76
+#, kde-format
+msgid "Results"
+msgstr "Rezultati"
+
+#: docfilekcm/docfilewizard.cpp:82
+#, kde-format
+msgid "Close"
+msgstr "Zatvori"
+
+#: docfilekcm/docfilewizard.cpp:84
+#, kde-format
+msgid "Save and close"
+msgstr "Snimi i zatvori"
+
+#: docfilekcm/docfilewizard.cpp:87
+#, kde-format
+msgid "Generate"
+msgstr "Generiši"
+
+#: docfilekcm/docfilewizard.cpp:138
+#, kde-format
+msgid "Couldn't find the introspect.py script; check your installation!"
+msgstr "Ne mogu naći introspect.py skriptu; provjerite vašu instalaciju!"
+
+#: docfilekcm/docfilewizard.cpp:142
+#, kde-format
+msgid ""
+"Couldn't find a valid kdev-python data directory; check your installation!"
+msgstr ""
+"Ne mogu naći važeći kdev-python direktorij podataka; provjerite vašu "
+"instalaciju!"
+
+#: docfilekcm/docfilewizard.cpp:148
+#, kde-format
+msgid "Invalid output filename"
+msgstr "Pogrešno izlazno ime datoteke"
+
+#: docfilekcm/docfilewizard.cpp:188
+#, kde-format
+msgid ""
+"The output file <br/>%1<br/> already exists, do you want to overwrite it?"
+msgstr "Izlazna datoteka <br/>%1<br/> već postoji, želite li pisati preko nje?"
+
+#: docfilekcm/docfilewizard.cpp:203
+#, fuzzy, kde-format
+#| msgid ""
+#| "This file contains auto-generated documentation extracted\n"
+#| "from python run-time information. It is analyzed by KDevelop\n"
+#| "to offer features such as code-completion and syntax highlighting.\n"
+#| "If you discover errors in KDevelop's support for this module,\n"
+#| "you can edit this file to correct the errors, e.g. you can add\n"
+#| "additional return statements to functions to control the return\n"
+#| "type to be used for that function by the analyzer.\n"
+#| "Make sure to keep a copy of your changes so you don't accidentally\n"
+#| "overwrite them by re-generating the file.\n"
+#| "If you do significant improvements, consider sharing the file\n"
+#| "with others through the Settings -> Configure KDevelop -> Python "
+#| "Documentation data\n"
+#| "module!"
+msgid ""
+"This file contains auto-generated documentation extracted\n"
+"from python run-time information. It is analyzed by KDevelop\n"
+"to offer features such as code-completion and syntax highlighting.\n"
+"If you discover errors in KDevelop's support for this module,\n"
+"you can edit this file to correct the errors, e.g. you can add\n"
+"additional return statements to functions to control the return\n"
+"type to be used for that function by the analyzer.\n"
+"Make sure to keep a copy of your changes so you don't accidentally\n"
+"overwrite them by re-generating the file.\n"
+msgstr ""
+"Ova datoteka sadrži automatski generiranu dokumentaciju izvučenu\n"
+"iz informacija o vremenu izvršavanja Python-a. Analizirana je od strane "
+"KDevelop-a\n"
+"da bi ponudila mogućnosti kao što su dopuna koda i naglašavanje sintakse.\n"
+"Ako otkrijete greške u KDevelop-ovoj podršci za ovaj ugradbeni sklop,\n"
+"možete urediti datoteku u cilju ispravljanja grešaka, npr. možete dodati\n"
+"dodatne povratne naredbe funkcijama da kontolirate tip povratka\n"
+"koji će analizator koristiti za tu funkciju.\n"
+"Napravite kopiju izmjena koje ste učinili, kako ih ne biste nehotice\n"
+"prepisali obnavljanjem datoteke.\n"
+"Ako napravite značajna poboljšanja, razmotrite opciju da podijelite "
+"datoteku\n"
+"sa ostalima putem Opcije -> Konfiguriši KDevelop -> Podaci dokumentacije "
+"Python-a!"
+
+#: docfilekcm/kcm_docfiles.cpp:48
+#, kde-format
+msgid "Manage Documentation Files Used by the Python Plugin"
+msgstr ""
+
+#: docfilekcm/kcm_docfiles.cpp:58
+#, kde-format
+msgid "Python Documentation"
+msgstr ""
+
+#: duchain/assistants/missingincludeassistant.cpp:48
+#, kde-format
+msgid "Generate documentation for module \"%1\"..."
+msgstr "Generiši dokumentaciju za modul \"%1\"..."
+
+#: duchain/declarationbuilder.cpp:705
+#, kde-format
+msgid "Module \"%1\" not found"
+msgstr "Modul \"%1\" nije nađen"
+
+#: duchain/declarationbuilder.cpp:776
+#, kde-format
+msgid "Declaration for \"%1\" not found in specified module"
+msgstr "Deklaracija \"%1\" nije pronađena u naznačenom modulu"
+
+#: duchain/declarationbuilder.cpp:1584
+#, kde-format
+msgid "First argument of __new__ method is not called cls, this is deprecated"
+msgstr "Prvi argument od __new__ metode se ne zove cls, to nije dozvoljeno"
+
+#: duchain/declarationbuilder.cpp:1589
+#, kde-format
+msgid "First argument of class method is not called self, this is deprecated"
+msgstr "Prvi argument metode klase se ne naziva self, taj naziv je zastario"
+
+#: duchain/declarationbuilder.cpp:1609
+#, kde-format
+msgid ""
+"Non-static class method without arguments, must have at least one (self)"
+msgstr "Nestatična metoda klase bez argumenata, mora imati barem jedan (self)"
+
+#: duchain/declarationbuilder.cpp:1770
+#, kde-format
+msgid "Return statement not within function declaration"
+msgstr "Naredba povratka bez deklaracije funkcije"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:67
+#, kde-format
+msgctxt "refers to an unknown type in programming"
+msgid "unknown"
+msgstr "nepoznato"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:83
+#: duchain/navigation/declarationnavigationcontext.cpp:99
+#: duchain/types/indexedcontainer.cpp:78
+#, kde-format
+msgctxt "as in list of int, set of string"
+msgid "%1 of %2"
+msgstr "%1 od %2"
+
+#: duchain/types/unsuretype.cpp:101
+#, kde-format
+msgctxt "some object that can be called, in programming"
+msgid "<callable>"
+msgstr ""
+
+#: duchain/types/unsuretype.cpp:106
+#, kde-format
+msgctxt "a set with some elements"
+msgid "<iterable>"
+msgstr ""
+
+#: duchain/types/unsuretype.cpp:127
+#, kde-format
+msgctxt "refers to a type (in program code) which is not known"
+msgid "mixed"
+msgstr "miješano"
+
+#: duchain/types/unsuretype.cpp:130
+#, kde-format
+msgctxt "refers to a type (in program code) which can have multiple values"
+msgid "unsure (%1)"
+msgstr "nesigurno (%1)"
+
+#: duchain/usebuilder.cpp:83
+#, kde-format
+msgid "Undefined variable: %1"
+msgstr "Nedefinisana varijabla: %1"
+
+#: duchain/usebuilder.cpp:130
+#, kde-format
+msgid "Attribute \"%1\" not found on accessed object"
+msgstr "Atribut \"%1\" nije nađen na pristupljenom objektu"
+
+#: pep8kcm/kcm_pep8.cpp:63
+#, fuzzy, kde-format
+#| msgid "Configure the Python interpreter to use"
+msgid "Configure Python Style Checking"
+msgstr "Konfiguriši Python interpreter za korištenje"
+
+#: pep8kcm/kcm_pep8.cpp:73
+#, fuzzy, kde-format
+#| msgid "Configure the Python interpreter to use"
+msgid "Python Style Checking"
+msgstr "Konfiguriši Python interpreter za korištenje"
+
+#. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
+#: pep8kcm/pep8.ui:29
+#, fuzzy, kde-format
+#| msgid "Enable PEP8 checking:"
+msgid "Enable Style Checking"
+msgstr "Omogući PEP8 provjeravanje:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
+#: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
+#, fuzzy, kde-format
+#| msgid "A comma separated list of modules required for the type"
+msgid "Comma-separated list of error codes"
+msgstr "Zarez je odvojio listu modula potrebnih za ovaj tip"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: pep8kcm/pep8.ui:51
+#, kde-format
+msgid "Enable these errors and warnings:"
+msgstr ""
+
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: pep8kcm/pep8.ui:65
+#, kde-format
+msgid "Maximum line length:"
+msgstr ""
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: pep8kcm/pep8.ui:88
+#, kde-format
+msgid "Disable these errors and warnings:"
+msgstr ""
+
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: pep8kcm/pep8.ui:100
+#, kde-format
+msgid ""
+"The `pycodestyle` Python module must be installed in order to use style "
+"checking."
+msgstr ""
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: projectconfig/projectconfig.ui:19
+#, fuzzy, kde-format
+#| msgid "Unsupported interpreter"
+msgid "Python interpreter:"
+msgstr "Nepodržan interpreter"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
+#: projectconfig/projectconfig.ui:26
+#, kde-format
+msgid "Full path to python interpreter, leave empty for default"
+msgstr ""
+
+#: projectconfig/projectconfigpage.cpp:47
+#, fuzzy, kde-format
+#| msgid "Configure the Python interpreter to use"
+msgid "Python Settings"
+msgstr "Konfiguriši Python interpreter za korištenje"
+
+#: pythonlanguagesupport.cpp:140
+#, fuzzy, kde-format
+#| msgid "Format source with the pep8ify formatter."
+msgid "Format source with the autopep8 formatter."
+msgstr "Formatiraj izvor sa pep8ify formaterom."
+
+#: pythonstylechecking.cpp:107
+#, kde-format
+msgid "PEP8 checker error: %1"
+msgstr "PEP8 greška provjere: %1"
+
+#: pythonstylechecking.cpp:209
+#, fuzzy, kde-format
+#| msgid ""
+#| "The selected PEP8 syntax checker \"%1\" does not seem to work correctly."
+msgid "The PEP8 syntax checker does not seem to work correctly."
+msgstr "Izabrani PEP8 provjeravač sintakse \"%1\" ne izgleda da radi ispravno."
+
+#~ msgid "%1 of ( %2 )"
+#~ msgstr "%1 od ( %2 )"
+
+#~ msgid "Full path to the PEP8 checker to use:"
+#~ msgstr "Puni put do PEP8 čekera za korištenje:"
+
+#~ msgid "PEP8 checker arguments:"
+#~ msgstr "Argumenti PEP8 čekera:"
+
+#~ msgid "Download new"
+#~ msgstr "Novo preuzimanje"
+
+#~ msgid "Share selected"
+#~ msgstr "Dijeljenje odabrano"
+
+#~ msgid "Python Debugger (pdb) Support"
+#~ msgstr "Podrška za Python debager (pdb)"
+
+#~ msgid "Support for the Python Debugger"
+#~ msgstr "Podrška za  Python debager"
+
+#~ msgid "Sven Brauch"
+#~ msgstr "Sven Brauch"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Python Support"
+#~ msgstr "Python podrška"
+
+#~ msgid "Support for the Python Scripting Language"
+#~ msgstr "Podrška za Python skriptni jezik"
+
+#~ msgctxt ""
+#~ "refers to types of variables in programming, as in \"various possible "
+#~ "types\""
+#~ msgid "various types"
+#~ msgstr "raznog tipa"
+
+#~ msgid "%1 of %2 : %3"
+#~ msgstr "%1 od %2 : %3"
+
+#~ msgid "%1 of %2"
+#~ msgstr "%1 od %2"

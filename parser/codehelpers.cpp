@@ -6,6 +6,8 @@
 
 #include "codehelpers.h"
 #include <QStack>
+#include <QStringView>
+#include <QRegularExpression>
 
 namespace Python {
     
@@ -37,12 +39,12 @@ void FileIndentInformation::initialize(const QStringList& lines)
 
 FileIndentInformation::FileIndentInformation(const QString& data)
 {
-    initialize(data.split('\n'));
+    initialize(data.split(QLatin1Char('\n')));
 }
 
 FileIndentInformation::FileIndentInformation(const QByteArray& data)
 {
-    initialize(QString(data.data()).split('\n'));
+    initialize(QString::fromLatin1(data.data()).split(QLatin1Char('\n')));
 }
 
 FileIndentInformation::FileIndentInformation(KTextEditor::Document* document)
@@ -93,19 +95,19 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
 {
     bool insideSingleLineComment = false;
     QStringList stringDelimiters;
-    stringDelimiters << "\"\"\"" << "\'\'\'" << "'" << "\"";
+    stringDelimiters << QStringLiteral("\"\"\"") << QStringLiteral("\'\'\'") << QStringLiteral("'") << QStringLiteral("\"");
     QStack<QString> stringStack;
     const int max_len = code.length();
     for ( int atChar = 0; atChar < max_len; atChar++ ) {
         const QChar c = code.at(atChar);
-        if ( c == ' ' || c.isLetterOrNumber() ) {
+        if ( c == QLatin1Char(' ') || c.isLetterOrNumber() ) {
             continue;
         }
-        if ( stringStack.isEmpty() && c == '#' ) {
+        if ( stringStack.isEmpty() && c == QLatin1Char('#') ) {
             insideSingleLineComment = true;
             continue;
         }
-        if ( c == '\n' ) {
+        if ( c == QLatin1Char('\n') ) {
             insideSingleLineComment = false;
             continue;
         }
@@ -113,14 +115,14 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
             // don't count string delimiters in a comment line
             continue;
         }
-        if ( c != '"' && c != '\'' && c != '\\' ) {
+        if ( c != QLatin1Char('"') && c != QLatin1Char('\'') && c != QLatin1Char('\\') ) {
             continue;
         }
-        QStringRef t;
+        QStringView t;
         if ( max_len - atChar > 2 ) {
-            t = code.midRef(atChar, 3);
+            t = QStringView{code}.mid(atChar, 3);
         }
-        foreach ( const QString& check, stringDelimiters ) {
+        for (const QString& check : std::as_const(stringDelimiters)) {
             if ( t != check && ! ( check.size() == 1 && c == check.at(0) ) ) {
                 continue;
             }
@@ -135,7 +137,7 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
                 break;
             }
         }
-        if ( c == '\\' ) {
+        if ( c == QLatin1Char('\\') ) {
             atChar ++;
             continue;
         }
@@ -153,9 +155,9 @@ CodeHelpers::EndLocation CodeHelpers::endsInside(const QString &code)
 
 QString CodeHelpers::killStrings(QString stringWithStrings)
 {
-    QRegExp replaceStrings("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')");
-    replaceStrings.setMinimal(true);
-    QString stripped = stringWithStrings.replace(replaceStrings, "\"S\"");
+    static QRegularExpression replaceStrings(QStringLiteral("(\".*\"|\'.*\'|\"\"\".*\"\"\"|\'\'\'.*\'\'\')"),
+                                             QRegularExpression::InvertedGreedinessOption);
+    QString stripped = stringWithStrings.replace(replaceStrings, QStringLiteral("\"S\""));
     return stripped;
 }
 
@@ -164,29 +166,34 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
 {
     startCursor = cursor;
     QString line = lineFetcher.fetchLine(cursor.line());
-    int index = cursor.column();
+    // Don't crash: the valid range for a non-empty line is [0, line.length())
+    if (line.isEmpty()) {
+        return line;
+    }
+    int index = std::clamp<qsizetype>(cursor.column(), 0, line.length() - 1);
+
     QChar c = line[index];
     
     int end = index;
     // This flag is used by codecompletion (in contrast to the debugger)
     if ( ! forceScanExpression ) {
-        if ( ! c.isLetterOrNumber() && c != '_' ) {
+        if ( ! c.isLetterOrNumber() && c != QLatin1Char('_') ) {
             return QString();
         }
     }
     for (; end < line.size(); ++end)
     {
         QChar c = line[end];
-        if ( ! ( c.isLetterOrNumber() || c == '_' ) ) {
+        if ( ! ( c.isLetterOrNumber() || c == QLatin1Char('_') ) ) {
             if ( ! forceScanExpression ) end--;
             break;
         }
     }
     int start = index;
-    QStringList openingBrackets = QStringList() << "(" << "[" << "{" << "\"" << "'";
-    QStringList closingBrackets = QStringList() << ")" << "]" << "}" << "\"" << "'";
-    QStringList sliceChars = QStringList() << "." << "(" << "["; // chars which are allowed to be preceded by a space
-    QStringList seperatorChars = QStringList() << "," << "=" << ":" << "*" << "-" << "+" << "/" << "%" << "^" << "~";
+    QStringList openingBrackets = QStringList() << QStringLiteral("(") << QStringLiteral("[") << QStringLiteral("{") << QStringLiteral("\"") << QStringLiteral("'");
+    QStringList closingBrackets = QStringList() << QStringLiteral(")") << QStringLiteral("]") << QStringLiteral("}") << QStringLiteral("\"") << QStringLiteral("'");
+    QStringList sliceChars = QStringList() << QStringLiteral(".") << QStringLiteral("(") << QStringLiteral("["); // chars which are allowed to be preceded by a space
+    QStringList seperatorChars = QStringList() << QStringLiteral(",") << QStringLiteral("=") << QStringLiteral(":") << QStringLiteral("*") << QStringLiteral("-") << QStringLiteral("+") << QStringLiteral("/") << QStringLiteral("%") << QStringLiteral("^") << QStringLiteral("~");
     QStack<QString> brackets;
     bool lastWasSlice = false;
     int linesFetched = 1;
@@ -228,7 +235,7 @@ QString CodeHelpers::expressionUnderCursor(Python::LazyLineFetcher& lineFetcher,
         if ( cursor.line() < linesFetched ) {
             break;
         }
-        if ( brackets.isEmpty() && ! lineFetcher.fetchLine(cursor.line() - linesFetched).trimmed().endsWith('\\') ) {
+        if ( brackets.isEmpty() && ! lineFetcher.fetchLine(cursor.line() - linesFetched).trimmed().endsWith(QLatin1Char('\\')) ) {
             // break at newline without previous backslash
             break;
         }
@@ -270,7 +277,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
         return QString();
     }
 
-    QStringList quoteCharacters = QStringList() << "\"" << "'";
+    QStringList quoteCharacters = QStringList() << QStringLiteral("\"") << QStringLiteral("'");
 
     // using a stack is probably overkill for this...
     QStack<QString> quotes;
@@ -284,7 +291,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
         int quote = quoteCharacters.indexOf(c);
 
         // if we've found a quote character and we're either at the beginning of the code or the previous char is not a backslash
-        if ( quote != -1 && (start == 0 || (start != 0 && beforeAndAfter.first.at(start - 1) != '\\')) ) {
+        if ( quote != -1 && (start == 0 || (start != 0 && beforeAndAfter.first.at(start - 1) != QLatin1Char('\\'))) ) {
             if ( endsInside(beforeAndAfter.first.left(start)) != String ) {
                 quotes.push(quoteCharacters.at(quote));
                 break;
@@ -305,7 +312,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
             c = beforeAndAfter.second.at(end - beforeAndAfter.first.size());
         }
 
-        if (c == '\\') {
+        if (c == QLatin1Char('\\')) {
             end += 2;
         }
 
@@ -327,7 +334,7 @@ QString CodeHelpers::extractStringUnderCursor(const QString &code, KTextEditor::
 
 QPair<QString, QString> CodeHelpers::splitCodeByCursor(const QString &code, KTextEditor::Range range, KTextEditor::Cursor cursor)
 {
-    QStringList lines = code.split('\n');
+    QStringList lines = code.split(QLatin1Char('\n'));
 
     int position = 0;
     bool firstRow = true;

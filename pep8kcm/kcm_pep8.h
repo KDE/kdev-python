@@ -6,7 +6,6 @@
 
 #ifndef KCM_PEP8_H
 #define KCM_PEP8_H
-#include <KCModule>
 #include <KConfigGroup>
 #include <QUrl>
 #include <QLineEdit>

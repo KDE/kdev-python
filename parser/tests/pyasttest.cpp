@@ -28,8 +28,6 @@
 #include "../astbuilder.h"
 #include "../parserdebug.h"
 
-#include <ktexteditor_version.h>
-
 #include <QDebug>
 #include <QtTest>
 
@@ -54,7 +52,8 @@ void PyAstTest::initShell()
 CodeAst::Ptr PyAstTest::getAst(QString code)
 {
     QSharedPointer<AstBuilder> builder(new AstBuilder);
-    CodeAst::Ptr result = builder->parse(QUrl("<empty>"), code);
+    CodeAst::Ptr result = builder->parse(QUrl(QStringLiteral("<empty>")), code);
+    qDebug() << result->dump();
     return result;
 }
 
@@ -86,10 +85,10 @@ void PyAstTest::testCode(QString code)
 
 void PyAstTest::testExceptionHandlers()
 {
-    QString code = "try: pass\n"
+    QString code = QStringLiteral("try: pass\n"
                    "except FooBar as baz: pass\n"
                    "except Cat as baz: pass\n"
-                   "except Dawg as asdf: pass\n";
+                   "except Dawg as asdf: pass\n");
     CodeAst::Ptr ast = getAst(code);
     VerifyVisitor v;
     v.visitCode(ast.data());
@@ -97,7 +96,7 @@ void PyAstTest::testExceptionHandlers()
     QVERIFY(ast->body.first()->astType == Ast::TryAstType);
     TryAst* try_ = static_cast<TryAst*>(ast->body.first());
     QCOMPARE(try_->handlers.size(), 3);
-    foreach ( ExceptionHandlerAst* handler, try_->handlers ) {
+    for (ExceptionHandlerAst* handler : std::as_const(try_->handlers)) {
         QVERIFY(handler->name);
         QCOMPARE(handler->name->astType, Ast::IdentifierAstType);
     }
@@ -155,6 +154,21 @@ void PyAstTest::testStatements_data()
     QTest::newRow("varannotation1") << "primes: List[int] = []";
     QTest::newRow("varannotation2") << "captain: str  # Note: no initial value!";
 #endif
+
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 10, 0)
+    QTest::newRow("match_value") << "match x:\n case 1:\n  pass";
+    QTest::newRow("match_singleton") << "match x:\n case True:\n  pass";
+    QTest::newRow("match_sequence") << "match x:\n case [a, b]:\n  pass";
+    QTest::newRow("match_mapping") << "match x:\n case {'type': 'update'}:\n  pass";
+    // TODO: Mapping rest
+    QTest::newRow("match_class") << "class Node:\n __match_args__=('type',)\ntype=1\nmatch x:\n case Node():\n  pass";
+    QTest::newRow("match_star") << "match x:\n case [a, b, *c]:\n  pass";
+    QTest::newRow("match_as") << "match x:\n case a:\n  pass";
+    QTest::newRow("match_as_empty") << "match x:\n case _:\n  pass";
+    QTest::newRow("match_or") << "match x:\n case a|b:\n  pass";
+    QTest::newRow("match_guard") << "match x:\n case [a, b, c] if c != 0:\n  pass";
+#endif
+
 }
 
 void PyAstTest::testSlices()
@@ -260,7 +274,7 @@ void PyAstTest::testCorrectedFuncRanges()
 
     CodeAst::Ptr ast = getAst(code);
     QVERIFY(ast);
-    foreach ( Ast* node, ast->body ) {
+    for (Ast* node : std::as_const(ast->body)) {
         if ( node->astType != Ast::FunctionDefinitionAstType ) {
             continue;
         }
@@ -304,6 +318,7 @@ void PyAstTest::testNewPython3_data()
 
 void PyAstTest::testClass()
 {
-    testCode("class c: pass");
+    testCode(QStringLiteral("class c: pass"));
 }
 
+#include "moc_pyasttest.cpp"

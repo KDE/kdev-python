@@ -32,11 +32,11 @@ ImplementFunctionCompletionItem::ImplementFunctionCompletionItem(const QString& 
 void ImplementFunctionCompletionItem::execute(KTextEditor::View* view, const KTextEditor::Range& word)
 {
     auto document = view->document();
-    const QString finalText = m_name + "(" + m_arguments.join(", ") + "):";
+    const QString finalText = m_name + QStringLiteral("(") + m_arguments.join(QStringLiteral(", ")) + QStringLiteral("):");
     document->replaceText(word, finalText);
     // 4 spaces is indentation for python. everyone does it like this. you must, too.
     // TODO use kate settings
-    document->insertLine(word.start().line() + 1, m_previousIndent + "    ");
+    document->insertLine(word.start().line() + 1, m_previousIndent + QStringLiteral("    "));
     if ( View* view = ICore::self()->documentController()->activeTextDocumentView() ) {
         view->setCursorPosition(Cursor(word.end().line() + 1, m_previousIndent.length() + 4));
     }
@@ -46,7 +46,7 @@ QVariant ImplementFunctionCompletionItem::data(const QModelIndex& index, int rol
 {
     switch ( role ) {
         case KDevelop::CodeCompletionModel::MatchQuality: {
-            return QVariant(m_name.startsWith("__") ? 0 : 10);
+            return QVariant(m_name.startsWith(QStringLiteral("__")) ? 0 : 10);
         }
         case KDevelop::CodeCompletionModel::BestMatchesCount: {
             return QVariant(5);
@@ -54,13 +54,13 @@ QVariant ImplementFunctionCompletionItem::data(const QModelIndex& index, int rol
         case Qt::DisplayRole:
             switch ( index.column() ) {
                 case KDevelop::CodeCompletionModel::Name:
-                    return m_name + "(" + m_arguments.join(", ") + ")";
+                    return QVariant(m_name + QStringLiteral("(") + m_arguments.join(QStringLiteral(", ")) + QStringLiteral(")"));
                 case KDevelop::CodeCompletionModel::Postfix:
-                    return "";
+                    return QVariant(QString());
                 case KDevelop::CodeCompletionModel::Prefix:
-                    return "Override method";
+                    return QVariant(QStringLiteral("Override method"));
                 default:
-                    return "";
+                    return QVariant(QString());
             }
         case Qt::DecorationRole:
             if( index.column() == KDevelop::CodeCompletionModel::Icon ) {

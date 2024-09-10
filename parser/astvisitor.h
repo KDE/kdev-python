@@ -31,7 +31,7 @@ public:
     virtual void visitNode(Ast* node);
 
     template <typename T> void visitNodeList( const QList<T*>& l ) {
-        foreach ( T* node, l ) {
+        for (  T* node: l ) {
             visitNode(node);
         }
     }
@@ -53,6 +53,7 @@ public:
     virtual void visitWith(WithAst* node) { Q_UNUSED(node); };
     virtual void visitRaise(RaiseAst* node) { Q_UNUSED(node); };
     virtual void visitTry(TryAst* node) { Q_UNUSED(node); };
+    virtual void visitTryStar(TryStarAst* node) { Q_UNUSED(node); };
     virtual void visitAssertion(AssertionAst* node) { Q_UNUSED(node); };
     virtual void visitImport(ImportAst* node) { Q_UNUSED(node); };
     virtual void visitImportFrom(ImportFromAst* node) { Q_UNUSED(node); };
@@ -98,7 +99,16 @@ public:
     virtual void visitExceptionHandler(ExceptionHandlerAst* node) { Q_UNUSED(node); };
     virtual void visitAlias(AliasAst* node) { Q_UNUSED(node); };
     virtual void visitWithItem(WithItemAst* node) { Q_UNUSED(node); };
-
+    virtual void visitMatch(MatchAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchCase(MatchCaseAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchValue(MatchValueAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchSingleton(MatchSingletonAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchSequence(MatchSequenceAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchMapping(MatchMappingAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchClass(MatchClassAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchStar(MatchStarAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchAs(MatchAsAst* node) { Q_UNUSED(node); };
+    virtual void visitMatchOr(MatchOrAst* node) { Q_UNUSED(node); };
 };
 }
 

@@ -22,21 +22,25 @@
 #include "breakpointcontroller.h"
 
 #include <QDebug>
+#include <QRegularExpression>
 #include <QStandardPaths>
+
 #include "debuggerdebug.h"
 
 #ifdef Q_OS_WIN
 #include <windows.h>
 #define INTERRUPT_DEBUGGER GenerateConsoleCtrlEvent(CTRL_C_EVENT, m_debuggerProcess->processId())
 #else
-#define INTERRUPT_DEBUGGER kill(m_debuggerProcess->pid(), SIGINT)
+#define INTERRUPT_DEBUGGER kill(m_debuggerProcess->processId(), SIGINT)
 #endif
 
-using namespace KDevelop;
+namespace {
+static const QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
+static const QByteArray debuggerOutputBegin = "__KDEVPYTHON_BEGIN_DEBUGGER_OUTPUT>>>";
+static const QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
+}
 
-static QByteArray debuggerPrompt = "__KDEVPYTHON_DEBUGGER_PROMPT";
-static QByteArray debuggerOutputBegin = "__KDEVPYTHON_BEGIN_DEBUGGER_OUTPUT>>>";
-static QByteArray debuggerOutputEnd = "<<<__KDEVPYTHON_END___DEBUGGER_OUTPUT";
+using namespace KDevelop;
 
 namespace Python {
 
@@ -99,10 +103,10 @@ void DebugSession::start()
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
     auto dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
-                                      "kdevpythonsupport/debugger/", QStandardPaths::LocateDirectory);
+                                      QStringLiteral("kdevpythonsupport/debugger/"), QStandardPaths::LocateDirectory);
     InternalPdbCommand* path = new InternalPdbCommand(nullptr, nullptr,
-        "import sys; sys.path.append('"+dir+"')\n");
-    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "import __kdevpython_debugger_utils\n");
+        QStringLiteral("import sys; sys.path.append('") + dir + QStringLiteral("')\n"));
+    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));
     addCommand(path);
     addCommand(cmd);
     updateLocation();
@@ -116,8 +120,9 @@ void DebugSession::debuggerQuit(int )
 
 QStringList byteArrayToStringList(const QByteArray& r) {
     QStringList items;
-    foreach ( const QByteArray& item, r.split('\n') ) {
-        items << item.data();
+    const auto list = r.split('\n');
+    for ( const QByteArray& item : list ) {
+        items << QString::fromLatin1(item);
     }
     if ( r.endsWith('\n') ) {
         items.pop_back();
@@ -131,8 +136,8 @@ void DebugSession::dataAvailable()
     qCDebug(KDEV_PYTHON_DEBUGGER) << data.length() << "bytes of data available";
     
     // remove pointless state changes
-    data.replace(debuggerOutputBegin+debuggerOutputEnd, "");
-    data.replace(debuggerOutputEnd+debuggerOutputBegin, "");
+   // data.replace(debuggerOutputBegin + debuggerOutputEnd, "");
+   // data.replace(debuggerOutputEnd + debuggerOutputBegin, "");
     
     bool endsWithPrompt = false;
     if ( data.endsWith(debuggerPrompt) ) {
@@ -156,15 +161,14 @@ void DebugSession::dataAvailable()
         Q_ASSERT(m_inDebuggerData == 0 || m_inDebuggerData == 1);
         
         if ( m_inDebuggerData == 1 ) {
-            QString newDebuggerData = data.mid(i, nextChangeAt - i);
-            m_buffer.append(newDebuggerData);
+            m_buffer.append(data.mid(i, nextChangeAt - i));
             if ( data.indexOf("Uncaught exception. Entering post mortem debugging") != -1 ) {
-                emit realDataReceived(QStringList() << "*****"
-                                                    << "  " + i18n("The program being debugged raised an uncaught exception.")
-                                                    << "  " + i18n("You can now inspect the status of the program after it exited.")
-                                                    << "  " + i18n("The debugger will silently stop when the next command is triggered.")
-                                                    << "*****");
-                InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "import __kdevpython_debugger_utils\n");
+                Q_EMIT realDataReceived(QStringList() << QStringLiteral("*****")
+                                                    << QStringLiteral("  ") + i18n("The program being debugged raised an uncaught exception.")
+                                                    << QStringLiteral("  ") + i18n("You can now inspect the status of the program after it exited.")
+                                                    << QStringLiteral("  ") + i18n("The debugger will silently stop when the next command is triggered.")
+                                                    << QStringLiteral("*****"));
+                InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));
                 addCommand(cmd);
             }
         }
@@ -190,7 +194,7 @@ void DebugSession::dataAvailable()
     if ( ! realData.isEmpty() ) {
         // FIXME this is not very elegant.
         QStringList items = byteArrayToStringList(realData);
-        emit realDataReceived(items);
+        Q_EMIT realDataReceived(items);
     }
     
     // Although unbuffered, it seems guaranteed that the debugger prompt is written at once.
@@ -209,12 +213,12 @@ void DebugSession::dataAvailable()
             }
         }
         m_processBusy = false;
-        emit debuggerReady();
+        Q_EMIT debuggerReady();
     }
     
     data = m_debuggerProcess->readAllStandardError();
     if ( ! data.isEmpty() ) {
-        emit stderrReceived(byteArrayToStringList(data));
+        Q_EMIT stderrReceived(byteArrayToStringList(data));
     }
 }
 
@@ -273,7 +277,7 @@ void DebugSession::setState(DebuggerState state)
     m_state = state;
     if ( m_state == EndedState ) {
         raiseEvent(debugger_exited);
-        emit finished();
+        Q_EMIT finished();
     }
     else if ( m_state == ActiveState || m_state == StartingState || m_state == StoppingState ) {
         raiseEvent(debugger_busy);
@@ -281,13 +285,13 @@ void DebugSession::setState(DebuggerState state)
     else if ( m_state == PausedState ) {
         raiseEvent(debugger_ready);
         if ( currentUrl().isValid() ) {
-            emit showStepInSource(currentUrl(), currentLine(), currentAddr());
+            Q_EMIT showStepInSource(currentUrl(), currentLine(), currentAddr());
         }
     }
     
     qCDebug(KDEV_PYTHON_DEBUGGER) << "debugger state changed to" << m_state;
     raiseEvent(program_state_changed);
-    emit stateChanged(m_state);
+    Q_EMIT stateChanged(m_state);
 }
 
 void DebugSession::write(const QByteArray& cmd)
@@ -299,27 +303,27 @@ void DebugSession::write(const QByteArray& cmd)
 void DebugSession::stepOut()
 {
     // TODO this only steps out of functions; use temporary breakpoints for loops maybe?
-    addSimpleUserCommand("return");
+    addSimpleUserCommand(QStringLiteral("return"));
 }
 
 void DebugSession::stepOverInstruction()
 {
-    addSimpleUserCommand("next");
+    addSimpleUserCommand(QStringLiteral("next"));
 }
 
 void DebugSession::stepInto()
 {
-    addSimpleUserCommand("step");
+    addSimpleUserCommand(QStringLiteral("step"));
 }
 
 void DebugSession::stepIntoInstruction()
 {
-    addSimpleUserCommand("step");
+    addSimpleUserCommand(QStringLiteral("step"));
 }
 
 void DebugSession::stepOver()
 {
-    addSimpleUserCommand("next");
+    addSimpleUserCommand(QStringLiteral("next"));
 }
 
 void DebugSession::jumpToCursor()
@@ -328,7 +332,7 @@ void DebugSession::jumpToCursor()
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
-            addSimpleUserCommand(QString("jump " + QString::number(cursor.line() + 1)).toUtf8());
+            addSimpleUserCommand(QString(QStringLiteral("jump ") + QString::number(cursor.line() + 1)));
         }
     }
 }
@@ -339,10 +343,10 @@ void DebugSession::runToCursor()
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
             // TODO disable all other breakpoints
-            QString temporaryBreakpointLocation = doc->url().path() + ':' + QString::number(cursor.line() + 1);
-            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(nullptr, nullptr, "tbreak " + temporaryBreakpointLocation + '\n');
+            QString temporaryBreakpointLocation = doc->url().path() + QLatin1Char(':') + QString::number(cursor.line() + 1);
+            InternalPdbCommand* temporaryBreakpointCmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("tbreak ") + temporaryBreakpointLocation + QLatin1Char('\n'));
             addCommand(temporaryBreakpointCmd);
-            addSimpleInternalCommand("continue");
+            addSimpleInternalCommand(QStringLiteral("continue"));
             updateLocation();
         }
     }
@@ -350,7 +354,7 @@ void DebugSession::runToCursor()
 
 void DebugSession::run()
 {
-    addSimpleUserCommand("continue");
+    addSimpleUserCommand(QStringLiteral("continue"));
 }
 
 void DebugSession::interruptDebugger()
@@ -371,7 +375,7 @@ void DebugSession::addCommand(PdbCommand* cmd)
         // this is queued and will run after the command is executed.
         updateLocation();
     }
-    emit commandAdded();
+    Q_EMIT commandAdded();
 }
 
 void DebugSession::checkCommandQueue()
@@ -385,27 +389,27 @@ void DebugSession::checkCommandQueue()
 
 void DebugSession::clearObjectTable()
 {
-    addSimpleInternalCommand("__kdevpython_debugger_utils.cleanup()");
+    addSimpleInternalCommand(QStringLiteral("__kdevpython_debugger_utils.cleanup()"));
 }
 
 void DebugSession::addSimpleUserCommand(const QString& cmd)
 {
     clearObjectTable();
-    UserPdbCommand* cmdObject = new UserPdbCommand(nullptr, nullptr, cmd + '\n');
+    UserPdbCommand* cmdObject = new UserPdbCommand(nullptr, nullptr, cmd + QLatin1Char('\n'));
     Q_ASSERT(cmdObject->type() == PdbCommand::UserType);
     addCommand(cmdObject);
 }
 
 void DebugSession::addSimpleInternalCommand(const QString& cmd)
 {
-    Q_ASSERT( ! cmd.endsWith('\n') );
-    InternalPdbCommand* cmdObject = new InternalPdbCommand(nullptr, nullptr, cmd + '\n');
+    Q_ASSERT( ! cmd.endsWith(QLatin1Char('\n')) );
+    InternalPdbCommand* cmdObject = new InternalPdbCommand(nullptr, nullptr, cmd + QLatin1Char('\n'));
     addCommand(cmdObject);
 }
 
 void DebugSession::runImmediately(const QString& cmd)
 {
-    Q_ASSERT(cmd.endsWith('\n'));
+    Q_ASSERT(cmd.endsWith(QLatin1Char('\n')));
     if ( state() == ActiveState ) {
         m_nextNotifyMethod = nullptr;
         m_nextNotifyObject.clear(); // TODO is this correct?
@@ -422,22 +426,22 @@ void DebugSession::runImmediately(const QString& cmd)
 
 void DebugSession::addBreakpoint(Breakpoint* bp)
 {
-    QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
+    QString location = bp->url().path() + QLatin1Char(':') + QString::number(bp->line() + 1);
     qCDebug(KDEV_PYTHON_DEBUGGER) << "adding breakpoint" << location;
-    runImmediately("break " + location + '\n');
+    runImmediately(QStringLiteral("break ") + location + QLatin1Char('\n'));
 }
 
 void DebugSession::removeBreakpoint(Breakpoint* bp)
 {
-    QString location = bp->url().path() + ":" + QString::number(bp->line() + 1);
+    QString location = bp->url().path() + QLatin1Char(':') + QString::number(bp->line() + 1);
     qCDebug(KDEV_PYTHON_DEBUGGER) << "deleting breakpoint" << location;
-    runImmediately("clear " + location + '\n');
+    runImmediately(QStringLiteral("clear ") + location + QLatin1Char('\n'));
 }
 
 void DebugSession::createVariable(Python::Variable* variable, QObject* callback, const char* callbackMethod)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "asked to create variable";
-    auto text = ("print(__kdevpython_debugger_utils.obj_to_string(" + variable->expression() + "))\n").toUtf8();
+    auto text = QString(QStringLiteral("print(__kdevpython_debugger_utils.obj_to_string(") + variable->expression() + QStringLiteral("))\n"));
     auto cmd = new InternalPdbCommand(variable, "dataFetched", text);
     variable->m_notifyCreated = callback;
     variable->m_notifyCreatedMethod = callbackMethod;
@@ -452,7 +456,7 @@ void DebugSession::clearOutputBuffer()
 void DebugSession::updateLocation()
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "updating location";
-    InternalPdbCommand* cmd = new InternalPdbCommand(this, "locationUpdateReady", "where\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(this, "locationUpdateReady", QStringLiteral("where\n"));
     addCommand(cmd);
 }
 
@@ -462,20 +466,20 @@ void DebugSession::locationUpdateReady(QByteArray data) {
     if ( lines.length() >= 3 ) {
         lines.removeLast(); // prompt
         lines.removeLast(); // source line
-        QString where = lines.last();
+        QString where = QString::fromUtf8(lines.last());
         // > /bar/baz/foo.py(123)<module>()
-        QRegExp m("^> (/.*\\.py)\\((\\d*)\\).*$");
-        m.setMinimal(true);
-        m.exactMatch(where);
-        setCurrentPosition(QUrl::fromLocalFile(m.capturedTexts().at(1)), m.capturedTexts().at(2).toInt() - 1 , "<unknown>");
-        qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << m.capturedTexts().at(1) << m.capturedTexts().at(2).toInt() - 1 << m.capturedTexts() << where;
+        static QRegularExpression m(QRegularExpression::anchoredPattern(QStringLiteral("^> (/.*\\.py)\\((\\d*)\\).*$")),
+                                    QRegularExpression::InvertedGreedinessOption);
+        auto match = m.match(where);
+        setCurrentPosition(QUrl::fromLocalFile(match.captured(1)), match.captured(2).toInt() - 1 , QStringLiteral("<unknown>"));
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << match.captured(1) << match.captured(2).toInt() - 1 << match.capturedTexts() << where;
     }
 }
 
 void DebugSession::stopDebugger()
 {
     m_commandQueue.clear();
-    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, "quit\nquit\n");
+    InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("quit\nquit\n"));
     addCommand(cmd);
     setState(StoppingState);
     if ( ! m_debuggerProcess->waitForFinished(200) ) {
@@ -507,7 +511,7 @@ DebugSession::~DebugSession()
 
 void DebugSession::restartDebugger()
 {
-    addSimpleUserCommand("run");
+    addSimpleUserCommand(QStringLiteral("run"));
 }
 
 bool DebugSession::restartAvaliable() const
@@ -523,3 +527,4 @@ KDevelop::IDebugSession::DebuggerState DebugSession::state() const
 
 }
 
+#include "moc_debugsession.cpp"

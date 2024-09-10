@@ -94,10 +94,10 @@ void UseBuilder::visitName(NameAst* node)
 void UseBuilder::visitCall(CallAst* node)
 {
     UseBuilderBase::visitCall(node);
-    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node->function));
     ExpressionVisitor v(context);
     v.visitNode(node->function);
-    if ( auto classType = v.lastType().cast<StructureType>() ) {
+    if ( auto classType = v.lastType().dynamicCast<StructureType>() ) {
         DUChainReadLocker lock;
         // This is either __init__() or __call__(): `a = Foo()` or `b = a()`.
         auto function = Helper::functionForCalled(classType->declaration(topContext()), v.isAlias());
@@ -140,8 +140,8 @@ void UseBuilder::visitSubscript(SubscriptAst* node) {
     ExpressionVisitor v(context);
     v.visitNode(node->value);
 
-    static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier("__getitem__"));
-    static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier("__setitem__"));
+    static const IndexedIdentifier getitemIdentifier(KDevelop::Identifier(QStringLiteral("__getitem__")));
+    static const IndexedIdentifier setitemIdentifier(KDevelop::Identifier(QStringLiteral("__setitem__")));
 
     bool isAugTarget = (node->parent->astType == Ast::AugmentedAssignmentAstType &&
                         static_cast<AugmentedAssignmentAst*>(node->parent)->target == node);
@@ -159,6 +159,22 @@ void UseBuilder::visitSubscript(SubscriptAst* node) {
         lock.unlock();
         useHiddenMethod(node->value, setItemFunc);
     }
+}
+
+void UseBuilder::visitMatchAs(MatchAsAst* node)
+{
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    if (!node->name) {
+        return;
+    }
+    Declaration* declaration = Helper::declarationForName(node->name->value, editorFindPositionSafe(node),
+                                                          DUChainPointer<const DUContext>(context));
+
+    RangeInRevision useRange = rangeForNode(node->name, true);
+    if ( declaration && declaration->range() == useRange )
+        return;
+
+    UseBuilderBase::newUse(useRange, DeclarationPointer(declaration));
 }
 
 ParseSession *UseBuilder::parseSession() const

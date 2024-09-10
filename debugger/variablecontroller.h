@@ -28,7 +28,7 @@ public:
      * @brief This just calls the Variable constructor and returns a new, empty \a Variable object.
      **/
     KDevelop::Variable* createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent,
-                                               const QString& expression, const QString& display = "") override;
+                                               const QString& expression, const QString& display = QString()) override;
     
     /**
      * @brief Mini-parser which gives the expression under the cursor.
@@ -57,7 +57,7 @@ private:
     QTimer m_updateTimer;
     QList<Variable*> m_watchVariables;
 
-private slots:
+private Q_SLOTS:
     /**
      * @brief Parse the debugger output, and perform an update of the local variables.
      **/

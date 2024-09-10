@@ -32,14 +32,14 @@ public:
     QUrl m_workingDirectory;
     QString m_envProfileName;
 
-private slots:
+private Q_SLOTS:
     void standardOutputReceived(QStringList lines);
     void standardErrorReceived(QStringList lines);
 
 private:
     OutputModel* outputModel();
     DebugSession* m_session;
-public slots:
+public Q_SLOTS:
     void sessionFinished();
 };
 

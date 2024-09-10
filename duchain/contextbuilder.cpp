@@ -170,7 +170,7 @@ void ContextBuilder::addImportedContexts()
     if ( compilingContexts() && !m_importedParentContexts.isEmpty() )
     {
         DUChainWriteLocker lock( DUChain::lock() );
-        foreach( DUContext* imported, m_importedParentContexts )
+        for (DUContext* imported : std::as_const(m_importedParentContexts))
             currentContext()->addImportedParentContext( imported );
 
         m_importedParentContexts.clear();
@@ -310,17 +310,17 @@ void ContextBuilder::visitCode(CodeAst* node) {
 
 QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, const QUrl& currentDocument)
 {
-    QStringList nameComponents = name.split(".");
+    QStringList nameComponents = name.split(QLatin1Char('.'));
     QVector<QUrl> searchPaths;
-    if ( name.startsWith('.') ) {
+    if ( name.startsWith(QLatin1Char('.')) ) {
         /* To take care for imports like "from ....xxxx.yyy import zzz"
          * we need to take current doc path and run "cd .." enough times
          */
         nameComponents.removeFirst();
-        QString tname = name.mid(1); // remove first dot
+        const QString tname = name.mid(1); // remove first dot
         QDir curPathDir = QDir(currentDocument.adjusted(QUrl::RemoveFilename).toLocalFile());
-        foreach(QString c, tname) {
-            if (c != ".")
+        for (QString c : std::as_const(tname)) {
+            if (c != QLatin1Char('.'))
                 break;
             curPathDir.cdUp();
             nameComponents.removeFirst();
@@ -336,11 +336,11 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
     // Loop over all the name components, and find matching folders or files.
     QDir tmp;
     QStringList leftNameComponents;
-    foreach ( const QUrl& currentPath, searchPaths ) {
+    for (const QUrl& currentPath : std::as_const(searchPaths)) {
         tmp.setPath(currentPath.toLocalFile());
         leftNameComponents = nameComponents;
-        foreach ( QString component, nameComponents ) {
-            if ( component == "*" ) {
+        for (QString component : std::as_const(nameComponents)) {
+            if ( component == QLatin1Char('*') ) {
                 // For "from ... import *", if "..." is a directory, use the "__init__.py" file
                 component = QStringLiteral("__init__");
             }
@@ -348,7 +348,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                 // only empty the list if not importing *, this is convenient later on
                 leftNameComponents.removeFirst();
             }
-            QString testFilename = tmp.path() + "/" + component;
+            QString testFilename = tmp.path() + QLatin1Char('/') + component;
 
             bool can_continue = tmp.cd(component);
             QFileInfo sourcedir(testFilename);
@@ -356,8 +356,8 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
             // we can only parse those, so we don't care about anything else for now.
             // Any C modules (.so, .dll) will be ignored, and highlighted as "not found". TODO fix this
-            static QStringList valid_extensions{".py", ".pyx"};
-            foreach ( const auto& extension, valid_extensions ) {
+            static QStringList valid_extensions{QStringLiteral(".py"), QStringLiteral(".pyx")};
+            for ( const auto& extension : valid_extensions ) {
                 QFile sourcefile(testFilename + extension);
                 if ( ! dir_exists || leftNameComponents.isEmpty() ) {
                     // If the search cannot continue further down into a hierarchy of directories,
@@ -369,7 +369,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
                         return qMakePair(sourceUrl, leftNameComponents);
                     }
                     else if ( dir_exists ) {
-                        auto path = QUrl::fromLocalFile(testFilename + "/__init__.py");
+                        auto path = QUrl::fromLocalFile(testFilename + QStringLiteral("/__init__.py"));
                         // TODO QUrl: cleanPath?
                         return qMakePair(path, leftNameComponents);
                     }

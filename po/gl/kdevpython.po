@@ -1,0 +1,720 @@
+# translation of kdevpython.po to Galician
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# mvillarino <mvillarino@users.sourceforge.net>, 2009.
+# Marce Villarino <mvillarino@users.sourceforge.net>, 2009, 2013.
+# marce villarino <mvillarino@users.sourceforge.net>, 2009.
+# Adrian Chaves Fernandez <adriyetichaves@gmail.com>, 2013, 2015, 2016.
+# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2019, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kdevpython\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"PO-Revision-Date: 2023-04-23 05:40+0200\n"
+"Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
+"Language-Team: Galician <proxecto@trasno.gal>\n"
+"Language: gl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 22.12.3\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Adrián Chaves Fernández, Marce Villarino"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "adriyetichaves@gmail.com, mvillarino@kde-espana.org"
+
+#: codecompletion/context.cpp:115
+#, kde-format
+msgid "insert Shebang line"
+msgstr "Inserir unha liña Shebang"
+
+#: codecompletion/context.cpp:123
+#, kde-format
+msgid "specify document encoding"
+msgstr "Indicar a codificación do documento"
+
+#: codecompletion/context.cpp:125
+#, kde-format
+msgid "Add file header"
+msgstr "Engadir a cabeceira do ficheiro"
+
+#: codecompletion/context.cpp:175
+#, kde-format
+msgid "specify default parameter"
+msgstr "Indicar un parámetro predeterminado"
+
+#: codecompletion/context.cpp:386
+#, kde-format
+msgid "Insert next positional variable"
+msgstr "Inserir unha variábel posicional"
+
+#: codecompletion/context.cpp:391
+#, kde-format
+msgid "Insert named variable"
+msgstr "Inserir unha variábel nomeada"
+
+#: codecompletion/context.cpp:427
+#, kde-format
+msgid "Format using str()"
+msgstr "Formatar usando str()"
+
+#: codecompletion/context.cpp:428
+#, kde-format
+msgid "Format using repr()"
+msgstr "Formatar usando repr()"
+
+#: codecompletion/context.cpp:436
+#, kde-format
+msgid "Format as left-aligned"
+msgstr "Formatar como aliñada á esquerda"
+
+#: codecompletion/context.cpp:437
+#, kde-format
+msgid "Format as right-aligned"
+msgstr "Formatar como aliñada á dereita"
+
+#: codecompletion/context.cpp:438
+#, kde-format
+msgid "Format as centered"
+msgstr "Formatar como centrada"
+
+#: codecompletion/context.cpp:442
+#, kde-format
+msgid "Specify precision"
+msgstr "Especificar a precisión"
+
+#: codecompletion/context.cpp:443
+#, kde-format
+msgid "Format as percentage"
+msgstr "Formatar como porcentaxe"
+
+#: codecompletion/context.cpp:444
+#, kde-format
+msgid "Format as character"
+msgstr "Formatar como carácter"
+
+#: codecompletion/context.cpp:445
+#, kde-format
+msgid "Format as binary number"
+msgstr "Formatar como un número binario"
+
+#: codecompletion/context.cpp:446
+#, kde-format
+msgid "Format as octal number"
+msgstr "Formatar como un número octal"
+
+#: codecompletion/context.cpp:447
+#, kde-format
+msgid "Format as hexadecimal number"
+msgstr "Formatar como un número hexadecimal"
+
+#: codecompletion/context.cpp:448
+#, kde-format
+msgid "Format in scientific (exponent) notation"
+msgstr "Formatar en notación científica (expoñente)"
+
+#: codecompletion/context.cpp:449
+#, kde-format
+msgid "Format as fixed point number"
+msgstr "Formatar como un número de punto fixo"
+
+#: codecompletion/context.cpp:509
+#, kde-format
+msgid "Initialize property"
+msgstr "Inicializar a propiedade"
+
+#: codecompletion/items/functiondeclaration.cpp:81
+#, kde-format
+msgid "function"
+msgstr "Función"
+
+#: codecompletion/items/missingincludeitem.cpp:38
+#, kde-format
+msgctxt "programming; %1 is a code statement to be added in the editor"
+msgid "Add \"%1\""
+msgstr "Engadir «%1»"
+
+#: codegen/correctionfilegenerator.cpp:58
+#, kde-format
+msgid "Specify type for \"%1\"..."
+msgstr "Indique un tipo para «%1»…"
+
+#: codegen/correctionfilegenerator.cpp:108
+#, kde-format
+msgid "Function return type"
+msgstr "Tipo que devolve a función"
+
+#: codegen/correctionfilegenerator.cpp:111
+#, kde-format
+msgid "Local variable"
+msgstr "Variábel local"
+
+#: codegen/correctionfilegenerator.cpp:147
+#, kde-format
+msgid "Sorry, cannot create hints for files which are not part of a project."
+msgstr ""
+"Non é posíbel crear consellos para ficheiros que non forman parte dun "
+"proxecto."
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
+#: codegen/correctionwidget.ui:20
+#, kde-format
+msgid "Specify correct type"
+msgstr "Indique o tipo correcto"
+
+#. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
+#: codegen/correctionwidget.ui:28
+#, kde-format
+msgid "Kind:"
+msgstr "Tipo:"
+
+#. i18n: ectx: property (text), widget (QLabel, givenIdentifierLabel)
+#: codegen/correctionwidget.ui:42
+#, kde-format
+msgid "Identifier:"
+msgstr "Identificador:"
+
+#. i18n: ectx: property (text), widget (QLabel, typeLabel)
+#: codegen/correctionwidget.ui:56
+#, kde-format
+msgid "Correct type:"
+msgstr "Tipo correcto:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
+#: codegen/correctionwidget.ui:63
+#, kde-format
+msgid "Code which evaluates to the type, e.g. int()"
+msgstr "Código que avalía o tipo, como por exemplo «int()»."
+
+#. i18n: ectx: property (text), widget (QLabel, importsLabel)
+#: codegen/correctionwidget.ui:70
+#, kde-format
+msgid "Required modules:"
+msgstr "Módulos necesarios:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
+#: codegen/correctionwidget.ui:77
+#, kde-format
+msgid "A comma separated list of modules required for the type"
+msgstr "Unha lista de módulos necesarios para o tipo, separados por comas."
+
+#: debugger/debugsession.cpp:167
+#, kde-format
+msgid "The program being debugged raised an uncaught exception."
+msgstr ""
+"O programa que se está a depurar produciu unha excepción non capturada."
+
+#: debugger/debugsession.cpp:168
+#, kde-format
+msgid "You can now inspect the status of the program after it exited."
+msgstr "Agora pode inspeccionar o estado do programa unha vez saíu."
+
+#: debugger/debugsession.cpp:169
+#, kde-format
+msgid "The debugger will silently stop when the next command is triggered."
+msgstr "O depurador deterase silandeiramente cando se active a seguinte orde."
+
+#: debugger/pdblauncher.cpp:45
+#, kde-format
+msgid "A plugin to debug Python applications with pdb."
+msgstr "Un complemento para depurar aplicacións de Python con pdb."
+
+#: debugger/pdblauncher.cpp:77
+#, kde-format
+msgid "Sorry, debugging is only supported for Python 3.x applications."
+msgstr "Só se permite depurar aplicacións de Python 3.x."
+
+#: debugger/pdblauncher.cpp:78
+#, kde-format
+msgid "Unsupported interpreter"
+msgstr "Intérprete incompatíbel"
+
+#: docfilekcm/docfilemanagerwidget.cpp:37
+#, kde-format
+msgid "Failed to find a valid data directory for kdevpythonsupport."
+msgstr ""
+"Non foi posíbel atopar un directorio de datos válido para kdevpythonsupport."
+
+#: docfilekcm/docfilemanagerwidget.cpp:51
+#, kde-format
+msgid "Generate..."
+msgstr "Xerar…"
+
+#: docfilekcm/docfilemanagerwidget.cpp:53
+#, kde-format
+msgid "Import From Editor"
+msgstr "Importar desde o editor"
+
+#: docfilekcm/docfilemanagerwidget.cpp:54
+#, kde-format
+msgid ""
+"Copy the contents of the active editor window to a new file in the "
+"documentation directory"
+msgstr ""
+"Copia o contido da xanela activa do editor nun ficheiro novo no directorio "
+"da documentación"
+
+#: docfilekcm/docfilemanagerwidget.cpp:66
+#, kde-format
+msgid "Open File Manager"
+msgstr "Abrir o xestor de ficheiros"
+
+#: docfilekcm/docfilemanagerwidget.cpp:68
+#, kde-format
+msgctxt "Edit selected files"
+msgid "Edit Selected"
+msgstr "Editar o seleccionado"
+
+#: docfilekcm/docfilemanagerwidget.cpp:70
+#, kde-format
+msgid "Search Paths..."
+msgstr "Rutas de busca…"
+
+#: docfilekcm/docfilemanagerwidget.cpp:101
+#, kde-format
+msgctxt "displays a list of search paths below"
+msgid "Paths searched for documentation by kdev-python (in this order):"
+msgstr "As rutas onde kdev-python ha buscar a documentación (por orde):"
+
+#: docfilekcm/docfilemanagerwidget.cpp:141
+#, kde-format
+msgid "Enter a relative target path to copy %1 to:"
+msgstr "Insira unha ruta relativa ao obxectivo na que copiar %1:"
+
+#: docfilekcm/docfilemanagerwidget.cpp:145
+#, kde-format
+msgid ""
+"This path must match what you use in Python to import this module. For "
+"example, enter \"numpy/fft.py\" for numpy.fft"
+msgstr ""
+"Esta ruta debe coincidir coa que usa en Python para importar este módulo. "
+"Por ex., escriba «numpy/fft.py» para numpy.fft"
+
+#: docfilekcm/docfilemanagerwidget.cpp:147
+#, kde-format
+msgid "After copying, you will be editing the new document."
+msgstr "Despois de copiar, estará a editar o novo documento."
+
+#: docfilekcm/docfilemanagerwidget.cpp:166
+#, kde-format
+msgid "Please select at least one file from the list for editing."
+msgstr "Escolla polo menos un ficheiro da lista para editalo."
+
+#: docfilekcm/docfilewizard.cpp:41
+#, kde-format
+msgid "Configure the Python interpreter to use"
+msgstr "Configurar o intérprete de Python que se vai usar"
+
+#: docfilekcm/docfilewizard.cpp:44
+#, kde-format
+msgid "Python executable"
+msgstr "Executábel de Python"
+
+#: docfilekcm/docfilewizard.cpp:49
+#, kde-format
+msgid "Select a python module to generate documentation for"
+msgstr "Escoller un módulo de Python para o que xerar a documentación"
+
+#: docfilekcm/docfilewizard.cpp:53
+#, kde-format
+msgctxt "refers to selecting a python module to perform some operation on"
+msgid "Target module (e.g. \"math\")"
+msgstr "Módulo de destino (por ex. «math»)"
+
+#: docfilekcm/docfilewizard.cpp:55
+#, kde-format
+msgid "Output filename"
+msgstr "Nome do ficheiro de saída"
+
+#: docfilekcm/docfilewizard.cpp:61
+#, kde-format
+msgid "Status and output"
+msgstr "Estado e saída"
+
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
+#, kde-format
+msgid "The process has not been run yet."
+msgstr "O proceso aínda non se executou."
+
+#: docfilekcm/docfilewizard.cpp:75
+#, kde-format
+msgid "Script output"
+msgstr "Saída do guión"
+
+#: docfilekcm/docfilewizard.cpp:76
+#, kde-format
+msgid "Results"
+msgstr "Resultados"
+
+#: docfilekcm/docfilewizard.cpp:82
+#, kde-format
+msgid "Close"
+msgstr "Pechar"
+
+#: docfilekcm/docfilewizard.cpp:84
+#, kde-format
+msgid "Save and close"
+msgstr "Gardar e pechar"
+
+#: docfilekcm/docfilewizard.cpp:87
+#, kde-format
+msgid "Generate"
+msgstr "Xerar"
+
+#: docfilekcm/docfilewizard.cpp:138
+#, kde-format
+msgid "Couldn't find the introspect.py script; check your installation!"
+msgstr "Non foi posíbel atopar o guión introspect.py, comprobe a instalación!"
+
+#: docfilekcm/docfilewizard.cpp:142
+#, kde-format
+msgid ""
+"Couldn't find a valid kdev-python data directory; check your installation!"
+msgstr ""
+"Non foi posíbel atopar un directorio de datos de kdev-python válido; "
+"comprobe a instalación!"
+
+#: docfilekcm/docfilewizard.cpp:148
+#, kde-format
+msgid "Invalid output filename"
+msgstr "O nome do ficheiro de saída é incorrecto"
+
+#: docfilekcm/docfilewizard.cpp:188
+#, kde-format
+msgid ""
+"The output file <br/>%1<br/> already exists, do you want to overwrite it?"
+msgstr "O ficheiro de saída <br/>%1<br/> xa existe, quere sobrescribilo?"
+
+#: docfilekcm/docfilewizard.cpp:203
+#, kde-format
+msgid ""
+"This file contains auto-generated documentation extracted\n"
+"from python run-time information. It is analyzed by KDevelop\n"
+"to offer features such as code-completion and syntax highlighting.\n"
+"If you discover errors in KDevelop's support for this module,\n"
+"you can edit this file to correct the errors, e.g. you can add\n"
+"additional return statements to functions to control the return\n"
+"type to be used for that function by the analyzer.\n"
+"Make sure to keep a copy of your changes so you don't accidentally\n"
+"overwrite them by re-generating the file.\n"
+msgstr ""
+"Este ficheiro contén documentación xerada automaticamente que se extraeu da\n"
+"información do ambiente de execución de python. KDevelop analízao\n"
+"para ofrecer funcións como completación de código e realce de sintaxe.\n"
+"Se descobre erros neste módulo de KDevelop, pode editar este ficheiro para\n"
+"corrixilos, por exemplo engadindo sentenzas adicionais de retorno en "
+"funcións\n"
+"para controlar o tipo de retorno que usa o analizador para esa función.\n"
+"Asegúrese de conservar unha copia das súas modificacións de maneira que non\n"
+"perda accidentalmente os seus cambios ao xerar de novo o ficheiro.\n"
+
+#: docfilekcm/kcm_docfiles.cpp:48
+#, kde-format
+msgid "Manage Documentation Files Used by the Python Plugin"
+msgstr ""
+"Xestiona os ficheiros de documentación usados por complemento de Python"
+
+#: docfilekcm/kcm_docfiles.cpp:58
+#, kde-format
+msgid "Python Documentation"
+msgstr "Documentación de Python"
+
+#: duchain/assistants/missingincludeassistant.cpp:48
+#, kde-format
+msgid "Generate documentation for module \"%1\"..."
+msgstr "Xerar a documentación do módulo «%1»…"
+
+#: duchain/declarationbuilder.cpp:705
+#, kde-format
+msgid "Module \"%1\" not found"
+msgstr "Non se atopou o módulo «%1»."
+
+#: duchain/declarationbuilder.cpp:776
+#, kde-format
+msgid "Declaration for \"%1\" not found in specified module"
+msgstr "Non se atopou a declaración de «%1» no módulo indicado."
+
+#: duchain/declarationbuilder.cpp:1584
+#, kde-format
+msgid "First argument of __new__ method is not called cls, this is deprecated"
+msgstr ""
+"O primeiro argumento do método __new__  non se chama «cls», iso está "
+"obsoleto."
+
+#: duchain/declarationbuilder.cpp:1589
+#, kde-format
+msgid "First argument of class method is not called self, this is deprecated"
+msgstr ""
+"O primeiro argumento do método da clase non se chama «self», iso está "
+"obsoleto."
+
+#: duchain/declarationbuilder.cpp:1609
+#, kde-format
+msgid ""
+"Non-static class method without arguments, must have at least one (self)"
+msgstr ""
+"Método non estático dunha clase sen argumentos; debe ter polo menos un: "
+"«self»."
+
+#: duchain/declarationbuilder.cpp:1770
+#, kde-format
+msgid "Return statement not within function declaration"
+msgstr "A instrución de devolución non está dentro da declaración da función."
+
+#: duchain/navigation/declarationnavigationcontext.cpp:67
+#, kde-format
+msgctxt "refers to an unknown type in programming"
+msgid "unknown"
+msgstr "descoñecido"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:83
+#: duchain/navigation/declarationnavigationcontext.cpp:99
+#: duchain/types/indexedcontainer.cpp:78
+#, kde-format
+msgctxt "as in list of int, set of string"
+msgid "%1 of %2"
+msgstr "%1 de %2"
+
+#: duchain/types/unsuretype.cpp:101
+#, kde-format
+msgctxt "some object that can be called, in programming"
+msgid "<callable>"
+msgstr "<chamábel>"
+
+#: duchain/types/unsuretype.cpp:106
+#, kde-format
+msgctxt "a set with some elements"
+msgid "<iterable>"
+msgstr "<iterábel>"
+
+#: duchain/types/unsuretype.cpp:127
+#, kde-format
+msgctxt "refers to a type (in program code) which is not known"
+msgid "mixed"
+msgstr "varios"
+
+#: duchain/types/unsuretype.cpp:130
+#, kde-format
+msgctxt "refers to a type (in program code) which can have multiple values"
+msgid "unsure (%1)"
+msgstr "inseguro (%1)"
+
+#: duchain/usebuilder.cpp:83
+#, kde-format
+msgid "Undefined variable: %1"
+msgstr "Variábel indefinida: %1"
+
+#: duchain/usebuilder.cpp:130
+#, kde-format
+msgid "Attribute \"%1\" not found on accessed object"
+msgstr "Non se atopou o atributo «%1» no obxecto ao que se accedeu."
+
+#: pep8kcm/kcm_pep8.cpp:63
+#, kde-format
+msgid "Configure Python Style Checking"
+msgstr "Configurar a comprobación do estilo de Python"
+
+#: pep8kcm/kcm_pep8.cpp:73
+#, kde-format
+msgid "Python Style Checking"
+msgstr "Comprobación do estilo de Python"
+
+#. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
+#: pep8kcm/pep8.ui:29
+#, kde-format
+msgid "Enable Style Checking"
+msgstr "Activar a comprobación de estilo"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
+#: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
+#, kde-format
+msgid "Comma-separated list of error codes"
+msgstr "Lista de códigos de erro separados por comas."
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: pep8kcm/pep8.ui:51
+#, kde-format
+msgid "Enable these errors and warnings:"
+msgstr "Activar estes erros e avisos:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: pep8kcm/pep8.ui:65
+#, kde-format
+msgid "Maximum line length:"
+msgstr "Anchura de liña máxima:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: pep8kcm/pep8.ui:88
+#, kde-format
+msgid "Disable these errors and warnings:"
+msgstr "Desactivar estes erros e avisos:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: pep8kcm/pep8.ui:100
+#, kde-format
+msgid ""
+"The `pycodestyle` Python module must be installed in order to use style "
+"checking."
+msgstr ""
+"O módulo de Python `pycodestyle` debe estar instalado para usar a "
+"comprobación de estilo."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: projectconfig/projectconfig.ui:19
+#, kde-format
+msgid "Python interpreter:"
+msgstr "Intérprete de Python:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
+#: projectconfig/projectconfig.ui:26
+#, kde-format
+msgid "Full path to python interpreter, leave empty for default"
+msgstr ""
+"Ruta completa ao intérprete de Python, deixar baleiro de maneira "
+"predeterminada."
+
+#: projectconfig/projectconfigpage.cpp:47
+#, kde-format
+msgid "Python Settings"
+msgstr "Configuración de Python"
+
+#: pythonlanguagesupport.cpp:140
+#, kde-format
+msgid "Format source with the autopep8 formatter."
+msgstr "Formatar o código con «autopep8»."
+
+# well-spelled: comprobador
+#: pythonstylechecking.cpp:107
+#, kde-format
+msgid "PEP8 checker error: %1"
+msgstr "Erro do comprobador PEP8: %1"
+
+# well-spelled: comprobador
+#: pythonstylechecking.cpp:209
+#, kde-format
+msgid "The PEP8 syntax checker does not seem to work correctly."
+msgstr "O comprobador de sintaxe PEP8 non parece funcionar correctamente."
+
+#~ msgid "%1 of ( %2 )"
+#~ msgstr "%1 de ( %2 )"
+
+#~ msgid "Full path to the PEP8 checker to use:"
+#~ msgstr "Ruta completa ao comprobador PEP8:"
+
+#~ msgid "PEP8 checker arguments:"
+#~ msgstr "Argumentos do corrector PEP8:"
+
+#~ msgid "Download new"
+#~ msgstr "Transferir as novas"
+
+#~ msgid "Share selected"
+#~ msgstr "Compartir o escollido"
+
+#~ msgid "Unused computation result"
+#~ msgstr "Resultado da computación sen usar"
+
+#~ msgid "Python Debugger (pdb) Support"
+#~ msgstr "Compatibilidade co depurador de Python (PDB)"
+
+#~ msgid "Support for the Python Debugger"
+#~ msgstr "Compatibilidade co depurador de Python."
+
+#~ msgid "Sven Brauch"
+#~ msgstr "Sven Brauch"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Python Support"
+#~ msgstr "Compatibilidade con Python"
+
+#~ msgid "Support for the Python Scripting Language"
+#~ msgstr "Compatibilidade coa linguaxe de scripting Python."
+
+#~ msgctxt ""
+#~ "refers to types of variables in programming, as in \"various possible "
+#~ "types\""
+#~ msgid "various types"
+#~ msgstr "varios tipos"
+
+#~ msgid "%1 of %2 : %3"
+#~ msgstr "%1 de %2 : %3"
+
+#~ msgid "%1 of %2"
+#~ msgstr "%1 de %2"
+
+#~ msgid "Rename \"%1\"..."
+#~ msgstr "Renomear «%1»…"
+
+#~ msgid "No declaration under cursor"
+#~ msgstr "Non hai unha declaración baixo o cursor."
+
+#~ msgid "Declaration is located in non-writeable file %1."
+#~ msgstr ""
+#~ "A declaración atópase no ficheiro «%1», no que non se pode escribir."
+
+#~ msgid "Rename %1"
+#~ msgstr "Renomear «%1»"
+
+#~ msgid "New name:"
+#~ msgstr "Novo nome:"
+
+#~ msgid "Rename"
+#~ msgstr "Renomear"
+
+#~ msgid ""
+#~ "Note: All overloaded functions, overloads, forward-declarations, etc. "
+#~ "will be renamed too"
+#~ msgstr ""
+#~ "Nota: todas as funcións, sobrecargas, declaracións previas, e demais "
+#~ "tamén se renomearán."
+
+#~ msgid "Cancel"
+#~ msgstr "Cancelar"
+
+#~ msgid "Uses"
+#~ msgstr "Usa"
+
+#~ msgid "Declaration Info"
+#~ msgstr "Información da declaración"
+
+#~ msgid "Applying changes failed: %1"
+#~ msgstr "Non foi posíbel aplicar os cambios: %1"
+
+#~ msgid "Insert left-aligned replacement variable"
+#~ msgstr "Inserir unha variábel de substitución aliñada á esquerda"
+
+#~ msgid "Insert right-aligned replacement variable"
+#~ msgstr "Inserir unha variábel de substitución aliñada á dereita"
+
+#~ msgid "Insert variable with specified precision"
+#~ msgstr "Inserir unha variábel coa precisión especificada"
+
+#~ msgid "list"
+#~ msgstr "lista"
+
+#~ msgid "dictionary"
+#~ msgstr "dicionario"
+
+#~ msgctxt "as in \"list of string\", \"set of integer\""
+#~ msgid " of "
+#~ msgstr " de "
+
+#~ msgid "python-parser"
+#~ msgstr "python-parser"
+
+#~ msgid "Parse Python project files"
+#~ msgstr "Analiza a sintaxe dos ficheiros de proxecto de Python"
+
+#~ msgid "Enable output of the debug AST"
+#~ msgstr "Activa a saída do AST de depuración"

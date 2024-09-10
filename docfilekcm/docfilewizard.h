@@ -41,7 +41,7 @@ private:
     QPushButton* runButton;
     QPushButton* saveButton;
 
-public slots:
+public Q_SLOTS:
     // Calls python to actually generate the docfile
     bool run();
     void updateOutputFilename(const QString& newModuleName);

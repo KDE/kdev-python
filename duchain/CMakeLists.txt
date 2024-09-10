@@ -39,7 +39,7 @@ generate_export_header( kdevpythonduchain EXPORT_MACRO_NAME KDEVPYTHONDUCHAIN_EX
 )
 
 target_link_libraries( kdevpythonduchain LINK_PRIVATE
-    KF5::TextEditor
+    KF6::TextEditor
     KDev::Interfaces
     KDev::Language
     KDev::Project
@@ -47,7 +47,7 @@ target_link_libraries( kdevpythonduchain LINK_PRIVATE
     kdevpythonparser
 )
 
-install(TARGETS kdevpythonduchain DESTINATION ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kdevpythonduchain DESTINATION ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 add_subdirectory(navigation)

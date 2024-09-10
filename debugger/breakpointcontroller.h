@@ -19,7 +19,7 @@ class BreakpointController : public KDevelop::IBreakpointController
 Q_OBJECT
 public:
     BreakpointController(IDebugSession* parent);
-public slots:
+public Q_SLOTS:
     /**
      * @brief Handles events in the debug session.
      * It is used here to send breakpoints to the debugger which were created by the user

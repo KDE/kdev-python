@@ -1,0 +1,726 @@
+# translation of kdevpython.po to Estonian
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Marek Laane <bald@smail.ee>, 2009, 2010, 2011, 2012, 2014, 2016, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: kdevpython\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"PO-Revision-Date: 2020-01-15 14:53+0200\n"
+"Last-Translator: Marek Laane <qiilaq69@gmail.com>\n"
+"Language-Team: Estonian <kde-et@lists.linux.ee>\n"
+"Language: et\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Lokalize 19.08.1\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Marek Laane"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "qiilaq69@gmail.com"
+
+#: codecompletion/context.cpp:115
+#, kde-format
+msgid "insert Shebang line"
+msgstr "Shebang-rea lisamine"
+
+#: codecompletion/context.cpp:123
+#, kde-format
+msgid "specify document encoding"
+msgstr "dokumendi kodeeringu määramine"
+
+#: codecompletion/context.cpp:125
+#, kde-format
+msgid "Add file header"
+msgstr "Lisa failipäis"
+
+#: codecompletion/context.cpp:175
+#, kde-format
+msgid "specify default parameter"
+msgstr "vaikeparameetri määramine"
+
+#: codecompletion/context.cpp:386
+#, kde-format
+msgid "Insert next positional variable"
+msgstr "Lisa järgmine positsiooniline muutuja"
+
+#: codecompletion/context.cpp:391
+#, kde-format
+msgid "Insert named variable"
+msgstr "Lisa nimega muutuja"
+
+#: codecompletion/context.cpp:427
+#, kde-format
+msgid "Format using str()"
+msgstr "Vorminda str() abil"
+
+#: codecompletion/context.cpp:428
+#, kde-format
+msgid "Format using repr()"
+msgstr "Vorminda repr() abil"
+
+#: codecompletion/context.cpp:436
+#, kde-format
+msgid "Format as left-aligned"
+msgstr "Vorminda vasakjoondatuna"
+
+#: codecompletion/context.cpp:437
+#, kde-format
+msgid "Format as right-aligned"
+msgstr "Vorminda paremjoondatuna"
+
+#: codecompletion/context.cpp:438
+#, kde-format
+msgid "Format as centered"
+msgstr "Vorminda keskjoondatuna"
+
+#: codecompletion/context.cpp:442
+#, kde-format
+msgid "Specify precision"
+msgstr "Määra täpsus"
+
+#: codecompletion/context.cpp:443
+#, kde-format
+msgid "Format as percentage"
+msgstr "Vorminda protsendina"
+
+#: codecompletion/context.cpp:444
+#, kde-format
+msgid "Format as character"
+msgstr "Vorminda tähena"
+
+#: codecompletion/context.cpp:445
+#, kde-format
+msgid "Format as binary number"
+msgstr "Vorminda kahendarvuna"
+
+#: codecompletion/context.cpp:446
+#, kde-format
+msgid "Format as octal number"
+msgstr "Vorminda kaheksandarvuna"
+
+#: codecompletion/context.cpp:447
+#, kde-format
+msgid "Format as hexadecimal number"
+msgstr "Vorminda kuueteistkümnendarvuna"
+
+#: codecompletion/context.cpp:448
+#, kde-format
+msgid "Format in scientific (exponent) notation"
+msgstr "Vorminda teaduslikus (astendus)tähistuses"
+
+#: codecompletion/context.cpp:449
+#, kde-format
+msgid "Format as fixed point number"
+msgstr "Vorminda püsikomaarvuna"
+
+#: codecompletion/context.cpp:509
+#, kde-format
+msgid "Initialize property"
+msgstr "Omaduse initsialiseerimine"
+
+#: codecompletion/items/functiondeclaration.cpp:81
+#, kde-format
+msgid "function"
+msgstr "funktsioon"
+
+#: codecompletion/items/missingincludeitem.cpp:38
+#, kde-format
+msgctxt "programming; %1 is a code statement to be added in the editor"
+msgid "Add \"%1\""
+msgstr "\"%1\" lisamine"
+
+#: codegen/correctionfilegenerator.cpp:58
+#, kde-format
+msgid "Specify type for \"%1\"..."
+msgstr "Määra \"%1\" tüüp..."
+
+#: codegen/correctionfilegenerator.cpp:108
+#, kde-format
+msgid "Function return type"
+msgstr "Funktsiooni tagastustüüp"
+
+#: codegen/correctionfilegenerator.cpp:111
+#, kde-format
+msgid "Local variable"
+msgstr "Kohalik muutuja"
+
+#: codegen/correctionfilegenerator.cpp:147
+#, kde-format
+msgid "Sorry, cannot create hints for files which are not part of a project."
+msgstr "Vabandust, vihjeid ei saa luua failidele, mis ei kuulu projekti."
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
+#: codegen/correctionwidget.ui:20
+#, kde-format
+msgid "Specify correct type"
+msgstr "Korrektse tüübi määramine"
+
+#. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
+#: codegen/correctionwidget.ui:28
+#, kde-format
+msgid "Kind:"
+msgstr "Liik:"
+
+#. i18n: ectx: property (text), widget (QLabel, givenIdentifierLabel)
+#: codegen/correctionwidget.ui:42
+#, kde-format
+msgid "Identifier:"
+msgstr "Identifikaator:"
+
+#. i18n: ectx: property (text), widget (QLabel, typeLabel)
+#: codegen/correctionwidget.ui:56
+#, kde-format
+msgid "Correct type:"
+msgstr "Korrektne tüüp:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
+#: codegen/correctionwidget.ui:63
+#, kde-format
+msgid "Code which evaluates to the type, e.g. int()"
+msgstr "Tüüpi hindav kood, nt. int()"
+
+#. i18n: ectx: property (text), widget (QLabel, importsLabel)
+#: codegen/correctionwidget.ui:70
+#, kde-format
+msgid "Required modules:"
+msgstr "Nõutavad moodulid:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
+#: codegen/correctionwidget.ui:77
+#, kde-format
+msgid "A comma separated list of modules required for the type"
+msgstr "Tüübile vajalike moodulite komadega eraldatud loend"
+
+#: debugger/debugsession.cpp:167
+#, kde-format
+msgid "The program being debugged raised an uncaught exception."
+msgstr "Silutav programm tekitas tabamata erindi."
+
+#: debugger/debugsession.cpp:168
+#, kde-format
+msgid "You can now inspect the status of the program after it exited."
+msgstr "Pärast programmi töö lõppemist võib nüüd uurida selle olekut."
+
+#: debugger/debugsession.cpp:169
+#, kde-format
+msgid "The debugger will silently stop when the next command is triggered."
+msgstr "Silur peatub vaikselt, kui käivitatakse järgmine käsk."
+
+#: debugger/pdblauncher.cpp:45
+#, kde-format
+msgid "A plugin to debug Python applications with pdb."
+msgstr "Plugin Pythoni rakenduste silumiseks pdb-s."
+
+#: debugger/pdblauncher.cpp:77
+#, kde-format
+msgid "Sorry, debugging is only supported for Python 3.x applications."
+msgstr "Vabandust, silumine on toetatud ainult Python 3.x rakenduste korral."
+
+#: debugger/pdblauncher.cpp:78
+#, kde-format
+msgid "Unsupported interpreter"
+msgstr "Toetamata interpretaator"
+
+#: docfilekcm/docfilemanagerwidget.cpp:37
+#, kde-format
+msgid "Failed to find a valid data directory for kdevpythonsupport."
+msgstr "Kdevpythonsupportile ei leitud korrektset andmekataloogi."
+
+#: docfilekcm/docfilemanagerwidget.cpp:51
+#, kde-format
+msgid "Generate..."
+msgstr "Genereeri..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:53
+#, kde-format
+msgid "Import From Editor"
+msgstr "Impordi redaktorist"
+
+#: docfilekcm/docfilemanagerwidget.cpp:54
+#, kde-format
+msgid ""
+"Copy the contents of the active editor window to a new file in the "
+"documentation directory"
+msgstr ""
+"Aktiivse redaktoriakna sisu kopeerimine uude faili "
+"dokumentatsioonikataloogis."
+
+#: docfilekcm/docfilemanagerwidget.cpp:66
+#, kde-format
+msgid "Open File Manager"
+msgstr "Ava failihaldur"
+
+#: docfilekcm/docfilemanagerwidget.cpp:68
+#, kde-format
+msgctxt "Edit selected files"
+msgid "Edit Selected"
+msgstr "Muuda valituid"
+
+#: docfilekcm/docfilemanagerwidget.cpp:70
+#, kde-format
+msgid "Search Paths..."
+msgstr "Otsinguteed..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:101
+#, kde-format
+msgctxt "displays a list of search paths below"
+msgid "Paths searched for documentation by kdev-python (in this order):"
+msgstr "Kdev-pythoni otsitud dokumentatsiooniasukohad (selles järjekorras):"
+
+#: docfilekcm/docfilemanagerwidget.cpp:141
+#, kde-format
+msgid "Enter a relative target path to copy %1 to:"
+msgstr "Suhteline asukoht, kuhu %1 kopeerida:"
+
+#: docfilekcm/docfilemanagerwidget.cpp:145
+#, kde-format
+msgid ""
+"This path must match what you use in Python to import this module. For "
+"example, enter \"numpy/fft.py\" for numpy.fft"
+msgstr ""
+"See asukoht peab vastama sellele, mida kasutab Pythonis selle mooduli "
+"importimiseks. Näiteks numpy.fft korral kirjuta \"numpy/fft.py\"."
+
+#: docfilekcm/docfilemanagerwidget.cpp:147
+#, kde-format
+msgid "After copying, you will be editing the new document."
+msgstr "Kopeerimise järel saad uut dokumenti muuta."
+
+#: docfilekcm/docfilemanagerwidget.cpp:166
+#, kde-format
+msgid "Please select at least one file from the list for editing."
+msgstr "Palun vali redigeerimiseks nimekirjast vähemalt üks fail."
+
+#: docfilekcm/docfilewizard.cpp:41
+#, kde-format
+msgid "Configure the Python interpreter to use"
+msgstr "Kasutatava Pythoni interpretaatori seadistamine"
+
+#: docfilekcm/docfilewizard.cpp:44
+#, kde-format
+msgid "Python executable"
+msgstr "Pythoni täitmisfail"
+
+#: docfilekcm/docfilewizard.cpp:49
+#, kde-format
+msgid "Select a python module to generate documentation for"
+msgstr "Pythoni mooduli valimine, millele dokumentatsiooni genereerida"
+
+#: docfilekcm/docfilewizard.cpp:53
+#, kde-format
+msgctxt "refers to selecting a python module to perform some operation on"
+msgid "Target module (e.g. \"math\")"
+msgstr "Sihtmoodul (nt. \"math\")"
+
+#: docfilekcm/docfilewizard.cpp:55
+#, kde-format
+msgid "Output filename"
+msgstr "Väljundfaili nimi"
+
+#: docfilekcm/docfilewizard.cpp:61
+#, kde-format
+msgid "Status and output"
+msgstr "Olek ja väljund"
+
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
+#, kde-format
+msgid "The process has not been run yet."
+msgstr "Protsessi ei ole veel käivitatud."
+
+#: docfilekcm/docfilewizard.cpp:75
+#, kde-format
+msgid "Script output"
+msgstr "Skripti väljund"
+
+#: docfilekcm/docfilewizard.cpp:76
+#, kde-format
+msgid "Results"
+msgstr "Tulemused"
+
+#: docfilekcm/docfilewizard.cpp:82
+#, kde-format
+msgid "Close"
+msgstr "Sulge"
+
+#: docfilekcm/docfilewizard.cpp:84
+#, kde-format
+msgid "Save and close"
+msgstr "Salvesta ja sulge"
+
+#: docfilekcm/docfilewizard.cpp:87
+#, kde-format
+msgid "Generate"
+msgstr "Genereeri"
+
+#: docfilekcm/docfilewizard.cpp:138
+#, kde-format
+msgid "Couldn't find the introspect.py script; check your installation!"
+msgstr "Skripti introspect.py ei leitud, kontrolli oma paigaldust!"
+
+#: docfilekcm/docfilewizard.cpp:142
+#, kde-format
+msgid ""
+"Couldn't find a valid kdev-python data directory; check your installation!"
+msgstr ""
+"Korrektset kdev-pythoni andmekataloogi ei leitud, kontrolli oma paigaldust!"
+
+#: docfilekcm/docfilewizard.cpp:148
+#, kde-format
+msgid "Invalid output filename"
+msgstr "Vigane väljundfaili nimi"
+
+#: docfilekcm/docfilewizard.cpp:188
+#, kde-format
+msgid ""
+"The output file <br/>%1<br/> already exists, do you want to overwrite it?"
+msgstr "Väljundfail <br/>%1<br/> on juba olemas, kas kirjutada see üle?"
+
+#: docfilekcm/docfilewizard.cpp:203
+#, kde-format
+msgid ""
+"This file contains auto-generated documentation extracted\n"
+"from python run-time information. It is analyzed by KDevelop\n"
+"to offer features such as code-completion and syntax highlighting.\n"
+"If you discover errors in KDevelop's support for this module,\n"
+"you can edit this file to correct the errors, e.g. you can add\n"
+"additional return statements to functions to control the return\n"
+"type to be used for that function by the analyzer.\n"
+"Make sure to keep a copy of your changes so you don't accidentally\n"
+"overwrite them by re-generating the file.\n"
+msgstr ""
+"See fail sisaldab automaatselt genereeritud dokumentatsiooni,\n"
+"mis on eksraktitud Pythoni käitusaja teabest. KDevelop analüüsib\n"
+"seda niisuguste võimaluste pakkumiseks, nagu automaatne\n"
+"lõpetamine ja süntaksi esiletõstmine. Kui avastad vigu KDevelopi\n"
+"toetuses sellele moodulile, võid vigade parandamiseks faili muuta,\n"
+"nt. lisada funktsioonidele täiendavaid tagastuslauseid, millega\n"
+"kontrollida tagastatavat tüüpi, mida selle funktsiooni korral\n"
+"analüsaator kasutab.\n"
+"Hoia kindlasti oma muutustest koopia alles, et sa ei kirjutaks neid\n"
+"kogemata üle, kui faili regenereerid.\n"
+
+#: docfilekcm/kcm_docfiles.cpp:48
+#, kde-format
+msgid "Manage Documentation Files Used by the Python Plugin"
+msgstr "Pythoni plugina kasutatavate dokumentatsioonifailide haldamine"
+
+#: docfilekcm/kcm_docfiles.cpp:58
+#, kde-format
+msgid "Python Documentation"
+msgstr "Pythoni dokumentatsioon"
+
+#: duchain/assistants/missingincludeassistant.cpp:48
+#, kde-format
+msgid "Generate documentation for module \"%1\"..."
+msgstr "Mooduli \"%1\" dokumentatsiooni genereerimine..."
+
+#: duchain/declarationbuilder.cpp:705
+#, kde-format
+msgid "Module \"%1\" not found"
+msgstr "Moodulit \"%1\" ei leitud."
+
+#: duchain/declarationbuilder.cpp:776
+#, kde-format
+msgid "Declaration for \"%1\" not found in specified module"
+msgstr "\"%1\" deklaratsiooni määratud moodulis ei leitud"
+
+#: duchain/declarationbuilder.cpp:1584
+#, kde-format
+msgid "First argument of __new__ method is not called cls, this is deprecated"
+msgstr "__new__ meetodi esimeseks argumendiks ei ole cls, see on iganenud"
+
+#: duchain/declarationbuilder.cpp:1589
+#, kde-format
+msgid "First argument of class method is not called self, this is deprecated"
+msgstr "Klassi meetodi esimeseks argumendiks ei ole self, see on iganenud"
+
+#: duchain/declarationbuilder.cpp:1609
+#, kde-format
+msgid ""
+"Non-static class method without arguments, must have at least one (self)"
+msgstr ""
+"Mittestaatiline klassi meetod ilma argumentidega, peab olema vähemalt üks "
+"(self)"
+
+#: duchain/declarationbuilder.cpp:1770
+#, kde-format
+msgid "Return statement not within function declaration"
+msgstr "Funktsiooni deklaratsioonis mitteleiduva lause tagastamine"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:67
+#, kde-format
+msgctxt "refers to an unknown type in programming"
+msgid "unknown"
+msgstr "tundmatu"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:83
+#: duchain/navigation/declarationnavigationcontext.cpp:99
+#: duchain/types/indexedcontainer.cpp:78
+#, kde-format
+msgctxt "as in list of int, set of string"
+msgid "%1 of %2"
+msgstr "%1 tüübiga %2"
+
+#: duchain/types/unsuretype.cpp:101
+#, kde-format
+msgctxt "some object that can be called, in programming"
+msgid "<callable>"
+msgstr "<väljakutsutav>"
+
+#: duchain/types/unsuretype.cpp:106
+#, kde-format
+msgctxt "a set with some elements"
+msgid "<iterable>"
+msgstr "<itereeritav>"
+
+#: duchain/types/unsuretype.cpp:127
+#, kde-format
+msgctxt "refers to a type (in program code) which is not known"
+msgid "mixed"
+msgstr "segatüüpi"
+
+#: duchain/types/unsuretype.cpp:130
+#, kde-format
+msgctxt "refers to a type (in program code) which can have multiple values"
+msgid "unsure (%1)"
+msgstr "kaheldav (%1)"
+
+#: duchain/usebuilder.cpp:83
+#, kde-format
+msgid "Undefined variable: %1"
+msgstr "Defineerimata muutuja: %1"
+
+#: duchain/usebuilder.cpp:130
+#, kde-format
+msgid "Attribute \"%1\" not found on accessed object"
+msgstr "Atribuuti \"%1\" pöördutud objektis ei leitud"
+
+#: pep8kcm/kcm_pep8.cpp:63
+#, kde-format
+msgid "Configure Python Style Checking"
+msgstr "Pythoni stiili kontrollimise seadistamine"
+
+#: pep8kcm/kcm_pep8.cpp:73
+#, kde-format
+msgid "Python Style Checking"
+msgstr "Pythoni stiili kontroll"
+
+#. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
+#: pep8kcm/pep8.ui:29
+#, kde-format
+msgid "Enable Style Checking"
+msgstr "Stiili kontrollimise lubamine"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
+#: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
+#, kde-format
+msgid "Comma-separated list of error codes"
+msgstr "Veakoodide komadega eraldatud loend"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: pep8kcm/pep8.ui:51
+#, kde-format
+msgid "Enable these errors and warnings:"
+msgstr "Järgmiste veateadete ja hoiatuste lubamine:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: pep8kcm/pep8.ui:65
+#, kde-format
+msgid "Maximum line length:"
+msgstr "Rea maks. pikkus:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: pep8kcm/pep8.ui:88
+#, kde-format
+msgid "Disable these errors and warnings:"
+msgstr "Järgmiste veateadete ja hoiatuste keelamine:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: pep8kcm/pep8.ui:100
+#, kde-format
+msgid ""
+"The `pycodestyle` Python module must be installed in order to use style "
+"checking."
+msgstr ""
+"Stiili kontrollimise võimaldamiseks peab olema paigaldatud Pythoni moodul "
+"\"pycodestyle\"."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: projectconfig/projectconfig.ui:19
+#, kde-format
+msgid "Python interpreter:"
+msgstr "Pythoni interpretaator:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
+#: projectconfig/projectconfig.ui:26
+#, kde-format
+msgid "Full path to python interpreter, leave empty for default"
+msgstr ""
+"Pythoni interpretaatori täielik asukoht, vaikimisi asukoha kasutamiseks jäta "
+"tühjaks"
+
+#: projectconfig/projectconfigpage.cpp:47
+#, kde-format
+msgid "Python Settings"
+msgstr "Pythoni seadistused"
+
+#: pythonlanguagesupport.cpp:140
+#, kde-format
+msgid "Format source with the autopep8 formatter."
+msgstr "Lähtekoodi vormindamine autopep8 vormindajaga."
+
+#: pythonstylechecking.cpp:107
+#, kde-format
+msgid "PEP8 checker error: %1"
+msgstr "PEP8 kontrollija viga: %1"
+
+#: pythonstylechecking.cpp:209
+#, kde-format
+msgid "The PEP8 syntax checker does not seem to work correctly."
+msgstr "Paistab, et PEP8 süntaksi kontrollija ei tööta korralikult."
+
+#~ msgid "%1 of ( %2 )"
+#~ msgstr "%1 tüübiga ( %2 )"
+
+#~ msgid "Full path to the PEP8 checker to use:"
+#~ msgstr "Kasutatava PEP8 kontrollija täielik asukoht:"
+
+#~ msgid "PEP8 checker arguments:"
+#~ msgstr "PEP8 kontrollija argumendid:"
+
+#~ msgid "Python Debugger (pdb) Support"
+#~ msgstr "Pythoni siluri (pdb) toetus"
+
+#~ msgid "Support for the Python Debugger"
+#~ msgstr "Pythoni siluri toetus"
+
+#~ msgid "Sven Brauch"
+#~ msgstr "Sven Brauch"
+
+#~ msgid "Author"
+#~ msgstr "Autor"
+
+#~ msgid "Python Support"
+#~ msgstr "Pythoni toetus"
+
+#~ msgid "Support for the Python Scripting Language"
+#~ msgstr "Pythoni skriptikeele toetus"
+
+#~ msgid "%1 of %2 : %3"
+#~ msgstr "%1 tüübiga %2 : %3"
+
+#~ msgid "%1 of %2"
+#~ msgstr "%1 tüübiga %2"
+
+#~ msgid "Rename \"%1\"..."
+#~ msgstr "Muuda \"%1\" nime..."
+
+#~ msgid "No declaration under cursor"
+#~ msgstr "Kursori all pole deklaratsiooni"
+
+#~ msgid "Declaration is located in non-writeable file %1."
+#~ msgstr "Deklaratsioon asub kirjutamisõiguseta failis %1."
+
+#~ msgid "Rename %1"
+#~ msgstr "%1 nime muutmine"
+
+#~ msgid "New name:"
+#~ msgstr "Uus nimi:"
+
+#~ msgid "Rename"
+#~ msgstr "Muuda nime"
+
+#~ msgid ""
+#~ "Note: All overloaded functions, overloads, forward-declarations, etc. "
+#~ "will be renamed too"
+#~ msgstr ""
+#~ "Märkus: nime muudetakse ka kõigil ülekoormatud funktsioonidel, "
+#~ "ülekoormustel, eeldeklaratsioonidel jms."
+
+#~ msgid "Cancel"
+#~ msgstr "Loobu"
+
+#~ msgid "Uses"
+#~ msgstr "Kasutused"
+
+#~ msgid "Declaration Info"
+#~ msgstr "Deklaratsiooni teave"
+
+#~ msgid "Applying changes failed: %1"
+#~ msgstr "Muudatuste rakendamine nurjus: %1"
+
+#~ msgid "list"
+#~ msgstr "loend"
+
+#~ msgid "dictionary"
+#~ msgstr "sõnaraamat"
+
+#~ msgctxt "as in \"list of string\", \"set of integer\""
+#~ msgid " of "
+#~ msgstr " tüübiga "
+
+#~ msgid "Support for running applications in PDB"
+#~ msgstr "Rakenduste PDB-s töötamise toetus"
+
+#~ msgid "Local declarations"
+#~ msgstr "Kohalikud deklaratsioonid"
+
+#~ msgid "Global or imported declarations"
+#~ msgstr "Globaalsed või imporditud deklaratsioonid"
+
+#~ msgid "Other suggestions"
+#~ msgstr "Muud soovitused"
+
+#, fuzzy
+#~ msgid "of"
+#~ msgstr " (%1 %2-st)"
+
+#~ msgid "MainWindow"
+#~ msgstr "Peaaken"
+
+#~ msgid "Click Me!"
+#~ msgstr "Klõpsa siia!"
+
+#~ msgid "File"
+#~ msgstr "Fail"
+
+#~ msgid "Quit"
+#~ msgstr "Välju"
+
+#~ msgid "python-parser"
+#~ msgstr "python-parser"
+
+#~ msgid "Parse Python project files"
+#~ msgstr "Pythoni projektifailide parsimine"
+
+#~ msgid "Enable output of the debug AST"
+#~ msgstr "Silumise AST-i väljundi lubamine"
+
+#~ msgid ""
+#~ "Re-declaration of \"%1\" shadows a previous declaration with different "
+#~ "type"
+#~ msgstr ""
+#~ "\"%1\" taasdeklareerimine varjutab varasema teist tüüpi deklaratsiooni"
+
+#~ msgid "Could not open file '%1'"
+#~ msgstr "Faili '%1' avamine nurjus"
+
+#~ msgid "File could not be read from."
+#~ msgstr "Faili lugemine nurjus."
+
+#~ msgid "File could not be opened."
+#~ msgstr "Faili avamine nurjus."
+
+#~ msgid "File permissions prevent opening for read."
+#~ msgstr "Faili õigused takistavad selle avamist lugemiseks."

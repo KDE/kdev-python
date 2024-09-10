@@ -41,3 +41,5 @@ bool Refactoring::acceptForContextMenu(const KDevelop::Declaration* decl)
 }
 
 }
+
+#include "moc_refactoring.cpp"

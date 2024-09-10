@@ -27,7 +27,8 @@ void BreakpointController::slotEvent(IDebugSession::event_t evt)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << evt;
     if ( evt == IDebugSession::connected_to_program ) {
-        foreach ( Breakpoint* bp, breakpointModel()->breakpoints() ) {
+        const auto breakpoints = breakpointModel()->breakpoints();
+        for (Breakpoint* bp : breakpoints) {
             if ( bp->deleted() ) {
                 continue;
             }
@@ -49,3 +50,4 @@ void BreakpointController::sendMaybe(KDevelop::Breakpoint* breakpoint)
 
 }
 
+#include "moc_breakpointcontroller.cpp"

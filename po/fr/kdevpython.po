@@ -1,0 +1,733 @@
+# translation of kdevpython.po to
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+# Joëlle Cornavin <jcorn@free.fr>, 2009, 2010, 2011, 2012, 2013.
+# Vincent PINON <vpinon@kde.org>, 2013, 2014.
+# Thomas Vergnaud <thomas.vergnaud@gmx.fr>, 2015, 2017, 2018, 2022.
+# SPDX-FileCopyrightText: 2021, 2023 Xavier Besnard <xavier.besnard@kde.org>
+# Xavier Besnard <xavier.besnard@kde.org>, 2023.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kdevpython\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"PO-Revision-Date: 2023-10-13 09:41+0200\n"
+"Last-Translator: Xavier BESNARD <xavier.besnard@neuf.fr>\n"
+"Language-Team: French <kde-francophone@kde.org>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Lokalize 23.08.1\n"
+"X-Environment: kde\n"
+"X-Accelerator-Marker: &\n"
+"X-Text-Markup: kde4\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "Joëlle Cornavin, Vincent Pinon, Thomas Vergnaud"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "jcorn@free.fr, vpinon@kde.org, thomas.vergnaud@mailo.eu"
+
+#: codecompletion/context.cpp:115
+#, kde-format
+msgid "insert Shebang line"
+msgstr "Insérer une ligne « shebang »"
+
+#: codecompletion/context.cpp:123
+#, kde-format
+msgid "specify document encoding"
+msgstr "spécifier l'encodage du document"
+
+#: codecompletion/context.cpp:125
+#, kde-format
+msgid "Add file header"
+msgstr "Ajouter un en-tête de fichier"
+
+#: codecompletion/context.cpp:175
+#, kde-format
+msgid "specify default parameter"
+msgstr "spécifier un paramètre par défaut"
+
+#: codecompletion/context.cpp:386
+#, kde-format
+msgid "Insert next positional variable"
+msgstr "Insérer la variable positionnelle suivante"
+
+#: codecompletion/context.cpp:391
+#, kde-format
+msgid "Insert named variable"
+msgstr "Insérer une variable nommée"
+
+#: codecompletion/context.cpp:427
+#, kde-format
+msgid "Format using str()"
+msgstr "Mettre en forme en utilisant la fonction « str() »"
+
+#: codecompletion/context.cpp:428
+#, kde-format
+msgid "Format using repr()"
+msgstr "Mettre en forme en utilisant la fonction « repr() »"
+
+#: codecompletion/context.cpp:436
+#, kde-format
+msgid "Format as left-aligned"
+msgstr "Mettre en forme en alignant à gauche"
+
+#: codecompletion/context.cpp:437
+#, kde-format
+msgid "Format as right-aligned"
+msgstr "Mettre en forme en alignant à droite"
+
+#: codecompletion/context.cpp:438
+#, kde-format
+msgid "Format as centered"
+msgstr "Mettre en forme en centrant"
+
+#: codecompletion/context.cpp:442
+#, kde-format
+msgid "Specify precision"
+msgstr "Spécifier la précision"
+
+#: codecompletion/context.cpp:443
+#, kde-format
+msgid "Format as percentage"
+msgstr "Mettre en forme comme un pourcentage"
+
+#: codecompletion/context.cpp:444
+#, kde-format
+msgid "Format as character"
+msgstr "Mettre en forme comme un caractère"
+
+#: codecompletion/context.cpp:445
+#, kde-format
+msgid "Format as binary number"
+msgstr "Mettre en forme comme un nombre binaire"
+
+#: codecompletion/context.cpp:446
+#, kde-format
+msgid "Format as octal number"
+msgstr "Mettre en forme comme un nombre octal"
+
+#: codecompletion/context.cpp:447
+#, kde-format
+msgid "Format as hexadecimal number"
+msgstr "Mettre en forme comme un nombre hexadécimal"
+
+#: codecompletion/context.cpp:448
+#, kde-format
+msgid "Format in scientific (exponent) notation"
+msgstr "Mettre en forme avec une notation scientifique (exposant)"
+
+#: codecompletion/context.cpp:449
+#, kde-format
+msgid "Format as fixed point number"
+msgstr "Mettre en forme comme un nombre à partie décimale fixe"
+
+#: codecompletion/context.cpp:509
+#, kde-format
+msgid "Initialize property"
+msgstr "Initialiser une propriété"
+
+#: codecompletion/items/functiondeclaration.cpp:81
+#, kde-format
+msgid "function"
+msgstr "fonction"
+
+#: codecompletion/items/missingincludeitem.cpp:38
+#, kde-format
+msgctxt "programming; %1 is a code statement to be added in the editor"
+msgid "Add \"%1\""
+msgstr "Ajouter « %1 »"
+
+#: codegen/correctionfilegenerator.cpp:58
+#, kde-format
+msgid "Specify type for \"%1\"..."
+msgstr "Spécifier le type de « %1 »..."
+
+#: codegen/correctionfilegenerator.cpp:108
+#, kde-format
+msgid "Function return type"
+msgstr "Type de retour de la fonction"
+
+#: codegen/correctionfilegenerator.cpp:111
+#, kde-format
+msgid "Local variable"
+msgstr "Variable locale"
+
+#: codegen/correctionfilegenerator.cpp:147
+#, kde-format
+msgid "Sorry, cannot create hints for files which are not part of a project."
+msgstr ""
+"Impossible de créer les informations pour des fichiers qui ne font pas "
+"partie d'un projet."
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
+#: codegen/correctionwidget.ui:20
+#, kde-format
+msgid "Specify correct type"
+msgstr "Spécifier un type correct"
+
+#. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
+#: codegen/correctionwidget.ui:28
+#, kde-format
+msgid "Kind:"
+msgstr "Genre :"
+
+#. i18n: ectx: property (text), widget (QLabel, givenIdentifierLabel)
+#: codegen/correctionwidget.ui:42
+#, kde-format
+msgid "Identifier:"
+msgstr "Identifiant :"
+
+#. i18n: ectx: property (text), widget (QLabel, typeLabel)
+#: codegen/correctionwidget.ui:56
+#, kde-format
+msgid "Correct type:"
+msgstr "Type correct :"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
+#: codegen/correctionwidget.ui:63
+#, kde-format
+msgid "Code which evaluates to the type, e.g. int()"
+msgstr "Code d'évaluation vers le type (exemple : int())"
+
+#. i18n: ectx: property (text), widget (QLabel, importsLabel)
+#: codegen/correctionwidget.ui:70
+#, kde-format
+msgid "Required modules:"
+msgstr "Modules requis :"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
+#: codegen/correctionwidget.ui:77
+#, kde-format
+msgid "A comma separated list of modules required for the type"
+msgstr "Une liste séparée par des virgules des modules requis pour le type"
+
+#: debugger/debugsession.cpp:167
+#, kde-format
+msgid "The program being debugged raised an uncaught exception."
+msgstr "Le programme en cours de débogage a déclenché une exception non gérée."
+
+#: debugger/debugsession.cpp:168
+#, kde-format
+msgid "You can now inspect the status of the program after it exited."
+msgstr ""
+"Vous pouvez maintenant analyser l'état du programme après qu'il se soit "
+"terminé."
+
+#: debugger/debugsession.cpp:169
+#, kde-format
+msgid "The debugger will silently stop when the next command is triggered."
+msgstr ""
+"Le débogueur s'arrêtera silencieusement lorsque la commande suivante sera "
+"déclenchée."
+
+#: debugger/pdblauncher.cpp:45
+#, kde-format
+msgid "A plugin to debug Python applications with pdb."
+msgstr ""
+"Un module externe pour déboguer des applications en Python avec le débogueur "
+"« pdb » de Python."
+
+#: debugger/pdblauncher.cpp:77
+#, kde-format
+msgid "Sorry, debugging is only supported for Python 3.x applications."
+msgstr ""
+"Désolé, le débogage n'est pris en charge que pour les applications Python 3."
+"x."
+
+#: debugger/pdblauncher.cpp:78
+#, kde-format
+msgid "Unsupported interpreter"
+msgstr "Interpréteur non pris en charge"
+
+#: docfilekcm/docfilemanagerwidget.cpp:37
+#, kde-format
+msgid "Failed to find a valid data directory for kdevpythonsupport."
+msgstr ""
+"Il est impossible de trouver un dossier de données valable pour "
+"« kdevpythonsupport »."
+
+#: docfilekcm/docfilemanagerwidget.cpp:51
+#, kde-format
+msgid "Generate..."
+msgstr "Générer..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:53
+#, kde-format
+msgid "Import From Editor"
+msgstr "Importer depuis l'éditeur"
+
+#: docfilekcm/docfilemanagerwidget.cpp:54
+#, kde-format
+msgid ""
+"Copy the contents of the active editor window to a new file in the "
+"documentation directory"
+msgstr ""
+"Copier le contenu de la fenêtre d'éditeur active dans un nouveau fichier "
+"dans le dossier de documentation"
+
+#: docfilekcm/docfilemanagerwidget.cpp:66
+#, kde-format
+msgid "Open File Manager"
+msgstr "Ouvrir le gestionnaire de fichiers"
+
+#: docfilekcm/docfilemanagerwidget.cpp:68
+#, kde-format
+msgctxt "Edit selected files"
+msgid "Edit Selected"
+msgstr "Modifier la sélection"
+
+#: docfilekcm/docfilemanagerwidget.cpp:70
+#, kde-format
+msgid "Search Paths..."
+msgstr "Emplacements de recherche…"
+
+#: docfilekcm/docfilemanagerwidget.cpp:101
+#, kde-format
+msgctxt "displays a list of search paths below"
+msgid "Paths searched for documentation by kdev-python (in this order):"
+msgstr ""
+"Emplacements cherchés par la documentation par « kdev-python » (dans cet "
+"ordre) :"
+
+#: docfilekcm/docfilemanagerwidget.cpp:141
+#, kde-format
+msgid "Enter a relative target path to copy %1 to:"
+msgstr "Saisissez un emplacement de cible relatif pour copier %1 dans :"
+
+#: docfilekcm/docfilemanagerwidget.cpp:145
+#, kde-format
+msgid ""
+"This path must match what you use in Python to import this module. For "
+"example, enter \"numpy/fft.py\" for numpy.fft"
+msgstr ""
+"Cet emplacement doit correspondre à ce que vous utilisez dans Python pour "
+"importer ce module. Par exemple, saisissez « numpy/fft.py » pour « numpy."
+"fft »"
+
+#: docfilekcm/docfilemanagerwidget.cpp:147
+#, kde-format
+msgid "After copying, you will be editing the new document."
+msgstr "Après avoir effectué la copie, vous modifierez le nouveau document."
+
+#: docfilekcm/docfilemanagerwidget.cpp:166
+#, kde-format
+msgid "Please select at least one file from the list for editing."
+msgstr ""
+"Veuillez sélectionner au moins un fichier de la liste pour modification."
+
+#: docfilekcm/docfilewizard.cpp:41
+#, kde-format
+msgid "Configure the Python interpreter to use"
+msgstr "Configurer l'interpréteur Python à utiliser"
+
+#: docfilekcm/docfilewizard.cpp:44
+#, kde-format
+msgid "Python executable"
+msgstr "Exécutable Python"
+
+#: docfilekcm/docfilewizard.cpp:49
+#, kde-format
+msgid "Select a python module to generate documentation for"
+msgstr "Sélectionner un module Python pour lequel générer de la documentation"
+
+#: docfilekcm/docfilewizard.cpp:53
+#, kde-format
+msgctxt "refers to selecting a python module to perform some operation on"
+msgid "Target module (e.g. \"math\")"
+msgstr "Module cible (par exemple « maths »)"
+
+#: docfilekcm/docfilewizard.cpp:55
+#, kde-format
+msgid "Output filename"
+msgstr "Nom de fichier de sortie"
+
+#: docfilekcm/docfilewizard.cpp:61
+#, kde-format
+msgid "Status and output"
+msgstr "État et sortie"
+
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
+#, kde-format
+msgid "The process has not been run yet."
+msgstr "Le processus n'a pas encore été lancé."
+
+#: docfilekcm/docfilewizard.cpp:75
+#, kde-format
+msgid "Script output"
+msgstr "Sortie du script"
+
+#: docfilekcm/docfilewizard.cpp:76
+#, kde-format
+msgid "Results"
+msgstr "Résultats"
+
+#: docfilekcm/docfilewizard.cpp:82
+#, kde-format
+msgid "Close"
+msgstr "Fermer"
+
+#: docfilekcm/docfilewizard.cpp:84
+#, kde-format
+msgid "Save and close"
+msgstr "Enregistrer et fermer"
+
+#: docfilekcm/docfilewizard.cpp:87
+#, kde-format
+msgid "Generate"
+msgstr "Générer"
+
+#: docfilekcm/docfilewizard.cpp:138
+#, kde-format
+msgid "Couldn't find the introspect.py script; check your installation!"
+msgstr ""
+"Il est impossible de trouver le script « introspect.py ». Veuillez vérifier "
+"votre installation !"
+
+#: docfilekcm/docfilewizard.cpp:142
+#, kde-format
+msgid ""
+"Couldn't find a valid kdev-python data directory; check your installation!"
+msgstr ""
+"Il est impossible de trouver un dossier de données « kdev-python » valable. "
+"Veuillez vérifier votre installation !"
+
+#: docfilekcm/docfilewizard.cpp:148
+#, kde-format
+msgid "Invalid output filename"
+msgstr "Nom de fichier de sortie non valable"
+
+#: docfilekcm/docfilewizard.cpp:188
+#, kde-format
+msgid ""
+"The output file <br/>%1<br/> already exists, do you want to overwrite it?"
+msgstr "Le fichier de sortie <br/>%1<br/> existe déjà. Voulez-vous l'écraser ?"
+
+#: docfilekcm/docfilewizard.cpp:203
+#, kde-format
+msgid ""
+"This file contains auto-generated documentation extracted\n"
+"from python run-time information. It is analyzed by KDevelop\n"
+"to offer features such as code-completion and syntax highlighting.\n"
+"If you discover errors in KDevelop's support for this module,\n"
+"you can edit this file to correct the errors, e.g. you can add\n"
+"additional return statements to functions to control the return\n"
+"type to be used for that function by the analyzer.\n"
+"Make sure to keep a copy of your changes so you don't accidentally\n"
+"overwrite them by re-generating the file.\n"
+msgstr ""
+"Ce fichier contient de la documentation auto-générée extraite\n"
+"à partir des informations d'exécution de Python. Il est analysé par "
+"KDevelop\n"
+"pour offrir des fonctionnalités comme l'auto-complètement de code et la "
+"coloration syntaxique.\n"
+"Si vous découvrez des erreurs dans la prise en charge de KDevelop pour ce "
+"module, \n"
+"vous pouvez modifier ce fichier pour corriger les erreurs, c'est-à-dire que "
+"vous pouvez ajouter\n"
+"des instructions additionnelles de retour aux fonctions pour contrôler le "
+"type de retour utilisé par l'analyseur pour ces fonctions.\n"
+"Assurez-vous que vous conservez une copie de vos modifications, pour éviter "
+"des les écraser par accident lors de la re-génération du fichier.\n"
+
+#: docfilekcm/kcm_docfiles.cpp:48
+#, kde-format
+msgid "Manage Documentation Files Used by the Python Plugin"
+msgstr ""
+"Gérer les fichiers de documentation utilisés par le module externe Python"
+
+#: docfilekcm/kcm_docfiles.cpp:58
+#, kde-format
+msgid "Python Documentation"
+msgstr "Documentation Python"
+
+#: duchain/assistants/missingincludeassistant.cpp:48
+#, kde-format
+msgid "Generate documentation for module \"%1\"..."
+msgstr "Générer la documentation pour le module Python « %1 »..."
+
+#: duchain/declarationbuilder.cpp:705
+#, kde-format
+msgid "Module \"%1\" not found"
+msgstr "Module « %1 » introuvable"
+
+#: duchain/declarationbuilder.cpp:776
+#, kde-format
+msgid "Declaration for \"%1\" not found in specified module"
+msgstr ""
+"Impossible de trouver la déclaration pour « %1 » dans le module spécifié"
+
+#: duchain/declarationbuilder.cpp:1584
+#, kde-format
+msgid "First argument of __new__ method is not called cls, this is deprecated"
+msgstr ""
+"Le premier argument de la méthode __new__ n'est pas appelé « cls ». Cette "
+"utilisation est déconseillée"
+
+#: duchain/declarationbuilder.cpp:1589
+#, kde-format
+msgid "First argument of class method is not called self, this is deprecated"
+msgstr ""
+"Le premier argument de la méthode de classe n'est pas appelé lui-même. Cette "
+"utilisation est déconseillée"
+
+#: duchain/declarationbuilder.cpp:1609
+#, kde-format
+msgid ""
+"Non-static class method without arguments, must have at least one (self)"
+msgstr ""
+"Méthode de classe non statique sans argument. Elle doit en comporter au "
+"moins un (lui-même)"
+
+#: duchain/declarationbuilder.cpp:1770
+#, kde-format
+msgid "Return statement not within function declaration"
+msgstr "Instruction de retour non présente dans la déclaration de fonction"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:67
+#, kde-format
+msgctxt "refers to an unknown type in programming"
+msgid "unknown"
+msgstr "inconnu"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:83
+#: duchain/navigation/declarationnavigationcontext.cpp:99
+#: duchain/types/indexedcontainer.cpp:78
+#, kde-format
+msgctxt "as in list of int, set of string"
+msgid "%1 of %2"
+msgstr "%1 sur %2"
+
+#: duchain/types/unsuretype.cpp:101
+#, kde-format
+msgctxt "some object that can be called, in programming"
+msgid "<callable>"
+msgstr "<callable>"
+
+#: duchain/types/unsuretype.cpp:106
+#, kde-format
+msgctxt "a set with some elements"
+msgid "<iterable>"
+msgstr "<iterable>"
+
+#: duchain/types/unsuretype.cpp:127
+#, kde-format
+msgctxt "refers to a type (in program code) which is not known"
+msgid "mixed"
+msgstr "mélangé"
+
+#: duchain/types/unsuretype.cpp:130
+#, kde-format
+msgctxt "refers to a type (in program code) which can have multiple values"
+msgid "unsure (%1)"
+msgstr "peu sûr (%1)"
+
+#: duchain/usebuilder.cpp:83
+#, kde-format
+msgid "Undefined variable: %1"
+msgstr "Variable indéfinie : %1"
+
+#: duchain/usebuilder.cpp:130
+#, kde-format
+msgid "Attribute \"%1\" not found on accessed object"
+msgstr "Impossible de trouver l'attribut « %1 » dans l'objet atteint"
+
+#: pep8kcm/kcm_pep8.cpp:63
+#, kde-format
+msgid "Configure Python Style Checking"
+msgstr "Configurer la vérification de style Python"
+
+#: pep8kcm/kcm_pep8.cpp:73
+#, kde-format
+msgid "Python Style Checking"
+msgstr "Vérification de style Python"
+
+#. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
+#: pep8kcm/pep8.ui:29
+#, kde-format
+msgid "Enable Style Checking"
+msgstr "Activer la vérification de style"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
+#: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
+#, kde-format
+msgid "Comma-separated list of error codes"
+msgstr "Liste des codes d'erreur séparés par des virgules"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: pep8kcm/pep8.ui:51
+#, kde-format
+msgid "Enable these errors and warnings:"
+msgstr "Activer ces erreurs et avertissements :"
+
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: pep8kcm/pep8.ui:65
+#, kde-format
+msgid "Maximum line length:"
+msgstr "Longueur de ligne maximale :"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: pep8kcm/pep8.ui:88
+#, kde-format
+msgid "Disable these errors and warnings:"
+msgstr "Désactiver ces erreurs et avertissements :"
+
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: pep8kcm/pep8.ui:100
+#, kde-format
+msgid ""
+"The `pycodestyle` Python module must be installed in order to use style "
+"checking."
+msgstr ""
+"Le module Python « pycodestyle » doit être installé pour utiliser la "
+"vérification de style."
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: projectconfig/projectconfig.ui:19
+#, kde-format
+msgid "Python interpreter:"
+msgstr "Interpréteur Python :"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
+#: projectconfig/projectconfig.ui:26
+#, kde-format
+msgid "Full path to python interpreter, leave empty for default"
+msgstr ""
+"Emplacement complet de l'interpréteur Python ; laisser vide pour avoir la "
+"valeur par défaut"
+
+#: projectconfig/projectconfigpage.cpp:47
+#, kde-format
+msgid "Python Settings"
+msgstr "Paramètres Python"
+
+#: pythonlanguagesupport.cpp:140
+#, kde-format
+msgid "Format source with the autopep8 formatter."
+msgstr "Mettre en forme le code source avec l'outil « autopep8 »."
+
+#: pythonstylechecking.cpp:107
+#, kde-format
+msgid "PEP8 checker error: %1"
+msgstr "Erreur du vérificateur « pep8 » : %1"
+
+#: pythonstylechecking.cpp:209
+#, kde-format
+msgid "The PEP8 syntax checker does not seem to work correctly."
+msgstr ""
+"Le vérificateur de syntaxe « pep8 » ne semble pas fonctionner correctement."
+
+#~ msgid "%1 of ( %2 )"
+#~ msgstr "%1 de ( %2 )"
+
+#~ msgid "Full path to the PEP8 checker to use:"
+#~ msgstr "Emplacement complet du vérificateur « PEP8 » à utiliser :"
+
+#, fuzzy
+#~| msgid "PEP8 checker arguments:"
+#~ msgid "PEP8 checker arguments:"
+#~ msgstr "Erreur du vérificateur « PEP8 » : %1"
+
+#~ msgid "Download new"
+#~ msgstr "Télécharger un nouveau"
+
+#~ msgid "Share selected"
+#~ msgstr "Partager une sélection"
+
+#~ msgid "Unused computation result"
+#~ msgstr "Résultat de calcul inutilisé"
+
+#~ msgid "Python Debugger (pdb) Support"
+#~ msgstr "Prise en charge du débogueur pour Python (pdb)"
+
+#~ msgid "Support for the Python Debugger"
+#~ msgstr "Prise en charge du débogueur pour Python"
+
+#~ msgid "Sven Brauch"
+#~ msgstr "Sven Brauch"
+
+#~ msgid "Author"
+#~ msgstr "Auteur"
+
+#~ msgid "Python Support"
+#~ msgstr "Prise en charge de Python"
+
+#~ msgid "Support for the Python Scripting Language"
+#~ msgstr "Prise en charge du langage de scripts de Python"
+
+#~ msgctxt ""
+#~ "refers to types of variables in programming, as in \"various possible "
+#~ "types\""
+#~ msgid "various types"
+#~ msgstr "types variés"
+
+#~ msgid "%1 of %2 : %3"
+#~ msgstr "%1 de %2 : %3"
+
+#~ msgid "%1 of %2"
+#~ msgstr "%1 de %2"
+
+#~ msgid "Rename \"%1\"..."
+#~ msgstr "Renommer « %1 »..."
+
+#~ msgid "No declaration under cursor"
+#~ msgstr "Aucune déclaration locale sous le curseur"
+
+#~ msgid "Declaration is located in non-writeable file %1."
+#~ msgstr "La déclaration se trouve dans un fichier non inscriptible %1."
+
+#~ msgid "Rename %1"
+#~ msgstr "Renommer %1"
+
+#~ msgid "New name:"
+#~ msgstr "Nouveau nom :"
+
+#~ msgid "Rename"
+#~ msgstr "Renommer"
+
+#~ msgid ""
+#~ "Note: All overloaded functions, overloads, forward-declarations, etc. "
+#~ "will be renamed too"
+#~ msgstr ""
+#~ "Remarque : toutes les fonctions surchargées, les surcharges, les "
+#~ "déclarations anticipées, etc. seront renommées également"
+
+#~ msgid "Cancel"
+#~ msgstr "Annuler"
+
+#~ msgid "Uses"
+#~ msgstr "Utilisations"
+
+#~ msgid "Declaration Info"
+#~ msgstr "Informations sur les déclarations"
+
+#~ msgid "Applying changes failed: %1"
+#~ msgstr "L'application des modifications a échoué : %1"
+
+#~ msgid "list"
+#~ msgstr "liste"
+
+#~ msgid "dictionary"
+#~ msgstr "dictionnaire"
+
+#, fuzzy
+#~| msgid " of "
+#~ msgctxt "as in \"list of string\", \"set of integer\""
+#~ msgid " of "
+#~ msgstr " de "
+
+#~ msgid "Support for running applications in PDB"
+#~ msgstr ""
+#~ "Prise en charge des applications en cours de fonctionnement dans PDB"
+
+#~ msgid "Assignment to call returning nothing"
+#~ msgstr "Affectation à un appel ne retournant rien"

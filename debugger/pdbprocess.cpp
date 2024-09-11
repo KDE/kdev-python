@@ -80,10 +80,17 @@ void PdbProcess::sendControlCommand(ControlCommand code)
 
 void PdbProcess::killNow()
 {
-    if (m_debuggerProcess && m_debuggerProcess->state() != KProcess::NotRunning) {
-        m_debuggerProcess->kill();
+    if (m_exitWait || !m_debuggerProcess || m_debuggerProcess->state() == KProcess::NotRunning) {
+        return;
     }
+    // Inhibit all of our signals first and kill the debugger process.
+    m_exitWait = new QEventLoop(this);
     m_sendQueue.clear();
+    m_debuggerProcess->kill();
+    // Process events until the process is terminated.
+    while (m_debuggerProcess->state() != KProcess::NotRunning) {
+        m_exitWait->processEvents(QEventLoop::WaitForMoreEvents);
+    }
 }
 
 bool PdbProcess::tryInterrupt()
@@ -128,8 +135,10 @@ void PdbProcess::processEnded(int exitCode, QProcess::ExitStatus exitStatus)
         m_socket->disconnectFromServer();
     }
 
-    // Done.
-    Q_EMIT finished();
+    if (!m_exitWait) {
+        // Process exited voluntarily.
+        Q_EMIT finished();
+    }
 }
 
 void PdbProcess::processError(QProcess::ProcessError error)
@@ -141,7 +150,9 @@ void PdbProcess::error(QLocalSocket::LocalSocketError reason)
 {
     qCWarning(KDEV_PYTHON_DEBUGGER) << "socket error:" << reason;
 
-    Q_EMIT socketStatus(reason);
+    if (!m_exitWait) {
+        Q_EMIT socketStatus(reason);
+    }
 
     if (m_socket && m_socket->state() == QLocalSocket::ConnectedState) {
         m_socket->disconnectFromServer();
@@ -150,7 +161,7 @@ void PdbProcess::error(QLocalSocket::LocalSocketError reason)
 
 void PdbProcess::trySendFrame()
 {
-    if (m_sendQueue.isEmpty() || !m_socket) {
+    if (m_exitWait || m_sendQueue.isEmpty() || !m_socket) {
         return;
     }
 
@@ -210,8 +221,8 @@ void PdbProcess::trySendFrame()
 
 void PdbProcess::tryRecvFrame()
 {
-    if (m_socket && m_socket->state() != QLocalSocket::ConnectedState) {
-        qCCritical(KDEV_PYTHON_DEBUGGER) << "Socket not in connected state!";
+    if (m_exitWait || (m_socket && m_socket->state() != QLocalSocket::ConnectedState)) {
+        qCCritical(KDEV_PYTHON_DEBUGGER) << "Socket not in connected state or process is about to exit!";
         return;
     }
 
@@ -304,6 +315,9 @@ void PdbProcess::signalSuspended()
 
 void PdbProcess::processIoReady(int channel)
 {
+    if (m_exitWait) {
+        return;
+    }
     // the process produced some output.
     QByteArray data;
     switch (channel) {

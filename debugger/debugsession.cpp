@@ -308,6 +308,8 @@ void DebugSession::killDebugger()
     }
 
     if (m_debugger && m_debugger->instance()) {
+        // Disarm the kill timer to not repeatedly invoke us.
+        m_killTimer.stop();
         // Be gone!
         m_debugger->instance()->killNow();
     }

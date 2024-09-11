@@ -10,6 +10,7 @@
 #include <KProcess>
 
 #include <QByteArray>
+#include <QEventLoop>
 #include <QList>
 #include <QLocalSocket>
 #include <QMutex>
@@ -81,6 +82,8 @@ public:
 
     /**
      * Kill the debugger process ungracefully.
+     * @note Waits that the process has exited before returning. Also inhibits all PdbProcess signals
+     *       so e.g. finished() will not be emitted.
      */
     void killNow();
 
@@ -170,6 +173,7 @@ private:
     KProcess* m_debuggerProcess = nullptr;
     int m_exitCode = -1;
     QProcess::ExitStatus m_exitStatus = QProcess::ExitStatus::NormalExit;
+    QEventLoop* m_exitWait = nullptr;
     /// The socket.
     QLocalSocket* m_socket = nullptr;
     /// Data-frame receiving.

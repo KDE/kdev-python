@@ -19,6 +19,7 @@
   <name xml:lang="fr">Prise en charge de Python pour KDevelop</name>
   <name xml:lang="gl">Compatibilidade con Python para KDevelop</name>
   <name xml:lang="he">תמיכה של KDevelop ב־Python</name>
+  <name xml:lang="ia">Supporto de KDevelop per Python</name>
   <name xml:lang="it">Supporto Python per KDevelop</name>
   <name xml:lang="ka">KDevelop Python მხარდაჭერა</name>
   <name xml:lang="ko">KDevelop Python 지원</name>
@@ -49,6 +50,7 @@
   <summary xml:lang="fr">Prise en charge du langage Python pour KDevelop</summary>
   <summary xml:lang="gl">Compatibilidade coa linguaxe Python para KDevelop</summary>
   <summary xml:lang="he">תמיכה בשפת Python ב־KDevelop</summary>
+  <summary xml:lang="ia">Supporto de linguage Python per KDevelop</summary>
   <summary xml:lang="it">Supporto per il linguaggio Python in KDevelop</summary>
   <summary xml:lang="ka">Python ენის მხარდაჭერა KDevelop-სთვის</summary>
   <summary xml:lang="ko">KDevelop의 Python 언어 지원</summary>

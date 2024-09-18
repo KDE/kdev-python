@@ -15,8 +15,9 @@
 #include "debugsession.h"
 #include "pdbdebuggerinstance.h"
 
-#include <vector>
 #include <optional>
+#include <utility>
+#include <vector>
 
 using namespace KDevelop;
 
@@ -28,6 +29,8 @@ struct BreakpointData
     std::optional<int> breakpointId;
     /// The model breakpoint associated with the PDB breakpoint.
     KDevelop::Breakpoint* modelBreakpoint = nullptr;
+    std::pair<QString, int> location;
+    bool enabled = true;
 
     Q_DISABLE_COPY_MOVE(BreakpointData)
 
@@ -95,6 +98,8 @@ private:
 
     static inline const auto CMD_BREAK = QStringLiteral("break");
     static inline const auto CMD_CLEAR = QStringLiteral("clear");
+    static inline const auto CMD_ENABLE = QStringLiteral("enable");
+    static inline const auto CMD_DISABLE = QStringLiteral("disable");
 
     static bool isSupportedBreakpoint(Breakpoint* bp);
     static std::pair<QString, int> locationForBreakpoint(Breakpoint* bp);

@@ -59,7 +59,7 @@ void BreakpointController::breakpointAdded(int row)
 
 void BreakpointController::breakpointModelChanged(int row, BreakpointModel::ColumnFlags columns)
 {
-    columns &= BreakpointModel::LocationColumnFlag;
+    columns &= BreakpointModel::LocationColumnFlag | BreakpointModel::EnableColumnFlag;
     if (!columns) {
         return;
     }
@@ -67,8 +67,7 @@ void BreakpointController::breakpointModelChanged(int row, BreakpointModel::Colu
     auto* const modelBreakpoint = breakpointModel()->breakpoint(row);
     updateBreakpoint(modelBreakpoint);
 
-    // TODO: - implement breakpoint enable/disable state.
-    //       - implement breakpoint hit count. (feedback on breakpoint hit)
+    // TODO: - implement breakpoint hit count. (feedback on breakpoint hit)
     //       - implement breakpoint ignore hits.
     //       - implement breakpoint condition.
 }
@@ -138,6 +137,7 @@ void BreakpointController::addBreakpoint(Breakpoint* bp)
 
     // (try) insert the PDB breakpoint.
     brk->breakpointId = m_debuggerBreakpointId++;
+    brk->location = location;
     session()->debugger()->request(CMD_BREAK.arg(location), [this, brk](const ResponseData& d) {
         addHandler(d, brk);
     });
@@ -150,6 +150,12 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
         // Insertion succeeded.
         if (brk->modelBreakpoint) {
             brk->modelBreakpoint->setState(Breakpoint::CleanState);
+
+            if (!brk->modelBreakpoint->enabled()) {
+                brk->enabled = false;
+                session()->debugger()->request(CMD_DISABLE.arg(brk->breakpointId.value()));
+                session()->flushCommands();
+            }
         }
         return;
     }
@@ -165,6 +171,7 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
     const int invalidId = brk->breakpointId.value();
     // Cancel a possible already queued removeHandler()
     brk->breakpointId.reset();
+    brk->location.clear();
     // Subtract one from all PDB ids greater than invalidId to correct them.
     for (const auto& breakpoint : m_breakpoints) {
         if (breakpoint->breakpointId.value_or(-1) < invalidId) {
@@ -208,6 +215,7 @@ bool BreakpointController::removeHandler(const BreakpointDataPtr& brk)
     }
     int delId = brk->breakpointId.value();
     brk->breakpointId.reset();
+    brk->location.clear();
     session()->debugger()->request(CMD_CLEAR.arg(delId));
     return true;
 }
@@ -251,7 +259,25 @@ void BreakpointController::updateBreakpoint(Breakpoint* bp)
 
 void BreakpointController::updateHandler(const BreakpointDataPtr& brk, QString location)
 {
-    // TODO: Apply breakpoint enable/disabled state, and don't do re-insert if the location didn't change.
+    // Update just the enabled/disabled state if location is up-to-date.
+    if (brk->modelBreakpoint && brk->breakpointId && brk->location == location) {
+        brk->modelBreakpoint->setState(Breakpoint::CleanState);
+        if (brk->modelBreakpoint->enabled() == brk->enabled) {
+            // No change to location or enabled state, nothing to do.
+            return;
+        }
+        // Just the enabled state changed.
+        brk->enabled = brk->modelBreakpoint->enabled();
+        if (brk->enabled) {
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "enabling breakpoint" << brk->modelBreakpoint;
+            session()->debugger()->request(CMD_ENABLE.arg(brk->breakpointId.value()));
+        } else {
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "disabling breakpoint" << brk->modelBreakpoint;
+            session()->debugger()->request(CMD_DISABLE.arg(brk->breakpointId.value()));
+        }
+        session()->flushCommands();
+        return;
+    }
 
     // Only way to change the location is to create a new PDB breakpoint,
     // so erase the old PDB breakpoint first, if it exist.
@@ -259,6 +285,7 @@ void BreakpointController::updateHandler(const BreakpointDataPtr& brk, QString l
     // Insert only if the model breakpoint has not been deleted yet.
     if (brk->modelBreakpoint) {
         brk->breakpointId = m_debuggerBreakpointId++;
+        brk->location = location;
         session()->debugger()->request(CMD_BREAK.arg(location), [this, brk](const ResponseData& d) {
             addHandler(d, brk);
         });

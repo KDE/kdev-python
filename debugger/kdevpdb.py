@@ -1,4 +1,5 @@
 # SPDX-FileCopyrightText: 2014 Sven Brauch <svenbrauch@gmail.com>
+# SPDX-FileCopyrightText: 2024 Jarmo Tiitto <jarmo.tiitto@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 import sys

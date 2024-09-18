@@ -28,6 +28,8 @@ struct BreakpointData
     std::optional<int> breakpointId;
     /// The model breakpoint associated with the PDB breakpoint.
     KDevelop::Breakpoint* modelBreakpoint = nullptr;
+    QString location;
+    bool enabled = true;
 
     Q_DISABLE_COPY_MOVE(BreakpointData)
 
@@ -96,6 +98,8 @@ private:
     static inline const auto CMD_PASS = QStringLiteral("pass");
     static inline const auto CMD_BREAK = QStringLiteral("break %1");
     static inline const auto CMD_CLEAR = QStringLiteral("clear %1");
+    static inline const auto CMD_ENABLE = QStringLiteral("enable %1");
+    static inline const auto CMD_DISABLE = QStringLiteral("disable %1");
 
     static bool isSupportedBreakpoint(Breakpoint* bp);
     static QString locationForBreakpoint(Breakpoint* bp);

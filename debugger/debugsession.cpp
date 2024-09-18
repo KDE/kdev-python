@@ -345,6 +345,14 @@ void DebugSession::locationUpdateReady(const ResponseData& data)
         const auto file = frame.value(QStringLiteral("filename")).toString();
         const int line = frame.value(QStringLiteral("line")).toInt();
 
+        // If the file name ends with bdb.py or pdb.py we shall not report a such location to the user.
+        // Thus, automatically run() until this situation resolves.
+        if (file.endsWith(QStringLiteral("bdb.py")) || file.endsWith(QStringLiteral("pdb.py"))) {
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "stop position within debugger itself, continuing.";
+            run();
+            return;
+        }
+
         setCurrentPosition(QUrl::fromLocalFile(file), line - 1, QStringLiteral("<unknown>"));
         qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << file << line - 1;
         return;

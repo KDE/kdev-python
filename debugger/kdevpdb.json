@@ -38,6 +38,10 @@
                 "Name[x-test]": "xxSven Brauchxx",
                 "Name[zh_CN]": "Sven Brauch",
                 "Name[zh_TW]": "Sven Brauch"
+            },
+            {
+                "Email": "jarmo.tiitto@gmail.com",
+                "Name": "Jarmo Tiitto"
             }
         ],
         "Category": "Debugging",

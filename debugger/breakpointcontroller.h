@@ -75,6 +75,11 @@ public Q_SLOTS:
      **/
     void slotEvent(IDebugSession::event_t evt);
 
+    /**
+     * Report a location at where the program has stopped.
+     */
+    void programStopped(QString filename, int line);
+
 protected:
     /**
      * Note: this method exists solely to full fill KDevelop::IBreakpointController

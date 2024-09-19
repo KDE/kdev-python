@@ -13,8 +13,6 @@
 
 #include <algorithm>
 
-// TODO: BreakpointController is not yet invoking notifyHit() to tell the model a breakpoint was hit...
-
 namespace Python {
 
 BreakpointController::BreakpointController(IDebugSession* parent)
@@ -22,6 +20,7 @@ BreakpointController::BreakpointController(IDebugSession* parent)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "constructing breakpoint controller";
     connect(debugSession(), SIGNAL(event(IDebugSession::event_t)), this, SLOT(slotEvent(IDebugSession::event_t)));
+    connect(session(), &DebugSession::programStopped, this, &BreakpointController::programStopped);
 }
 
 DebugSession* BreakpointController::session()
@@ -51,6 +50,33 @@ void BreakpointController::slotEvent(IDebugSession::event_t evt)
     }
 }
 
+void BreakpointController::programStopped(QString filename, int line)
+{
+    // srclocation must be comparable with locationForBreakpoint()
+    const auto srclocation = std::make_pair(filename, line + 1);
+    for (const auto& brk : m_breakpoints) {
+        // Note: the currently inserted PDB breakpoint location is compared,
+        //       rather than the model breakpoint, which may have changed since.
+        if (!brk->breakpointId || !brk->enabled || !brk->modelBreakpoint || brk->location != srclocation) {
+            continue;
+        }
+        // A breakpoint was hit:
+        // Increment hit count. (by-pass IBreakpointController::updateHitCount() which does the same thing.)
+        brk->modelBreakpoint->setHitCount(brk->modelBreakpoint->hitCount() + 1);
+
+        // FIXME: BreakpointWidget only guarantees a update of the BreakpointDetails for columns up to ConditionColumn.
+        //        Strobe the status column as work-around to force updating of the BreakpointDetails.
+        auto state = brk->modelBreakpoint->state();
+        brk->modelBreakpoint->setState(Breakpoint::DirtyState);
+        brk->modelBreakpoint->setState(state);
+
+        // Notify.
+        int row = breakpointModel()->breakpoints().indexOf(brk->modelBreakpoint);
+        notifyHit(row, QString());
+        return;
+    }
+}
+
 void BreakpointController::breakpointAdded(int row)
 {
     auto* modelBreakpoint = breakpointModel()->breakpoint(row);
@@ -67,8 +93,7 @@ void BreakpointController::breakpointModelChanged(int row, BreakpointModel::Colu
     auto* const modelBreakpoint = breakpointModel()->breakpoint(row);
     updateBreakpoint(modelBreakpoint);
 
-    // TODO: - implement breakpoint hit count. (feedback on breakpoint hit)
-    //       - implement breakpoint ignore hits.
+    // TODO: - implement breakpoint ignore hits.
     //       - implement breakpoint condition.
 }
 
@@ -150,6 +175,7 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
     if (responseValue(data, QStringLiteral("error")).isUndefined()) {
         // Insertion succeeded.
         if (brk->modelBreakpoint) {
+            brk->modelBreakpoint->setHitCount(0);
             brk->modelBreakpoint->setState(Breakpoint::CleanState);
 
             if (!brk->modelBreakpoint->enabled()) {

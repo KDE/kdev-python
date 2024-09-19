@@ -48,7 +48,8 @@ DebugSession::DebugSession(QString interpreter, QStringList program, const QUrl&
     })
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "creating debug session";
-    m_breakpointController = new Python::BreakpointController(this);
+    auto* const breakpointController = new Python::BreakpointController(this);
+    m_breakpointController = breakpointController;
     m_variableController = new VariableController(this);
     m_frameStackModel = new PdbFrameStackModel(this);
     m_debugger = new PdbDebuggerInstance(this);
@@ -352,6 +353,8 @@ void DebugSession::locationUpdateReady(const ResponseData& data)
             run();
             return;
         }
+
+        Q_EMIT programStopped(file, line - 1);
 
         setCurrentPosition(QUrl::fromLocalFile(file), line - 1, QStringLiteral("<unknown>"));
         qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << file << line - 1;

@@ -133,6 +133,9 @@ Q_SIGNALS:
     void realDataReceived(QStringList);
     void stderrReceived(QStringList);
 
+    /// Emitted when the program has stopped. (for any reason)
+    void programStopped(QString filename, int line);
+
 private:
     IBreakpointController* m_breakpointController;
     IVariableController* m_variableController;

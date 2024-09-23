@@ -54,6 +54,15 @@ void BreakpointController::programStopped(QString filename, int line)
 {
     // srclocation must be comparable with locationForBreakpoint()
     QString srclocation = filename + QLatin1Char(':') + QString::number(line + 1);
+
+    if (m_temporaryBreakpoint && m_temporaryBreakpoint->location == srclocation) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << srclocation << "was reached";
+        // A call to cleanTemporaryBreakpoint() was ordered after this slot by addHandler().
+        // The PDB has by now deleted the temporary breakpoint, so cancel the clear command for it.
+        m_temporaryBreakpoint->breakpointId.reset();
+        return;
+    }
+
     for (const auto& brk : m_breakpoints) {
         // Note: the currently inserted PDB breakpoint location is compared,
         //       rather than the model breakpoint, which may have changed since.
@@ -149,7 +158,7 @@ void BreakpointController::addBreakpoint(Breakpoint* bp)
     const auto& brk = m_breakpoints.emplace_back(BreakpointDataPtr::create(bp));
     const QString location = locationForBreakpoint(bp);
 
-    if (!isSupportedBreakpoint(bp)) {
+    if (m_temporaryBreakpoint || !isSupportedBreakpoint(bp)) {
         // updateBreakpoint() inserts the breakpoint once it changes to something valid.
         qCDebug(KDEV_PYTHON_DEBUGGER) << "breakpoint " << bp << "location" << location << "rejected";
         bp->setState(Breakpoint::DirtyState);
@@ -183,6 +192,14 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
                 session()->flushCommands();
             }
         }
+        if (m_temporaryBreakpoint == brk) {
+            // The runToCursor() can proceed.
+            session()->resumeAction(DebugSession::RunAction::RunToCursor);
+            // Ensure the temporary breakpoint will be cleaned up if it is never hit.
+            session()->debugger()->defer([this](const ResponseData&) {
+                cleanTemporaryBreakpoint();
+            });
+        }
         return;
     }
 
@@ -206,6 +223,11 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
         qCDebug(KDEV_PYTHON_DEBUGGER) << "fix-up pending id:" << breakpoint->breakpointId.value() << "as"
                                       << breakpoint->breakpointId.value() - 1;
         breakpoint->breakpointId.value()--;
+    }
+
+    if (m_temporaryBreakpoint == brk) {
+        // Failed to create the temporary breakpoint...
+        cleanTemporaryBreakpoint();
     }
 }
 
@@ -257,6 +279,11 @@ void BreakpointController::updateBreakpoint(Breakpoint* bp)
 
     BreakpointDataPtr brk = *itr;
     const QString location = locationForBreakpoint(bp);
+
+    if (m_temporaryBreakpoint) {
+        // Can't update while the temporary breakpoint exist.
+        return;
+    }
 
     if (!isSupportedBreakpoint(bp)) {
         // Rejected.
@@ -319,6 +346,72 @@ void BreakpointController::updateHandler(const BreakpointDataPtr& brk, QString l
     }
     if (flush) {
         session()->flushCommands();
+    }
+}
+
+void BreakpointController::runToLocation(const QUrl& fileName, int line)
+{
+    // Create a free-standing breakpoint detached from the model.
+    auto bp = std::make_unique<KDevelop::Breakpoint>(nullptr, Breakpoint::CodeBreakpoint);
+    bp->setLocation(fileName, line);
+
+    const QString location = locationForBreakpoint(bp.get());
+
+    if (!isSupportedBreakpoint(bp.get())) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << location << "ignored";
+        return;
+    }
+
+    m_temporaryBreakpoint = BreakpointDataPtr::create(bp.release());
+    m_temporaryBreakpoint->breakpointId = m_debuggerBreakpointId++;
+    m_temporaryBreakpoint->location = location;
+
+    session()->debugger()->request(QStringLiteral("tbreak %1").arg(location), [this](const ResponseData& d) {
+        // The disable loop uses the BreakpointData state, so it cannot run before this point.
+        for (const auto& breakpoint : m_breakpoints) {
+            if (breakpoint->breakpointId && breakpoint->enabled) {
+                session()->debugger()->request(CMD_DISABLE.arg(breakpoint->breakpointId.value()));
+            }
+        }
+        addHandler(d, m_temporaryBreakpoint);
+    });
+    // No flushCommands() since this function is only invoked from DebugSession::runToCursor()
+}
+
+void BreakpointController::cleanTemporaryBreakpoint()
+{
+    if (!m_temporaryBreakpoint) {
+        return;
+    }
+
+    delete m_temporaryBreakpoint->modelBreakpoint;
+    m_temporaryBreakpoint->modelBreakpoint = nullptr;
+    // Note: we are being invoked from three possible scenarios:
+    // - The temporary breakpoint was hit, and thus m_temporaryBreakpoint->breakpointId was reset.
+    // - 'tbreak' command failed, and thus m_temporaryBreakpoint->breakpointId was reset.
+    // - The m_temporaryBreakpoint->breakpointId is still valid, and thus has to be cleared.
+    removeHandler(m_temporaryBreakpoint);
+    m_temporaryBreakpoint.reset();
+
+    // Sync-up with the model again.
+    // We have ignored all updates since the temporary breakpoint was installed,
+    // so some PDB breakpoints can be missing or their enabled state doesn't match the model state.
+    for (const auto& breakpoint : m_breakpoints) {
+        if (!breakpoint->modelBreakpoint) {
+            continue;
+        }
+        const QString location = locationForBreakpoint(breakpoint->modelBreakpoint);
+        if (breakpoint->breakpointId && location == breakpoint->location) {
+            // Location is still up-to-date...
+            breakpoint->enabled = breakpoint->modelBreakpoint->enabled();
+            if (breakpoint->enabled) {
+                session()->debugger()->request(CMD_ENABLE.arg(breakpoint->breakpointId.value()));
+            }
+            continue;
+        }
+        // Do a full update.
+        // This might be an newly created model breakpoint, or one with a rejected location, we don't know.
+        updateBreakpoint(breakpoint->modelBreakpoint);
     }
 }
 }

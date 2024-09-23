@@ -64,6 +64,12 @@ public:
         Q_UNUSED(state);
     }
 
+    /**
+     * Create a temporary breakpoint, disable all other breakpoints and run the program if the
+     * breakpoint creation succeeded. The temporary breakpoint is automatically cleaned up.
+     */
+    void runToLocation(const QUrl& fileName, int line);
+
 public Q_SLOTS:
     /**
      * @brief Handles events in the debug session.
@@ -99,6 +105,8 @@ private:
      * reused in the same session. Must be incremented *before* queuing a CMD_BREAK.
      */
     int m_debuggerBreakpointId = 1;
+
+    BreakpointDataPtr m_temporaryBreakpoint;
 
     static inline const auto CMD_BREAK = QStringLiteral("break %1");
     static inline const auto CMD_CLEAR = QStringLiteral("clear %1");
@@ -138,6 +146,8 @@ private:
      **/
     void updateBreakpoint(Breakpoint* bp);
     void updateHandler(const BreakpointDataPtr& brk, QString location);
+
+    void cleanTemporaryBreakpoint();
 };
 
 }

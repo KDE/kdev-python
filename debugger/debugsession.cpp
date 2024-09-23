@@ -196,7 +196,7 @@ void DebugSession::inferiorSuspended()
 
 void DebugSession::stepOut()
 {
-    // TODO this only steps out of functions; use temporary breakpoints for loops maybe?
+    // TODO this only steps out of functions; use runToLocation() for loops maybe?
     m_resumingRequest = RunAction::StepOut;
     m_debugger->request(QStringLiteral("return"), m_locationUpdate);
 }
@@ -239,14 +239,12 @@ void DebugSession::jumpToCursor()
 
 void DebugSession::runToCursor()
 {
-    // Would be a resuming request, but this method can't be implemented yet...
-    // m_resumingRequest = RunAction::RunToCursor;
+    m_resumingRequest = RunAction::RunToCursor;
     if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
-            // TODO disable all other breakpoints
-            QString temporaryBreakpointLocation = doc->url().path() + QLatin1Char(':') + QString::number(cursor.line() + 1);
-            // TODO: need temporary breakpoint support in our BreakpointController...
+            qobject_cast<Python::BreakpointController*>(m_breakpointController)
+                ->runToLocation(doc->url(), cursor.line());
         }
     }
 }
@@ -311,6 +309,10 @@ void DebugSession::flushCommands()
             break;
         case RunAction::StepOut:
             stepOut();
+            break;
+        case RunAction::RunToCursor:
+            // Can only re-issue the continue.
+            m_debugger->request(QStringLiteral("continue"), m_locationUpdate);
             break;
         default:
             break;

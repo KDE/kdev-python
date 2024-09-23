@@ -161,6 +161,8 @@ private:
     RunAction m_resumingRequest = RunAction::None;
     bool m_flushInProgress = false;
     int m_flushSeqNro = -1;
+    QUrl m_runToUrl;
+    int m_runToLine = -1;
 
     /**
      * @brief Handler for debugger requests, which continued to execute inferior's code.

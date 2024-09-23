@@ -54,6 +54,12 @@ void BreakpointController::programStopped(QString filename, int line)
 {
     // srclocation must be comparable with locationForBreakpoint()
     const auto srclocation = std::make_pair(filename, line + 1);
+
+    if (m_temporaryBreakpoint && m_temporaryBreakpoint->location == srclocation) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << srclocation << "was reached";
+        return;
+    }
+
     for (const auto& brk : m_breakpoints) {
         // Note: the currently inserted PDB breakpoint location is compared,
         //       rather than the model breakpoint, which may have changed since.
@@ -323,6 +329,46 @@ void BreakpointController::updateHandler(const BreakpointDataPtr& brk, std::pair
     if (flush) {
         session()->flushCommands();
     }
+}
+
+void BreakpointController::runToLocation(const QUrl& fileName, int line, PdbDebuggerInstance::CmdCallback callback,
+                                         bool excludeOthers)
+{
+    // Create a free-standing breakpoint detached from the model.
+    auto bp = std::make_unique<KDevelop::Breakpoint>(nullptr, Breakpoint::CodeBreakpoint);
+    bp->setLocation(fileName, line);
+
+    const auto location = locationForBreakpoint(bp.get());
+
+    if (!isSupportedBreakpoint(bp.get())) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << location << "ignored";
+        return;
+    }
+
+    m_temporaryBreakpoint = BreakpointDataPtr::create(bp.release());
+    m_temporaryBreakpoint->breakpointId = m_debuggerBreakpointId++;
+    m_temporaryBreakpoint->location = location;
+
+    session()->debugger()->request({QStringLiteral("runtolocation"), location.first, location.second, excludeOthers},
+    [this, callback](const ResponseData& d) {
+        runToLocationHandler(d, callback);
+    });
+}
+
+void BreakpointController::runToLocationHandler(const ResponseData& data, PdbDebuggerInstance::CmdCallback callback)
+{
+    Q_ASSERT(m_temporaryBreakpoint);
+
+    // Handle the program stop.
+    callback(data);
+
+    // call addHandler() for the temporary breakpoint to possibly
+    // fix-up other pending added/updated breakpoint ids if runToLocation() failed.
+    addHandler(data, m_temporaryBreakpoint);
+
+    delete m_temporaryBreakpoint->modelBreakpoint;
+    m_temporaryBreakpoint->modelBreakpoint = nullptr;
+    m_temporaryBreakpoint.reset();
 }
 }
 

@@ -65,6 +65,13 @@ public:
         Q_UNUSED(state);
     }
 
+    /**
+     * Create a temporary breakpoint, disable all other breakpoints if @p excludeOthers is true and run
+     * the program if the breakpoint creation succeeded. The temporary breakpoint is automatically
+     * cleaned up.
+     */
+    void runToLocation(const QUrl& fileName, int line, PdbDebuggerInstance::CmdCallback callback, bool excludeOthers);
+
 public Q_SLOTS:
     /**
      * @brief Handles events in the debug session.
@@ -100,6 +107,8 @@ private:
      * reused in the same session. Must be incremented *before* queuing a CMD_BREAK.
      */
     int m_debuggerBreakpointId = 1;
+
+    BreakpointDataPtr m_temporaryBreakpoint;
 
     static inline const auto CMD_BREAK = QStringLiteral("break");
     static inline const auto CMD_CLEAR = QStringLiteral("clear");
@@ -139,6 +148,8 @@ private:
      **/
     void updateBreakpoint(Breakpoint* bp);
     void updateHandler(const BreakpointDataPtr& brk, std::pair<QString, int> location);
+
+    void runToLocationHandler(const ResponseData& data, PdbDebuggerInstance::CmdCallback callback);
 };
 
 }

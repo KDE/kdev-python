@@ -85,6 +85,14 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
         # todo: report which an breakpoint was hit?
 
+        if hasattr(self, 'restore_brks'):
+            # Re-enable breakpoints that runtolocation() disabled.
+            for bpnum in self.restore_brks[1:]:
+                self.get_bpbynumber(bpnum).enable()
+            # Ensure self.restore_brks[0] is deleted even if it wasn't hit.
+            self.clear_bpbynumber(self.restore_brks[0])
+            del self.restore_brks
+
     def get_next_request(self):
         '''Wait for a request.'''
         try:
@@ -225,6 +233,33 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
             self.error(notok)
         else:
             self.append_response({"breakpoints": [{"id": bpnum, "filename": filename, "line": lineno}]})
+
+    def do_runtolocation(self, filename, lineno, disable):
+        '''Try set a temporary breakpoint at filename:lineno location.
+           If successful, disable all other breakpoints if disable is set and then resume the inferior.
+           Later, when the (temporary) breakpoint is reached or the debugger is interrupted,
+           the enabled state of the modified breakpoints is restored.
+        '''
+        if self.is_runnable_srcline(filename, int(lineno)) < 0:
+            self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
+            return 0
+        bpnum = Breakpoint.next
+        notok = self.set_break(filename, int(lineno), True)
+        if notok:
+            self.error(notok)
+            self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
+            return 0
+        # Ok.
+        self.append_response({"breakpoints": [{"id": bpnum, "filename": filename, "line": lineno}]})
+        restore_brks = [bpnum]
+        if disable:
+            for bp in Breakpoint.bpbynumber:
+                if bp and bp.enabled and bp.number != bpnum:
+                    restore_brks.append(bp.number)
+                    bp.disable()
+        setattr(self, 'restore_brks', restore_brks)
+        self.set_continue()
+        return 1
 
     def do_enable(self, bpnum):
         '''Enable a breakpoint'''

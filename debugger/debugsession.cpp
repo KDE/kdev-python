@@ -219,14 +219,14 @@ void DebugSession::jumpToCursor()
 
 void DebugSession::runToCursor()
 {
-    // Would be a resuming request, but this method can't be implemented yet...
-    // m_resumingRequest = RunAction::RunToCursor;
+    m_resumingRequest = RunAction::RunToCursor;
     if (KDevelop::IDocument* doc = KDevelop::ICore::self()->documentController()->activeDocument()) {
         KTextEditor::Cursor cursor = doc->cursorPosition();
         if ( cursor.isValid() ) {
-            // TODO disable all other breakpoints
-            QString temporaryBreakpointLocation = doc->url().path() + QLatin1Char(':') + QString::number(cursor.line() + 1);
-            // TODO: need temporary breakpoint support in our BreakpointController...
+            m_runToUrl = doc->url();
+            m_runToLine = cursor.line();
+            qobject_cast<Python::BreakpointController*>(m_breakpointController)
+                ->runToLocation(m_runToUrl, m_runToLine, m_resumingFinished, true);
         }
     }
 }
@@ -295,6 +295,10 @@ void DebugSession::resumeAction(RunAction action)
         break;
     case RunAction::StepOut:
         stepOut();
+        break;
+    case RunAction::RunToCursor:
+        qobject_cast<Python::BreakpointController*>(m_breakpointController)
+            ->runToLocation(m_runToUrl, m_runToLine, m_resumingFinished, false);
         break;
     default:
         break;

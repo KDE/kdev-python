@@ -19,6 +19,16 @@ ecm_qt_declare_logging_category(kdevpdb_PART_SRCS
     EXPORT KDEVPYTHON
 )
 
+# Declare a separate category for VariableController so that the noise
+# from KDEV_PYTHON_DEBUGGER can be ignored.
+ecm_qt_declare_logging_category(kdevpdb_PART_SRCS
+    HEADER variabledebug.h
+    IDENTIFIER KDEV_PYTHON_VARIABLECONTROLLER
+    CATEGORY_NAME "kdevelop.plugins.python.debugger.variablecontroller"
+    DESCRIPTION "KDevelop plugin: Python language support - debugger variable support"
+    EXPORT KDEVPYTHON
+)
+
 kdevplatform_add_plugin(kdevpdb JSON kdevpdb.json SOURCES ${kdevpdb_PART_SRCS})
 
 generate_export_header(kdevpdb EXPORT_MACRO_NAME KDEVPYTHONDEBUG_EXPORT)

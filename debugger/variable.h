@@ -1,5 +1,6 @@
 /*
     SPDX-FileCopyrightText: 2012 Sven Brauch <svenbrauch@googlemail.com>
+    SPDX-FileCopyrightText: 2024 Jarmo Tiitto <jarmo.tiitto@gmail.com>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */
@@ -7,14 +8,27 @@
 #ifndef VARIABLE_H
 #define VARIABLE_H
 
+#include <QList>
+
 #include <debugger/variable/variablecollection.h>
 
+#include "pdbdebuggerinstance.h"
+
 namespace Python {
+
+class DebugSession;
+
+/// A unsigned integer large enough to hold a handle.
+typedef unsigned int PythonId;
 
 class Variable : public KDevelop::Variable
 {
 Q_OBJECT
 public:
+    /**
+     * Construct a variable.
+     * @note If possible, the namespaceId() is inherited from @p parent.
+     */
     Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = QString());
     
     /**
@@ -26,31 +40,69 @@ public:
     void attachMaybe(QObject* callback = nullptr, const char* callbackMethod = nullptr) override;
     
     /**
-     * @brief Fetches children (list items, object attributes...) for this variable.
-     * TODO: Should fetch more children, it currently simply fetches all children which is not so good
-     * if there's 20.000 of them
-     * This is invoked if the user clicks the "expand" icon in any variable tree view
+     * @brief Fetches more children (list items, object attributes...) for this variable.
+     * This is invoked if the user clicks the "expand" icon in any variable tree view.
      **/
     void fetchMoreChildren() override;
-    
-    QObject* m_notifyCreated;
-    const char* m_notifyCreatedMethod;
-public Q_SLOTS:
+
+    static DebugSession* session();
+
     /**
-     * @brief Parse the debugger output and update this variable's value.
-     **/
-    void dataFetched(QByteArray rawData);
+     * @brief Fetch this variable's value.
+     */
+    void fetchValue();
+
     /**
-     * @brief Parse the debugger output and add children to this variable.
+     * @brief Set this object's python ID.
      **/
-    void moreChildrenFetched(QByteArray rawData);
+    void setId(PythonId id)
+    {
+        m_pythonPtr = id;
+    }
+    PythonId id() const
+    {
+        return m_pythonPtr;
+    }
+
     /**
-     * @brief Set this object's python ID
+     * @brief Set this object's "namespace id".
      **/
-    void setId(long unsigned int id);
+    void setNamespaceId(int nsid)
+    {
+        m_nsId = nsid;
+    }
+    int namespaceId() const
+    {
+        return m_nsId;
+    }
+
+private Q_SLOTS:
+    /**
+     * Try fetch more children.
+     * @note m_pendingUpdates must be incremented and accountOperations(1) must have been called before this.
+     */
+    void tryFetchMoreChildren();
+
 private:
-    /// A unique ID of the python object pointed to by this variable.
-    unsigned long int m_pythonPtr;
+    /// A unique ID of the python object associated with this variable.
+    PythonId m_pythonPtr = 0;
+    /// To what namespace this variable is bound to?
+    int m_nsId = -1;
+    /// Number of items to expand by
+    int m_expandBy = 1;
+    /// Count of possible children.
+    int m_maxItems = -1;
+    /// Likewise to VariableController::m_pendingRequests,
+    /// except this doesn't count fetchValue() made request or any child variable made requests.
+    int m_pendingUpdates = 0;
+
+    /**
+     * Try insert a new child or return an existing child.
+     */
+    std::pair<Variable*, bool> findOrCreateChild(QString longname, QString expr);
+
+    void valueFetched(const ResponseData& data);
+    QList<Variable*> variablesEnumerated(const ResponseData& data);
 };
 
 }

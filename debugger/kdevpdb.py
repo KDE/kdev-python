@@ -320,6 +320,51 @@ class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMappe
         response = self.cleanupobjects()
         self.append_response({'released': response})
 
+    def do_enumeratevariables(self, parentid, ns_id, num):
+        '''JSON: 'variables': [{'expression': str(<name>), 'ptr': int() }
+           OR None, ...]
+        '''
+        # Required parameters are:
+        # parentid:   The object's handle to enumerate.
+        # ns_id:      A namespace id. (If the parentid is an namespace handle the ns_id is ignored.)
+        # num:        Count of handles to report.
+        parentid, ns_id, num = int(parentid), int(ns_id), int(num)
+        report = []
+        for _ in range(num):
+            result = self.enumerateHandle(parentid, ns_id)
+            report.append(result)
+            if result is None:
+                # The enumeration was exhausted.
+                break
+        # Report.
+        self.append_response({'variables': report})
+
+    def do_inspectvalue(self, handle, ns_id):
+        ''' Determine the variable's value and the number of children items, if any.
+            JSON: 'inspect': inspectvalue()
+        '''
+        handle, ns_id = int(handle), int(ns_id)
+        response = self.inspectvalue(handle, ns_id)
+        self.append_response({"inspect": response})
+
+    def do_framelocals(self):
+        '''Begin enumerating local variables from the active stack frame.'''
+        frame_id = self.activeindex
+        # The self.bottomindex frame object .f_locals has some weirdness going on:
+        # for x in range(2):
+        #     print(x) # <== .f_locals['x'] is zero on the *second iteration of the loop* on this line.
+        # Since there is no difference to .f_globals in this frame, except that it gives
+        # us the right result, it is used in place of .f_locals.
+        if frame_id <= self.bottomindex:
+            ref_locals = self.stack[frame_id].f_globals
+        else:
+            ref_locals = self.stack[frame_id].f_locals
+        frame_locals = list(ref_locals.items())
+        # The "longname" must stay associated with the same frame object in a event
+        # the count of stack frames grows, so use frame_id to make it unique.
+        count, objid = self.updateNamespace(frame_locals, frame_id, f"__kdevpdbframeobject{frame_id}")
+        self.append_response({'locals': {'count': count, 'ptr': objid, 'namespace': frame_id}})
+
 
 def main():
     """Kdevelop python debugger main."""

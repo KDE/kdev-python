@@ -34,8 +34,8 @@ target_link_libraries(kdevpdb
     KF6::TextEditor
 )
 
-install(FILES __kdevpython_debugger_utils.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdb.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdbcore.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES kdevpdbconn.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
 install(FILES asmskip.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)
+install(FILES kdevpdbvariablesupport.py DESTINATION ${KDE_INSTALL_DATADIR}/kdevpythonsupport/debugger)

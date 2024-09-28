@@ -19,11 +19,12 @@ from pdb import _ModuleTarget, _ScriptTarget, _ZipTarget
 from bdb import Breakpoint
 import kdevpdbcore
 import kdevpdbconn
+import kdevpdbvariablesupport
 
 # pylint: disable=C0103, R0903
 
 
-class kdevPdb(kdevpdbcore.kdevDbgCore):
+class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMapper):
     def __init__(self, socketpath="/tmp/"):
         kdevpdbcore.kdevDbgCore.__init__(self)
         # Connect to a client.
@@ -42,6 +43,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         self.currentbp = 0
         # The user selected active stack-frame.
         self.activeindex = -1
+        # Init the variable tracker.
+        kdevpdbvariablesupport.kdevExprValueMapper.__init__(self)
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -308,6 +311,14 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
             self.deleted_breaks.add(bp.number)
         except ValueError as e:
             self.error(str(e))
+
+    def get_topindex(self):
+        return self.topindex
+
+    def do_cleanupobjects(self):
+        '''Cleanup invalidated state after pausing'''
+        response = self.cleanupobjects()
+        self.append_response({'released': response})
 
 
 def main():

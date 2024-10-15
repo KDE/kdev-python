@@ -1578,15 +1578,11 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
             static IndexedString clsArgumentName("cls");
             if ( currentContext()->type() == DUContext::Class && ! parameters.isEmpty() && ! dec->isClassMethod() ) {
                 QString description;
-                if ( dec->identifier().identifier() == newMethodName
-                     && parameters[0]->identifier().identifier() != clsArgumentName )
+                if ( parameters[0]->identifier().identifier() != clsArgumentName
+                     && parameters[0]->identifier().identifier() != selfArgumentName )
                 {
-                    description = i18n("First argument of __new__ method is not called cls, this is deprecated");
-                }
-                else if ( dec->identifier().identifier() != newMethodName
-                          && parameters[0]->identifier().identifier() != selfArgumentName )
-                {
-                    description = i18n("First argument of class method is not called self, this is deprecated");
+                    // https://peps.python.org/pep-0008/#function-and-method-arguments
+                    description = i18n("First argument of class method is not called self or cls, this is deprecated");
                 }
                 if ( ! description.isEmpty() ) {
                     DUChainWriteLocker lock;

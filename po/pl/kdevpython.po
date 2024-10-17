@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2021-04-04 07:55+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
@@ -438,26 +438,23 @@ msgstr "Nie znaleziono modułu \"%1\""
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Nie znaleziono deklaracji dla \"%1\" w podanym module"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"Pierwszy argument metody __new__ nie jest nazywany cls, jest to przestarzałe"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Pierwszy argument metody klasy nie jest nazywany self, jest to przestarzałe"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Niestatyczna metoda klasy bez argumentów, musi mieć co najmniej jedno (self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Instrukcja powrotu nie jest wewnątrz deklaracji funkcji"
@@ -591,6 +588,12 @@ msgstr "Błąd sprawdzania PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Wybrany program sprawdzający składnię PEP8 nie działa poprawnie."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "Pierwszy argument metody __new__ nie jest nazywany cls, jest to "
+#~ "przestarzałe"
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 z ( %2 )"

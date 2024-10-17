@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2023-08-01 00:43+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
@@ -439,27 +439,23 @@ msgstr "\"%1\" modülü bulunamadı"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Belirtilen modülde \"%1\" bildirimi bulunamadı"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"__new__method metodunun ilk değişkeni cls 'yi çağırmıyor, kullanımdan "
-"çıkarılmış"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "class metodunun ilk değişkeni kendisini çağırmıyor, kullanımdan çıkarılmış"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Değişkensiz statik olmayan sınıf metodu, en az bir taneye (self) sahip olmalı"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Dönüş ifadesi işlev bildirimi içinde değil"
@@ -594,3 +590,9 @@ msgstr "PEP8 kontrol hatası: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 sözdizimi kontrol edicisi düzgün çalışıyor gibi görünmüyor."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "__new__method metodunun ilk değişkeni cls 'yi çağırmıyor, kullanımdan "
+#~ "çıkarılmış"

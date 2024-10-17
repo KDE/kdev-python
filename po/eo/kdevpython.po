@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2023-11-07 22:18+0100\n"
 "Last-Translator: Oliver Kellogg <olivermkellogg@gmail.com>\n"
 "Language-Team: esperanto <kde-i18n-eo@kde.org>\n"
@@ -436,25 +436,22 @@ msgstr "Modulo \"%1\" ne trovita"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaro por \"%1\" ne trovita en specifita modulo"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"Unua argumento de __nova__ metodo ne nomiĝas cls, ĉi tio estas malrekomendita"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Unua argumento de klasmetodo ne nomiĝas mem, ĉi tio estas malrekomendita"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Ne-senmova klasmetodo sen argumentoj, devas havi almenaŭ unu (mem)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Redona deklaro ne ene de funkciodeklaro"
@@ -588,3 +585,9 @@ msgstr "PEP8-kontrolilo eraro: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "La sintaksa kontrolilo de PEP8 ŝajnas ne funkcii ĝuste."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "Unua argumento de __nova__ metodo ne nomiĝas cls, ĉi tio estas "
+#~ "malrekomendita"

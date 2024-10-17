@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2017-06-09 18:08+0100\n"
 "Last-Translator: Eloy Cuadra <ecuadra@eloihr.net>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
@@ -446,28 +446,24 @@ msgstr "Módulo «%1» no encontrado"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Declaración para «%1» no encontrada en el módulo especificado"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"El primer argumento del método __new__ no se llama «cls», lo que está "
-"desaconsejado"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "El primer argumento del método de la clase no se llama «self», lo que está "
 "desaconsejado"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Método de clase no estático sin argumentos; debe tener al menos uno (self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "La sentencia de retorno no está dentro de la declaración de la función"
@@ -604,6 +600,12 @@ msgstr "Error del comprobador PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Parece que el comprobador de sintaxis PEP8 no funciona correctamente."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "El primer argumento del método __new__ no se llama «cls», lo que está "
+#~ "desaconsejado"
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 de ( %2 )"

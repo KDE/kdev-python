@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2023-02-26 18:50+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
@@ -446,20 +446,17 @@ msgstr "No s'ha trobat el mòdul «%1»"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "No s'ha trobat la declaració per a «%1» en el mòdul especificat"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"El primer argument del mètode __new__ no s'anomena «cls», es desaconsella"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "El primer argument del mètode de la classe no es crida a si mateix, es "
 "desaconsella"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -467,7 +464,7 @@ msgstr ""
 "Mètode de classe no estàtic sense arguments. Com a mínim n'ha de contenir un "
 "(a si mateix)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "La sentència retornada no està present a la declaració de la funció"
@@ -603,3 +600,8 @@ msgstr "Error del comprovador «PEP8»: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Sembla que el comprovador de sintaxi «PEP8» no funciona correctament."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "El primer argument del mètode __new__ no s'anomena «cls», es desaconsella"

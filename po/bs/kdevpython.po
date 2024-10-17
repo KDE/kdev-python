@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: desktop files\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2014-11-27 13:41+0000\n"
 "Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
 "Language-Team: bs <bs@kde.org>\n"
@@ -463,23 +463,21 @@ msgstr "Modul \"%1\" nije nađen"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaracija \"%1\" nije pronađena u naznačenom modulu"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr "Prvi argument od __new__ metode se ne zove cls, to nije dozvoljeno"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr "Prvi argument metode klase se ne naziva self, taj naziv je zastario"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Nestatična metoda klase bez argumenata, mora imati barem jedan (self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Naredba povratka bez deklaracije funkcije"
@@ -621,6 +619,10 @@ msgstr "PEP8 greška provjere: %1"
 #| "The selected PEP8 syntax checker \"%1\" does not seem to work correctly."
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Izabrani PEP8 provjeravač sintakse \"%1\" ne izgleda da radi ispravno."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr "Prvi argument od __new__ metode se ne zove cls, to nije dozvoljeno"
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 od ( %2 )"

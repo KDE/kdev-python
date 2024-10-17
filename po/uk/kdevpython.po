@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2017-06-08 08:36+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <kde-i18n-uk@kde.org>\n"
@@ -449,21 +449,17 @@ msgstr "Не знайдено модуля «%1»"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "У вказаному модулі не знайдено оголошення «%1»"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"Перший аргумент методу __new__ не названо cls. Такий варіант коду вважається "
-"застарілим."
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Перший аргумент методу класу не викликається автономно (self), такі "
 "синтаксичні конструкції вважаються застарілими"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -471,7 +467,7 @@ msgstr ""
 "Нестатичний метод класу без аргументів. Має бути принаймні один аргумент "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Інструкція return поза межами оголошення функції"
@@ -608,6 +604,12 @@ msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""
 "Здається, засіб перевірки синтаксичних конструкцій PEP8 не працює належним "
 "чином."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "Перший аргумент методу __new__ не названо cls. Такий варіант коду "
+#~ "вважається застарілим."
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 з (%2)"

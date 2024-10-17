@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2022-11-08 10:52+0100\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -436,24 +436,22 @@ msgstr "Modula \"%1\" ni bilo mogoče najti"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaracija za \"%1\" ni bila najdena v podanem modulu"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr "Prvi argument metode __new__ se ne imenuje cls, to je opuščeno"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr "Prvi argument metode razreda se ne imenuje self, to je opuščeno"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Ne-statična metoda razreda brez argumentov mora imeti vsaj enega (self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Vrnitvena izjava ni znotraj deklaracije funkcije"
@@ -588,6 +586,10 @@ msgstr "Napaka preverjalnika PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Izgleda, da preverjalnik skladnje PEP8, ne deluje pravilno."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr "Prvi argument metode __new__ se ne imenuje cls, to je opuščeno"
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 od (%2 )"

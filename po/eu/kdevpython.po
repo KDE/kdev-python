@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2023-01-04 00:59+0100\n"
 "Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
 "Language-Team: Basque <kde-i18n-eu@kde.org>\n"
@@ -445,20 +445,16 @@ msgstr "%1 modulua ez da aurkitu"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "\"%1\"(e)ren deklarazioa ez da aurkitu zehaztutako moduluan"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr ""
-"__new__ metodoaren aurreneko argumentua ez da «cls» deitzen, hori baztertua "
-"dago"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Klase metodoaren aurreneko argumentua ez da «self», hori baztertua dago"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -466,7 +462,7 @@ msgstr ""
 "Klase ez-estatikoaren argumenturik gabeko metodoa, gutxienez «(self)» bat "
 "izan behar du"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Itzulerako adierazpena ez dago funtzioaren deklarazioan"
@@ -602,3 +598,9 @@ msgstr "PEP8 zuzentzaile errorea: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Ematen du PEP8 sintaxi zuzentzailea ez dabilela ondo."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "__new__ metodoaren aurreneko argumentua ez da «cls» deitzen, hori "
+#~ "baztertua dago"

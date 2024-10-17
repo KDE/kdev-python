@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-08-04 00:38+0000\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
 "PO-Revision-Date: 2022-03-03 15:16+0300\n"
 "Last-Translator: Olesya Gerasimenko <translation-team@basealt.ru>\n"
 "Language-Team: Basealt Translation Team\n"
@@ -440,17 +440,15 @@ msgstr "Модуль «%1» не найден"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Объявление «%1» не найдено в указанном модуле"
 
-#: duchain/declarationbuilder.cpp:1584
-#, kde-format
-msgid "First argument of __new__ method is not called cls, this is deprecated"
-msgstr "Первый аргумент метода __new__ называется не cls — эта запись устарела"
-
-#: duchain/declarationbuilder.cpp:1589
-#, kde-format
-msgid "First argument of class method is not called self, this is deprecated"
+#: duchain/declarationbuilder.cpp:1585
+#, fuzzy, kde-format
+#| msgid ""
+#| "First argument of class method is not called self, this is deprecated"
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
 msgstr "Первый аргумент метода класса называется не self — эта запись устарела"
 
-#: duchain/declarationbuilder.cpp:1609
+#: duchain/declarationbuilder.cpp:1605
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -458,7 +456,7 @@ msgstr ""
 "Не статический метод класса не имеет аргументов, а должен иметь минимум один "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1770
+#: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Оператор return вне объявления функции"
@@ -594,6 +592,11 @@ msgstr "Ошибка при проверке PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Видимо, анализатор синтаксиса PEP8 работает неправильно."
+
+#~ msgid ""
+#~ "First argument of __new__ method is not called cls, this is deprecated"
+#~ msgstr ""
+#~ "Первый аргумент метода __new__ называется не cls — эта запись устарела"
 
 #~ msgid "%1 of ( %2 )"
 #~ msgstr "%1 типов ( %2 )"

@@ -426,12 +426,10 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "在指定模块中找不到 %1 的声明"
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
-msgstr "类方法的第一个参数不叫 self，这是不推荐使用的"
+msgstr ""
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format
@@ -572,7 +570,3 @@ msgstr "PEP8 检查器错误：%1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 语法检查器似乎无法正常工作。"
-
-#~ msgid ""
-#~ "First argument of __new__ method is not called cls, this is deprecated"
-#~ msgstr "__new__ 方法的第一个参数不叫 cls，这是不推荐使用的"

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-09-29 08:26+0200\n"
+"PO-Revision-Date: 2024-10-17 05:30+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -443,12 +443,10 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "აღწერა \"%1\"-სთვის მითითებულ მოდულში ვერ ვიპოვე"
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
-msgstr "კლასის მეთოდის პირველ არგუმენტს self არ ჰქვია. ეს მოძველებულია"
+msgstr "კლასის მეთოდის პირველ არგუმენტს self ან cls არ ჰქვია. ეს მოძველებულია"
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format

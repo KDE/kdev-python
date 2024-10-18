@@ -1,17 +1,17 @@
 # Translation of kdevpython.po to Catalan
-# Copyright (C) 2009-2023 This_file_is_part_of_KDE
+# Copyright (C) 2009-2024 This_file_is_part_of_KDE
 # This file is distributed under the license LGPL version 2.1 or
 # version 3 or later versions approved by the membership of KDE e.V.
 #
 # Manuel Tortosa <manutortosa@gmail.com>, 2009.
-# Josep M. Ferrer <txemaq@gmail.com>, 2010, 2013, 2014, 2015, 2016, 2017, 2021, 2023.
+# SPDX-FileCopyrightText: 2010, 2013, 2014, 2015, 2016, 2017, 2021, 2023, 2024 Josep M. Ferrer <txemaq@gmail.com>
 # Antoni Bella Pérez <antonibella5@yahoo.com>, 2013, 2014, 2015, 2016, 2017, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2023-02-26 18:50+0100\n"
+"PO-Revision-Date: 2024-10-17 15:12+0200\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: ca\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Accelerator-Marker: &\n"
-"X-Generator: Lokalize 20.12.0\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -447,14 +447,12 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "No s'ha trobat la declaració per a «%1» en el mòdul especificat"
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
-"El primer argument del mètode de la classe no es crida a si mateix, es "
-"desaconsella"
+"El primer argument del mètode de la classe no es crida a si mateix o «cls», "
+"això és obsolet"
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format

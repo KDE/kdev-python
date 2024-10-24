@@ -77,7 +77,7 @@ public:
      */
     void pendingRequests(int adjust);
 
-    enum UpdateFlag { None = 0x0, Locals = 0x1, Watches = 0x2, ReturnInfo = 0x4 };
+    enum UpdateFlag { None = 0x0, Locals = 0x1, Watches = 0x2, ReturnInfo = 0x4, Globals = 0x8 };
     Q_DECLARE_FLAGS(UpdateFlags, UpdateFlag)
 
 protected:
@@ -115,6 +115,7 @@ private:
 
     void fetchFrameLocals(const ResponseData& data);
     void fetchReturnInfo(const ResponseData& data);
+    void fetchGlobals(const ResponseData& data);
     void enumerateNamespace(int nsid, int count, PythonId handle, QString name = QString());
     void variablesEnumerated(const ResponseData& data, int nsid);
 };

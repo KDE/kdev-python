@@ -58,6 +58,22 @@ void PdbDebuggerInstance::request(QString command, CmdCallback callback)
     m_instance->sendCommand(QJsonDocument(cmd).toJson(QJsonDocument::JsonFormat::Compact));
 }
 
+void PdbDebuggerInstance::defer(CmdCallback callback)
+{
+    Q_ASSERT(callback);
+
+    // Assemble a request body without "input".
+    QJsonObject cmd{std::make_pair(QStringLiteral("seq"), QJsonValue(m_currentSeqnro))};
+
+    // Register the callback object.
+    m_callbacks.emplace(m_currentSeqnro).value() = std::move(callback);
+    qCDebug(KDEV_PYTHON_DEBUGGER).noquote() << "seqnro" << m_currentSeqnro << "assigned for defer()";
+    ++m_currentSeqnro;
+
+    // Encode and send.
+    m_instance->sendCommand(QJsonDocument(cmd).toJson(QJsonDocument::JsonFormat::Compact));
+}
+
 void PdbDebuggerInstance::decodeResponse(const QByteArray& data)
 {
     QJsonParseError error;

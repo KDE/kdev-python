@@ -85,6 +85,15 @@ public:
      */
     void request(QString command, CmdCallback callback = {});
 
+    /**
+     * Queue a callback.
+     * @brief
+     *   The callback is queued and it is invoked once all earlier request handlers have run.
+     *   The response JSON data is always empty.
+     *   The @p callback to be invoked. It must have a target.
+     */
+    void defer(CmdCallback callback);
+
 private Q_SLOTS:
     /// Internal slot to handle responses from the debugger.
     void decodeResponse(const QByteArray& data);

@@ -189,6 +189,9 @@ class kdevPdb(pdb.Pdb):
                     request = json.loads(self.pdbsrv.getDataFrame().decode())
                     assert "seq" in request
                     self.command_seqnro = int(request["seq"])
+                    if "input" not in request:
+                        # A no-op request.
+                        continue
                     line = request["input"]
                     assert line.endswith('\n')
                     if not line:

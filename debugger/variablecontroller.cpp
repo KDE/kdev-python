@@ -50,10 +50,11 @@ VariableController::VariableController(IDebugSession* parent) : IVariableControl
      *        VariableController. We may also miss an update when the variable widget is shown/hidden.
      *        (can detect only hiding via autoUpdate() which is useless...)
      */
-    std::array<CollectionInit, 3> collections = {
+    std::array<CollectionInit, 4> collections = {
         CollectionInit{UpdateFlag::Locals, variableCollection()->locals()},
         CollectionInit{UpdateFlag::Watches, variableCollection()->watches()},
-        CollectionInit{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info"))}
+        CollectionInit{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info"))},
+        CollectionInit{UpdateFlag::Globals, variableCollection()->locals(i18n("Globals"))}
     };
 
     for (auto& item : collections) {
@@ -287,6 +288,22 @@ void VariableController::fetchReturnInfo(const ResponseData& d)
     enumerateNamespace(nsid, count, handle, i18n("Return info"));
 }
 
+void VariableController::fetchGlobals(const ResponseData& d)
+{
+    const auto data = responseObject(d, QStringLiteral("globals"));
+    if (data.empty()) {
+        qCWarning(KDEV_PYTHON_VARIABLECONTROLLER) << "failed to enumerate globals";
+    }
+    int nsid = data.value(QStringLiteral("namespace")).toInt();
+    int count = data.value(QStringLiteral("count")).toInt();
+    PythonId handle = data.value(QStringLiteral("ptr")).toInt();
+
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
+        << "enumerating globals:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
+
+    enumerateNamespace(nsid, count, handle, i18n("Globals"));
+}
+
 void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, QString name)
 {
     auto itr = m_namespaces.find(nsid);
@@ -417,6 +434,18 @@ void VariableController::updateCollections()
         session()->debugger()->request({QStringLiteral("getreturninfo")},
             [this, guard = UpdateGuard()](const ResponseData& d) {
                 fetchReturnInfo(d);
+        });
+    }
+
+    // Update globals.
+    if ((updateMask & UpdateFlag::Globals) && !(m_updateStarted & UpdateFlag::Globals)) {
+        m_updateStarted |= UpdateFlag::Globals;
+        m_updateRequested.setFlag(UpdateFlag::Globals, false);
+        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Globals update";
+
+        session()->debugger()->request({QStringLiteral("globalobjects")},
+            [this, guard = UpdateGuard()](const ResponseData& d) {
+                fetchGlobals(d);
         });
     }
 

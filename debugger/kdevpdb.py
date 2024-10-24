@@ -367,6 +367,14 @@ class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMappe
         count, objid = self.updateNamespace(frame_locals, frame_id, f"__kdevpdbframeobject{frame_id}")
         self.append_response({'locals': {'count': count, 'ptr': objid, 'namespace': frame_id}})
 
+    def do_globalobjects(self):
+        '''Begin enumerating global variables.'''
+        globals_ns_id = -1
+        globalvars = list(self.stack[self.bottomindex].f_globals.items())
+        count, objid = self.updateNamespace(globalvars, globals_ns_id, "__kdevpdbglobals")
+        self.append_response({'globals': {'count': count, 'ptr': objid,
+                                          'namespace': globals_ns_id}})
+
     def do_getreturninfo(self):
         '''Begin enumerating program return info'''
         # Synthesize a namespace for:

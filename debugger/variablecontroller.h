@@ -47,6 +47,9 @@ public:
      **/
     void update() override;
 
+protected:
+    void handleEvent(KDevelop::IDebugSession::event_t event) override;
+
 private:
     QTimer m_updateTimer;
     QList<Variable*> m_watchVariables;

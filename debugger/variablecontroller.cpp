@@ -76,6 +76,24 @@ KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::D
     return {startCursor, startCursor + KTextEditor::Cursor{0, static_cast<int>(text.length())}};
 }
 
+void VariableController::handleEvent(IDebugSession::event_t event)
+{
+    if (!variableCollection())
+        return;
+
+    const auto* const frameModel = qobject_cast<DebugSession*>(QObject::parent())->frameStackModel();
+    const int frame = frameModel->currentFrame();
+
+    if (event == IDebugSession::program_state_changed) {
+        return;
+    }
+
+    if (frame == -1 || event != IDebugSession::thread_or_frame_changed)
+        return;
+
+    KDevelop::IVariableController::handleEvent(event);
+}
+
 void VariableController::localsUpdateReady(QByteArray rawData)
 {
     // TODO

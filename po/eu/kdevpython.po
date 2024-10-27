@@ -1,16 +1,16 @@
 # Translation for kdevpython.po to Euskara/Basque (eu).
-# Copyright (C) 2022-2023 This file is copyright:
+# Copyright (C) 2022-2024 This file is copyright:
 # This file is distributed under the same license as the kdev-python package.
-# KDE euskaratzeko proiektuko arduraduna <xalba@ni.eus>.
+# SPDX-FileCopyrightText: 2024 KDE euskaratzeko proiektuko arduraduna <xalba@ni.eus>
 #
 # Translators:
-# Iñigo Salvador Azurmendi <xalba@ni.eus>, 2022, 2023.
+# Iñigo Salvador Azurmendi <xalba@ni.eus>, 2022, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2023-01-04 00:59+0100\n"
+"PO-Revision-Date: 2024-10-26 22:11+0200\n"
 "Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
 "Language-Team: Basque <kde-i18n-eu@kde.org>\n"
 "Language: eu\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 22.12.0\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -446,13 +446,12 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "\"%1\"(e)ren deklarazioa ez da aurkitu zehaztutako moduluan"
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
-"Klase metodoaren aurreneko argumentua ez da «self», hori baztertua dago"
+"Klase metodoaren aurreneko argumentua ez da «self» edo «cls» deitzen, hori "
+"zaharkitua dago"
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format

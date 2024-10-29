@@ -74,11 +74,53 @@ class kdevPdb(pdb.Pdb):
         sys.settrace(self.trace_dispatch)
 
     def do_return(self, arg):
-        """Augmented version of pdb.do_return(...)"""
-        # TODO: this needs *more* improvements.
-        self.set_return(self.curframe)
+        """kdevPdb implementation of stepOut()"""
+        # Look ahead in the current frame's code and try find a line of code
+        # after the current line, which has an smaller indent level.
+        # This enables a fine grain stepping out of loops etc. before stepping out of the frame.
+        curr = None
+        lineno = None
+        try:
+            itr = enumerate(self.curframe.f_code.co_positions())
+            while True:
+                i, pyi = next(itr)
+                if None in pyi or i < self.curframe.f_lasti // 2:
+                    continue
+                if curr is None or pyi[0] == curr[0] and pyi[2] < curr[2]:
+                    # Compute a minimum indent level of this line before comparing.
+                    curr = pyi
+                    lineno = None
+                elif pyi[2] < curr[2]:
+                    # indent level decreased after lineno changed.
+                    lineno = pyi[0]
+                    break
+        except StopIteration:
+            curr = None
+        if None not in (lineno, curr) and lineno > self.curframe.f_lineno:
+            # Can step out of this block of code.
+            self.set_until(self.curframe, lineno)
+        elif self.curindex > 2:
+            # Stop immediately after returning from  self.curframe.
+            self.set_return(self.curframe)
+        else:
+            # No outer frames left, single step.
+            self.set_next(self.curframe)
         return 1
     do_r = do_return
+
+    def user_return(self, frame, return_value):
+        """Augmented version of Pdb.user_exception()."""
+        # By not calling self.interaction() here and in kdevPdb.user_exception()
+        # kdevPdb overrides the PDB's "stop just before returning" behavior.
+        if self._wait_for_mainpyfile:
+            return
+
+    def user_exception(self, frame, exc_info):
+        '''Augmented version of Pdb.user_exception()'''
+        # By not calling self.interaction() here and in kdevPdb.user_return()
+        # kdevPdb overrides the PDB's "stop just before returning" behavior.
+        if self._wait_for_mainpyfile:
+            return
 
     def append_response(self, obj):
         assert isinstance(obj, dict)

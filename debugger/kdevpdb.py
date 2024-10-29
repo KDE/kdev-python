@@ -38,6 +38,8 @@ class kdevPdb(pdb.Pdb):
         # Pdb appends an operation into self.cmdqueue on start up to display the stack-frame.
         # The response of this is reported with seqnro -1 only after preinit has been processed.
         self.debugger_initialized = False
+        self.bottomframeindex = 0
+        self.botframe = None
         # Init the super class:
         # - Disable tab complete
         # - Use sys.stdin and sys.stdout
@@ -73,12 +75,55 @@ class kdevPdb(pdb.Pdb):
         self.set_next(stop_frame)
         sys.settrace(self.trace_dispatch)
 
-    def do_return(self, arg):
-        """Augmented version of pdb.do_return(...)"""
-        # TODO: this needs *more* improvements.
-        self.set_return(self.curframe)
+    def do_return(self, _):
+        """kdevPdb implementation of stepOut()"""
+        # Look ahead in the current frame's code and try find a line of code
+        # after the current line, which has an smaller indent level.
+        # This enables a fine grain stepping out of loops etc. before stepping out of the frame.
+        curr = None
+        lineno = None
+        try:
+            # pylint: disable=E1136
+            itr = enumerate(self.curframe.f_code.co_positions())
+            while True:
+                i, pyi = next(itr)
+                if None in pyi or i < self.curframe.f_lasti // 2:
+                    continue
+                if curr is None or pyi[0] == curr[0] and pyi[2] < curr[2]:
+                    # Compute a minimum indent level of this line before comparing.
+                    curr = pyi
+                    lineno = None
+                elif pyi[2] < curr[2]:
+                    # indent level decreased after lineno changed.
+                    lineno = pyi[0]
+                    break
+        except StopIteration:
+            curr = None
+        if None not in (lineno, curr) and lineno > self.curframe.f_lineno:
+            # Can step out of this block of code.
+            self.set_until(self.curframe, lineno)
+        elif self.curindex > self.bottomframeindex:
+            # Stop immediately after returning from  self.curframe.
+            self.set_return(self.curframe)
+        else:
+            # No outer frames left, single step.
+            self.set_next(self.curframe)
         return 1
     do_r = do_return
+
+    def user_return(self, frame, return_value):
+        """Augmented version of Pdb.user_exception()."""
+        # By not calling self.interaction() here and in kdevPdb.user_exception()
+        # kdevPdb overrides the PDB's "stop just before returning" behavior.
+        if self._wait_for_mainpyfile:
+            return
+
+    def user_exception(self, frame, exc_info):
+        '''Augmented version of Pdb.user_exception()'''
+        # By not calling self.interaction() here and in kdevPdb.user_return()
+        # kdevPdb overrides the PDB's "stop just before returning" behavior.
+        if self._wait_for_mainpyfile:
+            return
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -106,7 +151,13 @@ class kdevPdb(pdb.Pdb):
         return stop
 
     def preloop(self):
-        pass
+        # Update the frame index of the bottom most inferior frame.
+        # Unfortunately, this cannot be hard-coded since the count of frames which
+        # can precede the call to self.interaction() can vary.
+        for index, frame_lineno in enumerate(self.stack):
+            if frame_lineno[0].f_code is self.run.__code__:
+                self.bottomframeindex = index + 2
+                break
 
     def cmdloop(self, intro=None):
         """Process the kdevPdbConnection received commands.

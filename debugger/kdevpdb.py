@@ -111,8 +111,13 @@ class kdevPdb(pdb.Pdb):
             self.postloop()
         except self.kdevpdbconn.Stop:
             raise
-        except BaseException as e:
-            print(e)
+        except BaseException:
+            # Hang up and die immediately. :-(
+            import traceback
+            import sys
+            print('Internal kdevPdb error:', file=sys.stderr)
+            traceback.print_exc(None, file=sys.stderr)
+            raise self.kdevpdbconn.Stop()
 
 def main():
     """Kdevelop python debugger main, based on pdb.main()"""

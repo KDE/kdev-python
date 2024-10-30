@@ -104,6 +104,45 @@ class chunkEnumerator(enumeratorBase):
         self.objectref = None
 
 
+class ExceptionInfo():
+    '''Hold user viewable exception info'''
+    def __init__(self, _exc, _traceback):
+        self.exc = _exc
+        self.traceback = _traceback
+
+
+class ExceptionNode():
+    def __init__(self, _exc, _traceback):
+        self.exc_type = _exc.__class__.__qualname__
+        self.exc_value = ExceptionInfo(_exc, _traceback)
+
+
+class Exceptions():
+    '''Hold a list of ExceptionNodes'''
+    def __init__(self, _data):
+        self.data = _data
+
+
+class excInfoEnumerator(enumeratorBase):
+    def __init__(self, exc):
+        super().__init__(exc, 2)
+
+    def next(self):
+        yield 'args', self.objectref.exc.args
+        yield 'from', self.objectref.traceback
+        self.objectref = None
+
+
+class excNodeEnumerator(enumeratorBase):
+    def __init__(self, nodes):
+        super().__init__(nodes, len(nodes))
+
+    def next(self):
+        for x in self.objectref:
+            yield (x.exc_type, x.exc_value)
+        self.objectref = None
+
+
 class Namespace():
     def __init__(self):
         self.names = {}    # mapping of handles into their longnames in self.handles[]
@@ -156,6 +195,25 @@ def inspectMethodOrFunction(obj, *_):
             return {'count': 0, 'data': f'{obj.__qualname__}'}
     except AttributeError:
         pass
+
+
+def inspectExceptions(obj, gens, handle):
+    '''Inspect getreturninfo() exception list.'''
+    if not isinstance(obj, Exceptions):
+        return None
+    # This is synthesized by getreturninfo()
+    g = excNodeEnumerator(obj.data)
+    gens[handle] = g.next()
+    return {'count': len(g), 'type': ''}
+
+
+def inspectExceptionInfo(obj, gens, handle):
+    '''Inspect getreturninfo() exception node.'''
+    if not isinstance(obj, ExceptionInfo):
+        return None
+    g = excInfoEnumerator(obj)
+    gens[handle] = g.next()
+    return {'count': len(g), 'type': '', 'expandhint': 2}
 
 
 def inspectClass(obj, gens, handle):
@@ -246,6 +304,8 @@ class kdevExprValueMapper():
         self.detectors = [
             inspectSimpleValue,
             inspectMethodOrFunction,
+            inspectExceptions,
+            inspectExceptionInfo,
             inspectClass,
             inspectCallable,
             inspectModuleType,

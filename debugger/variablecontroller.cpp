@@ -50,9 +50,10 @@ VariableController::VariableController(IDebugSession* parent) : IVariableControl
      *        VariableController. We may also miss an update when the variable widget is shown/hidden.
      *        (can detect only hiding via autoUpdate() which is useless...)
      */
-    std::array<CollectionInit, 2> collections = {
+    std::array<CollectionInit, 3> collections = {
         CollectionInit{UpdateFlag::Locals, variableCollection()->locals()},
-        CollectionInit{UpdateFlag::Watches, variableCollection()->watches()}
+        CollectionInit{UpdateFlag::Watches, variableCollection()->watches()},
+        CollectionInit{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info"))}
     };
 
     for (auto& item : collections) {
@@ -269,6 +270,23 @@ void VariableController::fetchFrameLocals(const ResponseData& d)
     enumerateNamespace(nsid, count, handle, i18n("Locals"));
 }
 
+void VariableController::fetchReturnInfo(const ResponseData& d)
+{
+    const auto data = responseObject(d, QStringLiteral("returninfo"));
+    if (data.empty()) {
+        qCWarning(KDEV_PYTHON_VARIABLECONTROLLER) << "failed to get return info!";
+    }
+
+    int nsid = data.value(QStringLiteral("namespace")).toInt();
+    int count = data.value(QStringLiteral("count")).toInt();
+    PythonId handle = data.value(QStringLiteral("ptr")).toInt();
+
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
+        << "enumerating return info:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
+
+    enumerateNamespace(nsid, count, handle, i18n("Return info"));
+}
+
 void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, QString name)
 {
     auto itr = m_namespaces.find(nsid);
@@ -389,6 +407,18 @@ void VariableController::updateCollections()
 
     // Update "Fixed" collections.
     // These collections are updated at most once per program_state_changed event.
+
+    // Update our return info.
+    if ((updateMask & UpdateFlag::ReturnInfo) && !(m_updateStarted & UpdateFlag::ReturnInfo)) {
+        m_updateStarted |= UpdateFlag::ReturnInfo;
+        m_updateRequested.setFlag(UpdateFlag::ReturnInfo, false);
+        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Return info update";
+
+        session()->debugger()->request({QStringLiteral("getreturninfo")},
+            [this, guard = UpdateGuard()](const ResponseData& d) {
+                fetchReturnInfo(d);
+        });
+    }
 
     // Update watches.
     if ((updateMask & UpdateFlag::Watches) && !(m_updateStarted & UpdateFlag::Watches)) {

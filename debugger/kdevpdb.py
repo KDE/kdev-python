@@ -80,6 +80,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMappe
         # About to return from enter_debugger(), thus allow the client to
         # interrupt the current operation.
         self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptAllowed)
+        # No need to hold onto the captured state.
+        self.forget_caught_values()
 
     def preloop(self):
         '''Handle suspension of inferior.'''
@@ -364,6 +366,34 @@ class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMappe
         # the count of stack frames grows, so use frame_id to make it unique.
         count, objid = self.updateNamespace(frame_locals, frame_id, f"__kdevpdbframeobject{frame_id}")
         self.append_response({'locals': {'count': count, 'ptr': objid, 'namespace': frame_id}})
+
+    def do_getreturninfo(self):
+        '''Begin enumerating program return info'''
+        # Synthesize a namespace for:
+        # - The return value from the last function/method call.
+        # - Exception from the last function/method call.
+        returninfo = []
+        if self.ret_value is not None:
+            returninfo.append(('Return', self.ret_value[0]))
+        if self.exc_info is not None:
+            # The exception type works as the variable name and when expanded gives:
+            # - The parameter(s) passed into the exception's __init__
+            # - A stack-frame listing allowing to pin point where the exception was raised.
+            exc_type, exc_value, exc_traceback = self.exc_info[0]
+            frames = []
+            t = exc_traceback
+            while t is not None:
+                f = t.tb_frame
+                filename = self.canonic(f.f_code.co_filename)
+                fn = "<lambda>" if not f.f_code.co_name else f.f_code.co_name
+                frames.append(f'{filename}:{t.tb_lineno} in {fn}()')
+                t = t.tb_next
+            exception = {}
+            exception[exc_type] = kdevpdbvariablesupport.ExceptionNode(exc_value, frames)
+            returninfo.append(('Exception', kdevpdbvariablesupport.Exceptions(exception.values())))
+        # Update the namespace.
+        count, objid = self.updateNamespace(returninfo, -2, '__kdevpdbreturninfo')
+        self.append_response({'returninfo': {'count': count, 'ptr': objid, 'namespace': -2}})
 
 
 def main():

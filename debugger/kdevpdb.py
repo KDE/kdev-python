@@ -403,6 +403,61 @@ class kdevPdb(kdevpdbcore.kdevDbgCore, kdevpdbvariablesupport.kdevExprValueMappe
         count, objid = self.updateNamespace(returninfo, -2, '__kdevpdbreturninfo')
         self.append_response({'returninfo': {'count': count, 'ptr': objid, 'namespace': -2}})
 
+    def do_dropnamespace(self, ns_id):
+        '''Discard a namespace id'''
+        self.dropNamespace(int(ns_id))
+
+    def do_evalexpression(self, arg, ns_id):
+        '''Evaluate an expression in a context of the active stack-frame.
+           If it is possible to evaluate the expression the result is attached into a namespace.
+           If ns_id != -1, the first argument is ignored and the expression of the namespace id is used.
+           Any reported namespace id must be later cleaned up with dropnamespace() command.
+           JSON: 'evaluate': {'namespace': <namespace id> or None, 'inscope': bool, 'ptr': <namespace handle>, 'count':1},
+                 'variable':{'expression': str(), 'ptr': <expression's handle>}
+                 'inspect': inspectvalue()}
+        '''
+        expr = str(arg)
+        if len(expr) <= 2:
+            self.append_response({'evaluate': {'namespace': None}})
+            return
+        ns_id = int(ns_id)
+        frameindex = self.activeindex if self.activeindex != -1 else self.topindex
+        if ns_id != -1:
+            if ns_id not in self.objectsByNamespace:
+                # Invalid. This happens when a variable gets carried over to a new session.
+                self.append_response({'evaluate': {'namespace': ns_id, 'inscope': False}})
+                return
+            # Get the variable details
+            details = self.objectsByNamespace[ns_id].label.split('/')
+            frameindex = int(details[2])
+            if frameindex > self.topindex:
+                self.append_response({'evaluate': {'namespace': ns_id, 'inscope': False}})
+                return
+            expr = details[3]
+        expr = expr[1:-1]
+        # Evaluate.
+        evalresult = self.evalexpression(expr, self.stack[frameindex])
+        if evalresult['error']:
+            if ns_id == -1:
+                self.append_response({'evaluate': {'namespace': None}})
+            else:
+                self.append_response({'evaluate': {'namespace': ns_id, 'inscope': False}})
+            return
+        if ns_id == -1:
+            # create an new namespace id
+            ns_id, self.variableNsids = self.variableNsids, self.variableNsids - 1
+        # Attach the (new) value to the namespace.
+        # The namespace label contains the originating frame and the quoted expression.
+        label = f"__kdevpdbvariable/{ns_id}/{frameindex}/'{expr}'"
+        _, ns_handle = self.updateNamespace([(expr, evalresult['value'])], ns_id, label)
+        # Enumerate the namespace so the client can skip this.
+        result = self.enumerateHandle(ns_handle, ns_id)
+        # Also inspect the handle.
+        inspect = self.inspectvalue(result['ptr'], ns_id)
+        self.append_response({'evaluate': {'namespace': ns_id, 'inscope': True, 'ptr': ns_handle, 'count': 1},
+                              'variable': result,
+                              'inspect': inspect})
+
 
 def main():
     """Kdevelop python debugger main."""

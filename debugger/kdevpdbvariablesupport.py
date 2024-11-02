@@ -5,6 +5,7 @@ import sys
 import types
 import math
 import copy
+
 # pylint: disable=C0103, R0903, C0115, R1710
 # This module implements the kdevPdb's variable machinery and other helpers.
 
@@ -159,6 +160,7 @@ class excNodeEnumerator(enumeratorBase):
 
 class Namespace():
     def __init__(self):
+        self.label = ""    # namespace's label inserted in handles
         self.names = {}    # mapping of handles into their longnames in self.handles[]
         self.handles = {}  # mapping of longname into the current and old handle
         self.inited = set()  # set of enumerated longnames.
@@ -365,6 +367,8 @@ class kdevExprValueMapper():
         self.objectEnumerators = {}
         # All namespace objects.
         self.objectsByNamespace = {}
+        self.droppedNamespaces = set()
+        self.variableNsids = -3
         # List of inspect() functions.
         # The order is critical, the first that doesn't return None wins.
         self.detectors = [
@@ -392,23 +396,35 @@ class kdevExprValueMapper():
         self.handleCounter += 1
         return self.handleCounter
 
+    def error(self, msg, lnend='\n'):
+        raise NotImplementedError("subclass must implement this method.")
+
     def get_topindex(self):
         raise NotImplementedError("subclass must implement this method.")
+
+    def dropNamespace(self, ns_id):
+        '''Cleanup a namespace id'''
+        self.droppedNamespaces.add(ns_id)
 
     def cleanupobjects(self):
         '''Cleanup invalidated state after pausing'''
         self.objectEnumerators.clear()
+        # Purge unavailable namespaces.
+        for ns_id in self.objectsByNamespace:
+            if ns_id > self.get_topindex():
+                self.dropNamespace(ns_id)
         # Coarse purge handles (and longnames) that are now unreachable
         # from the possible namespaces.
         reachable = set()
         unreachable = set()
         for ns_id, ns in list(self.objectsByNamespace.items()):
-            if -2 <= ns_id <= self.get_topindex():
-                reachable.update(ns.names)
-            else:
+            if ns_id in self.droppedNamespaces:
                 unreachable.update(ns.names)
                 # Drop the entire namespace object.
                 del self.objectsByNamespace[ns_id]
+            else:
+                reachable.update(ns.names)
+        self.droppedNamespaces.clear()
         # Drop handles which are not in reachable.
         unreachable -= reachable
         num_purged = len(unreachable)
@@ -438,6 +454,7 @@ class kdevExprValueMapper():
             handle = self.makeHandle()
             # Link the handle inside its own namespace.
             ns.handles[ns_label] = [handle, 0]
+        ns.label = ns_label
         ns.names[handle] = ns_label
         ns.inited.add(ns_label)
         self.objectsByHandle[handle] = (ns_id, True)
@@ -536,3 +553,24 @@ class kdevExprValueMapper():
                 ret.setdefault('type', obj.__class__.__qualname__)
                 return ret
         return None
+
+    def evalexpression(self, expr, frame):
+        '''Attempts to evaluate an expression in the context of a stack-frame.'''
+        # confine the frame.f_globals.__builtins__ a bit.
+        fglobals = {}
+        fglobals.update(frame.f_globals)
+        fbuiltins = {}
+        fbuiltins.update(fglobals['__builtins__'])
+        del fbuiltins['print']
+        del fbuiltins['__import__']
+        del fbuiltins['eval']
+        del fbuiltins['exec']
+        del fbuiltins['compile']
+        fglobals['__builtins__'] = fbuiltins
+        try:
+            evaluate_result = frame.evaluate(expr, fglobals, frame.f_locals)
+            return {'value': evaluate_result, 'error': False}
+        except Exception as e:
+            # Log the error.
+            self.error(f"{e}")
+        return {'error': True}

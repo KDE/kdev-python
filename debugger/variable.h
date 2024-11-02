@@ -9,6 +9,7 @@
 #define VARIABLE_H
 
 #include <QList>
+#include <QPointer>
 
 #include <debugger/variable/variablecollection.h>
 
@@ -30,7 +31,9 @@ public:
      * @note If possible, the namespaceId() is inherited from @p parent.
      */
     Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = QString());
-    
+
+    ~Variable();
+
     /**
      * @brief Fetch this variable's value, and notify callback::callbackMethod when done.
      *
@@ -95,6 +98,8 @@ private:
     /// Likewise to VariableController::m_pendingRequests,
     /// except this doesn't count fetchValue() made request or any child variable made requests.
     int m_pendingUpdates = 0;
+    /// True, if this is a watch root variable.
+    bool m_is_watch = false;
 
     /**
      * Try insert a new child or return an existing child.
@@ -103,6 +108,7 @@ private:
 
     void valueFetched(const ResponseData& data);
     QList<Variable*> variablesEnumerated(const ResponseData& data);
+    void attachDone(const ResponseData& d, QObject* object, const char* method);
 };
 
 }

@@ -16,7 +16,15 @@ import asmskip
 __all__ = ["kdevDbgCore", "FrameInfo"]
 
 # Decomposed frame object.
-FrameInfo = namedtuple('FrameInfo', ['frame', 'filename', 'lineno', 'fn', 'f_code', 'f_globals', 'f_locals'])
+FrameInfo = namedtuple('FrameInfo',
+                       ['frame',
+                        'filename',
+                        'lineno',
+                        'fn',
+                        'f_code',
+                        'f_globals',
+                        'f_locals',
+                        'evaluate'])
 
 
 class kdevDbgCore(bdb.Bdb):
@@ -175,7 +183,17 @@ class kdevDbgCore(bdb.Bdb):
         f_globals.update(f.f_globals)
         f_locals = {}
         f_locals.update(f.f_locals)
-        return self._frameinfo(f, filename, lineno, fn, f_code, f_globals, f_locals)
+        # Make an evaluator for the frame.
+        # The f_locals dict is unpacked as local variables in a __evaluate() function.
+        # The expression, a globals dict and locals() are then passed to the eval() call.
+        code = "def __evaluate(__kdevpdb_eval_expr, __kdevpdb_eval_frame_globals, __kdevpdb_eval_frame_locals):\n"
+        for name in f_locals:
+            code += f"    {name} = __kdevpdb_eval_frame_locals['{name}']\n"
+        code += "    del __kdevpdb_eval_frame_locals\n"
+        code += "    return eval(__kdevpdb_eval_expr, __kdevpdb_eval_frame_globals, locals())\n"
+        func = {}
+        exec(compile(code, "<string>", "exec"), {}, func)
+        return self._frameinfo(f, filename, lineno, fn, f_code, f_globals, f_locals, func['__evaluate'])
 
     def setup_frames(self):
         '''Update the debugger stack state and Bdb.botframe.'''

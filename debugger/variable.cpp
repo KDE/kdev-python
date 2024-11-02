@@ -26,18 +26,91 @@ Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const
     }
 }
 
+Variable::~Variable()
+{
+    if (!ICore::self() || !ICore::self()->debugController())
+        return;
+    if (m_is_watch && namespaceId() < -2) {
+        session()->debugger()->request({QStringLiteral("dropnamespace"), namespaceId()});
+    }
+}
+
 DebugSession* Variable::session()
 {
     IDebugSession* is = ICore::self()->debugController()->currentSession();
     return qobject_cast<DebugSession*>(is);
 }
 
-void Variable::attachMaybe(QObject* callback, const char* callbackMethod)
+void Variable::attachMaybe(QObject* context, const char* callback)
 {
-    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "Variable::attachMaybe() invoked for" << expression();
-    if (callback) {
-        // TODO: Needs server support... so for now just reject the request.
-        QMetaObject::invokeMethod(callback, callbackMethod, Qt::QueuedConnection, Q_ARG(bool, false));
+    if (auto* s = session(); !s || s->state() != DebugSession::PausedState) {
+        // KDevelop can call this function even if the inferior is running, so just don't.
+        if (context) {
+            QMetaObject::invokeMethod(context, callback, Qt::QueuedConnection, Q_ARG(bool, false));
+        }
+        return;
+    }
+    // This variable's existence hangs on the user not moving the mouse cursor or deleting this.
+    // When the request handler finally runs, *this might have been already deleted!
+    QPointer<Variable> holder(this);
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "search for:" << expression();
+
+    // FIXME: expression() can be from an expanded tooltip that contains "foo/[0]"
+    //        This does not work since "foo/[0]" is syntactically wrong.
+
+    m_is_watch = true;
+    session()->debugger()->request(
+        {QStringLiteral("evalexpression"), QStringLiteral("'%1'").arg(expression()), namespaceId()},
+        [guard = UpdateGuard(), holder, context, callback](const ResponseData& d) {
+            auto* const var = holder.data();
+            if (!var) {
+                // var got deleted...
+                qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "attachMaybe() was aborted";
+                // Release the namespace id if it was assigned.
+                const auto result = responseObject(d, QStringLiteral("evaluate"));
+                const auto ns_id = result.value(QStringLiteral("namespace")).toInt();
+                if (ns_id < -2) {
+                    session()->debugger()->request({QStringLiteral("dropnamespace"), ns_id});
+                }
+                return;
+            }
+            var->attachDone(d, context, callback);
+        });
+}
+
+void Variable::attachDone(const ResponseData& d, QObject* context, const char* callback)
+{
+    const auto result = responseObject(d, QStringLiteral("evaluate"));
+    const auto ns_id = result.value(QStringLiteral("namespace")).toInt();
+    const auto inscope = result.value(QStringLiteral("inscope")).toBool();
+    if (!ns_id) {
+        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "failed to lookup:" << expression();
+        if (context) {
+            QMetaObject::invokeMethod(context, callback, Qt::QueuedConnection, Q_ARG(bool, false));
+        }
+        return;
+    }
+
+    setNamespaceId(ns_id);
+    setInScope(inscope);
+
+    if (!inscope) {
+        // The server accepted the ns_id but there is no value available.
+        if (context) {
+            QMetaObject::invokeMethod(context, callback, Qt::QueuedConnection, Q_ARG(bool, true));
+        }
+        return;
+    }
+
+    // Process the "enumeratevariables" response.
+    const auto var = responseObject(d, QStringLiteral("variable"));
+    const PythonId ptr = var.value(QStringLiteral("ptr")).toInt();
+    setId(ptr);
+    // Process the 'inspect' response.
+    valueFetched(d);
+
+    if (context) {
+        QMetaObject::invokeMethod(context, callback, Qt::QueuedConnection, Q_ARG(bool, true));
     }
 }
 

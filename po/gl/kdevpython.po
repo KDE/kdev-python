@@ -5,27 +5,27 @@
 # Marce Villarino <mvillarino@users.sourceforge.net>, 2009, 2013.
 # marce villarino <mvillarino@users.sourceforge.net>, 2009.
 # Adrian Chaves Fernandez <adriyetichaves@gmail.com>, 2013, 2015, 2016.
-# Adrián Chaves (Gallaecio) <adrian@chaves.io>, 2017, 2019, 2023.
+# SPDX-FileCopyrightText: 2024 Adrián Chaves (Gallaecio)
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2023-04-23 05:40+0200\n"
+"PO-Revision-Date: 2024-11-09 16:19+0100\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
-"Language-Team: Galician <proxecto@trasno.gal>\n"
+"Language-Team: Proxecto Trasno (proxecto@trasno.gal)\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 24.08.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Adrián Chaves Fernández, Marce Villarino"
+msgstr "Adrián Chaves (Gallaecio), Marce Villarino"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
@@ -444,14 +444,12 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Non se atopou a declaración de «%1» no módulo indicado."
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
-"O primeiro argumento do método da clase non se chama «self», iso está "
-"obsoleto."
+"O primeiro argumento do método da clase non se chama «self» ou «cls», iso "
+"está obsoleto."
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format

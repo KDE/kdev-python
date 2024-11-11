@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-10-18 02:00+0300\n"
+"PO-Revision-Date: 2024-11-10 20:24+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 24.11.70\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -138,12 +138,12 @@ msgstr "işlev"
 #, kde-format
 msgctxt "programming; %1 is a code statement to be added in the editor"
 msgid "Add \"%1\""
-msgstr "\"%1\" Ekle"
+msgstr "“%1” Ekle"
 
 #: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
-msgstr "\"%1\" Türünü Belirt..."
+msgstr "“%1” türünü belirt…"
 
 #: codegen/correctionfilegenerator.cpp:108
 #, kde-format
@@ -216,7 +216,7 @@ msgstr "Programdan çıkıldıktan sonra durumunu kontrol edebilirsiniz."
 #: debugger/debugsession.cpp:169
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
-msgstr "Sonraki komut tetiklendiğinde hata ayıklayıcı sessizce duracak."
+msgstr "Sonraki komut tetiklendiğinde hata ayıklayıcısı sessizce duracak."
 
 #: debugger/pdblauncher.cpp:45
 #, kde-format
@@ -242,7 +242,7 @@ msgstr "kdevpython desteği için geçerli bir veri dizini bulunamadı."
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
 msgid "Generate..."
-msgstr "Oluştur..."
+msgstr "Üret"
 
 #: docfilekcm/docfilemanagerwidget.cpp:53
 #, kde-format
@@ -272,7 +272,7 @@ msgstr "Seçileni Düzenle"
 #: docfilekcm/docfilemanagerwidget.cpp:70
 #, kde-format
 msgid "Search Paths..."
-msgstr "Yolları Ara..."
+msgstr "Yolları Ara…"
 
 #: docfilekcm/docfilemanagerwidget.cpp:101
 #, kde-format
@@ -292,8 +292,8 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
-"Bu yol, bu modülü içe aktarmak için Python 'da kullandığınız yol ile "
-"eşleşmek zorundadır; örneğin, numpy.ftt için \"numpy/fft.py\" girin"
+"Bu yol, bu modülü içe aktarmak için Python’da kullandığınız yol ile eşleşmek "
+"zorundadır; örneğin, numpy.ftt için “numpy/fft.py” girin"
 
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
@@ -324,7 +324,7 @@ msgstr "Belgelendirmesi oluşturulacak bir python modülü seçin"
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr "Hedef modül (\"math\" gibi)"
+msgstr "Hedef modül (“math” gibi)"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
@@ -376,7 +376,7 @@ msgstr "introspect.py betiği bulunamadı; kurulumunuzu kontrol edin!"
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr ""
-"Geçerli bir kdev-python veri dizini bulunamadı; kurulumunuzu kontrol edin!"
+"Geçerli bir kdev-python veri dizini bulunamadı; kurulumunuzu denetleyin!"
 
 #: docfilekcm/docfilewizard.cpp:148
 #, kde-format
@@ -427,17 +427,17 @@ msgstr "Python Belgelendirmesi"
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr "\"%1\" modülü için belgelendirme oluştur ..."
+msgstr "“%1” modülü için belgelendirme oluştur…"
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
 msgid "Module \"%1\" not found"
-msgstr "\"%1\" modülü bulunamadı"
+msgstr "“%1” modülü bulunamadı"
 
 #: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
-msgstr "Belirtilen modülde \"%1\" bildirimi bulunamadı"
+msgstr "Belirtilen modülde “%1” beyanı bulunamadı"
 
 #: duchain/declarationbuilder.cpp:1585
 #, kde-format
@@ -456,7 +456,7 @@ msgstr ""
 #: duchain/declarationbuilder.cpp:1766
 #, kde-format
 msgid "Return statement not within function declaration"
-msgstr "Dönüş ifadesi işlev bildirimi içinde değil"
+msgstr "Dönüş ifadesi işlev beyanı içinde değil"
 
 #: duchain/navigation/declarationnavigationcontext.cpp:67
 #, kde-format
@@ -504,7 +504,7 @@ msgstr "Tanımlanmamış değişken: %1"
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr "\"%1\" özniteliği erişilen nesnede bulunamadı"
+msgstr "“%1” özniteliği erişilen nesnede bulunamadı"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format
@@ -539,7 +539,7 @@ msgstr "Şu hataları ve uyarıları etkinleştir:"
 #: pep8kcm/pep8.ui:65
 #, kde-format
 msgid "Maximum line length:"
-msgstr "Azami satır uzunluğu:"
+msgstr "En çok satır uzunluğu:"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: pep8kcm/pep8.ui:88
@@ -561,7 +561,7 @@ msgstr ""
 #: projectconfig/projectconfig.ui:19
 #, kde-format
 msgid "Python interpreter:"
-msgstr "Python yorumlayıcı:"
+msgstr "Python yorumlayıcısı:"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
 #: projectconfig/projectconfig.ui:26
@@ -582,7 +582,7 @@ msgstr "Kaynağı autopep8 biçimlendiricisi ile biçimlendir."
 #: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
-msgstr "PEP8 kontrol hatası: %1"
+msgstr "PEP8 denetleyicisi hatası: %1"
 
 #: pythonstylechecking.cpp:209
 #, kde-format

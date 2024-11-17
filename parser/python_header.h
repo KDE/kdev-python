@@ -13,11 +13,6 @@
 
 #include <language/duchain/duchainlock.h>
 
-#include "pyport.h"
-#ifndef _WIN32
-#include "pyconfig.h"
-#endif
-
 #include "Python.h"
 
 #include "ast.h"

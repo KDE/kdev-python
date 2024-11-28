@@ -42,7 +42,7 @@ add_definitions( -DTRANSLATION_DOMAIN=\"kdevpython\" )
 
 set(Python3_USE_STATIC_LIBS FALSE)
 set(Python3_FIND_STRATEGY VERSION)
-find_package(Python3 3.4.3...<3.13 COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 3.4.3...<3.14 COMPONENTS Interpreter Development REQUIRED)
 
 configure_file(kdevpythonversion.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/kdevpythonversion.h" @ONLY)
 

@@ -3,28 +3,31 @@
 # This file is distributed under the same license as the kdev-python package.
 # Kali <EMAIL@ADDRESS>, 2024.
 #
+# SPDX-FileCopyrightText: 2024 kali <skkalwar999@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-12-13 19:09+0530\n"
-"Last-Translator: Kali <EMAIL@ADDRESS>\n"
-"Language-Team: Sanskrit\n"
+"PO-Revision-Date: 2024-12-14 01:08+0530\n"
+"Last-Translator: kali <skkalwar999@gmail.com>\n"
+"Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
 "Language: sa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr ""
+msgstr "भवतः नामानि"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr ""
+msgstr "भवतः ईमेलपत्राणि"
 
 #: codecompletion/context.cpp:115
 #, kde-format
@@ -135,7 +138,7 @@ msgstr "नियोग"
 #, kde-format
 msgctxt "programming; %1 is a code statement to be added in the editor"
 msgid "Add \"%1\""
-msgstr ""
+msgstr "\"%1\" योजयतु।"
 
 #: codegen/correctionfilegenerator.cpp:58
 #, kde-format
@@ -262,7 +265,7 @@ msgstr "सञ्चिकाप्रबन्धकं उद्घाटय�
 #, kde-format
 msgctxt "Edit selected files"
 msgid "Edit Selected"
-msgstr ""
+msgstr "सम्पादनं चयनितम्"
 
 #: docfilekcm/docfilemanagerwidget.cpp:70
 #, kde-format
@@ -273,7 +276,7 @@ msgstr "अन्वेषणमार्गाः..."
 #, kde-format
 msgctxt "displays a list of search paths below"
 msgid "Paths searched for documentation by kdev-python (in this order):"
-msgstr ""
+msgstr "kdev-python द्वारा दस्तावेजीकरणार्थं अन्वेषिताः मार्गाः (अस्मिन् क्रमे):"
 
 #: docfilekcm/docfilemanagerwidget.cpp:141
 #, kde-format
@@ -318,7 +321,7 @@ msgstr "दस्तावेजीकरणं जनयितुं python म
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr ""
+msgstr "लक्ष्यमॉड्यूल (उदा. \"गणित\")"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
@@ -452,7 +455,7 @@ msgstr "फंक्शन् घोषणायाः अन्तः नास
 #, kde-format
 msgctxt "refers to an unknown type in programming"
 msgid "unknown"
-msgstr ""
+msgstr "अज्ञात"
 
 #: duchain/navigation/declarationnavigationcontext.cpp:83
 #: duchain/navigation/declarationnavigationcontext.cpp:99
@@ -460,31 +463,31 @@ msgstr ""
 #, kde-format
 msgctxt "as in list of int, set of string"
 msgid "%1 of %2"
-msgstr ""
+msgstr "%2 इत्यस्य %1"
 
 #: duchain/types/unsuretype.cpp:101
 #, kde-format
 msgctxt "some object that can be called, in programming"
 msgid "<callable>"
-msgstr ""
+msgstr "<आह्वानीय>"
 
 #: duchain/types/unsuretype.cpp:106
 #, kde-format
 msgctxt "a set with some elements"
 msgid "<iterable>"
-msgstr ""
+msgstr "<पुनरावर्तनीयम्>"
 
 #: duchain/types/unsuretype.cpp:127
 #, kde-format
 msgctxt "refers to a type (in program code) which is not known"
 msgid "mixed"
-msgstr ""
+msgstr "मिश्रितम्"
 
 #: duchain/types/unsuretype.cpp:130
 #, kde-format
 msgctxt "refers to a type (in program code) which can have multiple values"
 msgid "unsure (%1)"
-msgstr ""
+msgstr "अनिश्चित (%1) २."
 
 #: duchain/usebuilder.cpp:83
 #, kde-format

@@ -1,0 +1,580 @@
+# Hindi translations for kdev-python package.
+# Copyright (C) 2024 This file is copyright:
+# This file is distributed under the same license as the kdev-python package.
+# Kali <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: kdev-python\n"
+"Report-Msgid-Bugs-To: https://bugs.kde.org\n"
+"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"PO-Revision-Date: 2024-12-15 19:18+0530\n"
+"Last-Translator: Kali <EMAIL@ADDRESS>\n"
+"Language-Team: Hindi <fedora-trans-hi@redhat.com>\n"
+"Language: hi\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.5\n"
+
+#, kde-format
+msgctxt "NAME OF TRANSLATORS"
+msgid "Your names"
+msgstr "तुम्हारे नाम"
+
+#, kde-format
+msgctxt "EMAIL OF TRANSLATORS"
+msgid "Your emails"
+msgstr "आपके ईमेल"
+
+#: codecompletion/context.cpp:115
+#, kde-format
+msgid "insert Shebang line"
+msgstr "शेबैंग लाइन डालें"
+
+#: codecompletion/context.cpp:123
+#, kde-format
+msgid "specify document encoding"
+msgstr "दस्तावेज़ एनकोडिंग निर्दिष्ट करें"
+
+#: codecompletion/context.cpp:125
+#, kde-format
+msgid "Add file header"
+msgstr "फ़ाइल हेडर जोड़ें"
+
+#: codecompletion/context.cpp:175
+#, kde-format
+msgid "specify default parameter"
+msgstr "डिफ़ॉल्ट पैरामीटर निर्दिष्ट करें"
+
+#: codecompletion/context.cpp:386
+#, kde-format
+msgid "Insert next positional variable"
+msgstr "अगला स्थितीय चर डालें"
+
+#: codecompletion/context.cpp:391
+#, kde-format
+msgid "Insert named variable"
+msgstr "नामित चर डालें"
+
+#: codecompletion/context.cpp:427
+#, kde-format
+msgid "Format using str()"
+msgstr "str() का उपयोग करके प्रारूपित करें"
+
+#: codecompletion/context.cpp:428
+#, kde-format
+msgid "Format using repr()"
+msgstr "repr() का उपयोग करके प्रारूपित करें"
+
+#: codecompletion/context.cpp:436
+#, kde-format
+msgid "Format as left-aligned"
+msgstr "बाएं संरेखित स्वरूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:437
+#, kde-format
+msgid "Format as right-aligned"
+msgstr "दाएं संरेखित स्वरूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:438
+#, kde-format
+msgid "Format as centered"
+msgstr "केन्द्रित स्वरूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:442
+#, kde-format
+msgid "Specify precision"
+msgstr "परिशुद्धता निर्दिष्ट करें"
+
+#: codecompletion/context.cpp:443
+#, kde-format
+msgid "Format as percentage"
+msgstr "प्रतिशत के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:444
+#, kde-format
+msgid "Format as character"
+msgstr "वर्ण के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:445
+#, kde-format
+msgid "Format as binary number"
+msgstr "बाइनरी संख्या के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:446
+#, kde-format
+msgid "Format as octal number"
+msgstr "अष्टक संख्या के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:447
+#, kde-format
+msgid "Format as hexadecimal number"
+msgstr "हेक्साडेसिमल संख्या के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:448
+#, kde-format
+msgid "Format in scientific (exponent) notation"
+msgstr "वैज्ञानिक (घातांक) संकेतन में प्रारूप"
+
+#: codecompletion/context.cpp:449
+#, kde-format
+msgid "Format as fixed point number"
+msgstr "निश्चित बिंदु संख्या के रूप में प्रारूपित करें"
+
+#: codecompletion/context.cpp:509
+#, kde-format
+msgid "Initialize property"
+msgstr "संपत्ति आरंभ करें"
+
+#: codecompletion/items/functiondeclaration.cpp:81
+#, kde-format
+msgid "function"
+msgstr "समारोह"
+
+#: codecompletion/items/missingincludeitem.cpp:38
+#, kde-format
+msgctxt "programming; %1 is a code statement to be added in the editor"
+msgid "Add \"%1\""
+msgstr "\"%1\"जोड़ें"
+
+#: codegen/correctionfilegenerator.cpp:58
+#, kde-format
+msgid "Specify type for \"%1\"..."
+msgstr "\"%1\" के लिए प्रकार निर्दिष्ट करें..."
+
+#: codegen/correctionfilegenerator.cpp:108
+#, kde-format
+msgid "Function return type"
+msgstr "फ़ंक्शन वापसी प्रकार"
+
+#: codegen/correctionfilegenerator.cpp:111
+#, kde-format
+msgid "Local variable"
+msgstr "स्थानीय चर"
+
+#: codegen/correctionfilegenerator.cpp:147
+#, kde-format
+msgid "Sorry, cannot create hints for files which are not part of a project."
+msgstr ""
+"क्षमा करें, उन फ़ाइलों के लिए संकेत नहीं बनाए जा सकते जो किसी प्रोजेक्ट का हिस्सा नहीं हैं।"
+
+#. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
+#: codegen/correctionwidget.ui:20
+#, kde-format
+msgid "Specify correct type"
+msgstr "सही प्रकार निर्दिष्ट करें"
+
+#. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
+#: codegen/correctionwidget.ui:28
+#, kde-format
+msgid "Kind:"
+msgstr "दयालु:"
+
+#. i18n: ectx: property (text), widget (QLabel, givenIdentifierLabel)
+#: codegen/correctionwidget.ui:42
+#, kde-format
+msgid "Identifier:"
+msgstr "पहचानकर्ता:"
+
+#. i18n: ectx: property (text), widget (QLabel, typeLabel)
+#: codegen/correctionwidget.ui:56
+#, kde-format
+msgid "Correct type:"
+msgstr "सही प्रकार:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
+#: codegen/correctionwidget.ui:63
+#, kde-format
+msgid "Code which evaluates to the type, e.g. int()"
+msgstr "कोड जो प्रकार का मूल्यांकन करता है, जैसे int()"
+
+#. i18n: ectx: property (text), widget (QLabel, importsLabel)
+#: codegen/correctionwidget.ui:70
+#, kde-format
+msgid "Required modules:"
+msgstr "आवश्यक मॉड्यूल:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
+#: codegen/correctionwidget.ui:77
+#, kde-format
+msgid "A comma separated list of modules required for the type"
+msgstr "प्रकार के लिए आवश्यक मॉड्यूल की अल्पविराम से अलग की गई सूची"
+
+#: debugger/debugsession.cpp:167
+#, kde-format
+msgid "The program being debugged raised an uncaught exception."
+msgstr "डिबग किए जा रहे प्रोग्राम ने एक अनकैच्ड अपवाद उठाया।"
+
+#: debugger/debugsession.cpp:168
+#, kde-format
+msgid "You can now inspect the status of the program after it exited."
+msgstr "अब आप प्रोग्राम से बाहर निकलने के बाद उसकी स्थिति का निरीक्षण कर सकते हैं।"
+
+#: debugger/debugsession.cpp:169
+#, kde-format
+msgid "The debugger will silently stop when the next command is triggered."
+msgstr "अगला आदेश सक्रिय होने पर डिबगर चुपचाप बंद हो जाएगा।"
+
+#: debugger/pdblauncher.cpp:45
+#, kde-format
+msgid "A plugin to debug Python applications with pdb."
+msgstr "पीडीबी के साथ पायथन अनुप्रयोगों को डीबग करने के लिए एक प्लगइन।"
+
+#: debugger/pdblauncher.cpp:77
+#, kde-format
+msgid "Sorry, debugging is only supported for Python 3.x applications."
+msgstr "क्षमा करें, डिबगिंग केवल पायथन 3.x अनुप्रयोगों के लिए समर्थित है।"
+
+#: debugger/pdblauncher.cpp:78
+#, kde-format
+msgid "Unsupported interpreter"
+msgstr "असमर्थित दुभाषिया"
+
+#: docfilekcm/docfilemanagerwidget.cpp:37
+#, kde-format
+msgid "Failed to find a valid data directory for kdevpythonsupport."
+msgstr "kdevpythonsupport के लिए वैध डेटा निर्देशिका खोजने में विफल।"
+
+#: docfilekcm/docfilemanagerwidget.cpp:51
+#, kde-format
+msgid "Generate..."
+msgstr "उत्पन्न..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:53
+#, kde-format
+msgid "Import From Editor"
+msgstr "संपादक से आयात करें"
+
+#: docfilekcm/docfilemanagerwidget.cpp:54
+#, kde-format
+msgid ""
+"Copy the contents of the active editor window to a new file in the "
+"documentation directory"
+msgstr "सक्रिय संपादक विंडो की सामग्री को डॉक्यूमेंटेशन निर्देशिका में एक नई फ़ाइल में कॉपी करें"
+
+#: docfilekcm/docfilemanagerwidget.cpp:66
+#, kde-format
+msgid "Open File Manager"
+msgstr "फ़ाइल प्रबंधक खोलें"
+
+#: docfilekcm/docfilemanagerwidget.cpp:68
+#, kde-format
+msgctxt "Edit selected files"
+msgid "Edit Selected"
+msgstr "चयनित संपादित करें"
+
+#: docfilekcm/docfilemanagerwidget.cpp:70
+#, kde-format
+msgid "Search Paths..."
+msgstr "खोज पथ..."
+
+#: docfilekcm/docfilemanagerwidget.cpp:101
+#, kde-format
+msgctxt "displays a list of search paths below"
+msgid "Paths searched for documentation by kdev-python (in this order):"
+msgstr "kdev-python द्वारा दस्तावेज़ीकरण के लिए खोजे गए पथ (इस क्रम में):"
+
+#: docfilekcm/docfilemanagerwidget.cpp:141
+#, kde-format
+msgid "Enter a relative target path to copy %1 to:"
+msgstr "%1 को कॉपी करने के लिए सापेक्ष लक्ष्य पथ दर्ज करें:"
+
+#: docfilekcm/docfilemanagerwidget.cpp:145
+#, kde-format
+msgid ""
+"This path must match what you use in Python to import this module. For "
+"example, enter \"numpy/fft.py\" for numpy.fft"
+msgstr ""
+"यह पथ उससे मेल खाना चाहिए जो आप इस मॉड्यूल को आयात करने के लिए पायथन में उपयोग करते "
+"हैं। उदाहरण के लिए, numpy.fft के लिए \"numpy/fft.py\" दर्ज करें"
+
+#: docfilekcm/docfilemanagerwidget.cpp:147
+#, kde-format
+msgid "After copying, you will be editing the new document."
+msgstr "कॉपी करने के बाद, आप नये दस्तावेज़ को संपादित करेंगे।"
+
+#: docfilekcm/docfilemanagerwidget.cpp:166
+#, kde-format
+msgid "Please select at least one file from the list for editing."
+msgstr "कृपया संपादन के लिए सूची से कम से कम एक फ़ाइल का चयन करें।"
+
+#: docfilekcm/docfilewizard.cpp:41
+#, kde-format
+msgid "Configure the Python interpreter to use"
+msgstr "उपयोग करने के लिए पायथन इंटरप्रेटर को कॉन्फ़िगर करें"
+
+#: docfilekcm/docfilewizard.cpp:44
+#, kde-format
+msgid "Python executable"
+msgstr "पायथन निष्पादन योग्य"
+
+#: docfilekcm/docfilewizard.cpp:49
+#, kde-format
+msgid "Select a python module to generate documentation for"
+msgstr "दस्तावेज़ बनाने के लिए एक पायथन मॉड्यूल का चयन करें"
+
+#: docfilekcm/docfilewizard.cpp:53
+#, kde-format
+msgctxt "refers to selecting a python module to perform some operation on"
+msgid "Target module (e.g. \"math\")"
+msgstr "लक्ष्य मॉड्यूल (जैसे \"गणित\")"
+
+#: docfilekcm/docfilewizard.cpp:55
+#, kde-format
+msgid "Output filename"
+msgstr "आउटपुट फ़ाइल नाम"
+
+#: docfilekcm/docfilewizard.cpp:61
+#, kde-format
+msgid "Status and output"
+msgstr "स्थिति और आउटपुट"
+
+#: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
+#, kde-format
+msgid "The process has not been run yet."
+msgstr "प्रक्रिया अभी तक शुरू नहीं हुई है."
+
+#: docfilekcm/docfilewizard.cpp:75
+#, kde-format
+msgid "Script output"
+msgstr "स्क्रिप्ट आउटपुट"
+
+#: docfilekcm/docfilewizard.cpp:76
+#, kde-format
+msgid "Results"
+msgstr "परिणाम"
+
+#: docfilekcm/docfilewizard.cpp:82
+#, kde-format
+msgid "Close"
+msgstr "बंद करना"
+
+#: docfilekcm/docfilewizard.cpp:84
+#, kde-format
+msgid "Save and close"
+msgstr "सहेजें और बंद करें"
+
+#: docfilekcm/docfilewizard.cpp:87
+#, kde-format
+msgid "Generate"
+msgstr "उत्पन्न"
+
+#: docfilekcm/docfilewizard.cpp:138
+#, kde-format
+msgid "Couldn't find the introspect.py script; check your installation!"
+msgstr "introspect.py स्क्रिप्ट नहीं मिल सकी; अपनी स्थापना की जाँच करें!"
+
+#: docfilekcm/docfilewizard.cpp:142
+#, kde-format
+msgid ""
+"Couldn't find a valid kdev-python data directory; check your installation!"
+msgstr "वैध kdev-python डेटा निर्देशिका नहीं मिल सकी; अपनी स्थापना की जाँच करें!"
+
+#: docfilekcm/docfilewizard.cpp:148
+#, kde-format
+msgid "Invalid output filename"
+msgstr "अमान्य आउटपुट फ़ाइल नाम"
+
+#: docfilekcm/docfilewizard.cpp:188
+#, kde-format
+msgid ""
+"The output file <br/>%1<br/> already exists, do you want to overwrite it?"
+msgstr "आउटपुट फ़ाइल<br/> %1<br/> पहले से मौजूद है, क्या आप इसे अधिलेखित करना चाहते हैं?"
+
+#: docfilekcm/docfilewizard.cpp:203
+#, kde-format
+msgid ""
+"This file contains auto-generated documentation extracted\n"
+"from python run-time information. It is analyzed by KDevelop\n"
+"to offer features such as code-completion and syntax highlighting.\n"
+"If you discover errors in KDevelop's support for this module,\n"
+"you can edit this file to correct the errors, e.g. you can add\n"
+"additional return statements to functions to control the return\n"
+"type to be used for that function by the analyzer.\n"
+"Make sure to keep a copy of your changes so you don't accidentally\n"
+"overwrite them by re-generating the file.\n"
+msgstr ""
+"इस फ़ाइल में स्वचालित रूप से जेनरेट किए गए दस्तावेज़ हैं, \n"
+"जो पाइथन रन-टाइम जानकारी से निकाले गए हैं। \n"
+"कोड-पूर्णता और सिंटैक्स हाइलाइटिंग जैसी सुविधाएँ प्रदान करने के लिए KDevelop द्वारा इसका "
+"विश्लेषण किया जाता है। \n"
+"यदि आपको इस मॉड्यूल के लिए KDevelop के समर्थन में त्रुटियाँ मिलती हैं, \n"
+"तो आप त्रुटियों को ठीक करने के लिए इस फ़ाइल को संपादित कर सकते हैं, \n"
+"उदाहरण के लिए आप विश्लेषक द्वारा उस फ़ंक्शन के लिए उपयोग किए जाने वाले रिटर्न प्रकार को "
+"नियंत्रित करने के लिए \n"
+"फ़ंक्शन में अतिरिक्त रिटर्न स्टेटमेंट जोड़ सकते हैं। \n"
+"अपने परिवर्तनों की एक प्रति रखना सुनिश्चित करें ताकि आप फ़ाइल को फिर से जेनरेट करके गलती "
+"से उन्हें अधिलेखित न कर दें।\n"
+
+#: docfilekcm/kcm_docfiles.cpp:48
+#, kde-format
+msgid "Manage Documentation Files Used by the Python Plugin"
+msgstr "पायथन प्लगइन द्वारा उपयोग की जाने वाली दस्तावेज़ फ़ाइलों का प्रबंधन करें"
+
+#: docfilekcm/kcm_docfiles.cpp:58
+#, kde-format
+msgid "Python Documentation"
+msgstr "पायथन दस्तावेज़ीकरण"
+
+#: duchain/assistants/missingincludeassistant.cpp:48
+#, kde-format
+msgid "Generate documentation for module \"%1\"..."
+msgstr "मॉड्यूल \"%1\" के लिए दस्तावेज़ तैयार करें..."
+
+#: duchain/declarationbuilder.cpp:705
+#, kde-format
+msgid "Module \"%1\" not found"
+msgstr "मॉड्यूल \"%1\" नहीं मिला"
+
+#: duchain/declarationbuilder.cpp:776
+#, kde-format
+msgid "Declaration for \"%1\" not found in specified module"
+msgstr "\"%1\" के लिए घोषणा निर्दिष्ट मॉड्यूल में नहीं मिली"
+
+#: duchain/declarationbuilder.cpp:1585
+#, kde-format
+msgid ""
+"First argument of class method is not called self or cls, this is deprecated"
+msgstr "क्लास विधि का पहला तर्क self या cls नहीं कहा जाता है, यह अप्रासंगिक है"
+
+#: duchain/declarationbuilder.cpp:1605
+#, kde-format
+msgid ""
+"Non-static class method without arguments, must have at least one (self)"
+msgstr "तर्कों के बिना गैर-स्थिर वर्ग विधि, कम से कम एक (स्वयं) होना चाहिए"
+
+#: duchain/declarationbuilder.cpp:1766
+#, kde-format
+msgid "Return statement not within function declaration"
+msgstr "रिटर्न स्टेटमेंट फ़ंक्शन घोषणा के अंतर्गत नहीं है"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:67
+#, kde-format
+msgctxt "refers to an unknown type in programming"
+msgid "unknown"
+msgstr "अज्ञात"
+
+#: duchain/navigation/declarationnavigationcontext.cpp:83
+#: duchain/navigation/declarationnavigationcontext.cpp:99
+#: duchain/types/indexedcontainer.cpp:78
+#, kde-format
+msgctxt "as in list of int, set of string"
+msgid "%1 of %2"
+msgstr "%2 में से %1"
+
+#: duchain/types/unsuretype.cpp:101
+#, kde-format
+msgctxt "some object that can be called, in programming"
+msgid "<callable>"
+msgstr "<कॉल करने योग्य>"
+
+#: duchain/types/unsuretype.cpp:106
+#, kde-format
+msgctxt "a set with some elements"
+msgid "<iterable>"
+msgstr "<पुनरावर्तनीय>"
+
+#: duchain/types/unsuretype.cpp:127
+#, kde-format
+msgctxt "refers to a type (in program code) which is not known"
+msgid "mixed"
+msgstr "मिश्रित"
+
+#: duchain/types/unsuretype.cpp:130
+#, kde-format
+msgctxt "refers to a type (in program code) which can have multiple values"
+msgid "unsure (%1)"
+msgstr "अनिश्चित (%1)"
+
+#: duchain/usebuilder.cpp:83
+#, kde-format
+msgid "Undefined variable: %1"
+msgstr "अपरिभाषित चर: %1"
+
+#: duchain/usebuilder.cpp:130
+#, kde-format
+msgid "Attribute \"%1\" not found on accessed object"
+msgstr "एक्सेस की गई वस्तु पर विशेषता \"%1\" नहीं मिली"
+
+#: pep8kcm/kcm_pep8.cpp:63
+#, kde-format
+msgid "Configure Python Style Checking"
+msgstr "पायथन शैली जाँच कॉन्फ़िगर करें"
+
+#: pep8kcm/kcm_pep8.cpp:73
+#, kde-format
+msgid "Python Style Checking"
+msgstr "पायथन शैली जाँच"
+
+#. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
+#: pep8kcm/pep8.ui:29
+#, kde-format
+msgid "Enable Style Checking"
+msgstr "शैली जाँच सक्षम करें"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
+#: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
+#, kde-format
+msgid "Comma-separated list of error codes"
+msgstr "त्रुटि कोडों की अल्पविराम से अलग की गई सूची"
+
+#. i18n: ectx: property (text), widget (QLabel, label_2)
+#: pep8kcm/pep8.ui:51
+#, kde-format
+msgid "Enable these errors and warnings:"
+msgstr "इन त्रुटियों और चेतावनियों को सक्षम करें:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_3)
+#: pep8kcm/pep8.ui:65
+#, kde-format
+msgid "Maximum line length:"
+msgstr "अधिकतम पंक्ति लंबाई:"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: pep8kcm/pep8.ui:88
+#, kde-format
+msgid "Disable these errors and warnings:"
+msgstr "इन त्रुटियों और चेतावनियों को अक्षम करें:"
+
+#. i18n: ectx: property (text), widget (QLabel, label_4)
+#: pep8kcm/pep8.ui:100
+#, kde-format
+msgid ""
+"The `pycodestyle` Python module must be installed in order to use style "
+"checking."
+msgstr ""
+"शैली जाँच का उपयोग करने के लिए `pycodestyle` पायथन मॉड्यूल स्थापित होना चाहिए।"
+
+#. i18n: ectx: property (text), widget (QLabel, label)
+#: projectconfig/projectconfig.ui:19
+#, kde-format
+msgid "Python interpreter:"
+msgstr "पायथन इंटरप्रेटर:"
+
+#. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
+#: projectconfig/projectconfig.ui:26
+#, kde-format
+msgid "Full path to python interpreter, leave empty for default"
+msgstr "पायथन इंटरप्रेटर का पूर्ण पथ, डिफ़ॉल्ट के लिए रिक्त छोड़ दें"
+
+#: projectconfig/projectconfigpage.cpp:47
+#, kde-format
+msgid "Python Settings"
+msgstr "पायथन सेटिंग्स"
+
+#: pythonlanguagesupport.cpp:140
+#, kde-format
+msgid "Format source with the autopep8 formatter."
+msgstr "ऑटोपेप8 फ़ॉर्मेटर के साथ स्रोत को फ़ॉर्मेट करें।"
+
+#: pythonstylechecking.cpp:107
+#, kde-format
+msgid "PEP8 checker error: %1"
+msgstr "PEP8 चेकर त्रुटि: %1"
+
+#: pythonstylechecking.cpp:209
+#, kde-format
+msgid "The PEP8 syntax checker does not seem to work correctly."
+msgstr "ऐसा प्रतीत होता है कि PEP8 सिंटैक्स परीक्षक सही ढंग से काम नहीं कर रहा है।"

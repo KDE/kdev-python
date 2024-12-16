@@ -19,6 +19,7 @@
   <name xml:lang="fr">Prise en charge de Python pour KDevelop</name>
   <name xml:lang="gl">Compatibilidade con Python para KDevelop</name>
   <name xml:lang="he">תמיכה של KDevelop ב־Python</name>
+  <name xml:lang="hi">KDevelop पायथन समर्थन</name>
   <name xml:lang="ia">Supporto de KDevelop per Python</name>
   <name xml:lang="it">Supporto Python per KDevelop</name>
   <name xml:lang="ka">KDevelop Python მხარდაჭერა</name>
@@ -51,6 +52,7 @@
   <summary xml:lang="fr">Prise en charge du langage Python pour KDevelop</summary>
   <summary xml:lang="gl">Compatibilidade coa linguaxe Python para KDevelop</summary>
   <summary xml:lang="he">תמיכה בשפת Python ב־KDevelop</summary>
+  <summary xml:lang="hi">KDevelop के लिए पायथन भाषा समर्थन</summary>
   <summary xml:lang="ia">Supporto de linguage Python per KDevelop</summary>
   <summary xml:lang="it">Supporto per il linguaggio Python in KDevelop</summary>
   <summary xml:lang="ka">Python ენის მხარდაჭერა KDevelop-სთვის</summary>
@@ -86,6 +88,7 @@
     <p xml:lang="fr">Ajoute la prise en charge de Python à KDevelop. Les fonctionnalités incluent la coloration syntaxique, le complètement du code, la prise en charge du système de compilation, les liens avec la documentation et la prise en charge du débogage.</p>
     <p xml:lang="gl">Engade compatibilidade con Python a KDevelop. Inclúe engadir integración con KDevelop para realce de código, completado de código, compatibilidade co sistema de construción, ligazóns á documentación e funcionalidade de depuración.</p>
     <p xml:lang="he">הוספת תמיכה ב־Python ל־KDevelop. כולל הוספת שילוב עם הדגשת קוד, השלמת קוד, תמיכה במערכת בנייה, קישור לתיעוד וניפוי שגיאות.</p>
+    <p xml:lang="hi">KDevelop में पायथन समर्थन जोड़ता है। इसमें कोड हाइलाइटिंग, कोड पूर्णता, बिल्ड सिस्टम समर्थन, डॉक्यूमेंटेशन लिंकिंग और डिबगिंग समर्थन के साथ एकीकरण जोड़ना शामिल है।</p>
     <p xml:lang="it">Aggiunge il supporto a Python in KDevelop. Include l'integrazione con l'evidenziazione del codice, il completamente del codice, il supporto per il sistema di compilazione, il collegamento con la documentazione ed il supporto per il debugging.</p>
     <p xml:lang="ka">KDevelop-სთვის Python-ის მხარდაჭერის დამატება. ემატება კოდის გამოკვეთა, კოდის დასრულება, აგების სისტემის მხარდაჭერა, აწყობისა და გამართვის დოკუმენტაცია.</p>
     <p xml:lang="ko">KDevelop에 Python 지원을 추가합니다. 코드 구문 강조, 자동 완성, 빌드 시스템 지원, 문서 링크 및 디버그 지원 통합이 들어 있습니다.</p>

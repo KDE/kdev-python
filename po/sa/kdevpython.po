@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-12-14 01:08+0530\n"
+"PO-Revision-Date: 2024-12-20 22:01+0530\n"
 "Last-Translator: kali <skkalwar999@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
 "Language: sa\n"
@@ -177,25 +177,25 @@ msgstr "दयालु:"
 #: codegen/correctionwidget.ui:42
 #, kde-format
 msgid "Identifier:"
-msgstr "परिचयकः : १."
+msgstr "परिचयकः :"
 
 #. i18n: ectx: property (text), widget (QLabel, typeLabel)
 #: codegen/correctionwidget.ui:56
 #, kde-format
 msgid "Correct type:"
-msgstr "सम्यक् प्रकारः : १."
+msgstr "सम्यक् प्रकारः :"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
 #: codegen/correctionwidget.ui:63
 #, kde-format
 msgid "Code which evaluates to the type, e.g. int()"
-msgstr "कोडः यः प्रकारं प्रति मूल्याङ्कनं करोति, उदा. int() ९."
+msgstr "कोडः यः प्रकारं प्रति मूल्याङ्कनं करोति, उदा. int()"
 
 #. i18n: ectx: property (text), widget (QLabel, importsLabel)
 #: codegen/correctionwidget.ui:70
 #, kde-format
 msgid "Required modules:"
-msgstr "आवश्यकाः मॉड्यूलाः : १."
+msgstr "आवश्यकाः मॉड्यूलाः :"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
 #: codegen/correctionwidget.ui:77
@@ -487,7 +487,7 @@ msgstr "मिश्रितम्"
 #, kde-format
 msgctxt "refers to a type (in program code) which can have multiple values"
 msgid "unsure (%1)"
-msgstr "अनिश्चित (%1) २."
+msgstr "अनिश्चित (%1)"
 
 #: duchain/usebuilder.cpp:83
 #, kde-format
@@ -532,7 +532,7 @@ msgstr "एतानि त्रुटयः चेतावनीश्च स
 #: pep8kcm/pep8.ui:65
 #, kde-format
 msgid "Maximum line length:"
-msgstr "अधिकतम रेखादीर्घता : १."
+msgstr "अधिकतम रेखादीर्घता :"
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: pep8kcm/pep8.ui:88
@@ -552,7 +552,7 @@ msgstr "शैलीपरीक्षणस्य उपयोगाय `pycode
 #: projectconfig/projectconfig.ui:19
 #, kde-format
 msgid "Python interpreter:"
-msgstr "पायथन् व्याख्याकारः : १."
+msgstr "पायथन् व्याख्याकारः :"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, pythonInterpreter)
 #: projectconfig/projectconfig.ui:26

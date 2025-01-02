@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2023-11-07 22:18+0100\n"
+"PO-Revision-Date: 2024-12-27 10:42+0100\n"
 "Last-Translator: Oliver Kellogg <olivermkellogg@gmail.com>\n"
 "Language-Team: esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -437,13 +437,11 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaro por \"%1\" ne trovita en specifita modulo"
 
 #: duchain/declarationbuilder.cpp:1585
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
-"Unua argumento de klasmetodo ne nomiĝas mem, ĉi tio estas malrekomendita"
+"Unua argumento de klasmetodo ne nomiĝas self aŭ cls, ĉi tio estas evitinda"
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format
@@ -585,9 +583,3 @@ msgstr "PEP8-kontrolilo eraro: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "La sintaksa kontrolilo de PEP8 ŝajnas ne funkcii ĝuste."
-
-#~ msgid ""
-#~ "First argument of __new__ method is not called cls, this is deprecated"
-#~ msgstr ""
-#~ "Unua argumento de __nova__ metodo ne nomiĝas cls, ĉi tio estas "
-#~ "malrekomendita"

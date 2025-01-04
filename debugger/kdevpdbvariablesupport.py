@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Jarmo Tiitto <jarmo.tiitto@gmail.com>
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+import sys
 import types
 import math
 import copy
@@ -40,6 +41,10 @@ class namespaceEnumerator(enumeratorBase):
         self.objectref = None
 
 
+class UnknownType():
+    '''Helper type to differentiate getattr() returning NoneType'''
+
+
 class attributeEnumerator(enumeratorBase):
     '''Enumerate an object attributes with dir() builtin.'''
     def __init__(self, obj):
@@ -48,8 +53,14 @@ class attributeEnumerator(enumeratorBase):
         # a much nicer order if all of the attributes aren't immediately enumerated.
         g = [[], [], [], [], [], []]
         for x in dir(obj):
+            try:
+                attr = getattr(obj, x, UnknownType)
+                if attr is UnknownType:
+                    continue
+            except Exception:
+                continue
             # order callable attributes after non-callable.
-            iscallable = callable(getattr(obj, x))
+            iscallable = callable(attr)
             if len(x) >= 2 and x[:2] == '__':
                 g[4 + iscallable].append(x)
             elif x[0] == '_':
@@ -84,9 +95,12 @@ class dictEnumerator(enumeratorBase):
         super().__init__(obj, len(obj) * 2)
 
     def next(self):
-        for i, x in enumerate(self.objectref.items()):
-            yield (f'[{i}].key', x[0])
-            yield (f'[{i}].value', x[1])
+        try:
+            for i, x in enumerate(self.objectref.items()):
+                yield (f'[{i}].key', x[0])
+                yield (f'[{i}].value', x[1])
+        except Exception:
+            pass
         self.objectref = None
 
 
@@ -173,6 +187,19 @@ def _shallowcopy(value):
         return value
 
 
+try:
+    import numpy
+    numpy.set_printoptions(threshold=numpy.inf)
+
+    def inspectNumpyArray(obj, gens, handle):
+        if isinstance(obj, (numpy.ndarray, numpy.dtype)):
+            # this is not very useful yet but numpy types
+            # need to handled before everything else.
+            return {'count': 0, 'data': f'{obj}'}
+except ImportError:
+    pass
+
+
 def inspectSimpleValue(obj, *_):
     '''Inspect a simple value with no children'''
     if isinstance(obj, (types.NoneType, int, bool, float)):
@@ -186,14 +213,14 @@ def inspectMethodOrFunction(obj, *_):
         if code:
             # Instance method
             return {'count': 0, 'data': f'{obj.__qualname__}'}
-    except AttributeError:
+    except Exception:
         pass
     try:
         code = obj.__code__
         if code:
             # Function
             return {'count': 0, 'data': f'{obj.__qualname__}'}
-    except AttributeError:
+    except Exception:
         pass
 
 
@@ -249,7 +276,10 @@ def inspectDataString(obj, gens, handle):
     # For shorter than chunkEnumerator.MAX_LEN chars, report a direct value with 'len'.
     # Otherwise, report in chunks as the sequence may be *very* long.
     # (megabytes perhaps even..)
-    report = {'len': len(obj)}
+    try:
+        report = {'len': len(obj)}
+    except TypeError:
+        report = {'len': 0}
     if report['len'] > chunkEnumerator.MAX_LEN:
         g = chunkEnumerator(obj)
         gens[handle] = g.next()
@@ -313,6 +343,10 @@ class kdevExprValueMapper():
             inspectSequence,
             inspectDict,
             inspectAttributes]
+
+        # Numpy support is optional.
+        if getattr(sys.modules[__name__], 'inspectNumpyArray', None):
+            self.detectors.insert(1, inspectNumpyArray)
 
     def makeHandle(self):
         '''Make a variable handle.'''
@@ -452,7 +486,10 @@ class kdevExprValueMapper():
             changed = True
             if handles[1] in self.objectsByHandle:
                 # assert obj is self.objectsByHandle[handles[0]][0]
-                changed = obj != self.objectsByHandle[handles[1]][0]
+                try:
+                    changed = bool(obj != self.objectsByHandle[handles[1]][0])
+                except Exception:
+                    changed = True
 
         for proc in self.detectors:
             ret = proc(obj, self.objectEnumerators, handle)

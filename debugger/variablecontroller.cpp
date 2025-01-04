@@ -209,8 +209,8 @@ void UpdateGuard::pendingRequests(int adjust)
             return;
         }
     }
+    // The debug session is likely exiting due to a bug.
     qCCritical(KDEV_PYTHON_VARIABLECONTROLLER) << "failed to account the number of operations!";
-    Q_ASSERT(false);
 }
 
 void VariableController::pendingRequests(int adjust)

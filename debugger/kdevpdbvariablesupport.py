@@ -187,15 +187,51 @@ def _shallowcopy(value):
         return value
 
 
+def compareValues(a, b):
+    '''General non-equal comparison of two values'''
+    try:
+        changed = a != b
+        if isinstance(changed, bool):
+            return changed
+    except Exception:
+        pass
+
+
 try:
     import numpy
     numpy.set_printoptions(threshold=numpy.inf)
 
+    class ndarrayEnumerator(enumeratorBase):
+        '''Decompose numpy.ndarray into a list of sub dimensions'''
+        def __init__(self, obj):
+            assert isinstance(obj, numpy.ndarray)
+            data = [obj[i] for i in range(obj.shape[0])]
+            super().__init__(data, len(data))
+
+        def next(self):
+            for i, x in enumerate(self.objectref):
+                yield (f'[{i}]', x)
+            self.objectref = None
+
     def inspectNumpyArray(obj, gens, handle):
-        if isinstance(obj, (numpy.ndarray, numpy.dtype)):
-            # this is not very useful yet but numpy types
-            # need to handled before everything else.
-            return {'count': 0, 'data': f'{obj}'}
+        '''Inspect numpy.ndarray.'''
+        if not isinstance(obj, numpy.ndarray):
+            return None
+        if len(obj.shape) == 1:
+            return {'count': 0, 'data': f"{obj}"}
+        if len(obj.shape) > 1:
+            # peel dimensions off:
+            g = ndarrayEnumerator(obj)
+            gens[handle] = g.next()
+            return {'count': len(g), 'data': f"shape={obj.shape}", 'expandhint': len(g)}
+        return {'count': 0, 'data': '<invalid>'}
+
+    def compareNumpyArrays(a, b):
+        '''Compare ndarrays'''
+        try:
+            return not numpy.array_equal(a, b)
+        except Exception:
+            pass
 except ImportError:
     pass
 
@@ -343,10 +379,13 @@ class kdevExprValueMapper():
             inspectSequence,
             inspectDict,
             inspectAttributes]
+        # List of compare() functions.
+        self.comparators = [compareValues]
 
         # Numpy support is optional.
         if getattr(sys.modules[__name__], 'inspectNumpyArray', None):
             self.detectors.insert(1, inspectNumpyArray)
+            self.comparators.append(compareNumpyArrays)
 
     def makeHandle(self):
         '''Make a variable handle.'''
@@ -485,11 +524,10 @@ class kdevExprValueMapper():
             handles = ns.handles[ns.names[handle]]
             changed = True
             if handles[1] in self.objectsByHandle:
-                # assert obj is self.objectsByHandle[handles[0]][0]
-                try:
-                    changed = bool(obj != self.objectsByHandle[handles[1]][0])
-                except Exception:
-                    changed = True
+                for cmp in self.comparators:
+                    changed = cmp(obj, self.objectsByHandle[handles[1]][0])
+                    if changed is not None:
+                        break
 
         for proc in self.detectors:
             ret = proc(obj, self.objectEnumerators, handle)

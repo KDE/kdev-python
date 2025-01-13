@@ -5,14 +5,14 @@
 # Marce Villarino <mvillarino@users.sourceforge.net>, 2009, 2013.
 # marce villarino <mvillarino@users.sourceforge.net>, 2009.
 # Adrian Chaves Fernandez <adriyetichaves@gmail.com>, 2013, 2015, 2016.
-# SPDX-FileCopyrightText: 2024 Adrián Chaves (Gallaecio)
+# SPDX-FileCopyrightText: 2024, 2025 Adrián Chaves (Gallaecio)
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-11-09 16:19+0100\n"
+"PO-Revision-Date: 2025-01-12 17:11+0100\n"
 "Last-Translator: Adrián Chaves (Gallaecio) <adrian@chaves.io>\n"
 "Language-Team: Proxecto Trasno (proxecto@trasno.gal)\n"
 "Language: gl\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 24.08.3\n"
+"X-Generator: Lokalize 24.12.0\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -407,15 +407,16 @@ msgid ""
 "Make sure to keep a copy of your changes so you don't accidentally\n"
 "overwrite them by re-generating the file.\n"
 msgstr ""
-"Este ficheiro contén documentación xerada automaticamente que se extraeu da\n"
-"información do ambiente de execución de python. KDevelop analízao\n"
-"para ofrecer funcións como completación de código e realce de sintaxe.\n"
-"Se descobre erros neste módulo de KDevelop, pode editar este ficheiro para\n"
-"corrixilos, por exemplo engadindo sentenzas adicionais de retorno en "
-"funcións\n"
-"para controlar o tipo de retorno que usa o analizador para esa función.\n"
-"Asegúrese de conservar unha copia das súas modificacións de maneira que non\n"
-"perda accidentalmente os seus cambios ao xerar de novo o ficheiro.\n"
+"Este ficheiro contén documentación xerada automaticamente que\n"
+"se extraeu da información do contorno de execución de Python.\n"
+"KDevelop analízao para ofrecer funcións como completación de\n"
+"código e realce de sintaxe. Se descobre erros na compatibilidade\n"
+"de KDevelop con este módulo, pode editar o ficheiro para\n"
+"corrixilos, por exemplo engadir sentenzas adicionais de devolución\n"
+"en funcións para controlar o tipo de devolución que usa o analizador\n"
+"para esa función. Asegúrese de conservar unha copia das súas\n"
+"modificacións de maneira que non perda accidentalmente os seus\n"
+"cambios ao xerar de novo o ficheiro.\n"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format

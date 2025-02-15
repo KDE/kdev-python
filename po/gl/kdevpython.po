@@ -30,7 +30,7 @@ msgstr "Adrián Chaves (Gallaecio), Marce Villarino"
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "adriyetichaves@gmail.com, mvillarino@kde-espana.org"
+msgstr "adrian@chaves.gal, mvillarino@kde-espana.org"
 
 #: codecompletion/context.cpp:115
 #, kde-format

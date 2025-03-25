@@ -37,8 +37,6 @@ void DebugJob::start()
     setModel(pyOutputModel);
     setTitle(m_interpreter + m_scriptUrl.toLocalFile());
 
-    setModel(new KDevelop::OutputModel(nullptr));
-
     startOutput();
     
     qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting standardOutputReceived";

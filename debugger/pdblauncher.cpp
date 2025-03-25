@@ -63,12 +63,20 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
                                       ->pluginForExtension(QStringLiteral("org.kdevelop.IExecuteScriptPlugin"))->extension<IExecuteScriptPlugin>();
         Q_ASSERT(iface);
         QString err;
-        QString interpreter = iface->interpreter(cfg, err);
-        
+
+        const auto interpreter = iface->interpreter(cfg, err);
+        // TODO: replace this minimal safety check with proper ILaunchConfiguration
+        //       error handling like that in ScriptAppJob from the executescript plugin
+        if (interpreter.empty()) {
+            return nullptr;
+        }
+
         // check the interpreter
         QProcess p;
         p.setProcessChannelMode(QProcess::MergedChannels);
-        p.start(interpreter, QStringList() << QStringLiteral("--version"));
+        // Do not pass the interpreter command line arguments to the interpreter version check command,
+        // because the arguments are more likely to break the check than to improve version detection accuracy.
+        p.start(interpreter.constFirst(), {QStringLiteral("--version")});
         p.waitForFinished(500);
         QByteArray version = p.readAll();
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interpreter version:" << version;

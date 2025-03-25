@@ -15,6 +15,8 @@
 #include <sublime/view.h>
 #include <util/processlinemaker.h>
 
+#include <KShell>
+
 #include <QDebug>
 #include <QStandardPaths>
 #include "debuggerdebug.h"
@@ -35,7 +37,7 @@ void DebugJob::start()
     OutputModel* pyOutputModel = new KDevelop::OutputModel();
     pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
-    setTitle(m_interpreter + QLatin1Char{' '} + m_scriptPath);
+    setTitle(KShell::joinArgs(m_interpreter) + QLatin1Char{' '} + m_scriptPath);
 
     startOutput();
     

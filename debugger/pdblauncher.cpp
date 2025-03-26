@@ -8,12 +8,10 @@
 #include <interfaces/idocumentcontroller.h>
 #include "debugjob.h"
 
-#include <util/executecompositejob.h>
 #include <executescript/iexecutescriptplugin.h>
 #include <interfaces/launchconfigurationpage.h>
 #include <interfaces/ilaunchconfiguration.h>
 #include <interfaces/iplugincontroller.h>
-#include <interfaces/iruncontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/iuicontroller.h>
 
@@ -124,9 +122,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         }
         job->m_envProfileName = envProfileName;
 
-        QList<KJob*> l;
-        l << job;
-        return new KDevelop::ExecuteCompositeJob( KDevelop::ICore::self()->runController(), l );
+        return job;
     }
     qCDebug(KDEV_PYTHON_DEBUGGER) << "unknown launch mode";
     return nullptr;

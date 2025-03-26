@@ -84,7 +84,7 @@ bool DebugJob::doKill()
 
 DebugJob::DebugJob()
 {
-
+    setCapabilities(Killable);
 }
 
 DebugJob::~DebugJob()

@@ -106,6 +106,8 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         }
 
         DebugJob* job = new DebugJob();
+        const auto scriptFileName = scriptPath.sliced(scriptPath.lastIndexOf(QLatin1Char{'/'}) + 1);
+        job->setObjectName(scriptFileName);
         job->m_scriptPath = scriptPath;
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);

@@ -35,7 +35,7 @@ void DebugJob::start()
     OutputModel* pyOutputModel = new KDevelop::OutputModel();
     pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
-    setTitle(m_interpreter + m_scriptUrl.toLocalFile());
+    setTitle(m_interpreter + QLatin1Char{' '} + m_scriptUrl.toLocalFile());
 
     startOutput();
     

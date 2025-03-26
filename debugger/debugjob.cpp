@@ -26,7 +26,7 @@ void DebugJob::start()
 {
     QStringList program;
     QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/debugger"), QStandardPaths::LocateDirectory) + QStringLiteral("/kdevpdb.py");
-    program << m_interpreter << QStringLiteral("-u") << debuggerUrl << m_scriptUrl.toLocalFile() << m_args;
+    program << m_interpreter << QStringLiteral("-u") << debuggerUrl << m_scriptPath << m_args;
     // Inject environment
     m_session = new DebugSession(program, m_workingDirectory, m_envProfileName);
     
@@ -35,7 +35,7 @@ void DebugJob::start()
     OutputModel* pyOutputModel = new KDevelop::OutputModel();
     pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
-    setTitle(m_interpreter + QLatin1Char{' '} + m_scriptUrl.toLocalFile());
+    setTitle(m_interpreter + QLatin1Char{' '} + m_scriptPath);
 
     startOutput();
     

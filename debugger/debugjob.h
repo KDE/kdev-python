@@ -25,8 +25,8 @@ public:
      **/
     void start() override;
     bool doKill() override;
-    
-    QUrl m_scriptUrl;
+
+    QString m_scriptPath;
     QString m_interpreter;
     QStringList m_args;
     QUrl m_workingDirectory;

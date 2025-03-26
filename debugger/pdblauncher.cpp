@@ -91,15 +91,16 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         else {
             scriptUrl = iface->script(cfg, err);
         }
+        const auto scriptPath = scriptUrl.toLocalFile();
 
         auto wd = iface->workingDirectory(cfg);
         if( !wd.isValid() || wd.isEmpty() )
         {
-            wd = QUrl::fromLocalFile( QFileInfo( scriptUrl.toLocalFile() ).absolutePath() );
+            wd = QUrl::fromLocalFile(QFileInfo{scriptPath}.absolutePath());
         }
 
         DebugJob* job = new DebugJob();
-        job->m_scriptUrl = scriptUrl;
+        job->m_scriptPath = scriptPath;
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         job->m_workingDirectory = wd;

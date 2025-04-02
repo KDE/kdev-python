@@ -27,6 +27,7 @@ public:
     bool doKill() override;
 
     QString m_scriptPath;
+    QString m_debuggerPath;
     QStringList m_interpreter;
     QStringList m_args;
     QUrl m_workingDirectory;

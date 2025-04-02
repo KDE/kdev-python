@@ -20,6 +20,7 @@
 #include <KParts/MainWindow>
 #include <KConfigGroup>
 #include <QFileInfo>
+#include <QStandardPaths>
 
 #include <QDebug>
 #include "debuggerdebug.h"
@@ -105,10 +106,20 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
             wd = QUrl::fromLocalFile(QFileInfo{scriptPath}.absolutePath());
         }
 
+        // Locate the kdevpdb.py debugger script.
+        const auto debuggerPath =
+            QStandardPaths::locate(QStandardPaths::GenericDataLocation,
+                                   QStringLiteral("kdevpythonsupport/debugger/kdevpdb.py"), QStandardPaths::LocateFile);
+        if (debuggerPath.isEmpty()) {
+            qCDebug(KDEV_PYTHON_DEBUGGER) << "failed to locate kdevpdb.py debugger script";
+            return nullptr;
+        }
+
         DebugJob* job = new DebugJob();
         const auto scriptFileName = scriptPath.sliced(scriptPath.lastIndexOf(QLatin1Char{'/'}) + 1);
         job->setObjectName(scriptFileName);
         job->m_scriptPath = scriptPath;
+        job->m_debuggerPath = debuggerPath;
         job->m_interpreter = interpreter;
         job->m_args = iface->arguments(cfg, err);
         job->m_workingDirectory = wd;

@@ -16,6 +16,7 @@
 #include <util/environmentprofilelist.h>
 
 #include "debugsession.h"
+#include "debugjob.h"
 #include "pdbframestackmodel.h"
 #include "variablecontroller.h"
 #include "variable.h"
@@ -23,7 +24,6 @@
 
 #include <QDebug>
 #include <QRegularExpression>
-#include <QStandardPaths>
 
 #include "debuggerdebug.h"
 
@@ -44,19 +44,15 @@ using namespace KDevelop;
 
 namespace Python {
 
-DebugSession::DebugSession(QStringList program, const QUrl &workingDirectory,
-    const QString& envProfileName) :
-    IDebugSession()
+DebugSession::DebugSession()
+    : IDebugSession()
     , m_breakpointController(nullptr)
     , m_variableController(nullptr)
     , m_frameStackModel(nullptr)
-    , m_workingDirectory(workingDirectory)
-    , m_envProfileName(envProfileName)
     , m_nextNotifyMethod(nullptr)
     , m_inDebuggerData(0)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "creating debug session";
-    m_program = program;
     m_breakpointController = new Python::BreakpointController(this);
     m_variableController = new VariableController(this);
     m_frameStackModel = new PdbFrameStackModel(this);
@@ -77,17 +73,18 @@ IFrameStackModel* DebugSession::frameStackModel() const
     return m_frameStackModel;
 }
 
-void DebugSession::start()
+void DebugSession::start(const DebugJob& job)
 {
     setState(StartingState);
     m_debuggerProcess = new KProcess(this);
-    m_debuggerProcess->setProgram(m_program);
+    *m_debuggerProcess << job.m_interpreter << QStringLiteral("-u") << job.m_debuggerPath << job.m_scriptPath
+                       << job.m_args;
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
-    m_debuggerProcess->setWorkingDirectory(m_workingDirectory.path());
+    m_debuggerProcess->setWorkingDirectory(job.m_workingDirectory.path());
 
     const KDevelop::EnvironmentProfileList environmentProfiles(KSharedConfig::openConfig());
-    const auto environment = environmentProfiles.variables(m_envProfileName);
+    const auto environment = environmentProfiles.variables(job.m_envProfileName);
 
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     for(auto i = environment.cbegin(); i != environment.cend(); i++ )
@@ -100,10 +97,13 @@ void DebugSession::start()
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
     connect(this, &DebugSession::debuggerReady, this, &DebugSession::checkCommandQueue);
     connect(this, &DebugSession::commandAdded, this, &DebugSession::checkCommandQueue);
+
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "starting program:" << m_debuggerProcess->program();
+
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
-    auto dir = QStandardPaths::locate(QStandardPaths::GenericDataLocation,
-                                      QStringLiteral("kdevpythonsupport/debugger/"), QStandardPaths::LocateDirectory);
+
+    const auto dir = job.m_debuggerPath.first(job.m_debuggerPath.lastIndexOf(QLatin1Char{'/'}) + 1);
     InternalPdbCommand* path = new InternalPdbCommand(nullptr, nullptr,
         QStringLiteral("import sys; sys.path.append('") + dir + QStringLiteral("')\n"));
     InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));

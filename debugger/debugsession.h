@@ -24,13 +24,13 @@ using namespace KDevelop;
 namespace Python {
 
 struct PdbCommand;
-    
+class DebugJob;
+
 class DebugSession : public KDevelop::IDebugSession
 {
     Q_OBJECT
 public:
-    DebugSession(QStringList program, const QUrl& workingDirectory,
-                 const QString& envProfileName);
+    DebugSession();
     ~DebugSession() override;
 
     IBreakpointController* breakpointController() const override;
@@ -39,8 +39,8 @@ public:
     /**
      * @brief Start the debugger.
      **/
-    void start();
-    
+    void start(const DebugJob& job);
+
     /**
      * @brief Adds a command to the queue.
      * Commands are processed in the same order they're added.
@@ -210,10 +210,8 @@ private:
     KProcess* m_debuggerProcess;
     IDebugSession::DebuggerState m_state;
     QByteArray m_buffer;
-    QStringList m_program;
     QList<PdbCommand*> m_commandQueue;
-    const QUrl& m_workingDirectory;
-    const QString m_envProfileName;
+
 private:
     /// objects to notify next
     QPointer<QObject> m_nextNotifyObject;

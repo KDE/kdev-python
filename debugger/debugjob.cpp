@@ -16,7 +16,6 @@
 #include <util/processlinemaker.h>
 
 #include <QDebug>
-#include <QStandardPaths>
 #include "debuggerdebug.h"
 
 namespace Python {
@@ -24,12 +23,9 @@ namespace Python {
 
 void DebugJob::start()
 {
-    QStringList program;
-    QString debuggerUrl = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kdevpythonsupport/debugger"), QStandardPaths::LocateDirectory) + QStringLiteral("/kdevpdb.py");
-    program << m_interpreter << QStringLiteral("-u") << debuggerUrl << m_scriptPath << m_args;
     // Inject environment
-    m_session = new DebugSession(program, m_workingDirectory, m_envProfileName);
-    
+    m_session = new DebugSession();
+
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
     OutputModel* pyOutputModel = new KDevelop::OutputModel();
@@ -43,8 +39,7 @@ void DebugJob::start()
     connect(m_session, &DebugSession::stderrReceived, this, &DebugJob::standardErrorReceived);
     connect(m_session, &KDevelop::IDebugSession::finished, this, &DebugJob::sessionFinished);
     KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start();
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "starting program:" << program;
+    m_session->start(*this);
 }
 
 void DebugJob::sessionFinished()

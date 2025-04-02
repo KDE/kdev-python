@@ -24,7 +24,7 @@ using namespace KDevelop;
 namespace Python {
 
 struct PdbCommand;
-class DebugJob;
+struct StartupInfo;
 
 class DebugSession : public KDevelop::IDebugSession
 {
@@ -39,7 +39,7 @@ public:
     /**
      * @brief Start the debugger.
      **/
-    void start(const DebugJob& job);
+    void start(const StartupInfo& info);
 
     /**
      * @brief Adds a command to the queue.

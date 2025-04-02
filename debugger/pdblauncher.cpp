@@ -62,11 +62,12 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
                                       ->pluginForExtension(QStringLiteral("org.kdevelop.IExecuteScriptPlugin"))->extension<IExecuteScriptPlugin>();
         Q_ASSERT(iface);
         QString err;
+        StartupInfo data;
 
-        const auto interpreter = iface->interpreter(cfg, err);
+        data.interpreter = iface->interpreter(cfg, err);
         // TODO: replace this minimal safety check with proper ILaunchConfiguration
         //       error handling like that in ScriptAppJob from the executescript plugin
-        if (interpreter.empty()) {
+        if (data.interpreter.empty()) {
             return nullptr;
         }
 
@@ -75,7 +76,7 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         p.setProcessChannelMode(QProcess::MergedChannels);
         // Do not pass the interpreter command line arguments to the interpreter version check command,
         // because the arguments are more likely to break the check than to improve version detection accuracy.
-        p.start(interpreter.constFirst(), {QStringLiteral("--version")});
+        p.start(data.interpreter.constFirst(), {QStringLiteral("--version")});
         p.waitForFinished(500);
         QByteArray version = p.readAll();
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interpreter version:" << version;
@@ -98,31 +99,23 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         else {
             scriptUrl = iface->script(cfg, err);
         }
-        const auto scriptPath = scriptUrl.toLocalFile();
+        data.scriptPath = scriptUrl.toLocalFile();
 
-        auto wd = iface->workingDirectory(cfg);
-        if( !wd.isValid() || wd.isEmpty() )
-        {
-            wd = QUrl::fromLocalFile(QFileInfo{scriptPath}.absolutePath());
+        data.workingDirectory = iface->workingDirectory(cfg);
+        if (!data.workingDirectory.isValid() || data.workingDirectory.isEmpty()) {
+            data.workingDirectory = QUrl::fromLocalFile(QFileInfo{data.scriptPath}.absolutePath());
         }
 
         // Locate the kdevpdb.py debugger script.
-        const auto debuggerPath =
+        data.debuggerPath =
             QStandardPaths::locate(QStandardPaths::GenericDataLocation,
                                    QStringLiteral("kdevpythonsupport/debugger/kdevpdb.py"), QStandardPaths::LocateFile);
-        if (debuggerPath.isEmpty()) {
+        if (data.debuggerPath.isEmpty()) {
             qCDebug(KDEV_PYTHON_DEBUGGER) << "failed to locate kdevpdb.py debugger script";
             return nullptr;
         }
 
-        DebugJob* job = new DebugJob();
-        const auto scriptFileName = scriptPath.sliced(scriptPath.lastIndexOf(QLatin1Char{'/'}) + 1);
-        job->setObjectName(scriptFileName);
-        job->m_scriptPath = scriptPath;
-        job->m_debuggerPath = debuggerPath;
-        job->m_interpreter = interpreter;
-        job->m_args = iface->arguments(cfg, err);
-        job->m_workingDirectory = wd;
+        data.args = iface->arguments(cfg, err);
 
         const KDevelop::EnvironmentProfileList environmentProfiles(KSharedConfig::openConfig());
         QString envProfileName = iface->environmentProfileName(cfg);
@@ -135,10 +128,14 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         }
 
         const auto environment = environmentProfiles.variables(envProfileName);
-        job->m_environment = QProcessEnvironment::systemEnvironment();
+        data.environment = QProcessEnvironment::systemEnvironment();
         for (auto i = environment.cbegin(); i != environment.cend(); i++) {
-            job->m_environment.insert(i.key(), i.value());
+            data.environment.insert(i.key(), i.value());
         }
+
+        DebugJob* job = new DebugJob(data);
+        const auto scriptFileName = data.scriptPath.section(QLatin1Char{'/'}, -1);
+        job->setObjectName(scriptFileName);
 
         return job;
     }

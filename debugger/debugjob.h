@@ -10,8 +10,7 @@
 #include <outputview/outputjob.h>
 #include <outputview/outputmodel.h>
 #include "debugsession.h"
-
-#include <QProcessEnvironment>
+#include "startupinfo.h"
 
 namespace Python {
 
@@ -19,7 +18,7 @@ class DebugJob : public KDevelop::OutputJob
 {
 Q_OBJECT
 public:
-    DebugJob();
+    explicit DebugJob(const StartupInfo& info);
     ~DebugJob() override;
     
     /**
@@ -28,19 +27,13 @@ public:
     void start() override;
     bool doKill() override;
 
-    QString m_scriptPath;
-    QString m_debuggerPath;
-    QStringList m_interpreter;
-    QStringList m_args;
-    QUrl m_workingDirectory;
-    QProcessEnvironment m_environment;
-
 private Q_SLOTS:
     void standardOutputReceived(QStringList lines);
     void standardErrorReceived(QStringList lines);
 
 private:
     OutputModel* outputModel();
+    const StartupInfo m_data;
     DebugSession* m_session;
 public Q_SLOTS:
     void sessionFinished();

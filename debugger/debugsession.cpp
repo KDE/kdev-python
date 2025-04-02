@@ -15,11 +15,11 @@
 #include <interfaces/idocumentcontroller.h>
 
 #include "debugsession.h"
-#include "debugjob.h"
+#include "breakpointcontroller.h"
 #include "pdbframestackmodel.h"
+#include "startupinfo.h"
 #include "variablecontroller.h"
 #include "variable.h"
-#include "breakpointcontroller.h"
 
 #include <QDebug>
 #include <QRegularExpression>
@@ -72,16 +72,15 @@ IFrameStackModel* DebugSession::frameStackModel() const
     return m_frameStackModel;
 }
 
-void DebugSession::start(const DebugJob& job)
+void DebugSession::start(const StartupInfo& info)
 {
     setState(StartingState);
     m_debuggerProcess = new KProcess(this);
-    *m_debuggerProcess << job.m_interpreter << QStringLiteral("-u") << job.m_debuggerPath << job.m_scriptPath
-                       << job.m_args;
+    *m_debuggerProcess << info.interpreter << QStringLiteral("-u") << info.debuggerPath << info.scriptPath << info.args;
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
-    m_debuggerProcess->setWorkingDirectory(job.m_workingDirectory.path());
-    m_debuggerProcess->setProcessEnvironment(job.m_environment);
+    m_debuggerProcess->setWorkingDirectory(info.workingDirectory.path());
+    m_debuggerProcess->setProcessEnvironment(info.environment);
 
     connect(m_debuggerProcess, &QProcess::readyReadStandardOutput, this, &DebugSession::dataAvailable);
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));
@@ -93,7 +92,7 @@ void DebugSession::start(const DebugJob& job)
     m_debuggerProcess->start();
     m_debuggerProcess->waitForStarted();
 
-    const auto dir = job.m_debuggerPath.first(job.m_debuggerPath.lastIndexOf(QLatin1Char{'/'}) + 1);
+    const auto dir = info.debuggerPath.section(QLatin1Char('/'), 0, -2, QString::SectionIncludeTrailingSep);
     InternalPdbCommand* path = new InternalPdbCommand(nullptr, nullptr,
         QStringLiteral("import sys; sys.path.append('") + dir + QStringLiteral("')\n"));
     InternalPdbCommand* cmd = new InternalPdbCommand(nullptr, nullptr, QStringLiteral("import __kdevpython_debugger_utils\n"));

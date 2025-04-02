@@ -39,7 +39,7 @@ void DebugJob::start()
     connect(m_session, &DebugSession::stderrReceived, this, &DebugJob::standardErrorReceived);
     connect(m_session, &KDevelop::IDebugSession::finished, this, &DebugJob::sessionFinished);
     KDevelop::ICore::self()->debugController()->addSession(m_session);
-    m_session->start(*this);
+    m_session->start(m_data);
 }
 
 void DebugJob::sessionFinished()
@@ -74,7 +74,8 @@ bool DebugJob::doKill()
     return true;
 }
 
-DebugJob::DebugJob()
+DebugJob::DebugJob(const StartupInfo& info)
+    : m_data(info)
 {
     setCapabilities(Killable);
 }

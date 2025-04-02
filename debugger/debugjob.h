@@ -11,6 +11,8 @@
 #include <outputview/outputmodel.h>
 #include "debugsession.h"
 
+#include <QProcessEnvironment>
+
 namespace Python {
 
 class DebugJob : public KDevelop::OutputJob
@@ -31,7 +33,7 @@ public:
     QStringList m_interpreter;
     QStringList m_args;
     QUrl m_workingDirectory;
-    QString m_envProfileName;
+    QProcessEnvironment m_environment;
 
 private Q_SLOTS:
     void standardOutputReceived(QStringList lines);

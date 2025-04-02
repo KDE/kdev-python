@@ -13,7 +13,6 @@
 #include <debugger/framestack/framestackmodel.h>
 #include <interfaces/icore.h>
 #include <interfaces/idocumentcontroller.h>
-#include <util/environmentprofilelist.h>
 
 #include "debugsession.h"
 #include "debugjob.h"
@@ -82,16 +81,7 @@ void DebugSession::start(const DebugJob& job)
     m_debuggerProcess->setOutputChannelMode(KProcess::SeparateChannels);
     m_debuggerProcess->blockSignals(true);
     m_debuggerProcess->setWorkingDirectory(job.m_workingDirectory.path());
-
-    const KDevelop::EnvironmentProfileList environmentProfiles(KSharedConfig::openConfig());
-    const auto environment = environmentProfiles.variables(job.m_envProfileName);
-
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    for(auto i = environment.cbegin(); i != environment.cend(); i++ )
-    {
-        env.insert(i.key(), i.value());
-    }
-    m_debuggerProcess->setProcessEnvironment(env);
+    m_debuggerProcess->setProcessEnvironment(job.m_environment);
 
     connect(m_debuggerProcess, &QProcess::readyReadStandardOutput, this, &DebugSession::dataAvailable);
     connect(m_debuggerProcess, SIGNAL(finished(int)), this, SLOT(debuggerQuit(int)));

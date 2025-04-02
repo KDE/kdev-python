@@ -133,7 +133,12 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
                                        ". Using default environment profile.";
             envProfileName = environmentProfiles.defaultProfileName();
         }
-        job->m_envProfileName = envProfileName;
+
+        const auto environment = environmentProfiles.variables(envProfileName);
+        job->m_environment = QProcessEnvironment::systemEnvironment();
+        for (auto i = environment.cbegin(); i != environment.cend(); i++) {
+            job->m_environment.insert(i.key(), i.value());
+        }
 
         return job;
     }

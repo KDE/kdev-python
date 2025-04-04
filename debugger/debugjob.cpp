@@ -5,8 +5,7 @@
 */
 
 #include "debugjob.h"
-
-
+#include "debugsession.h"
 
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>

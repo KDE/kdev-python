@@ -9,10 +9,11 @@
 
 #include <outputview/outputjob.h>
 #include <outputview/outputmodel.h>
-#include "debugsession.h"
 #include "startupinfo.h"
 
 namespace Python {
+
+class DebugSession;
 
 class DebugJob : public KDevelop::OutputJob
 {
@@ -32,7 +33,7 @@ private Q_SLOTS:
     void standardErrorReceived(QStringList lines);
 
 private:
-    OutputModel* outputModel();
+    KDevelop::OutputModel* outputModel();
     const StartupInfo m_data;
     DebugSession* m_session;
 public Q_SLOTS:

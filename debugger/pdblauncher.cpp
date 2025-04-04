@@ -81,9 +81,9 @@ KJob* PdbLauncher::start(const QString& launchMode, KDevelop::ILaunchConfigurati
         QByteArray version = p.readAll();
         qCDebug(KDEV_PYTHON_DEBUGGER) << "interpreter version:" << version;
         if ( ! version.startsWith("Python 3.") ) {
-            KMessageBox::error(ICore::self()->uiController()->activeMainWindow(),
-                            i18n("Sorry, debugging is only supported for Python 3.x applications."),
-                            i18n("Unsupported interpreter"));
+            KMessageBox::error(KDevelop::ICore::self()->uiController()->activeMainWindow(),
+                               i18n("Sorry, debugging is only supported for Python 3.x applications."),
+                               i18n("Unsupported interpreter"));
             return nullptr;
         }
 

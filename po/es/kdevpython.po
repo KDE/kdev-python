@@ -1,13 +1,14 @@
-# Copyright (C) YEAR This_file_is_part_of_KDE
-# This file is distributed under the same license as the PACKAGE package.
+# Spanish translations for kdevpython.po package.
+# Copyright (C) 2013-2025 This file is copyright:
+# This file is distributed under the same license as the kdev-python package.
 #
-# SPDX-FileCopyrightText: 2013, 2014, 2015, 2016, 2017, 2024 Eloy Cuadra <ecuadra@eloihr.net>
+# SPDX-FileCopyrightText: 2013, 2014, 2015, 2016, 2017, 2024, 2025 Eloy Cuadra <ecuadra@eloihr.net>
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-10-17 00:39+0000\n"
-"PO-Revision-Date: 2024-10-18 00:09+0200\n"
+"PO-Revision-Date: 2025-05-13 21:29+0100\n"
 "Last-Translator: Eloy Cuadra <ecuadra@eloihr.net>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -141,7 +142,7 @@ msgstr "Añadir «%1»"
 #: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
-msgstr "Especifique el tipo para «%1»..."
+msgstr "Especifique el tipo para «%1»…"
 
 #: codegen/correctionfilegenerator.cpp:108
 #, kde-format
@@ -247,7 +248,7 @@ msgstr ""
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
 msgid "Generate..."
-msgstr "Generar..."
+msgstr "Generar…"
 
 #: docfilekcm/docfilemanagerwidget.cpp:53
 #, kde-format
@@ -277,7 +278,7 @@ msgstr "Editar la selección"
 #: docfilekcm/docfilemanagerwidget.cpp:70
 #, kde-format
 msgid "Search Paths..."
-msgstr "Rutas de búsqueda..."
+msgstr "Rutas de búsqueda…"
 
 #: docfilekcm/docfilemanagerwidget.cpp:101
 #, kde-format
@@ -434,7 +435,7 @@ msgstr "Documentación de Python"
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr "Generar documentación para el módulo «%1»..."
+msgstr "Generar documentación para el módulo «%1»…"
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
@@ -598,104 +599,3 @@ msgstr "Error del comprobador PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Parece que el comprobador de sintaxis PEP8 no funciona correctamente."
-
-#~ msgid ""
-#~ "First argument of __new__ method is not called cls, this is deprecated"
-#~ msgstr ""
-#~ "El primer argumento del método __new__ no se llama «cls», lo que está "
-#~ "desaconsejado"
-
-#~ msgid "%1 of ( %2 )"
-#~ msgstr "%1 de ( %2 )"
-
-#~ msgid "Form"
-#~ msgstr "Formulario"
-
-#~ msgid "Full path to the PEP8 checker to use:"
-#~ msgstr "Ruta completa del comprobador PEP8 a usar:"
-
-#~ msgid "PEP8 checker arguments:"
-#~ msgstr "Argumentos del comprobador PEP8:"
-
-#~ msgid "Download new"
-#~ msgstr "Descargar nuevo"
-
-#~ msgid "Share selected"
-#~ msgstr "Compartir selección"
-
-#~ msgid "Unused computation result"
-#~ msgstr "Resultado de cálculo no usado"
-
-#~ msgid "Python Debugger (pdb) Support"
-#~ msgstr "Implementación del depurador de Python (pdb)"
-
-#~ msgid "Support for the Python Debugger"
-#~ msgstr "Implementación del depurador de Python"
-
-#~ msgid "Sven Brauch"
-#~ msgstr "Sven Brauch"
-
-#~ msgid "Author"
-#~ msgstr "Autor"
-
-#~ msgid "Python Support"
-#~ msgstr "Implementación de Python"
-
-#~ msgid "Support for the Python Scripting Language"
-#~ msgstr "Implementación del lenguaje de script de Python"
-
-#~ msgctxt ""
-#~ "refers to types of variables in programming, as in \"various possible "
-#~ "types\""
-#~ msgid "various types"
-#~ msgstr "varios tipos"
-
-#~ msgid "%1 of %2 : %3"
-#~ msgstr "%1 de %2 : %3"
-
-#~ msgid "%1 of %2"
-#~ msgstr "%1 de %2"
-
-#~ msgid "Rename \"%1\"..."
-#~ msgstr "Cambiar el nombre de «%1»..."
-
-#~ msgid "No declaration under cursor"
-#~ msgstr "Ninguna declaración bajo el cursor"
-
-#~ msgid "Declaration is located in non-writeable file %1."
-#~ msgstr ""
-#~ "La declaración está ubicada en el archivo sin permiso de escritura %1."
-
-#~ msgid "Rename %1"
-#~ msgstr "Cambiar el nombre de %1"
-
-#~ msgid "New name:"
-#~ msgstr "Nuevo nombre:"
-
-#~ msgid "Rename"
-#~ msgstr "Cambiar nombre"
-
-#~ msgid ""
-#~ "Note: All overloaded functions, overloads, forward-declarations, etc. "
-#~ "will be renamed too"
-#~ msgstr ""
-#~ "Nota: también se cambiará el nombre de todas las funciones sobrecargadas, "
-#~ "las sobrecargas, las declaraciones previas, etc."
-
-#~ msgid "Cancel"
-#~ msgstr "Cancelar"
-
-#~ msgid "Uses"
-#~ msgstr "Usos"
-
-#~ msgid "Declaration Info"
-#~ msgstr "Información de la declaración"
-
-#~ msgid "Applying changes failed: %1"
-#~ msgstr "Ha fallado la aplicación de cambios: %1"
-
-#~ msgid "list"
-#~ msgstr "lista"
-
-#~ msgid "dictionary"
-#~ msgstr "diccionario"

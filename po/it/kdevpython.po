@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2024-10-18 13:53+0200\n"
 "Last-Translator: Luigi Toscano <luigi.toscano@tiscali.it>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
@@ -221,17 +221,17 @@ msgstr ""
 "Il debugger si fermerà senza avvisare quando verrà attivato il prossimo "
 "comando."
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Un'estensione per eseguire il debug delle applicazioni Python con pdb."
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Spiacente, il debug è supportato solo per le applicazioni Python 3.x."
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Interprete non supportato"

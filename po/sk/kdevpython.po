@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2017-09-16 21:11+0100\n"
 "Last-Translator: Roman Paholik <wizzardsk@gmail.com>\n"
 "Language-Team: Slovak <kde-sk@linux.sk>\n"
@@ -215,17 +215,17 @@ msgstr "Teraz môžete preskúmať stav programu po jeho ukončení."
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Debugger sa ticho zastaví pri spustení ďalšieho príkazu."
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Plugin na ladenie Python aplikácií s pdb."
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Prepáčte, ladenie je podporované iba v aplikáciách Python 3.x."
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Nepodporovaný interpreter"

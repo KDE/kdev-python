@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevelop\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2024-12-24 16:53+0100\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -212,17 +212,17 @@ msgstr "프로그램이 종료된 후 상태를 조사할 수 있습니다."
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "다음 명령을 내렸을 때 디버거가 조용히 중단됩니다."
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Python 앱을 pdb로 디버그하는 플러그인입니다."
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "디버깅은 Python 3.x 앱만 지원합니다."
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "지원하지 않는 인터프리터"

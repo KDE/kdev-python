@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2024-12-27 10:42+0100\n"
 "Last-Translator: Oliver Kellogg <olivermkellogg@gmail.com>\n"
 "Language-Team: esperanto <kde-i18n-eo@kde.org>\n"
@@ -218,17 +218,17 @@ msgstr "Vi nun povas inspekti la staton de la programo post kiam ĝi eliris."
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "La erarserĉilo silente ĉesos kiam la sekva komando estas ekigita."
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Kromaĵo por sencimi Python-aplikaĵojn per pdb."
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Pardonu, sencimigado estas nur subtenata por Python 3.x-aplikoj."
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Nesubtenata interpretisto"

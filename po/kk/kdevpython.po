@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2013-11-15 05:35+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -218,18 +218,18 @@ msgstr "Енді бағдарламаның доғарылғаннан кейі�
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Келесі командаға ауысқанда жөндегіш үндемей тоқтатады."
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Python бағдарламасын pdb көмегімен жөндейтін плагині."
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, fuzzy, kde-format
 #| msgid "Sorry, debugging is only supported for Python 2.x applications."
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Ғафу етіңіз, жөндеу тек қана Python 2.x бағдарламаларға істейді."
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Қолдауы жоқ интерпретаторы"

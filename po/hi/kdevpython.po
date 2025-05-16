@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-10-17 00:39+0000\n"
+"POT-Creation-Date: 2025-05-16 00:40+0000\n"
 "PO-Revision-Date: 2024-12-15 19:18+0530\n"
 "Last-Translator: Kali <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <fedora-trans-hi@redhat.com>\n"
@@ -217,17 +217,17 @@ msgstr "अब आप प्रोग्राम से बाहर निक�
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "अगला आदेश सक्रिय होने पर डिबगर चुपचाप बंद हो जाएगा।"
 
-#: debugger/pdblauncher.cpp:45
+#: debugger/pdblauncher.cpp:43
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "पीडीबी के साथ पायथन अनुप्रयोगों को डीबग करने के लिए एक प्लगइन।"
 
-#: debugger/pdblauncher.cpp:77
+#: debugger/pdblauncher.cpp:83
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "क्षमा करें, डिबगिंग केवल पायथन 3.x अनुप्रयोगों के लिए समर्थित है।"
 
-#: debugger/pdblauncher.cpp:78
+#: debugger/pdblauncher.cpp:84
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "असमर्थित दुभाषिया"

@@ -123,11 +123,15 @@ void PdbProcess::connectToServer()
 
 void PdbProcess::processEnded(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    // TODO: Read all remaining data out from the process device.
-    m_exitCode = exitCode;
-    m_exitStatus = exitStatus;
+    // Ensure we won't miss any output from the process.
+    processIoReady(QProcess::StandardOutput);
+    processIoReady(QProcess::StandardError);
 
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "process exited with code:" << m_exitCode;
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "debugger process exited with code:" << exitCode;
+
+    if (m_debuggerProcess && (exitCode || exitStatus != QProcess::ExitStatus::NormalExit)) {
+        qCWarning(KDEV_PYTHON_DEBUGGER) << "debugger exited abnormally:" << exitStatus << m_debuggerProcess->error();
+    }
 
     if (m_socket && m_socket->state() == QLocalSocket::ConnectedState) {
         // Somehow not disconnected yet.

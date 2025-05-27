@@ -305,6 +305,9 @@ class kdevDbgCore(bdb.Bdb):
                 # (Inferior has likely raised an unhandled exception)
                 return
             self.enter_debugger()
+        if exc:
+            # Restore debugger __main__, we are about to quit.
+            self.switch_namespaces()
 
     def enter_debugger(self):
         '''By returning from this method the inferior resumes its execution,

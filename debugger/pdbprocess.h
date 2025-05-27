@@ -173,8 +173,6 @@ private:
     static constexpr int32_t DIE_TOO_BIG_FRAMESIZE = 1024 * 1024 * 512;
     QTemporaryDir m_socketdir;
     KProcess* m_debuggerProcess = nullptr;
-    int m_exitCode = -1;
-    QProcess::ExitStatus m_exitStatus = QProcess::ExitStatus::NormalExit;
     QEventLoop* m_exitWait = nullptr;
     /// The socket.
     QLocalSocket* m_socket = nullptr;

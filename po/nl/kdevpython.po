@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2024-10-17 12:05+0200\n"
 "Last-Translator: Freek de Kruijf <freekdekruijf@kde.nl>\n"
 "Language-Team: \n"
@@ -201,36 +201,36 @@ msgstr "Vereiste modulen:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Een kommagescheiden lijst met modulen vereist voor het type"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr ""
 "Het programma dat wordt gedebugd kwam met een niet gevangen uitzondering."
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr ""
 "U kunt nu de status van het programma inspecteren nadat het is beëindigd."
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
 "De debugger zal stilletjes stoppen wanneer het volgende commando wordt "
 "geactiveerd."
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Een plug-in voor het debuggen van Python-toepassingen met pdb."
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Debuggen is alleen ondersteund voor Python 3.x toepassingen."
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Niet ondersteunde interpretator"

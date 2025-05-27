@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2024-10-18 11:14+0200\n"
 "Last-Translator: Xavier Besnard <xavier.besnard@kde.org>\n"
 "Language-Team: French <French <kde-francophone@kde.org>>\n"
@@ -210,40 +210,40 @@ msgstr "Modules requis :"
 msgid "A comma separated list of modules required for the type"
 msgstr "Une liste séparée par des virgules des modules requis pour le type"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "Le programme en cours de débogage a déclenché une exception non gérée."
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr ""
 "Vous pouvez maintenant analyser l'état du programme après qu'il se soit "
 "terminé."
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr ""
 "Le débogueur s'arrêtera silencieusement lorsque la commande suivante sera "
 "déclenchée."
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr ""
 "Un module externe pour déboguer des applications en Python avec le débogueur "
 "« pdb » de Python."
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr ""
 "Désolé, le débogage n'est pris en charge que pour les applications Python 3."
 "x."
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Interpréteur non pris en charge"

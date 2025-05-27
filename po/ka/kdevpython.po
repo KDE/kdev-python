@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2024-10-17 05:30+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -203,33 +203,33 @@ msgstr "აუცილებელი მოდულები:"
 msgid "A comma separated list of modules required for the type"
 msgstr "ტიპისთვის აუცილებელი მძიმით გამოყოფილი მოდულების სია"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "გამართვადი პროგრამის უცნობი შეცდომა."
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr ""
 "ახლა პროგრამის სტატუსი მისი მუშაობის დასრულების შემდეგ შეგიძლიათ შეამოწმოთ."
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "გამმართველი შემდეგი ბრძანების დატრიგერებისას ჩუმად გაჩერდება."
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Python-ის აპლიკაციების pdb-ით გამართვის დამატება."
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "უკაცრავად, გამართვა მხოლოდ Python 3.x აპლიკაციებისთვისაა მხარდაჭერილი."
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "მხარდაუჭერელი ინტერპრეტატორი"

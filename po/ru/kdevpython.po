@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2025-05-22 18:13+0300\n"
 "Last-Translator: Alexander Yavorsky <kekcuha@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -206,32 +206,32 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Список разделённых запятыми модулей, необходимых для работы с этим типом"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "В отлаживаемой программе возникло необрабатываемое исключение."
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "Сейчас вы можете изучить состояние программы после этого события."
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "Отладчик остановится сам при выполнении следующей команды."
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Расширение для отладки приложений Python в pdb"
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "К сожалению, отладка поддерживается только для приложений Python 3.x."
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Неподдерживаемый интерпретатор"

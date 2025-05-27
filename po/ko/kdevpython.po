@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevelop\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2024-12-24 16:53+0100\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -197,32 +197,32 @@ msgstr "필요한 모듈:"
 msgid "A comma separated list of modules required for the type"
 msgstr "쉼표로 구분된 형식에 필요한 모듈 목록"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "디버그하고 있는 프로그램에서 처리되지 않은 예외가 발생했습니다."
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "프로그램이 종료된 후 상태를 조사할 수 있습니다."
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "다음 명령을 내렸을 때 디버거가 조용히 중단됩니다."
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Python 앱을 pdb로 디버그하는 플러그인입니다."
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "디버깅은 Python 3.x 앱만 지원합니다."
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "지원하지 않는 인터프리터"

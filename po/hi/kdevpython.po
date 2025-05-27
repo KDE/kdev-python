@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-16 00:40+0000\n"
+"POT-Creation-Date: 2025-05-27 00:40+0000\n"
 "PO-Revision-Date: 2024-12-15 19:18+0530\n"
 "Last-Translator: Kali <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <fedora-trans-hi@redhat.com>\n"
@@ -202,32 +202,32 @@ msgstr "आवश्यक मॉड्यूल:"
 msgid "A comma separated list of modules required for the type"
 msgstr "प्रकार के लिए आवश्यक मॉड्यूल की अल्पविराम से अलग की गई सूची"
 
-#: debugger/debugsession.cpp:167
+#: debugger/debugsession.cpp:156
 #, kde-format
 msgid "The program being debugged raised an uncaught exception."
 msgstr "डिबग किए जा रहे प्रोग्राम ने एक अनकैच्ड अपवाद उठाया।"
 
-#: debugger/debugsession.cpp:168
+#: debugger/debugsession.cpp:157
 #, kde-format
 msgid "You can now inspect the status of the program after it exited."
 msgstr "अब आप प्रोग्राम से बाहर निकलने के बाद उसकी स्थिति का निरीक्षण कर सकते हैं।"
 
-#: debugger/debugsession.cpp:169
+#: debugger/debugsession.cpp:158
 #, kde-format
 msgid "The debugger will silently stop when the next command is triggered."
 msgstr "अगला आदेश सक्रिय होने पर डिबगर चुपचाप बंद हो जाएगा।"
 
-#: debugger/pdblauncher.cpp:43
+#: debugger/pdblauncher.cpp:44
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "पीडीबी के साथ पायथन अनुप्रयोगों को डीबग करने के लिए एक प्लगइन।"
 
-#: debugger/pdblauncher.cpp:83
+#: debugger/pdblauncher.cpp:85
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "क्षमा करें, डिबगिंग केवल पायथन 3.x अनुप्रयोगों के लिए समर्थित है।"
 
-#: debugger/pdblauncher.cpp:84
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "असमर्थित दुभाषिया"

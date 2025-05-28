@@ -209,19 +209,20 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
             self.switch_namespaces()
             self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
 
-    def do_break(self, filename, lineno):
-        '''Try set a breakpoint at filename:lineno location.
+    def do_break(self, filename, lineno, disabled):
+        '''Try set a breakpoint at filename:lineno location and possibly disable it by default.
            JSON: "breakpoints": [{}] (single item) breakpoint details.
         '''
         if self.is_runnable_srcline(filename, int(lineno)) < 0:
             return
-        # todo: set_break() ends up doing unnecessary work here.
         bpnum = Breakpoint.next
         notok = self.set_break(filename, int(lineno))
         if notok:
             self.error(notok)
-        else:
-            self.append_response({"breakpoints": [{"id": bpnum, "filename": filename, "line": lineno}]})
+            return
+        if disabled:
+            self.get_bpbynumber(bpnum).disable()
+        self.append_response({"breakpoints": [{"id": bpnum, "filename": filename, "line": lineno}]})
 
     def do_tbreak(self, filename, lineno):
         '''Try set a temporary breakpoint at filename:lineno location.'''

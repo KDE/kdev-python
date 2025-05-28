@@ -170,7 +170,9 @@ void BreakpointController::addBreakpoint(Breakpoint* bp)
     // (try) insert the PDB breakpoint.
     brk->breakpointId = m_debuggerBreakpointId++;
     brk->location = location;
-    session()->debugger()->request({CMD_BREAK, location.first, location.second}, [this, brk](const ResponseData& d) {
+    brk->enabled = bp->enabled();
+    session()->debugger()->request({CMD_BREAK, location.first, location.second, !brk->enabled},
+        [this, brk](const ResponseData& d) {
         addHandler(d, brk);
     });
     session()->flushCommands();
@@ -178,17 +180,12 @@ void BreakpointController::addBreakpoint(Breakpoint* bp)
 
 void BreakpointController::addHandler(const ResponseData& data, const BreakpointDataPtr& brk)
 {
-    if (responseValue(data, QStringLiteral("error")).isUndefined()) {
+    const auto result = responseValue(data, QStringLiteral("error"));
+    if (result.isUndefined()) {
         // Insertion succeeded.
         if (brk->modelBreakpoint) {
             brk->modelBreakpoint->setHitCount(0);
             brk->modelBreakpoint->setState(Breakpoint::CleanState);
-
-            if (!brk->modelBreakpoint->enabled()) {
-                brk->enabled = false;
-                session()->debugger()->request({CMD_DISABLE, brk->breakpointId.value()});
-                session()->flushCommands();
-            }
         }
         return;
     }
@@ -197,9 +194,9 @@ void BreakpointController::addHandler(const ResponseData& data, const Breakpoint
         brk->modelBreakpoint->setState(Breakpoint::DirtyState);
     }
 
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "breakpoint insertion failed:" << brk->breakpointId.value();
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "breakpoint insertion failed:" << brk->breakpointId.value() << result.toString();
 
-    // Pdb rejected the breakpoint's location, and therefore the server didn't use the brk->breakpointId.
+    // The breakpoint's location was rejected, and therefore the server didn't use the brk->breakpointId.
     --m_debuggerBreakpointId;
     const int invalidId = brk->breakpointId.value();
     // Cancel a possible already queued removeHandler()
@@ -320,7 +317,8 @@ void BreakpointController::updateHandler(const BreakpointDataPtr& brk, std::pair
     // Insert only if the model breakpoint has not been deleted yet.
     if (brk->modelBreakpoint) {
         brk->breakpointId = m_debuggerBreakpointId++;
-        session()->debugger()->request({CMD_BREAK, location.first, location.second},
+        brk->enabled = brk->modelBreakpoint->enabled();
+        session()->debugger()->request({CMD_BREAK, location.first, location.second, !brk->enabled},
         [this, brk](const ResponseData& d) {
             addHandler(d, brk);
         });

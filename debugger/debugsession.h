@@ -130,6 +130,8 @@ public Q_SLOTS:
      */
     void inferiorSuspended();
 
+    void runOnStart();
+
     /**
      * @brief Called once when the debugger process has exited.
      */

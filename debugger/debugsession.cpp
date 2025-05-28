@@ -159,6 +159,10 @@ void DebugSession::inferiorSuspended()
     if (!m_sessionStarted) {
         m_sessionStarted = true;
         qCDebug(KDEV_PYTHON_DEBUGGER) << "debugger initialized successfully!";
+        // run() cannot be invoked from this method as this would interfere
+        // with the PausedState <==> ActiveState switching.
+        QMetaObject::invokeMethod(this, &DebugSession::runOnStart, Qt::QueuedConnection);
+
         raiseEvent(connected_to_program);
     }
 
@@ -173,6 +177,22 @@ void DebugSession::inferiorSuspended()
         // Program state has changed.
         raiseEvent(program_state_changed);
     }
+}
+
+void DebugSession::runOnStart()
+{
+    if (debugger()->instance()->isBusy()) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "DebugSession is not idle yet";
+
+        // Retry to after all currently queued commands.
+        debugger()->defer([this](const ResponseData&) {
+            QMetaObject::invokeMethod(this, &DebugSession::runOnStart, Qt::QueuedConnection);
+        });
+        return;
+    }
+
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "DebugSession::run()";
+    run();
 }
 
 void DebugSession::stepOut()

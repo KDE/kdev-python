@@ -38,6 +38,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         # The kdevPdb responds with {"seq":-1} once the client has connected
         # and the program is successfully started.
         self.debugger_initialized = False
+        self.deleted_breaks = set()
+        self.currentbp = 0
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -64,11 +66,18 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         self.append_response({"error": msg + lnend})
 
     def postloop(self):
+        '''Prepare resuming the inferior.'''
+        # Prune deleted breakpoints.
+        for bpnum in self.deleted_breaks:
+            self.clear_bpbynumber(bpnum)
+        self.deleted_breaks.clear()
+        self.currentbp = 0
         # About to return from enter_debugger(), thus allow the client to
         # interrupt the current operation.
         self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptAllowed)
 
     def preloop(self):
+        '''Handle suspension of inferior.'''
         # Disallow interrupting.
         self.pdbsrv.sendCmdFrame(kdevpdbconn.Cmd.InterruptDisallowed)
 
@@ -83,7 +92,16 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         # Send a "frames" response of the top-most inferior frame.
         # JSON: "frames" : [{}]
         self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
-        # todo: report which an breakpoint was hit?
+
+        # Send a "bphit" response if a breakpoint got hit.
+        if self.currentbp:
+            try:
+                bp = self.get_bpbynumber(self.currentbp)
+                self.append_response({'bphit': {"id": int(self.currentbp)
+                                                , "filename": bp.file, "line": bp.line
+                                                , "hits": bp.hits}})
+            except ValueError:
+                pass
 
         if hasattr(self, 'restore_brks'):
             # Re-enable breakpoints that runtolocation() disabled.
@@ -279,10 +297,15 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
             self.error(str(e))
 
     def do_clear(self, arg):
-        '''Implement Bdb's do_clear(), required for tbreak.'''
-        notok = self.clear_bpbynumber(int(arg))
-        if notok:
-            self.error(notok)
+        '''Implement Bdb's do_clear()'''
+        # We cannot simply delete the breakpoint here. This would make preloop()
+        # unable to report hit temporary breakpoints. Because of this,
+        # the deletion is deferred into postloop().
+        try:
+            bp = self.get_bpbynumber(arg)
+            self.deleted_breaks.add(bp.number)
+        except ValueError as e:
+            self.error(str(e))
 
 
 def main():

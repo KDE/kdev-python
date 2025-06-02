@@ -85,7 +85,7 @@ public Q_SLOTS:
     /**
      * Report a location at where the program has stopped.
      */
-    void programStopped(QString filename, int line);
+    void programStopped(const Python::ResponseData& data);
 
 protected:
     /**

@@ -148,7 +148,7 @@ Q_SIGNALS:
     void stderrReceived(QStringList);
 
     /// Emitted when the program has stopped. (for any reason)
-    void programStopped(QString filename, int line);
+    void programStopped(const Python::ResponseData& data);
 
 private:
     IBreakpointController* m_breakpointController;

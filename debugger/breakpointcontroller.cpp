@@ -50,25 +50,28 @@ void BreakpointController::slotEvent(IDebugSession::event_t evt)
     }
 }
 
-void BreakpointController::programStopped(QString filename, int line)
+void BreakpointController::programStopped(const ResponseData& data)
 {
-    // srclocation must be comparable with locationForBreakpoint()
-    const auto srclocation = std::make_pair(filename, line + 1);
+    const auto bphit = responseObject(data, QStringLiteral("bphit"));
+    if (bphit.isEmpty())
+        return;
 
-    if (m_temporaryBreakpoint && m_temporaryBreakpoint->location == srclocation) {
-        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << srclocation << "was reached";
+    const auto id = bphit.value(QStringLiteral("id")).toInt();
+    const auto file = bphit.value(QStringLiteral("filename")).toString();
+    const int line = bphit.value(QStringLiteral("line")).toInt();
+    const int hits = bphit.value(QStringLiteral("hits")).toInt();
+
+    if (m_temporaryBreakpoint && m_temporaryBreakpoint->breakpointId == id) {
+        qCDebug(KDEV_PYTHON_DEBUGGER) << "temporary breakpoint location" << file << "at line" << line << "was reached";
         return;
     }
 
     for (const auto& brk : m_breakpoints) {
-        // Note: the currently inserted PDB breakpoint location is compared,
-        //       rather than the model breakpoint, which may have changed since.
-        if (!brk->breakpointId || !brk->enabled || !brk->modelBreakpoint || brk->location != srclocation) {
+        if (!brk->breakpointId || brk->breakpointId != id || !brk->modelBreakpoint) {
             continue;
         }
-        // A breakpoint was hit:
-        // Increment hit count. (by-pass IBreakpointController::updateHitCount() which does the same thing.)
-        brk->modelBreakpoint->setHitCount(brk->modelBreakpoint->hitCount() + 1);
+        // Update hit count. (by-pass IBreakpointController::updateHitCount() which does the same thing.)
+        brk->modelBreakpoint->setHitCount(hits);
 
         // FIXME: BreakpointWidget only guarantees a update of the BreakpointDetails for columns up to ConditionColumn.
         //        Strobe the status column as work-around to force updating of the BreakpointDetails.

@@ -344,7 +344,7 @@ void DebugSession::resumingFinished(const ResponseData& data)
     setCurrentPosition(QUrl::fromLocalFile(file), line - 1, QString::number(addr));
     qCDebug(KDEV_PYTHON_DEBUGGER) << "New position: " << file << line - 1;
 
-    Q_EMIT programStopped(file, line - 1);
+    Q_EMIT programStopped(data);
 }
 
 void DebugSession::stopDebugger()

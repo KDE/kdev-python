@@ -161,6 +161,16 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         return 1
 
     def do_stepout(self):
+        '''Step-out of a frame.'''
+        if self.topindex > self.bottomindex:
+            # Stop immediately after exiting from the frame.
+            self.set_return(self.curframe)
+        else:
+            # No outer frames left, single step.
+            self.set_next(self.curframe)
+        return 1
+
+    def do_steppast(self):
         '''Step-out of a function or past a conditional block of code.'''
         self.set_stepout()
         return 1

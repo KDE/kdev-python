@@ -174,7 +174,7 @@ void DebugSession::stepOut()
 void DebugSession::stepOverInstruction()
 {
     m_resumingRequest = true;
-    m_debugger->request({QStringLiteral("next")}, m_resumingFinished);
+    m_debugger->request({QStringLiteral("steppast")}, m_resumingFinished);
 }
 
 void DebugSession::stepInto()

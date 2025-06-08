@@ -18,6 +18,7 @@ namespace Python {
 PdbFrameStackModel::PdbFrameStackModel(IDebugSession* session)
     : FrameStackModel(session)
 {
+    connect(this, &IFrameStackModel::currentFrameChanged, this, &PdbFrameStackModel::setDebuggerAtFrame);
 }
 
 int PdbFrameStackModel::debuggerAtFrame() const

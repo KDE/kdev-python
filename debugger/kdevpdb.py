@@ -40,6 +40,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         self.debugger_initialized = False
         self.deleted_breaks = set()
         self.currentbp = 0
+        # The user selected active stack-frame.
+        self.activeindex = -1
 
     def append_response(self, obj):
         assert isinstance(obj, dict)
@@ -88,7 +90,8 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
                 return
             self.message("The program started successfully.")
             self.debugger_initialized = True
-
+        # Reset the active frame to top most.
+        self.activeindex = self.topindex
         # Send a "frames" response of the top-most inferior frame.
         # JSON: "frames" : [{}]
         self.append_response({"frames": [self.make_frame_entry(self.stack[self.topindex])]})
@@ -176,8 +179,7 @@ class kdevPdb(kdevpdbcore.kdevDbgCore):
         # KDevelop expects most recent frame to be at index zero,
         # which is reversed to what we have in self.stack.
         kdevframe = max(min(int(whichframe), len(self.get_inferior_stack()) - 1), 0)
-        # todo: nothing is yet depending on the client selected stack-frame.
-        # self.activeindex = len(self.stack) - 1 - int(kdevframe)
+        self.activeindex = min(max(self.bottomindex, self.topindex - kdevframe), self.topindex)
         self.append_response({"activeframe": kdevframe})
 
     def do_continue(self):

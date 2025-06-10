@@ -18,6 +18,8 @@
 
 #include "pdbdebuggerinstance.h"
 
+#include <array>
+
 namespace Python {
 
 class DebugSession;
@@ -27,12 +29,13 @@ typedef unsigned int PythonId;
 class UpdateGuard
 {
 public:
-    UpdateGuard();
+    UpdateGuard(int collection);
     UpdateGuard(const UpdateGuard&);
     ~UpdateGuard();
 
 private:
-    static void pendingRequests(int adjust);
+    const int m_collection;
+    void pendingRequests(int adjust);
 };
 
 class VariableController : public KDevelop::IVariableController
@@ -68,6 +71,9 @@ public:
 
     static DebugSession* session();
 
+    enum UpdateFlag { None = 0x0, Locals = 0x1, Watches = 0x2, ReturnInfo = 0x4, Globals = 0x8 };
+    Q_DECLARE_FLAGS(UpdateFlags, UpdateFlag)
+
     /**
      * @brief Before a debugger request is made with an response handler that might modify an
      *        variable, pendingRequests(1) must be called to keep track of the number of such
@@ -75,10 +81,7 @@ public:
      *        pendingRequests(-1) must be called to signal the handler has completed.
      * @param adjust Increment (1) or decrement (-1) the count of queued requests.
      */
-    void pendingRequests(int adjust);
-
-    enum UpdateFlag { None = 0x0, Locals = 0x1, Watches = 0x2, ReturnInfo = 0x4, Globals = 0x8 };
-    Q_DECLARE_FLAGS(UpdateFlags, UpdateFlag)
+    void pendingRequests(int adjust, UpdateFlag collection);
 
 protected:
     void handleEvent(KDevelop::IDebugSession::event_t event) override;
@@ -99,16 +102,25 @@ private:
     };
     QHash<int, QSharedPointer<Namespace>> m_namespaces;
 
-    /// Count of in-flight queued requests on Python::Variable(s)
-    KDevelop::NonNegative<> m_pendingRequests;
     /// Which collections are expanded? (to best of knowing)
     UpdateFlags m_isExpanded;
     /// Which updates have been requested?
     UpdateFlags m_updateRequested;
     /// Which updates have been started?
     UpdateFlags m_updateStarted;
-    /// Has an update of "Locals" been deferred?
-    bool m_localsUpdateDeferred = false;
+    /// Which updates have been deferred?
+    UpdateFlags m_updateDeferred;
+
+    struct Collection
+    {
+        const VariableController::UpdateFlags flag;
+        KDevelop::TreeItem* collection;
+        std::function<void()> fn;
+        /// Count of in-flight queued requests on Python::Variable(s)
+        KDevelop::NonNegative<> pending;
+    };
+    // Array of Collections.
+    std::array<Collection, 4> m_collections;
 
     /// Update any variable collections which have m_updateRequested flag set.
     void updateCollections();
@@ -116,8 +128,13 @@ private:
     void fetchFrameLocals(const ResponseData& data);
     void fetchReturnInfo(const ResponseData& data);
     void fetchGlobals(const ResponseData& data);
-    void enumerateNamespace(int nsid, int count, PythonId handle, QString name = QString());
+    void enumerateNamespace(int nsid, int count, PythonId handle, UpdateFlag collection, QString name = QString());
     void variablesEnumerated(const ResponseData& data, int nsid);
+
+    void doLocalsUpdate();
+    void doReturnInfoUpdate();
+    void doGlobalsUpdate();
+    void doWatchesUpdate();
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(VariableController::UpdateFlags)

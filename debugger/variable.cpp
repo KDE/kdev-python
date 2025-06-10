@@ -22,7 +22,7 @@ class VariableRequestHandler
 
 public:
     VariableRequestHandler(Variable* var)
-        : m_guard()
+        : m_guard(var->collection())
         , m_holder(var)
     {
     }
@@ -46,10 +46,10 @@ public:
     }
 };
 
-Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression,
+Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, int collection, const QString& expression,
                    const QString& display)
     : KDevelop::Variable(model, parent, expression, display)
-    , m_pythonPtr(0)
+    , m_collection(collection)
 {
     // Copy the namespace id from the parent if possible.
     if (auto* const var = qobject_cast<Python::Variable*>(parent)) {
@@ -360,7 +360,7 @@ std::pair<Variable*, bool> Variable::findOrCreateChild(QString longname, QString
             return {var, false};
         }
     }
-    return {new Variable(model_, this, longname, expr), true};
+    return {new Variable(model_, this, m_collection, longname, expr), true};
 }
 
 QList<Variable*> Variable::variablesEnumerated(const ResponseData& d)

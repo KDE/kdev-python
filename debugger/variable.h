@@ -30,7 +30,8 @@ public:
      * Construct a variable.
      * @note If possible, the namespaceId() is inherited from @p parent.
      */
-    Variable(KDevelop::TreeModel* model, TreeItem* parent, const QString& expression, const QString& display = QString());
+    Variable(KDevelop::TreeModel* model, TreeItem* parent, int collection, const QString& expression,
+             const QString& display = QString());
 
     ~Variable();
 
@@ -78,15 +79,22 @@ public:
     {
         return m_nsId;
     }
+    /// Collection (UpdateFlag) of this variable.
+    int collection()
+    {
+        return m_collection;
+    }
 
 private Q_SLOTS:
     /**
      * Try fetch more children.
-     * @note m_pendingUpdates must be incremented and accountOperations(1) must have been called before this.
+     * @note m_pendingUpdates must be incremented before calling this.
      */
     void tryFetchMoreChildren();
 
 private:
+    /// Which collection this variable is part of? ("Locals", "Globals", "Watches" or "Return info")
+    const int m_collection;
     /// A unique ID of the python object associated with this variable.
     PythonId m_pythonPtr = 0;
     /// To what namespace this variable is bound to?

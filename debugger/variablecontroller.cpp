@@ -27,13 +27,16 @@
 
 namespace Python {
 
-struct CollectionInit
-{
-    VariableController::UpdateFlags flag;
-    KDevelop::TreeItem* collection;
-};
-
-VariableController::VariableController(IDebugSession* parent) : IVariableController(parent)
+VariableController::VariableController(IDebugSession* parent)
+    : IVariableController(parent)
+    , m_collections{Collection{UpdateFlag::Locals, variableCollection()->locals(),
+                               std::bind(&VariableController::doLocalsUpdate, this)},
+                    Collection{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info")),
+                               std::bind(&VariableController::doReturnInfoUpdate, this)},
+                    Collection{UpdateFlag::Globals, variableCollection()->locals(i18n("Globals")),
+                               std::bind(&VariableController::doGlobalsUpdate, this)},
+                    Collection{UpdateFlag::Watches, variableCollection()->watches(),
+                               std::bind(&VariableController::doWatchesUpdate, this)}}
 {
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "constructing VariableController";
 
@@ -50,14 +53,7 @@ VariableController::VariableController(IDebugSession* parent) : IVariableControl
      *        VariableController. We may also miss an update when the variable widget is shown/hidden.
      *        (can detect only hiding via autoUpdate() which is useless...)
      */
-    std::array<CollectionInit, 4> collections = {
-        CollectionInit{UpdateFlag::Locals, variableCollection()->locals()},
-        CollectionInit{UpdateFlag::Watches, variableCollection()->watches()},
-        CollectionInit{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info"))},
-        CollectionInit{UpdateFlag::Globals, variableCollection()->locals(i18n("Globals"))}
-    };
-
-    for (auto& item : collections) {
+    for (auto& item : m_collections) {
         auto expander = [&, flag = item.flag]() {
             m_updateRequested |= flag;
             m_isExpanded |= flag;
@@ -105,7 +101,20 @@ void VariableController::addWatchpoint(KDevelop::Variable* /*variable*/)
 
 KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression, const QString& display)
 {
-    return new Variable(model, parent, expression, display);
+    // Put the variable into one of the collections:
+    // This is propagated up in the tree to account the queued request handlers in each collection.
+    int collection = UpdateFlag::None;
+    if (qobject_cast<KDevelop::Watches*>(parent) || qobject_cast<KDevelop::TooltipRoot*>(parent)) {
+        collection = UpdateFlag::Watches;
+    } else if (qobject_cast<KDevelop::Locals*>(parent)) {
+        const auto itr = std::find_if(m_collections.begin(), m_collections.end(), [parent](Collection& c) {
+            return c.collection == parent;
+        });
+        Q_ASSERT(itr != m_collections.end());
+        collection = itr->flag;
+    }
+    Q_ASSERT(collection);
+    return new Variable(model, parent, collection, expression, display);
 }
 
 KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
@@ -186,12 +195,15 @@ void VariableController::handleEvent(IDebugSession::event_t event)
     session()->debugger()->defer([this](const ResponseData&) { updateCollections(); });
 }
 
-UpdateGuard::UpdateGuard()
+UpdateGuard::UpdateGuard(int collection)
+    : m_collection(collection)
 {
+    Q_ASSERT(m_collection);
     pendingRequests(1);
 }
 
-UpdateGuard::UpdateGuard(const UpdateGuard&)
+UpdateGuard::UpdateGuard(const UpdateGuard& copy)
+    : m_collection(copy.m_collection)
 {
     pendingRequests(1);
 }
@@ -205,7 +217,7 @@ void UpdateGuard::pendingRequests(int adjust)
 {
     if (auto* s = VariableController::session()) {
         if (auto* ctrl = qobject_cast<Python::VariableController*>(s->variableController())) {
-            ctrl->pendingRequests(adjust);
+            ctrl->pendingRequests(adjust, static_cast<VariableController::UpdateFlag>(m_collection));
             return;
         }
     }
@@ -213,24 +225,38 @@ void UpdateGuard::pendingRequests(int adjust)
     qCCritical(KDEV_PYTHON_VARIABLECONTROLLER) << "failed to account the number of operations!";
 }
 
-void VariableController::pendingRequests(int adjust)
+void VariableController::pendingRequests(int adjust, UpdateFlag collection)
 {
+    auto& pending = [this, collection]() -> auto& {
+        switch (collection) {
+        case UpdateFlag::Locals:
+            return m_collections[0].pending;
+        case UpdateFlag::ReturnInfo:
+            return m_collections[1].pending;
+        case UpdateFlag::Globals:
+            return m_collections[2].pending;
+        case UpdateFlag::Watches:
+            return m_collections[3].pending;
+        default:
+            Q_ASSERT(false);
+        };
+    }();
+
     if (adjust > 0) {
-        ++m_pendingRequests;
+        ++pending;
     } else {
-        --m_pendingRequests;
+        --pending;
     }
 
-    if (m_pendingRequests)
+    if (pending)
         return;
 
-    // Clear UpdateFlag::Locals on m_updateStarted since it's now safe to update this collection.
-    m_updateStarted.setFlag(Locals, false);
+    // Clear flag on m_updateStarted since it's now safe to update this collection.
+    m_updateStarted.setFlag(collection, false);
 
-    if (m_localsUpdateDeferred) {
-        // Deferred update of "Locals" requested.
-        m_localsUpdateDeferred = false;
-        m_updateRequested.setFlag(Locals);
+    if (m_updateDeferred & collection) {
+        m_updateDeferred.setFlag(collection, false);
+        m_updateRequested.setFlag(collection);
         QMetaObject::invokeMethod(this, &VariableController::updateCollections, Qt::QueuedConnection);
     }
 }
@@ -268,7 +294,7 @@ void VariableController::fetchFrameLocals(const ResponseData& d)
      * only causes us lose how the variables were expanded, but we are forced rebuild the "Locals"
      * collection from scratch each time a switch happens.
      */
-    enumerateNamespace(nsid, count, handle, i18n("Locals"));
+    enumerateNamespace(nsid, count, handle, UpdateFlag::Locals, i18n("Locals"));
 }
 
 void VariableController::fetchReturnInfo(const ResponseData& d)
@@ -285,7 +311,7 @@ void VariableController::fetchReturnInfo(const ResponseData& d)
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
         << "enumerating return info:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
 
-    enumerateNamespace(nsid, count, handle, i18n("Return info"));
+    enumerateNamespace(nsid, count, handle, UpdateFlag::ReturnInfo, i18n("Return info"));
 }
 
 void VariableController::fetchGlobals(const ResponseData& d)
@@ -301,10 +327,10 @@ void VariableController::fetchGlobals(const ResponseData& d)
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
         << "enumerating globals:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
 
-    enumerateNamespace(nsid, count, handle, i18n("Globals"));
+    enumerateNamespace(nsid, count, handle, UpdateFlag::Globals, i18n("Globals"));
 }
 
-void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, QString name)
+void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, UpdateFlag collection, QString name)
 {
     auto itr = m_namespaces.find(nsid);
     if (itr == m_namespaces.end()) {
@@ -319,7 +345,7 @@ void VariableController::enumerateNamespace(int nsid, int count, PythonId handle
 
     // The last argument count + 1 ensures the server will release the enumeration handle.
     session()->debugger()->request({QStringLiteral("enumeratevariables"), int(handle), nsid, count + 1},
-        [this, nsid, guard = UpdateGuard()](const ResponseData& d) {
+        [this, nsid, guard = UpdateGuard(collection)](const ResponseData& d) {
             variablesEnumerated(d, nsid);
     });
 }
@@ -393,70 +419,52 @@ void VariableController::updateCollections()
     // What actually needs to be updated?
     auto updateMask = m_updateRequested & m_isExpanded;
 
-    /*
-     * Update "Locals" collection. For this case, we must prevent starting the update
-     * until the previous update on "Locals" has completed. (The user can switch the selected
-     * stack-frame before the last update as fully completed.)
-     */
-    if (updateMask & UpdateFlag::Locals) {
-        if (m_pendingRequests || (m_updateStarted & UpdateFlag::Locals)) {
-            // Can't update yet...
-            // TODO: Unfortunately the "Locals" update can get arbitrarily delayed more that I
-            // would want to, since all other collection updates also increment
-            // m_pendingRequests. The UpdateGuard should perhaps be improved such that each
-            // collection has its own VariableController::m_pendingRequests counter. Which
-            // collection a variable is part of would need to be propagated up in the tree.
-            qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "deferring Locals update...";
-            m_localsUpdateDeferred = true;
+    for (auto& updater : m_collections) {
+        if (!(updateMask & updater.flag))
+            continue;
+        if (updater.pending || (m_updateStarted & updater.flag)) {
+            // Defer the update. pendingRequests(-1, updater.flag)
+            // will call us again once the pending request count reaches zero.
+            m_updateDeferred |= updater.flag;
         } else {
-            // m_updateStarted|UpdateFlag::Locals is cleared by pendingRequests(-1) when
-            // m_pendingRequests reaches zero.
-            m_updateStarted |= UpdateFlag::Locals;
-            m_updateRequested.setFlag(UpdateFlag::Locals, false);
-            qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Locals update";
-
-            session()->debugger()->request({QStringLiteral("framelocals")},
-                [this, guard = UpdateGuard()](const ResponseData& d) {
-                    fetchFrameLocals(d);
-            });
+            m_updateStarted |= updater.flag;
+            m_updateRequested &= ~updater.flag;
+            updater.fn();
         }
     }
+}
 
-    // Update "Fixed" collections.
-    // These collections are updated at most once per program_state_changed event.
+void VariableController::doLocalsUpdate()
+{
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Locals update";
+    session()->debugger()->request({QStringLiteral("framelocals")},
+        [this, guard = UpdateGuard(UpdateFlag::Locals)](const ResponseData& d) {
+            fetchFrameLocals(d);
+    });
+}
 
-    // Update our return info.
-    if ((updateMask & UpdateFlag::ReturnInfo) && !(m_updateStarted & UpdateFlag::ReturnInfo)) {
-        m_updateStarted |= UpdateFlag::ReturnInfo;
-        m_updateRequested.setFlag(UpdateFlag::ReturnInfo, false);
-        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Return info update";
+void VariableController::doReturnInfoUpdate()
+{
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Return info update";
+    session()->debugger()->request({QStringLiteral("getreturninfo")},
+        [this, guard = UpdateGuard(UpdateFlag::ReturnInfo)](const ResponseData& d) {
+            fetchReturnInfo(d);
+    });
+}
 
-        session()->debugger()->request({QStringLiteral("getreturninfo")},
-            [this, guard = UpdateGuard()](const ResponseData& d) {
-                fetchReturnInfo(d);
-        });
-    }
+void VariableController::doGlobalsUpdate()
+{
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Globals update";
+    session()->debugger()->request({QStringLiteral("globalobjects")},
+        [this, guard = UpdateGuard(UpdateFlag::Globals)](const ResponseData& d) {
+            fetchGlobals(d);
+    });
+}
 
-    // Update globals.
-    if ((updateMask & UpdateFlag::Globals) && !(m_updateStarted & UpdateFlag::Globals)) {
-        m_updateStarted |= UpdateFlag::Globals;
-        m_updateRequested.setFlag(UpdateFlag::Globals, false);
-        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Globals update";
-
-        session()->debugger()->request({QStringLiteral("globalobjects")},
-            [this, guard = UpdateGuard()](const ResponseData& d) {
-                fetchGlobals(d);
-        });
-    }
-
-    // Update watches.
-    if ((updateMask & UpdateFlag::Watches) && !(m_updateStarted & UpdateFlag::Watches)) {
-        m_updateStarted |= UpdateFlag::Watches;
-        m_updateRequested.setFlag(UpdateFlag::Watches, false);
-        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Watches update";
-
-        variableCollection()->watches()->reinstall();
-    }
+void VariableController::doWatchesUpdate()
+{
+    qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "starting Watches update";
+    variableCollection()->watches()->reinstall();
 }
 }
 

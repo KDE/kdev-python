@@ -8,19 +8,18 @@
 #define VARIABLECONTROLLER_H
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/interfaces/idebugsession.h>
-#include "variable.h"
 
 #include <QTimer>
 
-using namespace KDevelop;
-
 namespace Python {
+
+class Variable;
 
 class VariableController : public KDevelop::IVariableController
 {
 Q_OBJECT
 public:
-    VariableController(IDebugSession* parent);
+    VariableController(KDevelop::IDebugSession* parent);
     void addWatch(KDevelop::Variable* variable) override;
     void addWatchpoint(KDevelop::Variable* variable) override;
     

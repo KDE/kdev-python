@@ -25,8 +25,6 @@
 #include <QRegularExpression>
 #include "debuggerdebug.h"
 
-using namespace KDevelop;
-
 namespace Python {
 
 VariableController::VariableController(IDebugSession* parent) : IVariableController(parent)

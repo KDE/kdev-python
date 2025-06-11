@@ -15,7 +15,6 @@
 #include <debugger/interfaces/ivariablecontroller.h>
 #include <debugger/interfaces/ibreakpointcontroller.h>
 #include "pdbdebuggerinstance.h"
-#include "variable.h"
 
 using namespace KDevelop;
 

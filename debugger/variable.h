@@ -106,8 +106,11 @@ private:
      */
     std::pair<Variable*, bool> findOrCreateChild(QString longname, QString expr);
 
+public:
     void valueFetched(const ResponseData& data);
     QList<Variable*> variablesEnumerated(const ResponseData& data);
+    void enumerateDone(const QList<Variable*>& fetched);
+    void updateHasMore();
     void attachDone(const ResponseData& d, QObject* object, const char* method);
 };
 

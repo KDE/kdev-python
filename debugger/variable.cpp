@@ -15,6 +15,37 @@
 
 namespace Python {
 
+class VariableRequestHandler
+{
+    UpdateGuard m_guard;
+    QPointer<Variable> m_holder;
+
+public:
+    VariableRequestHandler(Variable* var)
+        : m_guard()
+        , m_holder(var)
+    {
+    }
+    virtual ~VariableRequestHandler()
+    {
+    }
+
+    void operator()(const ResponseData& d)
+    {
+        auto* const var = m_holder.data();
+        if (!var) {
+            cleanup(d);
+        } else {
+            process(*var, d);
+        }
+    }
+    virtual void process(Variable& self, const ResponseData& d) = 0;
+    virtual void cleanup(const ResponseData& d)
+    {
+        qCWarning(KDEV_PYTHON_VARIABLECONTROLLER) << "Variable was deleted before its update completed";
+    }
+};
+
 Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, const QString& expression,
                    const QString& display)
     : KDevelop::Variable(model, parent, expression, display)
@@ -41,6 +72,37 @@ DebugSession* Variable::session()
     return qobject_cast<DebugSession*>(is);
 }
 
+class EvalHandler : public VariableRequestHandler
+{
+    QObject* m_context;
+    const char* m_callback;
+
+public:
+    EvalHandler(Variable* self, QObject* context, const char* callback)
+        : VariableRequestHandler(self)
+        , m_context(context)
+        , m_callback(callback)
+    {
+    }
+
+    void process(Variable& self, const ResponseData& d) override
+    {
+        self.attachDone(d, m_context, m_callback);
+    }
+
+    void cleanup(const ResponseData& d) override
+    {
+        // var got deleted...
+        qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "attachMaybe() was aborted";
+        // Release the namespace id if it was assigned.
+        const auto result = responseObject(d, QStringLiteral("evaluate"));
+        const auto ns_id = result.value(QStringLiteral("namespace")).toInt();
+        if (ns_id < -2) {
+            Variable::session()->debugger()->request({QStringLiteral("dropnamespace"), ns_id});
+        }
+    }
+};
+
 void Variable::attachMaybe(QObject* context, const char* callback)
 {
     if (auto* s = session(); !s || s->state() != DebugSession::PausedState) {
@@ -50,9 +112,7 @@ void Variable::attachMaybe(QObject* context, const char* callback)
         }
         return;
     }
-    // This variable's existence hangs on the user not moving the mouse cursor or deleting this.
-    // When the request handler finally runs, *this might have been already deleted!
-    QPointer<Variable> holder(this);
+
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "search for:" << expression();
 
     // FIXME: expression() can be from an expanded tooltip that contains "foo/[0]"
@@ -61,21 +121,7 @@ void Variable::attachMaybe(QObject* context, const char* callback)
     m_is_watch = true;
     session()->debugger()->request(
         {QStringLiteral("evalexpression"), QStringLiteral("'%1'").arg(expression()), namespaceId()},
-        [guard = UpdateGuard(), holder, context, callback](const ResponseData& d) {
-            auto* const var = holder.data();
-            if (!var) {
-                // var got deleted...
-                qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "attachMaybe() was aborted";
-                // Release the namespace id if it was assigned.
-                const auto result = responseObject(d, QStringLiteral("evaluate"));
-                const auto ns_id = result.value(QStringLiteral("namespace")).toInt();
-                if (ns_id < -2) {
-                    session()->debugger()->request({QStringLiteral("dropnamespace"), ns_id});
-                }
-                return;
-            }
-            var->attachDone(d, context, callback);
-        });
+        EvalHandler(this, context, callback));
 }
 
 void Variable::attachDone(const ResponseData& d, QObject* context, const char* callback)
@@ -114,14 +160,37 @@ void Variable::attachDone(const ResponseData& d, QObject* context, const char* c
     }
 }
 
+class FetchHandler : public VariableRequestHandler
+{
+public:
+    FetchHandler(Variable* self)
+        : VariableRequestHandler(self)
+    {
+    }
+    void process(Variable& self, const ResponseData& d) override
+    {
+        self.valueFetched(d);
+    }
+};
+
 void Variable::fetchValue()
 {
-    session()->debugger()->request(
-        {QStringLiteral("inspectvalue"), int(m_pythonPtr), m_nsId},
-        [this, guard = UpdateGuard()](const ResponseData& d) {
-            valueFetched(d);
-        });
+    session()->debugger()->request({QStringLiteral("inspectvalue"), int(m_pythonPtr), m_nsId}, FetchHandler(this));
 }
+
+class EnumerateHandler : public VariableRequestHandler
+{
+public:
+    EnumerateHandler(Variable* self)
+        : VariableRequestHandler(self)
+    {
+    }
+    void process(Variable& self, const ResponseData& d) override
+    {
+        const auto fetched = self.variablesEnumerated(d);
+        self.enumerateDone(fetched);
+    }
+};
 
 void Variable::valueFetched(const ResponseData& d)
 {
@@ -199,32 +268,38 @@ void Variable::valueFetched(const ResponseData& d)
     // Update all existing children.
     const auto count = qMin(m_maxItems, childItems.size());
     session()->debugger()->request({QStringLiteral("enumeratevariables"), int(m_pythonPtr), m_nsId, count},
-        [this, guard = UpdateGuard()](const ResponseData& d) {
+                                   EnumerateHandler(this));
+}
 
-        const auto fetched = variablesEnumerated(d);
-        // var->die() modifies childItems...
-        const auto list = childItems;
-        for (auto* const item : std::as_const(list)) {
-            Q_ASSERT(qobject_cast<Variable*>(item));
-            auto* var = static_cast<Variable*>(item);
+void Variable::enumerateDone(const QList<Variable*>& fetched)
+{
+    // var->die() modifies childItems...
+    const auto list = childItems;
+    for (auto* const item : std::as_const(list)) {
+        Q_ASSERT(qobject_cast<Variable*>(item));
+        auto* var = static_cast<Variable*>(item);
 
-            if (fetched.contains(var)) {
-                var->fetchValue();
-            } else {
-                qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "removing:" << var->expression();
-                Q_ASSERT(!var->m_pendingUpdates);
-                var->die();
-            }
+        if (fetched.contains(var)) {
+            var->fetchValue();
+        } else {
+            qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "removing:" << var->expression();
+            Q_ASSERT(!var->m_pendingUpdates);
+            var->die();
         }
+    }
 
-        more_ = ellipsis_;
-        setHasMore(m_maxItems > childItems.size());
+    updateHasMore();
+}
 
-        --m_pendingUpdates;
-        if (m_pendingUpdates) {
-            QMetaObject::invokeMethod(this, &Variable::tryFetchMoreChildren, Qt::QueuedConnection);
-        }
-    });
+void Variable::updateHasMore()
+{
+    more_ = ellipsis_;
+    setHasMore(m_maxItems > childItems.size());
+
+    --m_pendingUpdates;
+    if (m_pendingUpdates) {
+        QMetaObject::invokeMethod(this, &Variable::tryFetchMoreChildren, Qt::QueuedConnection);
+    }
 }
 
 void Variable::fetchMoreChildren()
@@ -237,6 +312,27 @@ void Variable::fetchMoreChildren()
     ++m_pendingUpdates;
     tryFetchMoreChildren();
 }
+
+class FetchMoreHandler : public VariableRequestHandler
+{
+public:
+    FetchMoreHandler(Variable* self)
+        : VariableRequestHandler(self)
+    {
+    }
+
+    void process(Variable& self, const ResponseData& d) override
+    {
+        // Process the response.
+        const auto fetched = self.variablesEnumerated(d);
+        // Update any added children.
+        for (auto* const var : std::as_const(fetched)) {
+            var->fetchValue();
+        }
+
+        self.updateHasMore();
+    }
+};
 
 void Variable::tryFetchMoreChildren()
 {
@@ -252,22 +348,7 @@ void Variable::tryFetchMoreChildren()
     // (The server continues the enumeration from the last point, so count is relative)
     const auto count = qMin(m_expandBy, m_maxItems - childItems.size());
     session()->debugger()->request({QStringLiteral("enumeratevariables"), int(m_pythonPtr), m_nsId, count},
-        [this, guard = UpdateGuard()](const ResponseData& d) {
-        // Process the response.
-        const auto fetched = variablesEnumerated(d);
-        // Update any added children.
-        for (auto* const var : std::as_const(fetched)) {
-            var->fetchValue();
-        }
-
-        more_ = ellipsis_;
-        setHasMore(m_maxItems > childItems.size());
-
-        --m_pendingUpdates;
-        if (m_pendingUpdates) {
-            QMetaObject::invokeMethod(this, &Variable::tryFetchMoreChildren, Qt::QueuedConnection);
-        }
-    });
+                                   FetchMoreHandler(this));
 }
 
 std::pair<Variable*, bool> Variable::findOrCreateChild(QString longname, QString expr)

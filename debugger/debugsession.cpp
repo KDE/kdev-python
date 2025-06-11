@@ -18,7 +18,6 @@
 #include "breakpointcontroller.h"
 #include "pdbframestackmodel.h"
 #include "variablecontroller.h"
-#include "variable.h"
 #include "pdbprocess.h"
 
 #include <QDebug>

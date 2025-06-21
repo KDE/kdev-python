@@ -178,8 +178,10 @@ def _shallowcopy(value):
     cls = type(value)
     if cls in _skip_shallowcopy:
         return value
-    # pylint: disable=W0718
-    # Note: copy.copy() can raise arbitrary exceptions when it fails.
+    # Check for __setstate__ method as such object is likely not safe to copy.
+    if hasattr(value, '__setstate__'):
+        _skip_shallowcopy.add(cls)
+        return value
     try:
         return copy.copy(value)
     except Exception:

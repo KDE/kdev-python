@@ -266,7 +266,6 @@ void DebugSession::setState(DebuggerState state)
     m_state = state;
     if ( m_state == EndedState ) {
         raiseEvent(debugger_exited);
-        Q_EMIT finished();
     }
     else if ( m_state == ActiveState || m_state == StartingState || m_state == StoppingState ) {
         raiseEvent(debugger_busy);

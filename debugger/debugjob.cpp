@@ -36,14 +36,13 @@ void DebugJob::start()
     qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting standardOutputReceived";
     connect(m_session, &DebugSession::realDataReceived, this, &DebugJob::standardOutputReceived);
     connect(m_session, &DebugSession::stderrReceived, this, &DebugJob::standardErrorReceived);
-    connect(m_session, &KDevelop::IDebugSession::finished, this, &DebugJob::sessionFinished);
+    connect(m_session, &DebugSession::stateChanged, this, [this](KDevelop::IDebugSession::DebuggerState state) {
+        if (state == KDevelop::IDebugSession::EndedState) {
+            emitResult();
+        }
+    });
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start(m_data);
-}
-
-void DebugJob::sessionFinished()
-{
-    emitResult();
 }
 
 void DebugJob::standardErrorReceived(QStringList lines)

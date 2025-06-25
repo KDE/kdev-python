@@ -36,8 +36,6 @@ private:
     KDevelop::OutputModel* outputModel();
     const StartupInfo m_data;
     DebugSession* m_session;
-public Q_SLOTS:
-    void sessionFinished();
 };
 
 }

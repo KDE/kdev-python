@@ -208,7 +208,7 @@ private:
     IVariableController* m_variableController;
     IFrameStackModel* m_frameStackModel;
     KProcess* m_debuggerProcess;
-    IDebugSession::DebuggerState m_state;
+    DebuggerState m_state = DebuggerState::NotStartedState;
     QByteArray m_buffer;
     QList<PdbCommand*> m_commandQueue;
 

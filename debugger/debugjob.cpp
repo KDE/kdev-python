@@ -10,6 +10,7 @@
 #include <interfaces/idebugcontroller.h>
 #include <interfaces/icore.h>
 #include <interfaces/iplugincontroller.h>
+#include <outputview/outputmodel.h>
 
 #include <sublime/view.h>
 #include <util/processlinemaker.h>
@@ -32,10 +33,10 @@ void DebugJob::start()
     setModel(pyOutputModel);
 
     startOutput();
-    
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting standardOutputReceived";
-    connect(m_session, &DebugSession::realDataReceived, this, &DebugJob::standardOutputReceived);
-    connect(m_session, &DebugSession::stderrReceived, this, &DebugJob::standardErrorReceived);
+
+    qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting DebugSession to OutputModel";
+    connect(m_session, &DebugSession::realDataReceived, pyOutputModel, &OutputModel::appendLines);
+    connect(m_session, &DebugSession::stderrReceived, pyOutputModel, &OutputModel::appendLines);
     connect(m_session, &DebugSession::stateChanged, this, [this](KDevelop::IDebugSession::DebuggerState state) {
         if (state == KDevelop::IDebugSession::EndedState) {
             emitResult();
@@ -43,26 +44,6 @@ void DebugJob::start()
     });
     KDevelop::ICore::self()->debugController()->addSession(m_session);
     m_session->start(m_data);
-}
-
-void DebugJob::standardErrorReceived(QStringList lines)
-{
-    if ( OutputModel* m = outputModel() ) {
-        m->appendLines(lines);
-    }
-}
-
-void DebugJob::standardOutputReceived(QStringList lines)
-{
-    qCDebug(KDEV_PYTHON_DEBUGGER) << "standard output received:" << lines << outputModel();
-    if ( OutputModel* m = outputModel() ) {
-        m->appendLines(lines);
-    }
-}
-
-OutputModel* DebugJob::outputModel()
-{
-    return dynamic_cast<OutputModel*>(model());
 }
 
 bool DebugJob::doKill()

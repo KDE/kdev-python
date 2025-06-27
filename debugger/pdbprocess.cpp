@@ -347,6 +347,9 @@ void PdbProcess::processIoReady(int channel)
                 connectToServer();
             } else {
                 qCWarning(KDEV_PYTHON_DEBUGGER) << "Unexpected output from the debugger process";
+                if (!data.isEmpty()) {
+                    Q_EMIT stdoutAvailable(data);
+                }
             }
         }
 

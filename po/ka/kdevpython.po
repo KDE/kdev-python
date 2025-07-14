@@ -46,7 +46,7 @@ msgstr "ფაილის თავსართის დამატება"
 #: codecompletion/context.cpp:175
 #, kde-format
 msgid "specify default parameter"
-msgstr "ნაგულისხმები პარამეტრის მითითება"
+msgstr "ნაგულისხმევი პარამეტრის მითითება"
 
 #: codecompletion/context.cpp:386
 #, kde-format
@@ -571,7 +571,7 @@ msgstr "Python -ის ინტერპრეტატორი:"
 #, kde-format
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
-"სრული ბილიკი python-ის ინტერპრეტატორამდე. ნაგულისხმები მნიშვნელობის "
+"სრული ბილიკი python-ის ინტერპრეტატორამდე. ნაგულისხმევი მნიშვნელობის "
 "გამოსაყენებლად ცარიელი დატოვეთ"
 
 #: projectconfig/projectconfigpage.cpp:47

@@ -429,7 +429,7 @@ msgstr "在指定模块中找不到 %1 的声明"
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
-msgstr "类方法的第一个参数既不叫 self 也不叫 cls ，这种做法已不推荐"
+msgstr "类方法的第一个参数未命名为 self 或 cls，此做法已被弃用。"
 
 #: duchain/declarationbuilder.cpp:1605
 #, kde-format

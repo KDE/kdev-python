@@ -1403,6 +1403,7 @@ void PyDUChainTest::testProblemCount_data()
     QTest::newRow("misplaced_return_class") << "class A:\n return 25" << 1;
     QTest::newRow("correct_return") << "def foo():\n return" << 0;
     QTest::newRow("lambda_argument_outside") << "def bar():\n lambda foo: 3\n foo" << 1;
+    QTest::newRow("lambda_name_defined_later") << "x = lambda: Foo\nclass Foo:\n pass\n" << 0;
     QTest::newRow("use_found_at_decl") << "foo = 3" << 0;
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("fstring_visit_inside") << "checkme = f'{name}'" << 1;

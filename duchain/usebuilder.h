@@ -37,6 +37,7 @@ protected:
     void visitSubscript(SubscriptAst* node) override;
     void visitMatchAs(MatchAsAst* node) override;
     void visitImportFrom(ImportFromAst* node) override;
+    void visitLambda(LambdaAst* node) override;
 
 private:
     ParseSession* m_session;
@@ -45,6 +46,7 @@ private:
         return m_nextUseStack.top();
     }
     QStack<int> m_nextUseStack;
+    bool m_findBeyondUse;
     bool m_errorReportingEnabled;
     inline void disableErrorReporting() {
         m_errorReportingEnabled = false;

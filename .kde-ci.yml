@@ -15,3 +15,6 @@ Dependencies:
     'frameworks/kxmlgui': '@latest-kf6'
     'frameworks/threadweaver': '@latest-kf6'
     'kdevelop/kdevelop': '@same'
+
+Options:
+  require-passing-tests-on: ['@all']

@@ -1,5 +1,6 @@
 /*
     SPDX-FileCopyrightText: 2012 Sven Brauch <svenbrauch@googlemail.com>
+    SPDX-FileCopyrightText: 2025 Jarmo Tiitto <jarmo.tiitto@gmail.com>
 
     SPDX-License-Identifier: GPL-2.0-or-later
 */

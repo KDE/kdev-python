@@ -172,6 +172,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                     atLineBeginning = false;
                 }
                 else {
+                    if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
                     currentLine += 1;
                     currentLineBeginning = i+1;
                     // this line has had content, so reset the "empty lines since" counter
@@ -181,14 +182,13 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                         emptyLinesSinceLine = currentLine;
                     }
                     atLineBeginning = true;
-                    if ( indents.length() <= currentLine ) indents.append(currentLineIndent);
                     currentLineIndent = 0;
                 }
             }
             else if ( atLineBeginning ) {
                 currentLineIndent += 1;
             }
-            
+
             if ( currentLine == errline && ! atLineBeginning ) {
                 // if the last non-empty char before the error opens a new block, it's likely an "empty block" problem
                 // we can easily fix that by adding in a "pass" statement. However, we want to add that in the next line, if possible
@@ -204,7 +204,7 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                     }
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
-                    qCDebug(KDEV_PYTHON_PARSER) << indents << currentLine;
+                    qCDebug(KDEV_PYTHON_PARSER) << "indents, current line:" << indents << currentLine << contents;
                     contents[i+1+indents.at(currentLine)] = QLatin1Char('#');
                     contents.insert(i+1+indents.at(currentLine), QStringLiteral("pass"));
                 }

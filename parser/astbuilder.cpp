@@ -205,8 +205,8 @@ CodeAst::Ptr AstBuilder::parse(const QUrl& filename, QString &contents)
                 }
                 else if ( indents.length() >= currentLine && currentLine > 0 ) {
                     qCDebug(KDEV_PYTHON_PARSER) << indents << currentLine;
-                    contents[i+1+indents.at(currentLine - 1)] = QLatin1Char('#');
-                    contents.insert(i+1+indents.at(currentLine - 1), QStringLiteral("pass"));
+                    contents[i+1+indents.at(currentLine)] = QLatin1Char('#');
+                    contents.insert(i+1+indents.at(currentLine), QStringLiteral("pass"));
                 }
                 break;
             }

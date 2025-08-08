@@ -30,13 +30,13 @@ namespace Python {
 VariableController::VariableController(IDebugSession* parent)
     : IVariableController(parent)
     , m_collections{Collection{UpdateFlag::Locals, variableCollection()->locals(),
-                               std::bind(&VariableController::doLocalsUpdate, this)},
+                               std::bind(&VariableController::doLocalsUpdate, this), {}},
                     Collection{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info")),
-                               std::bind(&VariableController::doReturnInfoUpdate, this)},
+                               std::bind(&VariableController::doReturnInfoUpdate, this), {}},
                     Collection{UpdateFlag::Globals, variableCollection()->locals(i18n("Globals")),
-                               std::bind(&VariableController::doGlobalsUpdate, this)},
+                               std::bind(&VariableController::doGlobalsUpdate, this), {}},
                     Collection{UpdateFlag::Watches, variableCollection()->watches(),
-                               std::bind(&VariableController::doWatchesUpdate, this)}}
+                               std::bind(&VariableController::doWatchesUpdate, this), {}}}
 {
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "constructing VariableController";
 

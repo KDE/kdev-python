@@ -40,7 +40,7 @@ public:
         }
     }
     virtual void process(Variable& self, const ResponseData& d) = 0;
-    virtual void cleanup(const ResponseData& d)
+    virtual void cleanup(const ResponseData& /*d*/)
     {
         qCWarning(KDEV_PYTHON_VARIABLECONTROLLER) << "Variable was deleted before its update completed";
     }

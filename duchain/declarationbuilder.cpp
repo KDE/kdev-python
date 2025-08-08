@@ -1083,6 +1083,11 @@ void DeclarationBuilder::visitMatch(MatchAst* node)
                         continue;
                     }
                     auto* asElement = static_cast<MatchAsAst*>(element);
+                    if (!asElement->name)
+                    {
+                        // generated for _ in case [a, _, b]
+                        continue;
+                    }
                     auto type = Helper::contentOfIterable(subjectVisitor.lastType(), topContext());
                     visitVariableDeclaration<Declaration>(asElement->name, nullptr, type);
                 }

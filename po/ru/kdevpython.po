@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2025-05-22 18:13+0300\n"
 "Last-Translator: Alexander Yavorsky <kekcuha@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -206,35 +206,35 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Список разделённых запятыми модулей, необходимых для работы с этим типом"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "В отлаживаемой программе возникло необрабатываемое исключение."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "Сейчас вы можете изучить состояние программы после этого события."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "Отладчик остановится сам при выполнении следующей команды."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Расширение для отладки приложений Python в pdb"
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "К сожалению, отладка поддерживается только для приложений Python 3.x."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Неподдерживаемый интерпретатор"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -441,7 +441,7 @@ msgstr "Модуль «%1» не найден"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Объявление «%1» не найдено в указанном модуле"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
@@ -449,7 +449,7 @@ msgstr ""
 "Первый аргумент метода класса называется не self или cls — эта запись "
 "устарела"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -457,7 +457,7 @@ msgstr ""
 "Не статический метод класса не имеет аргументов, а должен иметь минимум один "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Оператор return вне объявления функции"
@@ -593,6 +593,15 @@ msgstr "Ошибка при проверке PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Видимо, анализатор синтаксиса PEP8 работает неправильно."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "В отлаживаемой программе возникло необрабатываемое исключение."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "Сейчас вы можете изучить состояние программы после этого события."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "Отладчик остановится сам при выполнении следующей команды."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

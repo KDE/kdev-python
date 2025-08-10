@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2024-10-20 00:33+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
@@ -202,35 +202,35 @@ msgstr "需要的模組："
 msgid "A comma separated list of modules required for the type"
 msgstr "此型態需要的模組清單，以逗號分隔"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "除錯中的程式發出了未捕捉到的例外。"
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "您現在可以在程式離開後檢查其狀態。"
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "在下個指令觸發後，除錯器會無聲地停止。"
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "用 pdb 除錯 Python 應用程式的外掛程式。"
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "抱歉，除錯器只支援除錯 Python 3.x 的應用程式。"
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "未支援的直譯器"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -429,19 +429,19 @@ msgstr "找不到模組 \"%1\""
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "在指定的模組找不到宣告 \"%1\""
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr "類別方法的第一個參數名稱並非 self 或 cls，這種方式已被廢棄"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "非靜態類別方法沒有參數。您必須至少指定一個參數（self）"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return 敘述不在函式宣告內"
@@ -574,6 +574,15 @@ msgstr "PEP8 檢查器發生錯誤：%1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP 語法檢查器似乎無法正常運作。"
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "除錯中的程式發出了未捕捉到的例外。"
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "您現在可以在程式離開後檢查其狀態。"
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "在下個指令觸發後，除錯器會無聲地停止。"
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2024-10-18 17:20+0100\n"
 "Last-Translator: Steve Allewell <steve.allewell@gmail.com>\n"
 "Language-Team: British English\n"
@@ -201,35 +201,35 @@ msgstr "Required modules:"
 msgid "A comma separated list of modules required for the type"
 msgstr "A comma separated list of modules required for the type"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "The program being debugged raised an uncaught exception."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "You can now inspect the status of the program after it exited."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "The debugger will silently stop when the next command is triggered."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "A plugin to debug Python applications with pdb."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Sorry, debugging is only supported for Python 3.x applications."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Unsupported interpreter"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -434,21 +434,21 @@ msgstr "Module \"%1\" not found"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Declaration for \"%1\" not found in specified module"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "First argument of class method is not called self or cls, this is deprecated"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Non-static class method without arguments, must have at least one (self)"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return statement not within function declaration"
@@ -583,6 +583,15 @@ msgstr "PEP8 checker error: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "The PEP8 syntax checker does not seem to work correctly."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "The program being debugged raised an uncaught exception."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "You can now inspect the status of the program after it exited."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "The debugger will silently stop when the next command is triggered."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2024-10-17 15:20+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -206,38 +206,35 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Список відокремлених комами записів модулів, потрібних для роботи з типом."
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "Під час діагностичного запуску програми сталося невідоме виключення."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr ""
-"Тепер можна ознайомитися зі станом програми після завершення її роботи."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr ""
-"Інструмент діагностики зупинить роботу без повідомлень, коли буде віддано "
-"наступну програму."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Додаток для діагностування програм мовою Python за допомогою pdb."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Вибачте, діагностування передбачено лише для програм Python 3.x."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Непідтримуваний інтерпретатор"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -449,7 +446,7 @@ msgstr "Не знайдено модуля «%1»"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "У вказаному модулі не знайдено оголошення «%1»"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
@@ -457,7 +454,7 @@ msgstr ""
 "Перший аргумент методу класу не викликається автономно (self) або не "
 "викликає cls, такі синтаксичні конструкції вважаються застарілими"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -465,7 +462,7 @@ msgstr ""
 "Нестатичний метод класу без аргументів. Має бути принаймні один аргумент "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Інструкція return поза межами оголошення функції"
@@ -602,6 +599,19 @@ msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""
 "Здається, засіб перевірки синтаксичних конструкцій PEP8 не працює належним "
 "чином."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr ""
+#~ "Під час діагностичного запуску програми сталося невідоме виключення."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr ""
+#~ "Тепер можна ознайомитися зі станом програми після завершення її роботи."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr ""
+#~ "Інструмент діагностики зупинить роботу без повідомлень, коли буде віддано "
+#~ "наступну програму."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

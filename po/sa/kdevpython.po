@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2024-12-24 20:39+0530\n"
 "Last-Translator: kali <shreekantkalwar@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
@@ -203,35 +203,35 @@ msgstr "आवश्यकाः मॉड्यूलाः :"
 msgid "A comma separated list of modules required for the type"
 msgstr "प्रकारस्य कृते आवश्यकानां मॉड्यूलानां अल्पविरामविभक्तसूची"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "त्रुटिनिवारणं क्रियमाणः कार्यक्रमः अगृहीतं अपवादं उत्थापितवान् ।"
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "इदानीं भवान् कार्यक्रमस्य निर्गमनानन्तरं तस्य स्थितिं निरीक्षितुं शक्नोति ।"
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "अग्रिमः आदेशः प्रवर्तते सति त्रुटिनिवारकः मौनेन स्थगयिष्यति ।"
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "pdb इत्यनेन सह Python अनुप्रयोगानाम् त्रुटिनिवारणार्थं प्लगिन् ।"
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "क्षम्यतां, त्रुटिनिवारणं केवलं Python 3.x अनुप्रयोगानाम् कृते समर्थितम् अस्ति ।"
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "असमर्थितः व्याख्याकारः"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -433,20 +433,20 @@ msgstr "\"%1\" मॉड्यूल् न प्राप्तम्"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "निर्दिष्टे मॉड्यूले \"%1\" इत्यस्य घोषणा न प्राप्ता"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "class मेथड् इत्यस्य प्रथमः आर्गुमेण्ट् self अथवा cls इति न उच्यते, एतत् अप्रचलितम् अस्ति"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "तर्करहितः अस्थिरवर्गविधिः, न्यूनातिन्यूनं एकः (स्वयं) भवितुमर्हति ।"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "फंक्शन् घोषणायाः अन्तः नास्ति इति कथनं प्रत्यागच्छतु"
@@ -579,3 +579,12 @@ msgstr "PEP8 परीक्षकदोषः: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 वाक्यविन्यासपरीक्षकः सम्यक् कार्यं न करोति इति दृश्यते ।"
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "त्रुटिनिवारणं क्रियमाणः कार्यक्रमः अगृहीतं अपवादं उत्थापितवान् ।"
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "इदानीं भवान् कार्यक्रमस्य निर्गमनानन्तरं तस्य स्थितिं निरीक्षितुं शक्नोति ।"
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "अग्रिमः आदेशः प्रवर्तते सति त्रुटिनिवारकः मौनेन स्थगयिष्यति ।"

@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2017-09-16 21:11+0100\n"
 "Last-Translator: Roman Paholik <wizzardsk@gmail.com>\n"
 "Language-Team: Slovak <kde-sk@linux.sk>\n"
@@ -200,35 +200,35 @@ msgstr "Vyžadované moduly:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Čiarkou oddelený zoznam modulov vyžadovaných pre typ"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "Ladený program vygeneroval neošetrenú výnimku."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "Teraz môžete preskúmať stav programu po jeho ukončení."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "Debugger sa ticho zastaví pri spustení ďalšieho príkazu."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Plugin na ladenie Python aplikácií s pdb."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Prepáčte, ladenie je podporované iba v aplikáciách Python 3.x."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Nepodporovaný interpreter"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -432,7 +432,7 @@ msgstr "Modul \"%1\" nebol nájdený"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklarácia pre \"%1\" nenájdená v určenom module"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, fuzzy, kde-format
 #| msgid ""
 #| "First argument of class method is not called self, this is deprecated"
@@ -440,13 +440,13 @@ msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr "Prvý argument metódy triedy nie je volaný sám, čo je zastaralé"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Nestatická metóda triedy bez argumentov, musí mať aspoň jednu (self)"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Návratové vyhlásenie nie je v deklarácii funkcie"
@@ -581,6 +581,15 @@ msgstr "Chyba kontroly PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Kontrolovať syntaxe PEP8 zrejme nepracuje správne."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "Ladený program vygeneroval neošetrenú výnimku."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "Teraz môžete preskúmať stav programu po jeho ukončení."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "Debugger sa ticho zastaví pri spustení ďalšieho príkazu."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

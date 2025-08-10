@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2013-11-15 05:35+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -203,36 +203,36 @@ msgstr ""
 msgid "A comma separated list of modules required for the type"
 msgstr ""
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "Бағдарламаны жөндеу мақсатпен жібергенде беймәлім ерекшелік орын алды."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "Енді бағдарламаның доғарылғаннан кейінгі күй-жайын білуге болады."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "Келесі командаға ауысқанда жөндегіш үндемей тоқтатады."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Python бағдарламасын pdb көмегімен жөндейтін плагині."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, fuzzy, kde-format
 #| msgid "Sorry, debugging is only supported for Python 2.x applications."
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr "Ғафу етіңіз, жөндеу тек қана Python 2.x бағдарламаларға істейді."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Қолдауы жоқ интерпретаторы"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -456,7 +456,7 @@ msgstr "\"%1\" модулі табылмады"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Келтірілген модулінде \"%1\" үшін мәлімдеме жоқ"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, fuzzy, kde-format
 #| msgid ""
 #| "First argument of class method is not called self, this is deprecated"
@@ -466,13 +466,13 @@ msgstr ""
 "Клас әдісінің бірінші аргументі өзі бөлек (self) шақырылмады. Ол ескірген "
 "тәсіл."
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Статикалық емес әдіс аргументсіз, кемінде біреуі (self) болу тиіс"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return нұсқасы функция мәлімдемеден тыс жерде"
@@ -612,6 +612,16 @@ msgstr "PEP8 тексергіш қатесі: %1"
 #| "The selected PEP8 syntax checker \"%1\" does not seem to work correctly."
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Таңдалған PEP8 \"%1\" синтаксіс тексергіші дұрыс істемейтін сияқты."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr ""
+#~ "Бағдарламаны жөндеу мақсатпен жібергенде беймәлім ерекшелік орын алды."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "Енді бағдарламаның доғарылғаннан кейінгі күй-жайын білуге болады."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "Келесі командаға ауысқанда жөндегіш үндемей тоқтатады."
 
 #, fuzzy
 #~| msgid ""

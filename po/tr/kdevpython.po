@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2024-11-10 20:24+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
@@ -203,36 +203,36 @@ msgstr "Gerekli modüller:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Tür için gerekli modüllerin virgülle ayrılmış listesi"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr "Hatası ayıklanacak program yakalanamayan bir istisna üretti."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "Programdan çıkıldıktan sonra durumunu kontrol edebilirsiniz."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr "Sonraki komut tetiklendiğinde hata ayıklayıcısı sessizce duracak."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Pdb ile Python uygulamalarının hatalarını ayıklayan bir eklenti."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr ""
 "Üzgünüm, hata ayıklama yalnızca Python 3.x sürümleri için desteklenmektedir."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Desteklenmeyen yorumlayıcı"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -439,21 +439,21 @@ msgstr "“%1” modülü bulunamadı"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Belirtilen modülde “%1” beyanı bulunamadı"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Sınıf yönteminin ilk argümanı self veya cls değil, bu artık kullanılmıyor"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Değişkensiz statik olmayan sınıf metodu, en az bir taneye (self) sahip olmalı"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Dönüş ifadesi işlev beyanı içinde değil"
@@ -588,6 +588,15 @@ msgstr "PEP8 denetleyicisi hatası: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 sözdizimi kontrol edicisi düzgün çalışıyor gibi görünmüyor."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr "Hatası ayıklanacak program yakalanamayan bir istisna üretti."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "Programdan çıkıldıktan sonra durumunu kontrol edebilirsiniz."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr "Sonraki komut tetiklendiğinde hata ayıklayıcısı sessizce duracak."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

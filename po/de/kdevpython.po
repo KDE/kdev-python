@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2017-11-26 17:10+0100\n"
 "Last-Translator: Burkhard Lück <lueck@hube-lueck.de>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
@@ -200,42 +200,37 @@ msgid "A comma separated list of modules required for the type"
 msgstr ""
 "Durch Komma getrennte Liste von Modulen, die für diesen Typ erforderlich sind"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr ""
-"Das im Debugger ausgeführte Programm hat eine nicht behandelte "
-"Ausnahmebedingung ausgelöst."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr ""
-"Sie können jetzt den Status des Programms nach den Beenden untersuchen."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr ""
-"Der Debugger wird ohne Benachrichtigung anhalten, wenn der nächste Befehl "
-"ausgelöst wird."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Ein Modul zur Fehlersuche in Python-Programmen mit pdb."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr ""
 "Leider wird die Fehlersuche nur für Programme mit der Python-Version 3.x "
 "unterstützt."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Nicht unterstützter Interpreter"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -449,7 +444,7 @@ msgstr "Das Modul „%1“ wurde nicht gefunden"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Die Deklaration für „%1“ wurde im angegebenen Modul nicht gefunden"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, fuzzy, kde-format
 #| msgid ""
 #| "First argument of class method is not called self, this is deprecated"
@@ -458,7 +453,7 @@ msgid ""
 msgstr ""
 "Das erste Argument der Klassenmethode heißt nicht „self“. Dies ist veraltet."
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -466,7 +461,7 @@ msgstr ""
 "Nichtstatische Klassenmethode ohne Argumente. Es muss mindestens eines "
 "verwendet werden („self“)."
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Return-Anweisung nicht innerhalb der Funktionsdeklaration"
@@ -603,6 +598,20 @@ msgstr "PEP8-Überprüfungsfehler: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Die PEP8-Syntaxüberprüfung  scheint nicht richtig zu funktionieren."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr ""
+#~ "Das im Debugger ausgeführte Programm hat eine nicht behandelte "
+#~ "Ausnahmebedingung ausgelöst."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr ""
+#~ "Sie können jetzt den Status des Programms nach den Beenden untersuchen."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr ""
+#~ "Der Debugger wird ohne Benachrichtigung anhalten, wenn der nächste Befehl "
+#~ "ausgelöst wird."
 
 #~ msgid ""
 #~ "First argument of __new__ method is not called cls, this is deprecated"

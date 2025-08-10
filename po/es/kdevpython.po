@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-05-27 00:40+0000\n"
+"POT-Creation-Date: 2025-08-10 00:41+0000\n"
 "PO-Revision-Date: 2025-05-13 21:29+0100\n"
 "Last-Translator: Eloy Cuadra <ecuadra@eloihr.net>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
@@ -203,40 +203,37 @@ msgstr "Módulos requeridos:"
 msgid "A comma separated list of modules required for the type"
 msgstr "Una lista separada por comas de los módulos requeridos por el tipo"
 
-#: debugger/debugsession.cpp:156
-#, kde-format
-msgid "The program being debugged raised an uncaught exception."
-msgstr ""
-"El programa que está siendo depurado ha generado una excepción no "
-"contemplada."
-
-#: debugger/debugsession.cpp:157
-#, kde-format
-msgid "You can now inspect the status of the program after it exited."
-msgstr "Ya puede inspeccionar el estado del programa tras su salida."
-
-#: debugger/debugsession.cpp:158
-#, kde-format
-msgid "The debugger will silently stop when the next command is triggered."
-msgstr ""
-"El depurador se detendrá en silencio cuando se lance la siguiente orden."
-
-#: debugger/pdblauncher.cpp:44
+#: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
 msgstr "Un complemento para depurar aplicaciones de Python con pdb."
 
-#: debugger/pdblauncher.cpp:85
+#: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
 msgstr ""
 "Lo sentimos. La depuración solo está permitida para aplicaciones de Python 3."
 "x."
 
-#: debugger/pdblauncher.cpp:86
+#: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
 msgstr "Intérprete no permitido"
+
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#, kde-format
+msgid "Return info"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#, kde-format
+msgid "Globals"
+msgstr ""
+
+#: debugger/variablecontroller.cpp:297
+#, kde-format
+msgid "Locals"
+msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -447,7 +444,7 @@ msgstr "Módulo «%1» no encontrado"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Declaración para «%1» no encontrada en el módulo especificado"
 
-#: duchain/declarationbuilder.cpp:1585
+#: duchain/declarationbuilder.cpp:1590
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
@@ -455,14 +452,14 @@ msgstr ""
 "El primer argumento del método de la clase no se llama «self» ni «cls», lo "
 "que está desaconsejado"
 
-#: duchain/declarationbuilder.cpp:1605
+#: duchain/declarationbuilder.cpp:1610
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Método de clase no estático sin argumentos; debe tener al menos uno (self)"
 
-#: duchain/declarationbuilder.cpp:1766
+#: duchain/declarationbuilder.cpp:1771
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "La sentencia de retorno no está dentro de la declaración de la función"
@@ -599,3 +596,15 @@ msgstr "Error del comprobador PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Parece que el comprobador de sintaxis PEP8 no funciona correctamente."
+
+#~ msgid "The program being debugged raised an uncaught exception."
+#~ msgstr ""
+#~ "El programa que está siendo depurado ha generado una excepción no "
+#~ "contemplada."
+
+#~ msgid "You can now inspect the status of the program after it exited."
+#~ msgstr "Ya puede inspeccionar el estado del programa tras su salida."
+
+#~ msgid "The debugger will silently stop when the next command is triggered."
+#~ msgstr ""
+#~ "El depurador se detendrá en silencio cuando se lance la siguiente orden."

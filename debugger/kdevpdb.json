@@ -41,14 +41,17 @@
             },
             {
                 "Email": "jarmo.tiitto@gmail.com",
-                "Name": "Jarmo Tiitto"
+                "Name": "Jarmo Tiitto",
+                "Name[x-test]": "xxJarmo Tiittoxx"
             }
         ],
         "Category": "Debugging",
         "Description": "This plugin provides a graphical frontend for debugging python programs",
+        "Description[x-test]": "xxThis plugin provides a graphical frontend for debugging python programsxx",
         "Icon": "text-x-python",
         "License": "GPL",
         "Name": "Python Debugger support",
+        "Name[x-test]": "xxPython Debugger supportxx",
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

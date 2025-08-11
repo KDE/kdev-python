@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-08-10 00:41+0000\n"
-"PO-Revision-Date: 2024-10-20 21:49+0200\n"
+"PO-Revision-Date: 2025-08-10 23:11+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -219,17 +219,17 @@ msgstr "Nepodprt tolmač"
 #: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "Povratne informacije"
 
 #: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "Globalne"
 
 #: debugger/variablecontroller.cpp:297
 #, kde-format
 msgid "Locals"
-msgstr ""
+msgstr "Lokalne"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format

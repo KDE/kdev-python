@@ -570,12 +570,3 @@ msgstr "PEP8 检查器错误：%1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 语法检查器似乎无法正常工作。"
-
-#~ msgid "The program being debugged raised an uncaught exception."
-#~ msgstr "正在调试的程序引发了一个未被捕获的异常。"
-
-#~ msgid "You can now inspect the status of the program after it exited."
-#~ msgstr "您现在可以在退出后检查程序的状态。"
-
-#~ msgid "The debugger will silently stop when the next command is triggered."
-#~ msgstr "当下一个命令被触发时，调试器将静默停止。"

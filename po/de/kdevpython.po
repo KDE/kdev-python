@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2025 Alexander Becker <alex-at-kde-l10n-de@freenet.de>
 # Burkhard Lück <lueck@hube-lueck.de>, 2009, 2012, 2013, 2014, 2015, 2016, 2017.
 # Frederik Schwarzer <schwarzer@kde.org>, 2013, 2015, 2016.
 msgid ""
@@ -5,14 +6,15 @@ msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-08-10 00:41+0000\n"
-"PO-Revision-Date: 2017-11-26 17:10+0100\n"
-"Last-Translator: Burkhard Lück <lueck@hube-lueck.de>\n"
+"PO-Revision-Date: 2025-08-05 22:37+0200\n"
+"Last-Translator: Alexander Becker <alex-at-kde-l10n-de@freenet.de>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 25.04.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -138,7 +140,7 @@ msgstr "„%1“ hinzufügen"
 #: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
-msgstr "Geben Sie den Typ für „%1“ an ..."
+msgstr "Geben Sie den Typ für „%1“ an …"
 
 #: codegen/correctionfilegenerator.cpp:108
 #, kde-format
@@ -240,7 +242,7 @@ msgstr "Es wurde kein gültiger Datenordner für kdevpythonsupport gefunden."
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
 msgid "Generate..."
-msgstr "Erzeugen ..."
+msgstr "Erzeugen …"
 
 #: docfilekcm/docfilemanagerwidget.cpp:53
 #, kde-format
@@ -270,7 +272,7 @@ msgstr "Ausgewählte bearbeiten"
 #: docfilekcm/docfilemanagerwidget.cpp:70
 #, kde-format
 msgid "Search Paths..."
-msgstr "Suchpfade ..."
+msgstr "Suchpfade …"
 
 #: docfilekcm/docfilemanagerwidget.cpp:101
 #, kde-format
@@ -408,16 +410,16 @@ msgid ""
 "Make sure to keep a copy of your changes so you don't accidentally\n"
 "overwrite them by re-generating the file.\n"
 msgstr ""
-"Diese Datei enthält automatisch generierte Documentation, die\n"
-"aus der Python-Laufzeitinformation extrahiert wird. Sie wird analysiert,\n"
-"um Funktionen wie Quelltext-Vervollständigung und -Hervorhebung "
-"bereitzustellen.\n"
-"Finden Sie Fehler in diesen Funktionen für dieses Modul, dann können\n"
-"Sie diese Datei bearbeiten und Fehler korrigieren. Z. B. können Sie\n"
-"zusätzliche Rückgabe-Anweisungen hinzufügen, die bei der Analyse des\n"
-"Rückgabetyps dieser Funktion verwendet werden. Erstellen Sie eine Kopie\n"
-"dieser geänderten Datei, so dass Ihre Änderungen nicht unbeabsichtigt beim\n"
-"erneuten Regenerieren der Datei überschrieben werden.\n"
+"Diese Datei enthält automatisch generierte Dokumentation, die\n"
+"aus Python-Laufzeitinformationen extrahiert wird. Sie wird von\n"
+"KDevelop analysiert, um Funktionen wie Quelltextvervollständigung\n"
+"und Syntaxhervorhebung bereitzustellen. Finden Sie Fehler in\n"
+"der Unterstützung von KDevelop für dieses Modul, dann können\n"
+"Sie diese Datei bearbeiten und Fehler korrigieren. Z.B. können Sie\n"
+"zusätzliche Rückgabe-Anweisungen hinzufügen, die bei der Analyse\n"
+"des Rückgabetyps dieser Funktion verwendet werden. Erstellen Sie\n"
+"eine Kopie Ihrer Änderungen, da diese unbeabsichtigt durch das\n"
+"erneute Erzeugen der Datei überschrieben werden können.\n"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
@@ -432,7 +434,7 @@ msgstr "Python-Dokumentation"
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr "Die Dokumentation für das Modul „%1“ wird generiert ..."
+msgstr "Die Dokumentation für das Modul „%1“ wird generiert …"
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
@@ -445,13 +447,12 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Die Deklaration für „%1“ wurde im angegebenen Modul nicht gefunden"
 
 #: duchain/declarationbuilder.cpp:1590
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
-"Das erste Argument der Klassenmethode heißt nicht „self“. Dies ist veraltet."
+"Das erste Argument der Klassenmethode heißt nicht „self“ oder „cls“, dies "
+"ist veraltet"
 
 #: duchain/declarationbuilder.cpp:1610
 #, kde-format

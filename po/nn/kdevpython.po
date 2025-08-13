@@ -567,14 +567,3 @@ msgstr ""
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""
-
-#~ msgid "The program being debugged raised an uncaught exception."
-#~ msgstr ""
-#~ "Programmet som vart feilsøkt, gav eit unntak som ikkje vart fanga opp."
-
-#~ msgid "You can now inspect the status of the program after it exited."
-#~ msgstr "Du kan no inspisera statusen til programmet etter at det avslutta."
-
-#~ msgid "The debugger will silently stop when the next command is triggered."
-#~ msgstr ""
-#~ "Feilsøkjaren vil stoppa (utan meldingar) når neste kommando vert utløyst."

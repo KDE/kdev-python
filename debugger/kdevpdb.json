@@ -42,6 +42,7 @@
             {
                 "Email": "jarmo.tiitto@gmail.com",
                 "Name": "Jarmo Tiitto",
+                "Name[ca@valencia]": "Jarmo Tiitto",
                 "Name[ca]": "Jarmo Tiitto",
                 "Name[es]": "Jarmo Tiitto",
                 "Name[eu]": "Jarmo Tiitto",
@@ -57,6 +58,7 @@
         ],
         "Category": "Debugging",
         "Description": "This plugin provides a graphical frontend for debugging python programs",
+        "Description[ca@valencia]": "Este connector proporciona un frontal gràfic per a depurar programes en Python",
         "Description[ca]": "Aquest connector proporciona un frontal gràfic per a depurar programes Python",
         "Description[es]": "Este complemento proporciona una interfaz gráfica para depurar programas Python",
         "Description[eu]": "Plugin honek python programak arazteko bitarteko grafiko bat eskaintzen du",
@@ -71,6 +73,7 @@
         "Icon": "text-x-python",
         "License": "GPL",
         "Name": "Python Debugger support",
+        "Name[ca@valencia]": "Implementació del depurador de Python",
         "Name[ca]": "Implementació del depurador de Python",
         "Name[es]": "Implementación del depurador Python",
         "Name[eu]": "Python araztailearen euskarria",

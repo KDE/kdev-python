@@ -238,7 +238,7 @@ void VariableController::pendingRequests(int adjust, UpdateFlag collection)
         case UpdateFlag::Watches:
             return m_collections[3].pending;
         default:
-            Q_ASSERT(false);
+            Q_UNREACHABLE_RETURN(m_collections[0].pending);
         };
     }();
 

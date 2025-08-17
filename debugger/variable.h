@@ -79,7 +79,7 @@ public:
     {
         return m_nsId;
     }
-    /// Collection (UpdateFlag) of this variable.
+    /// Collection index of this variable.
     int collection()
     {
         return m_collection;
@@ -103,8 +103,7 @@ private:
     int m_expandBy = 1;
     /// Count of possible children.
     int m_maxItems = -1;
-    /// Likewise to VariableController::m_pendingRequests,
-    /// except this doesn't count fetchValue() made request or any child variable made requests.
+    /// Account deferred fetchMoreChildren() calls.
     int m_pendingUpdates = 0;
     /// True, if this is a watch root variable.
     bool m_is_watch = false;

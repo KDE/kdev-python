@@ -29,7 +29,9 @@ typedef unsigned int PythonId;
 class UpdateGuard
 {
 public:
-    UpdateGuard(int collection);
+    enum : int { LocalsIndex, ReturnInfoIndex, GlobalsIndex, WatchesIndex };
+
+    explicit UpdateGuard(int index);
     UpdateGuard(const UpdateGuard&);
     ~UpdateGuard();
 
@@ -81,7 +83,7 @@ public:
      *        pendingRequests(-1) must be called to signal the handler has completed.
      * @param adjust Increment (1) or decrement (-1) the count of queued requests.
      */
-    void pendingRequests(int adjust, UpdateFlag collection);
+    void pendingRequests(int adjust, int index);
 
 protected:
     void handleEvent(KDevelop::IDebugSession::event_t event) override;
@@ -128,7 +130,7 @@ private:
     void fetchFrameLocals(const ResponseData& data);
     void fetchReturnInfo(const ResponseData& data);
     void fetchGlobals(const ResponseData& data);
-    void enumerateNamespace(int nsid, int count, PythonId handle, UpdateFlag collection, QString name = QString());
+    void enumerateNamespace(int nsid, int count, PythonId handle, int collection, QString name = QString());
     void variablesEnumerated(const ResponseData& data, int nsid);
 
     void doLocalsUpdate();

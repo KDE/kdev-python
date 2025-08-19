@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Frank Weng (a.k.a. Franklin) <franklin at goodhorse dot idv dot tw>, 2009, 2013, 2014.
-# SPDX-FileCopyrightText: 2024 Kisaragi Hiu <mail@kisaragi-hiu.com>
+# SPDX-FileCopyrightText: 2024, 2025 Kisaragi Hiu <mail@kisaragi-hiu.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-08-10 00:41+0000\n"
-"PO-Revision-Date: 2024-10-20 00:33+0900\n"
+"PO-Revision-Date: 2025-08-19 04:55+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
 "Language: zh_TW\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "dot tw>\n"
-"X-Generator: Lokalize 24.08.2\n"
+"X-Generator: Lokalize 25.11.70\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
@@ -220,17 +220,17 @@ msgstr "未支援的直譯器"
 #: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "傳回資訊"
 
 #: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "全域變數"
 
 #: debugger/variablecontroller.cpp:297
 #, kde-format
 msgid "Locals"
-msgstr ""
+msgstr "本地變數"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format

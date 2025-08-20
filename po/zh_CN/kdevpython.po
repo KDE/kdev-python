@@ -228,7 +228,7 @@ msgstr ""
 #: debugger/variablecontroller.cpp:297
 #, kde-format
 msgid "Locals"
-msgstr ""
+msgstr "本地"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format

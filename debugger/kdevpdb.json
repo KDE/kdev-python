@@ -54,7 +54,8 @@
                 "Name[sv]": "Jarmo Tiitto",
                 "Name[tr]": "Jarmo Tiitto",
                 "Name[uk]": "Jarmo Tiitto",
-                "Name[x-test]": "xxJarmo Tiittoxx"
+                "Name[x-test]": "xxJarmo Tiittoxx",
+                "Name[zh_TW]": "Jarmo Tiitto"
             }
         ],
         "Category": "Debugging",
@@ -72,6 +73,7 @@
         "Description[tr]": "Bu eklenti, Python programlarında hata ayıklamak için grafiksel bir ön yüz sağlar",
         "Description[uk]": "Цей додаток є графічною оболонкою для діагностування програм мовою Python",
         "Description[x-test]": "xxThis plugin provides a graphical frontend for debugging python programsxx",
+        "Description[zh_TW]": "此外掛程式提供用來偵錯 Python 程式的圖形前端",
         "Icon": "text-x-python",
         "License": "GPL",
         "Name": "Python Debugger support",
@@ -88,6 +90,7 @@
         "Name[tr]": "Python Hata Ayıklayıcısı Desteği",
         "Name[uk]": "Підтримка засобу діагностики Python",
         "Name[x-test]": "xxPython Debugger supportxx",
+        "Name[zh_TW]": "Python 偵錯器支援",
         "ServiceTypes": [
             "KDevelop/Plugin"
         ]

@@ -13,6 +13,8 @@
 
 #include <algorithm>
 
+using namespace KDevelop;
+
 namespace Python {
 
 BreakpointController::BreakpointController(IDebugSession* parent)

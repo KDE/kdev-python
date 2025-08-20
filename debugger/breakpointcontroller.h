@@ -19,8 +19,6 @@
 #include <utility>
 #include <vector>
 
-using namespace KDevelop;
-
 namespace Python {
 
 struct BreakpointData
@@ -46,11 +44,11 @@ class BreakpointController : public KDevelop::IBreakpointController
 {
 Q_OBJECT
 public:
-    BreakpointController(IDebugSession* parent);
+    BreakpointController(KDevelop::IDebugSession* parent);
 
     void breakpointAdded(int row) override;
 
-    void breakpointModelChanged(int row, BreakpointModel::ColumnFlags columns) override;
+    void breakpointModelChanged(int row, KDevelop::BreakpointModel::ColumnFlags columns) override;
 
     void breakpointAboutToBeDeleted(int row) override;
 
@@ -60,7 +58,7 @@ public:
      *       debuggerStateChanged() default implementation to override the breakpoint states that
      *       we have setup.
      **/
-    void debuggerStateChanged(IDebugSession::DebuggerState state) override
+    void debuggerStateChanged(KDevelop::IDebugSession::DebuggerState state) override
     {
         Q_UNUSED(state);
     }
@@ -115,26 +113,26 @@ private:
     static inline const auto CMD_ENABLE = QStringLiteral("enable");
     static inline const auto CMD_DISABLE = QStringLiteral("disable");
 
-    static bool isSupportedBreakpoint(Breakpoint* bp);
-    static std::pair<QString, int> locationForBreakpoint(Breakpoint* bp);
+    static bool isSupportedBreakpoint(KDevelop::Breakpoint* bp);
+    static std::pair<QString, int> locationForBreakpoint(KDevelop::Breakpoint* bp);
 
     /**
      * Find the BreakpointData for a model breakpoint.
      */
-    std::vector<BreakpointDataPtr>::iterator lookupBreakpointData(Breakpoint* bp);
+    std::vector<BreakpointDataPtr>::iterator lookupBreakpointData(KDevelop::Breakpoint* bp);
 
     /**
      * Add a given model breakpoint to the debugger.
      * @param bp The breakpoint to add
      **/
-    void addBreakpoint(Breakpoint* bp);
+    void addBreakpoint(KDevelop::Breakpoint* bp);
     void addHandler(const ResponseData& data, const BreakpointDataPtr& brk);
 
     /**
      * Queue commands to remove a given model breakpoint from the debugger.
      * @param bp The breakpoint to remove
      **/
-    void removeBreakpoint(Breakpoint* bp);
+    void removeBreakpoint(KDevelop::Breakpoint* bp);
 
     /**
      * Queue a PDB clear command if possible.
@@ -146,7 +144,7 @@ private:
      * Queue commands to update a given model breakpoint in the debugger.
      * @param bp The breakpoint to update
      **/
-    void updateBreakpoint(Breakpoint* bp);
+    void updateBreakpoint(KDevelop::Breakpoint* bp);
     void updateHandler(const BreakpointDataPtr& brk, std::pair<QString, int> location);
 
     void runToLocationHandler(const ResponseData& data, PdbDebuggerInstance::CmdCallback callback);

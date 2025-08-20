@@ -17,8 +17,6 @@
 #include <debugger/interfaces/ibreakpointcontroller.h>
 #include "pdbdebuggerinstance.h"
 
-using namespace KDevelop;
-
 namespace Python {
 
 struct StartupInfo;
@@ -30,8 +28,8 @@ public:
     DebugSession();
     ~DebugSession() override;
 
-    IBreakpointController* breakpointController() const override;
-    IFrameStackModel* frameStackModel() const override;
+    KDevelop::IBreakpointController* breakpointController() const override;
+    KDevelop::IFrameStackModel* frameStackModel() const override;
 
     /**
      * @brief Start the debugger.
@@ -52,7 +50,7 @@ public:
     /**
      * @brief Access this session's variable controller
      **/
-    IVariableController* variableController() const override;
+    KDevelop::IVariableController* variableController() const override;
     
     /// Those functions just execute the basic debugger commands. They're used when the user
     /// clicks the appropriate button.
@@ -151,9 +149,9 @@ Q_SIGNALS:
     void programStopped(const Python::ResponseData& data);
 
 private:
-    IBreakpointController* m_breakpointController;
-    IVariableController* m_variableController;
-    IFrameStackModel* m_frameStackModel;
+    KDevelop::IBreakpointController* m_breakpointController;
+    KDevelop::IVariableController* m_variableController;
+    KDevelop::IFrameStackModel* m_frameStackModel;
     DebuggerState m_state = DebuggerState::NotStartedState;
     PdbDebuggerInstance* m_debugger = nullptr;
     QTimer m_killTimer;

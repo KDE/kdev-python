@@ -59,7 +59,7 @@ Variable::Variable(KDevelop::TreeModel* model, KDevelop::TreeItem* parent, int c
 
 Variable::~Variable()
 {
-    if (!ICore::self() || !ICore::self()->debugController())
+    if (!KDevelop::ICore::self() || !KDevelop::ICore::self()->debugController())
         return;
     if (m_is_watch && namespaceId() < -2) {
         session()->debugger()->request({QStringLiteral("dropnamespace"), namespaceId()});
@@ -68,7 +68,7 @@ Variable::~Variable()
 
 DebugSession* Variable::session()
 {
-    IDebugSession* is = ICore::self()->debugController()->currentSession();
+    KDevelop::IDebugSession* is = KDevelop::ICore::self()->debugController()->currentSession();
     return qobject_cast<DebugSession*>(is);
 }
 
@@ -230,13 +230,13 @@ void Variable::valueFetched(const ResponseData& d)
     bool changed = result.value(QStringLiteral("changed")).toBool();
     bool report = changed != isChanged();
     if (value() != data) {
-        itemData[VariableCollection::ValueColumn] = data;
+        itemData[KDevelop::VariableCollection::ValueColumn] = data;
         report = true;
     }
 
     const auto typeident = result.value(QStringLiteral("type")).toString();
     if (type() != typeident) {
-        itemData[VariableCollection::TypeColumn] = typeident;
+        itemData[KDevelop::VariableCollection::TypeColumn] = typeident;
         report = true;
     }
 

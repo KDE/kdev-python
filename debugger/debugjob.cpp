@@ -29,15 +29,15 @@ void DebugJob::start()
 
     setStandardToolView(KDevelop::IOutputView::DebugView);
     setBehaviours(KDevelop::IOutputView::Behaviours(KDevelop::IOutputView::AllowUserClose) | KDevelop::IOutputView::AutoScroll);
-    OutputModel* pyOutputModel = new KDevelop::OutputModel();
-    pyOutputModel->setFilteringStrategy(OutputModel::ScriptErrorFilter);
+    KDevelop::OutputModel* pyOutputModel = new KDevelop::OutputModel();
+    pyOutputModel->setFilteringStrategy(KDevelop::OutputModel::ScriptErrorFilter);
     setModel(pyOutputModel);
 
     startOutput();
 
     qCDebug(KDEV_PYTHON_DEBUGGER) << "connecting DebugSession to OutputModel";
-    connect(m_session, &DebugSession::realDataReceived, pyOutputModel, &OutputModel::appendLines);
-    connect(m_session, &DebugSession::stderrReceived, pyOutputModel, &OutputModel::appendLines);
+    connect(m_session, &DebugSession::realDataReceived, pyOutputModel, &KDevelop::OutputModel::appendLines);
+    connect(m_session, &DebugSession::stderrReceived, pyOutputModel, &KDevelop::OutputModel::appendLines);
     connect(m_session, &DebugSession::stateChanged, this, [this](KDevelop::IDebugSession::DebuggerState state) {
         if (state == KDevelop::IDebugSession::EndedState) {
             emitResult();

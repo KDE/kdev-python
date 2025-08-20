@@ -27,7 +27,7 @@
 
 namespace Python {
 
-VariableController::VariableController(IDebugSession* parent)
+VariableController::VariableController(KDevelop::IDebugSession* parent)
     : IVariableController(parent)
     , m_collections{Collection{UpdateType::UpdateLocals, variableCollection()->locals(),
                                std::bind(&VariableController::doLocalsUpdate, this), {}},
@@ -65,8 +65,8 @@ VariableController::VariableController(IDebugSession* parent)
         // The four argument connect() must be used here or else the connections are not cleaned up
         // when VariableController is destroyed.
         Q_ASSERT(item.collection);
-        connect(item.collection, &TreeItem::expanded, this, expander);
-        connect(item.collection, &TreeItem::collapsed, this, collapser);
+        connect(item.collection, &KDevelop::TreeItem::expanded, this, expander);
+        connect(item.collection, &KDevelop::TreeItem::collapsed, this, collapser);
 
         // The user cannot expand collection without this...
         if (auto* collection = qobject_cast<KDevelop::Locals*>(item.collection)) {
@@ -85,7 +85,7 @@ VariableController::VariableController(IDebugSession* parent)
 
 DebugSession* VariableController::session()
 {
-    IDebugSession* is = ICore::self()->debugController()->currentSession();
+    KDevelop::IDebugSession* is = KDevelop::ICore::self()->debugController()->currentSession();
     return qobject_cast<DebugSession*>(is);
 }
 
@@ -125,6 +125,7 @@ KDevelop::Variable* VariableController::createVariable(KDevelop::TreeModel* mode
 KTextEditor::Range VariableController::expressionRangeUnderCursor(KTextEditor::Document* doc, const KTextEditor::Cursor& cursor)
 {
     QString prefix;
+    using namespace KDevelop;
     DUChainReadLocker lock;
     if ( ! doc->isModified() ) {
         if ( TopDUContext* context = DUChain::self()->chainForDocument(doc->url()) ) {
@@ -152,7 +153,7 @@ void VariableController::update()
     // This a stub method. Actual update happens via handleEvent() and updateCollections()
 }
 
-void VariableController::handleEvent(IDebugSession::event_t event)
+void VariableController::handleEvent(KDevelop::IDebugSession::event_t event)
 {
     if (!variableCollection())
         return;
@@ -164,7 +165,7 @@ void VariableController::handleEvent(IDebugSession::event_t event)
     // Note: PdbFrameStackModel queues a "selectframe" command after this method. The call to
     // updateCollections() is deferred here to order any commands we may queue after the "selectframe".
 
-    if (event == IDebugSession::program_state_changed) {
+    if (event == KDevelop::IDebugSession::program_state_changed) {
         // The program state has expired and so we must re-fetch *everything* again.
         session()->debugger()->request({QStringLiteral("cleanupobjects")}, [](const ResponseData& d) {
             // This handler is just for logging that cleanupobjects is doing its job.
@@ -181,7 +182,7 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         return;
     }
 
-    if (session()->frameStackModel()->currentFrame() == -1 || event != IDebugSession::thread_or_frame_changed)
+    if (session()->frameStackModel()->currentFrame() == -1 || event != KDevelop::IDebugSession::thread_or_frame_changed)
         return;
 
     // Invoking IVariableController::handleEvent() doesn't make sense for us:

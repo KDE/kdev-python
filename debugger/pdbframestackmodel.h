@@ -12,8 +12,6 @@
 
 #include "pdbdebuggerinstance.h"
 
-using namespace KDevelop;
-
 namespace Python {
 
 class DebugSession;
@@ -25,7 +23,7 @@ class PdbFrameStackModel : public KDevelop::FrameStackModel
 {
 Q_OBJECT
 public:
-    PdbFrameStackModel(IDebugSession* session);
+    PdbFrameStackModel(KDevelop::IDebugSession* session);
     void fetchFrames(int threadNumber, int from, int to) override;
     void fetchThreads() override;
 

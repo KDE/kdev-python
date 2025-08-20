@@ -80,7 +80,7 @@ public Q_SLOTS:
      * 
      * @param evt passed by kdevplatform, specifies the type of the event.
      **/
-    void slotEvent(IDebugSession::event_t evt);
+    void slotEvent(KDevelop::IDebugSession::event_t evt);
 
     /**
      * Report a location at where the program has stopped.

@@ -19,7 +19,8 @@ BreakpointController::BreakpointController(IDebugSession* parent)
     : IBreakpointController(parent)
 {
     qCDebug(KDEV_PYTHON_DEBUGGER) << "constructing breakpoint controller";
-    connect(debugSession(), SIGNAL(event(IDebugSession::event_t)), this, SLOT(slotEvent(IDebugSession::event_t)));
+    connect(debugSession(), qOverload<KDevelop::IDebugSession::event_t>(&IDebugSession::event), this,
+            &BreakpointController::slotEvent);
     connect(session(), &DebugSession::programStopped, this, &BreakpointController::programStopped);
 }
 
@@ -28,7 +29,7 @@ DebugSession* BreakpointController::session()
     return static_cast<DebugSession*>(parent());
 }
 
-void BreakpointController::slotEvent(IDebugSession::event_t evt)
+void BreakpointController::slotEvent(KDevelop::IDebugSession::event_t evt)
 {
     const auto breakpoints = breakpointModel()->breakpoints();
 

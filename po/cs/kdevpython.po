@@ -223,12 +223,12 @@ msgstr ""
 #: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "Globály"
 
 #: debugger/variablecontroller.cpp:297
 #, kde-format
 msgid "Locals"
-msgstr ""
+msgstr "Místní"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format

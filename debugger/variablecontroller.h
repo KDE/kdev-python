@@ -73,8 +73,15 @@ public:
 
     static DebugSession* session();
 
-    enum UpdateFlag { None = 0x0, Locals = 0x1, Watches = 0x2, ReturnInfo = 0x4, Globals = 0x8 };
-    Q_DECLARE_FLAGS(UpdateFlags, UpdateFlag)
+    // Extend IVariableController::UpdateType
+    enum UpdateType {
+        UpdateNone = IVariableController::UpdateNone,
+        UpdateLocals = IVariableController::UpdateLocals,
+        UpdateWatches = IVariableController::UpdateWatches,
+        UpdateReturnInfo = 0x4,
+        UpdateGlobals = 0x8
+    };
+    Q_DECLARE_FLAGS(UpdateTypes, UpdateType)
 
     /**
      * @brief Before a debugger request is made with an response handler that might modify an
@@ -105,17 +112,17 @@ private:
     QHash<int, QSharedPointer<Namespace>> m_namespaces;
 
     /// Which collections are expanded? (to best of knowing)
-    UpdateFlags m_isExpanded;
+    UpdateTypes m_isExpanded;
     /// Which updates have been requested?
-    UpdateFlags m_updateRequested;
+    UpdateTypes m_updateRequested;
     /// Which updates have been started?
-    UpdateFlags m_updateStarted;
+    UpdateTypes m_updateStarted;
     /// Which updates have been deferred?
-    UpdateFlags m_updateDeferred;
+    UpdateTypes m_updateDeferred;
 
     struct Collection
     {
-        const VariableController::UpdateFlags flag;
+        const VariableController::UpdateTypes flag;
         KDevelop::TreeItem* collection;
         std::function<void()> fn;
         /// Count of in-flight queued requests on Python::Variable(s)
@@ -139,7 +146,7 @@ private:
     void doWatchesUpdate();
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(VariableController::UpdateFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(VariableController::UpdateTypes)
 }
 
 #endif // VARIABLECONTROLLER_H

@@ -29,13 +29,13 @@ namespace Python {
 
 VariableController::VariableController(IDebugSession* parent)
     : IVariableController(parent)
-    , m_collections{Collection{UpdateFlag::Locals, variableCollection()->locals(),
+    , m_collections{Collection{UpdateType::UpdateLocals, variableCollection()->locals(),
                                std::bind(&VariableController::doLocalsUpdate, this), {}},
-                    Collection{UpdateFlag::ReturnInfo, variableCollection()->locals(i18n("Return info")),
+                    Collection{UpdateType::UpdateReturnInfo, variableCollection()->locals(i18n("Return info")),
                                std::bind(&VariableController::doReturnInfoUpdate, this), {}},
-                    Collection{UpdateFlag::Globals, variableCollection()->locals(i18n("Globals")),
+                    Collection{UpdateType::UpdateGlobals, variableCollection()->locals(i18n("Globals")),
                                std::bind(&VariableController::doGlobalsUpdate, this), {}},
-                    Collection{UpdateFlag::Watches, variableCollection()->watches(),
+                    Collection{UpdateType::UpdateWatches, variableCollection()->watches(),
                                std::bind(&VariableController::doWatchesUpdate, this), {}}}
 {
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << "constructing VariableController";
@@ -158,8 +158,8 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         return;
 
     // Sync m_isExpanded from autoUpdate() state.
-    m_isExpanded.setFlag(UpdateFlag::Locals, autoUpdate() & UpdateType::UpdateLocals);
-    m_isExpanded.setFlag(UpdateFlag::Watches, autoUpdate() & UpdateType::UpdateWatches);
+    m_isExpanded.setFlag(UpdateType::UpdateLocals, autoUpdate() & UpdateType::UpdateLocals);
+    m_isExpanded.setFlag(UpdateType::UpdateWatches, autoUpdate() & UpdateType::UpdateWatches);
 
     // Note: PdbFrameStackModel queues a "selectframe" command after this method. The call to
     // updateCollections() is deferred here to order any commands we may queue after the "selectframe".
@@ -175,8 +175,8 @@ void VariableController::handleEvent(IDebugSession::event_t event)
         });
 
         // Ensure that all other than Locals collection will be updated.
-        m_updateRequested = ~UpdateFlags(Locals);
-        m_updateStarted = UpdateFlag::None;
+        m_updateRequested = ~UpdateTypes(UpdateLocals);
+        m_updateStarted = UpdateType::UpdateNone;
         session()->debugger()->defer([this](const ResponseData&) { updateCollections(); });
         return;
     }
@@ -190,7 +190,7 @@ void VariableController::handleEvent(IDebugSession::event_t event)
     // 2. updateCollections() already checks all preconditions before doing an update.
     // 3. The collections expanded() and collapsed() signals have been connected to updateCollections().
     if (autoUpdate() & UpdateLocals) {
-        m_updateRequested |= UpdateFlag::Locals;
+        m_updateRequested |= UpdateType::UpdateLocals;
     }
 
     // FIXME: no way to detect when the variable widget is being shown to set all m_updateRequested bits on.

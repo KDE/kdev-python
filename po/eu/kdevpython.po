@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-08-10 00:41+0000\n"
+"POT-Creation-Date: 2025-08-30 00:40+0000\n"
 "PO-Revision-Date: 2025-08-10 20:12+0200\n"
 "Last-Translator: Iñigo Salvador Azurmendi <xalba@ni.eus>\n"
 "Language-Team: Basque <kde-i18n-eu@kde.org>\n"
@@ -221,17 +221,17 @@ msgstr ""
 msgid "Unsupported interpreter"
 msgstr "Euskarririk gabeko interpretea"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
 msgstr "Itzulerako informazioa"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
 msgstr "Globalak"
 
-#: debugger/variablecontroller.cpp:297
+#: debugger/variablecontroller.cpp:290
 #, kde-format
 msgid "Locals"
 msgstr "Lokalak"

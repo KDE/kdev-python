@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: desktop files\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-08-10 00:41+0000\n"
+"POT-Creation-Date: 2025-08-30 00:40+0000\n"
 "PO-Revision-Date: 2014-11-27 13:41+0000\n"
 "Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
 "Language-Team: bs <bs@kde.org>\n"
@@ -219,17 +219,17 @@ msgstr "Nažalost, praćenje grešaka je podržano samo za Python 2.x aplikacije
 msgid "Unsupported interpreter"
 msgstr "Nepodržan interpreter"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:297
+#: debugger/variablecontroller.cpp:290
 #, kde-format
 msgid "Locals"
 msgstr ""

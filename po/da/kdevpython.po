@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-08-10 00:41+0000\n"
+"POT-Creation-Date: 2025-08-30 00:40+0000\n"
 "PO-Revision-Date: 2014-02-23 14:14+0100\n"
 "Last-Translator: Martin Schlander <mschlander@opensuse.org>\n"
 "Language-Team: Danish <kde-i18n-doc@kde.org>\n"
@@ -217,17 +217,17 @@ msgstr "Beklager, fejlsøgning understøttes kun for programmer i Python 2.x"
 msgid "Unsupported interpreter"
 msgstr "Ikke-understøttet fortolker"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:297
+#: debugger/variablecontroller.cpp:290
 #, kde-format
 msgid "Locals"
 msgstr ""

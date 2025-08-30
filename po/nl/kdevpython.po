@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-08-10 00:41+0000\n"
+"POT-Creation-Date: 2025-08-30 00:40+0000\n"
 "PO-Revision-Date: 2025-08-10 09:38+0200\n"
 "Last-Translator: Freek de Kruijf <freekdekruijf@kde.nl>\n"
 "Language-Team: \n"
@@ -216,17 +216,17 @@ msgstr "Debuggen is alleen ondersteund voor Python 3.x toepassingen."
 msgid "Unsupported interpreter"
 msgstr "Niet ondersteunde interpretator"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:314
+#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
 msgstr "Terugkeerinformatie"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:330
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
 msgstr "Globalen"
 
-#: debugger/variablecontroller.cpp:297
+#: debugger/variablecontroller.cpp:290
 #, kde-format
 msgid "Locals"
 msgstr "Locals"

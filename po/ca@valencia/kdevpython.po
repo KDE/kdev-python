@@ -307,7 +307,7 @@ msgstr "Després de la còpia, estareu editant el nou document."
 #: docfilekcm/docfilemanagerwidget.cpp:166
 #, kde-format
 msgid "Please select at least one file from the list for editing."
-msgstr "Per a editar un fitxer, seleccioneu-ne almenys un de la llista."
+msgstr "Per a editar un fitxer, trieu-ne almenys un de la llista."
 
 #: docfilekcm/docfilewizard.cpp:41
 #, kde-format
@@ -322,7 +322,7 @@ msgstr "Executable de Python"
 #: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
-msgstr "Seleccioneu un mòdul de Python per a generar la documentació"
+msgstr "Trieu un mòdul de Python per a generar la documentació"
 
 #: docfilekcm/docfilewizard.cpp:53
 #, kde-format

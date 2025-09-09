@@ -35,7 +35,6 @@
                 "Name[sv]": "Sven Brauch",
                 "Name[tr]": "Sven Brauch",
                 "Name[uk]": "Sven Brauch",
-                "Name[x-test]": "xxSven Brauchxx",
                 "Name[zh_CN]": "Sven Brauch",
                 "Name[zh_TW]": "Sven Brauch"
             },
@@ -57,7 +56,6 @@
                 "Name[sv]": "Jarmo Tiitto",
                 "Name[tr]": "Jarmo Tiitto",
                 "Name[uk]": "Jarmo Tiitto",
-                "Name[x-test]": "xxJarmo Tiittoxx",
                 "Name[zh_TW]": "Jarmo Tiitto"
             }
         ],
@@ -78,7 +76,6 @@
         "Description[sv]": "Insticksprogrammet tillhandahåller ett grafiskt gränssnitt för avlusning av Python-program",
         "Description[tr]": "Bu eklenti, Python programlarında hata ayıklamak için grafiksel bir ön yüz sağlar",
         "Description[uk]": "Цей додаток є графічною оболонкою для діагностування програм мовою Python",
-        "Description[x-test]": "xxThis plugin provides a graphical frontend for debugging python programsxx",
         "Description[zh_TW]": "此外掛程式提供用來偵錯 Python 程式的圖形前端",
         "Icon": "text-x-python",
         "License": "GPL",
@@ -98,7 +95,6 @@
         "Name[sv]": "Python-avlusarstöd",
         "Name[tr]": "Python Hata Ayıklayıcısı Desteği",
         "Name[uk]": "Підтримка засобу діагностики Python",
-        "Name[x-test]": "xxPython Debugger supportxx",
         "Name[zh_TW]": "Python 偵錯器支援",
         "ServiceTypes": [
             "KDevelop/Plugin"

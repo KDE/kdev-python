@@ -218,12 +218,12 @@ msgstr "不支持的解释器"
 #: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "返回信息"
 
 #: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "全局变量"
 
 #: debugger/variablecontroller.cpp:290
 #, kde-format

@@ -1,6 +1,7 @@
 # KDE Config File
 [General]
 Name=Simple Qt GUI application using Designer
+Name[ar]=تطبيق Qt رسومي مبدئي يستخدم المصمم
 Name[ca]=Aplicació senzilla amb IGU de les Qt que usa el Designer
 Name[ca@valencia]=Aplicació senzilla amb IGU de les Qt que utilitza Designer
 Name[cs]=Jednoduchá aplikace Qt GUI pomocí Designeru
@@ -35,6 +36,7 @@ Name[zh_CN]=使用 Designer 的简单的 Qt 图形界面程序
 Name[zh_TW]=使用 Designer 製作簡單的 Qt GUI 應用程式
 Category=Python
 Comment=An example application using Qt Designer. If you edit mainwindow.ui, regenerate mainwindow.py by calling pyuic5.
+Comment[ar]=تطبيق مثال يستخدم مصمم Qt. إذا حرّرت mainwindow.ui، أعِد توليد mainwindow.py بالنداء لـ pyuic5.
 Comment[ca]=Un exemple d'aplicació que usa el Designer de les Qt. Si editeu el «mainwindow.ui», regenereu el «mainwindow.py» invocant el «pyuic5».
 Comment[ca@valencia]=Un exemple d'aplicació que utilitza Designer de les Qt. Si editeu el «mainwindow.ui», regenereu el «mainwindow.py» invocant «pyuic5».
 Comment[de]=Eine Beispielanwendung mit Qt Designer. Wenn Sie die Datei „mainwindow.ui“ bearbeiten, erzeugen Sie die Datei „mainwindow.py“ mit dem Befehl „pyuic5“ neu.

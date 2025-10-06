@@ -1,6 +1,7 @@
 # KDE Config File
 [General]
 Name=Simple Python Application
+Name[ar]=تطبيق بايثون مبدئي
 Name[ca]=Una aplicació senzilla en Python
 Name[ca@valencia]=Una aplicació senzilla en Python
 Name[cs]=Jednoduchá aplikace v Pythonu
@@ -35,6 +36,7 @@ Name[zh_CN]=简单的 Python 应用程序
 Name[zh_TW]=簡單的 Python 應用程式
 Category=Python
 Comment=Generate filestructure to start a Python application
+Comment[ar]=ولِّد بنية ملفات لبدء تطبيق بايثون
 Comment[ca]=Genera l'estructura de fitxers per a començar una aplicació en Python
 Comment[ca@valencia]=Genera l'estructura de fitxers per a començar una aplicació en Python
 Comment[cs]=Vygenerovat strukturu souborů pro započetí aplikace v Pythonu

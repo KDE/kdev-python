@@ -1,6 +1,7 @@
 # KDE Config File
 [General]
 Name=Django 1.11
+Name[ar]=جانغو1.11
 Name[ca]=Django 1.11
 Name[ca@valencia]=Django 1.11
 Name[cs]=Django 1.11
@@ -36,6 +37,7 @@ Name[zh_CN]=Django 1.11
 Name[zh_TW]=Django 1.11
 Category=Python
 Comment=A Django project with one application
+Comment[ar]=مشروع جانغو بتطبيق واحد
 Comment[ca]=Un projecte de Django amb una aplicació
 Comment[ca@valencia]=Un projecte de Django amb una aplicació
 Comment[de]=Ein Django-Projekt mit einer Anwendung

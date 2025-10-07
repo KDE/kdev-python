@@ -6,6 +6,7 @@
     <name translate="no">KDE</name>
   </developer>
   <name>KDevelop Python Support</name>
+  <name xml:lang="ar">إتاحة لغة بيثون لمطورك</name>
   <name xml:lang="ca">Implementació de Python al KDevelop</name>
   <name xml:lang="ca-valencia">Implementació de Python a KDevelop</name>
   <name xml:lang="cs">Podpora Pythonu v KDevelop</name>
@@ -39,6 +40,7 @@
   <name xml:lang="zh-CN">KDevelop Python 支持</name>
   <name xml:lang="zh-TW">KDevelop Python 支援</name>
   <summary>Python language support for KDevelop</summary>
+  <summary xml:lang="ar">إتاحة لغة بيثون لمطورك</summary>
   <summary xml:lang="ca">Implementació del llenguatge Python al KDevelop</summary>
   <summary xml:lang="ca-valencia">Implementació del llenguatge Python a KDevelop</summary>
   <summary xml:lang="de">Python-Sprachunterstützung für KDevelop</summary>
@@ -74,6 +76,7 @@
     <p>Adds Python support to KDevelop.  Includes adding integration with code
     highlighting, code completion, build system support, documentation
     linking and debugging support.</p>
+    <p xml:lang="ar">يضيف دعم بيثون إلى مطورك KDevelop. يتضمن إضافة التكامل مع تمييز الكود، وإكمال الكود، ودعم نظام البناء، وربط الوثائق، ودعم تصحيح الأخطاء.</p>
     <p xml:lang="ca">Afegeix suport de Python al KDevelop. Afegeix els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços a la documentació i suport per a la depuració.</p>
     <p xml:lang="ca-valencia">Afig suport de Python a KDevelop. Afig els «include» per a la integració amb el ressaltat de codi, compleció de codi, suport per al sistema de construcció, enllaços cap a la documentació i suport per a la depuració.</p>
     <p xml:lang="de">Python-Unterstützung für KDevelop. Einschließlich Integration von Quelltexthervorhebung, Quelltextvervollständigung, Unterstützung für Build-System, Verknüpfung zur Dokumentation und Unterstützung für die Fehlersuche.</p>

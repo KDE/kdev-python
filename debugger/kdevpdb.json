@@ -4,6 +4,7 @@
             {
                 "Email": "svenbrauch@googlemail.com",
                 "Name": "Sven Brauch",
+                "Name[ar]": "سفين بروش",
                 "Name[ca@valencia]": "Sven Brauch",
                 "Name[ca]": "Sven Brauch",
                 "Name[cs]": "Sven Brauch",
@@ -41,6 +42,7 @@
         ],
         "Category": "Debugging",
         "Description": "This plugin provides a frontend for PDB",
+        "Description[ar]": "أرسل هذا الملحق واجهة أمامية لـ PDB",
         "Description[ca@valencia]": "Este connector proveïx d'un frontal per al PDB",
         "Description[ca]": "Aquest connector proveeix d'un frontal per al PDB",
         "Description[cs]": "Tento modul poskytuje rozhraní pro PDB",
@@ -76,6 +78,7 @@
         "Icon": "text-x-python",
         "License": "GPL",
         "Name": "Python Debugger (PDB) support",
+        "Name[ar]": "دعم مصحح أخطاء بيثون (PDB)",
         "Name[ca@valencia]": "Implementació del depurador de Python (PDB)",
         "Name[ca]": "Implementació del depurador de Python (PDB)",
         "Name[cs]": "Podpora ladění pro Python (PDB)",

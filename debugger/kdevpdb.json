@@ -4,6 +4,7 @@
             {
                 "Email": "svenbrauch@googlemail.com",
                 "Name": "Sven Brauch",
+                "Name[ar]": "سفين بروش",
                 "Name[ca@valencia]": "Sven Brauch",
                 "Name[ca]": "Sven Brauch",
                 "Name[cs]": "Sven Brauch",
@@ -41,6 +42,7 @@
             {
                 "Email": "jarmo.tiitto@gmail.com",
                 "Name": "Jarmo Tiitto",
+                "Name[ar]": "جارمو تيتو",
                 "Name[ca@valencia]": "Jarmo Tiitto",
                 "Name[ca]": "Jarmo Tiitto",
                 "Name[es]": "Jarmo Tiitto",
@@ -61,6 +63,7 @@
         ],
         "Category": "Debugging",
         "Description": "This plugin provides a graphical frontend for debugging python programs",
+        "Description[ar]": "أرسل هذا الملحق واجهة مرئية لتصحيح أخطاء برامج بيثون",
         "Description[ca@valencia]": "Este connector proporciona un frontal gràfic per a depurar programes en Python",
         "Description[ca]": "Aquest connector proporciona un frontal gràfic per a depurar programes Python",
         "Description[es]": "Este complemento proporciona una interfaz gráfica para depurar programas Python",
@@ -81,6 +84,7 @@
         "Icon": "text-x-python",
         "License": "GPL",
         "Name": "Python Debugger support",
+        "Name[ar]": "دعم مصحح أخطاء بيثون",
         "Name[ca@valencia]": "Implementació del depurador de Python",
         "Name[ca]": "Implementació del depurador de Python",
         "Name[es]": "Implementación del depurador Python",

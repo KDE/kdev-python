@@ -1,17 +1,17 @@
-# SPDX-FileCopyrightText: 2014, 2015, 2020, 2024 Shinjo Park <kde@peremen.name>
+# SPDX-FileCopyrightText: 2014, 2015, 2020, 2024, 2025 Shinjo Park <kde@peremen.name>
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevelop\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-08-30 00:40+0000\n"
-"PO-Revision-Date: 2024-12-24 16:53+0100\n"
+"PO-Revision-Date: 2025-10-09 00:41+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.08.5\n"
+"X-Generator: Lokalize 24.12.3\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
@@ -215,17 +215,17 @@ msgstr "지원하지 않는 인터프리터"
 #: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "반환값 정보"
 
 #: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "전역 변수"
 
 #: debugger/variablecontroller.cpp:290
 #, kde-format
 msgid "Locals"
-msgstr ""
+msgstr "지역 변수"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format

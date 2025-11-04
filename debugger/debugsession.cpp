@@ -143,7 +143,6 @@ void DebugSession::debuggerBusy()
 
     if (!m_flushInProgress) {
         raiseEvent(debugger_busy);
-        raiseEvent(program_running);
     }
     Q_EMIT stateChanged(m_state);
 }

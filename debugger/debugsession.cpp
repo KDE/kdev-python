@@ -76,7 +76,6 @@ void DebugSession::start(const StartupInfo& info)
 {
     m_state = StartingState;
     // Disable UI controls, so the user cannot try e.g. run() until we are ready.
-    raiseEvent(debugger_busy);
     Q_EMIT stateChanged(m_state);
 
     // Connect lower-level PdbProcess signals to our slots:
@@ -140,10 +139,6 @@ void DebugSession::debuggerBusy()
     }
     m_state = ActiveState;
     qCDebug(KDEV_PYTHON_DEBUGGER) << PausedState << "==>" << m_state;
-
-    if (!m_flushInProgress) {
-        raiseEvent(debugger_busy);
-    }
     Q_EMIT stateChanged(m_state);
 }
 
@@ -167,11 +162,9 @@ void DebugSession::inferiorSuspended()
     m_state = PausedState;
     Q_EMIT stateChanged(m_state);
 
-    // Don't raise debugger_ready nor program_state_changed, or reset m_resumingRequest
-    // if flushCommands() is in progress.
+    // Don't raise program_state_changed or reset m_resumingRequest if flushCommands() is in progress.
     if (!m_flushInProgress) {
         m_resumingRequest = RunAction::None;
-        raiseEvent(debugger_ready);
         // Program state has changed.
         raiseEvent(program_state_changed);
     }

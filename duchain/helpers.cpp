@@ -409,26 +409,26 @@ QString Helper::getPythonExecutablePath(IProject* project)
     // Check for default CPython installation path, because the
     // installer does not add the path to $PATH.
     QStringList keys = {
-        "HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath",
-        "HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath",
-        "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath",
-        "HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath"
+        QStringLiteral("HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath"),
+        QStringLiteral("HKEY_LOCAL_MACHINE\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath"),
+        QStringLiteral("HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION\\InstallPath"),
+        QStringLiteral("HKEY_CURRENT_USER\\Software\\Python\\PythonCore\\PYTHON_VERSION-32\\InstallPath")
     };
-    auto version = QString(PYTHON_VERSION_STR);
-    foreach ( QString key, keys ) {
-        key.replace("PYTHON_VERSION", version);
-        QSettings base(key.left(key.indexOf("Python")), QSettings::NativeFormat);
-        if ( ! base.childGroups().contains("Python") ) {
+    auto version = QStringLiteral(PYTHON_VERSION_STR);
+    for ( QString key : keys ) {
+        key.replace(QStringLiteral("PYTHON_VERSION"), version);
+        QSettings base(key.left(key.indexOf(QStringLiteral("Python"))), QSettings::NativeFormat);
+        if ( ! base.childGroups().contains(QStringLiteral("Python")) ) {
             continue;
         }
         QSettings keySettings(key, QSettings::NativeFormat);
-        auto path = keySettings.value("Default").toString();
+        auto path = keySettings.value(QStringLiteral("Default")).toString();
         if ( ! path.isEmpty() ) {
             extraPaths << path;
             break;
         }
     }
-    result = QStandardPaths::findExecutable("python", extraPaths);
+    result = QStandardPaths::findExecutable(QStringLiteral("python"), extraPaths);
     if ( ! result.isEmpty() ) {
         return result;
     }

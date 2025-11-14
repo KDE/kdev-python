@@ -14,7 +14,7 @@
 #include <QUrl>
 #include "astdefaultvisitor.h"
 
-#include <language/duchain/topducontext.h>
+#include <language/duchain/problem.h>
 
 typedef struct _object PyObject;
 

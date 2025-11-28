@@ -8,7 +8,9 @@
 #include "variable.h"
 #include "variablecontroller.h"
 #include "debugsession.h"
+
 #include <interfaces/icore.h>
+#include <interfaces/idebugcontroller.h>
 
 #include <QDebug>
 #include "variabledebug.h"

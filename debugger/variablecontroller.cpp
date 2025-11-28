@@ -17,6 +17,8 @@
 #include <debugger/variable/variablecollection.h>
 #include <debugger/interfaces/iframestackmodel.h>
 #include <interfaces/icore.h>
+#include <interfaces/idebugcontroller.h>
+
 #include <QStack>
 #include <KMessageBox>
 #include <KLocalizedString>

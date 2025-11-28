@@ -228,25 +228,13 @@ void Variable::valueFetched(const ResponseData& d)
             data = QStringLiteral("len=%1, %2").arg(len).arg(data);
         }
     }
-
-    bool changed = result.value(QStringLiteral("changed")).toBool();
-    bool report = changed != isChanged();
-    if (value() != data) {
-        itemData[KDevelop::VariableCollection::ValueColumn] = data;
-        report = true;
-    }
+    setValue(data);
 
     const auto typeident = result.value(QStringLiteral("type")).toString();
-    if (type() != typeident) {
-        itemData[KDevelop::VariableCollection::TypeColumn] = typeident;
-        report = true;
-    }
+    setType(typeident);
 
-    if (report) {
-        // This assumes setChange() unconditionally calls reportChange().
-        // Thus, this updates all of value(), type() and isChanged() in one go.
-        setChanged(changed);
-    }
+    const auto changed = result.value(QStringLiteral("changed")).toBool();
+    setChanged(changed);
 
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER) << expression() << "children:" << childItems.size() << "->" << m_maxItems
                                             << "type:" << typeident << "data:" << data << "changed:" << changed;

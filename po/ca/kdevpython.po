@@ -598,18 +598,3 @@ msgstr "Error del comprovador «PEP8»: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Sembla que el comprovador de sintaxi «PEP8» no funciona correctament."
-
-#~ msgid "The program being debugged raised an uncaught exception."
-#~ msgstr ""
-#~ "El programa que s'està depurant ha generat una excepció no controlada."
-
-#~ msgid "You can now inspect the status of the program after it exited."
-#~ msgstr "Ara podeu inspeccionar l'estat del programa després que finalitzi."
-
-#~ msgid "The debugger will silently stop when the next command is triggered."
-#~ msgstr "El depurador s'aturarà en silenci quan s'activi la següent ordre."
-
-#~ msgid ""
-#~ "First argument of __new__ method is not called cls, this is deprecated"
-#~ msgstr ""
-#~ "El primer argument del mètode __new__ no s'anomena «cls», es desaconsella"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 11:50+0000\n"
+"POT-Creation-Date: 2025-12-02 00:40+0000\n"
 "PO-Revision-Date: 2024-12-24 20:39+0530\n"
 "Last-Translator: kali <shreekantkalwar@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
@@ -218,17 +218,17 @@ msgstr "क्षम्यतां, त्रुटिनिवारणं क
 msgid "Unsupported interpreter"
 msgstr "असमर्थितः व्याख्याकारः"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
 #, kde-format
 msgid "Globals"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:290
+#: debugger/variablecontroller.cpp:292
 #, kde-format
 msgid "Locals"
 msgstr ""

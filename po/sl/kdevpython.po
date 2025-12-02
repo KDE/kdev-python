@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 11:50+0000\n"
+"POT-Creation-Date: 2025-12-02 00:40+0000\n"
 "PO-Revision-Date: 2025-08-10 23:11+0200\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -216,17 +216,17 @@ msgstr "Žal je razhroščevanje podprto le v programih Python 3.x."
 msgid "Unsupported interpreter"
 msgstr "Nepodprt tolmač"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
 #, kde-format
 msgid "Return info"
 msgstr "Povratne informacije"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
 #, kde-format
 msgid "Globals"
 msgstr "Globalne"
 
-#: debugger/variablecontroller.cpp:290
+#: debugger/variablecontroller.cpp:292
 #, kde-format
 msgid "Locals"
 msgstr "Lokalne"

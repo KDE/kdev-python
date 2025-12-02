@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdeorg\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 11:50+0000\n"
+"POT-Creation-Date: 2025-12-02 00:40+0000\n"
 "PO-Revision-Date: 2024-04-23 19:30\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -215,17 +215,17 @@ msgstr "抱歉，只有Python 3.x应用程序支持调试。"
 msgid "Unsupported interpreter"
 msgstr "不支持的解释器"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
 #, kde-format
 msgid "Return info"
 msgstr "返回信息"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
 #, kde-format
 msgid "Globals"
 msgstr "全局变量"
 
-#: debugger/variablecontroller.cpp:290
+#: debugger/variablecontroller.cpp:292
 #, kde-format
 msgid "Locals"
 msgstr "本地"

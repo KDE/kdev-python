@@ -242,7 +242,8 @@ msgstr "Locals"
 #, kde-format
 msgid "Failed to find a valid data directory for kdevpythonsupport."
 msgstr ""
-"No s'ha pogut trobar un directori de dades vàlid per a «kdevpythonsupport»."
+"Ha fallat mentre es trobava un directori de dades vàlid per a "
+"«kdevpythonsupport»."
 
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format

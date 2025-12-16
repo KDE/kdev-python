@@ -287,7 +287,7 @@ void VariableController::fetchFrameLocals(const ResponseData& d)
      * only causes us lose how the variables were expanded, but we are forced rebuild the "Locals"
      * collection from scratch each time a switch happens.
      */
-    enumerateNamespace(nsid, count, handle, UpdateGuard::LocalsIndex, i18n("Locals"));
+    enumerateNamespace(nsid, count, handle, UpdateGuard::LocalsIndex);
 }
 
 void VariableController::fetchReturnInfo(const ResponseData& d)
@@ -304,7 +304,7 @@ void VariableController::fetchReturnInfo(const ResponseData& d)
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
         << "enumerating return info:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
 
-    enumerateNamespace(nsid, count, handle, UpdateGuard::ReturnInfoIndex, i18n("Return info"));
+    enumerateNamespace(nsid, count, handle, UpdateGuard::ReturnInfoIndex);
 }
 
 void VariableController::fetchGlobals(const ResponseData& d)
@@ -320,17 +320,20 @@ void VariableController::fetchGlobals(const ResponseData& d)
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER).noquote()
         << "enumerating globals:" << QStringLiteral("ns_id=%1, count=%2, ptr=%3").arg(nsid).arg(count).arg(handle);
 
-    enumerateNamespace(nsid, count, handle, UpdateGuard::GlobalsIndex, i18n("Globals"));
+    enumerateNamespace(nsid, count, handle, UpdateGuard::GlobalsIndex);
 }
 
-void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, int collection, QString name)
+void VariableController::enumerateNamespace(int nsid, int count, PythonId handle, int collection)
 {
     auto itr = m_namespaces.find(nsid);
     if (itr == m_namespaces.end()) {
-        itr = m_namespaces.emplace(nsid, QSharedPointer<Namespace>::create());
+        // Can only be a Locals instance
+        Q_ASSERT(qobject_cast<KDevelop::Locals*>(m_collections[collection].collection));
+        itr = m_namespaces.emplace(
+            nsid,
+            QSharedPointer<Namespace>::create(static_cast<KDevelop::Locals*>(m_collections[collection].collection)));
     }
     auto ns = *itr;
-    ns->name = name;
     // Reset which variables can be kept.
     for (auto& item : ns->items) {
         item->remove = true;
@@ -381,10 +384,9 @@ void VariableController::variablesEnumerated(const ResponseData& d, int nsid)
     }
 
     qCDebug(KDEV_PYTHON_VARIABLECONTROLLER)
-        << "enumeration of ns_id" << nsid << "completed, updating" << ns->name << "variables.";
+        << "enumeration of ns_id" << nsid << "completed, updating section variables.";
 
-    auto* collection = variableCollection()->locals(ns->name);
-    const auto variables = collection->updateLocals(ns->items.keys());
+    const auto variables = ns->section->updateLocals(ns->items.keys());
 
     for (auto* const itr : std::as_const(variables)) {
         Q_ASSERT(qobject_cast<Variable*>(itr));

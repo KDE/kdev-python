@@ -14,6 +14,7 @@
 
 #include <debugger/interfaces/idebugsession.h>
 #include <debugger/interfaces/ivariablecontroller.h>
+#include <debugger/variable/variablecollection.h>
 #include <util/scopedincrementor.h>
 
 #include "pdbdebuggerinstance.h"
@@ -106,7 +107,11 @@ private:
     using ItemPtr = QSharedPointer<Item>;
     struct Namespace
     {
-        QString name;
+        explicit Namespace(KDevelop::Locals* const instance)
+            : section(instance)
+        {
+        }
+        KDevelop::Locals* const section;
         QHash<QString, ItemPtr> items;
     };
     QHash<int, QSharedPointer<Namespace>> m_namespaces;
@@ -137,7 +142,7 @@ private:
     void fetchFrameLocals(const ResponseData& data);
     void fetchReturnInfo(const ResponseData& data);
     void fetchGlobals(const ResponseData& data);
-    void enumerateNamespace(int nsid, int count, PythonId handle, int collection, QString name = QString());
+    void enumerateNamespace(int nsid, int count, PythonId handle, int collection);
     void variablesEnumerated(const ResponseData& data, int nsid);
 
     void doLocalsUpdate();

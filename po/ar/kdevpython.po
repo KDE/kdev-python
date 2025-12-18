@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-10-05 14:17+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
@@ -216,20 +216,15 @@ msgstr "آسف، تنقيح الأخطاء مدعوم فقط لتطبيقات ب
 msgid "Unsupported interpreter"
 msgstr "مفسّر غير مدعوم"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr "معلومات الإرجاع"
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
 msgstr "العامّات"
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
-msgstr "المحليّات"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -577,3 +572,6 @@ msgstr "خطأ فاحص $\text{PEP8}$: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "لا يَعمل فاحص صيغة $\text{PEP8}$ بشكل صحيح على ما يبدو."
+
+#~ msgid "Locals"
+#~ msgstr "المحليّات"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-08-10 06:11+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -218,20 +218,15 @@ msgstr "უკაცრავად, გამართვა მხოლოდ
 msgid "Unsupported interpreter"
 msgstr "მხარდაუჭერელი ინტერპრეტატორი"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr "დაბრუნების ინფორმაცია"
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
 msgstr "გლობალები"
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
-msgstr "ლოკალურები"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -592,6 +587,9 @@ msgstr "PEP8 შემმოწმებლის შეცდომა: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 სინტაქსის შემმოწმებელი სწორად არ მუშაობს."
+
+#~ msgid "Locals"
+#~ msgstr "ლოკალურები"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "გამართვადი პროგრამის უცნობი შეცდომა."

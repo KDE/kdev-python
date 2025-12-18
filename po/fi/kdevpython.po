@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-03-03 19:26+0200\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
@@ -214,19 +214,14 @@ msgstr "Virheiden paikantamista tuetaan vain Python 3.x -sovelluksille."
 msgid "Unsupported interpreter"
 msgstr "Tulkkia ei tueta"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
-msgstr ""
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
 msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37

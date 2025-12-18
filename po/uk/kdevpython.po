@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-08-10 19:37+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -221,20 +221,15 @@ msgstr "Вибачте, діагностування передбачено ли
 msgid "Unsupported interpreter"
 msgstr "Непідтримуваний інтерпретатор"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr "Повернути відомості"
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
 msgstr "Загальні"
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
-msgstr "Локальні"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -599,6 +594,9 @@ msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""
 "Здається, засіб перевірки синтаксичних конструкцій PEP8 не працює належним "
 "чином."
+
+#~ msgid "Locals"
+#~ msgstr "Локальні"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr ""

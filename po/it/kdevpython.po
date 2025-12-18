@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-08-11 14:32+0200\n"
 "Last-Translator: Luigi Toscano <luigi.toscano@tiscali.it>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
@@ -219,20 +219,15 @@ msgstr "Spiacente, il debug è supportato solo per le applicazioni Python 3.x."
 msgid "Unsupported interpreter"
 msgstr "Interprete non supportato"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr "Informazioni di ritorno"
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
 msgstr "Globali"
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
-msgstr "Locali"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -591,6 +586,9 @@ msgstr "Errore del correttore PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Il correttore di sintassi PEP8 non sembra funzionare correttamente."
+
+#~ msgid "Locals"
+#~ msgstr "Locali"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "Il programma in fase di debug ha generato un'eccezione non gestita."

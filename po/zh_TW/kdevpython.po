@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2025-08-19 04:55+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
@@ -217,20 +217,15 @@ msgstr "抱歉，除錯器只支援除錯 Python 3.x 的應用程式。"
 msgid "Unsupported interpreter"
 msgstr "未支援的直譯器"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr "傳回資訊"
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
 msgstr "全域變數"
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
-msgstr "本地變數"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -574,6 +569,9 @@ msgstr "PEP8 檢查器發生錯誤：%1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP 語法檢查器似乎無法正常運作。"
+
+#~ msgid "Locals"
+#~ msgstr "本地變數"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "除錯中的程式發出了未捕捉到的例外。"

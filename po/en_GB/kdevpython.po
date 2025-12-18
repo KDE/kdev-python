@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-02 00:40+0000\n"
+"POT-Creation-Date: 2025-12-18 00:42+0000\n"
 "PO-Revision-Date: 2024-10-18 17:20+0100\n"
 "Last-Translator: Steve Allewell <steve.allewell@gmail.com>\n"
 "Language-Team: British English\n"
@@ -216,19 +216,14 @@ msgstr "Sorry, debugging is only supported for Python 3.x applications."
 msgid "Unsupported interpreter"
 msgstr "Unsupported interpreter"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:309
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:38 debugger/variablecontroller.cpp:325
+#: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
-msgstr ""
-
-#: debugger/variablecontroller.cpp:292
-#, kde-format
-msgid "Locals"
 msgstr ""
 
 #: docfilekcm/docfilemanagerwidget.cpp:37

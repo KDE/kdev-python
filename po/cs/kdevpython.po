@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 14:39+0000\n"
+"POT-Creation-Date: 2025-12-19 02:41+0000\n"
 "PO-Revision-Date: 2017-08-03 13:58+0100\n"
 "Last-Translator: Vít Pelčák <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -215,20 +215,15 @@ msgstr ""
 msgid "Unsupported interpreter"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:34
 #, kde-format
 msgid "Return info"
 msgstr ""
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Globals"
 msgstr "Globály"
-
-#: debugger/variablecontroller.cpp:290
-#, kde-format
-msgid "Locals"
-msgstr "Místní"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -563,3 +558,6 @@ msgstr ""
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr ""
+
+#~ msgid "Locals"
+#~ msgstr "Místní"

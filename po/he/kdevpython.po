@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 14:39+0000\n"
+"POT-Creation-Date: 2025-12-19 02:41+0000\n"
 "PO-Revision-Date: 2025-08-10 09:37+0300\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: צוות התרגום של KDE ישראל\n"
@@ -216,20 +216,15 @@ msgstr "ניפוי שגיאות נתמך ביישומי Python 3.x ואילך ב
 msgid "Unsupported interpreter"
 msgstr "מפענח לא נתמך"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:34
 #, kde-format
 msgid "Return info"
 msgstr "פרטי חזרה"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Globals"
 msgstr "משתנים מקיפים"
-
-#: debugger/variablecontroller.cpp:290
-#, kde-format
-msgid "Locals"
-msgstr "משתנים מקומיים"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -577,6 +572,9 @@ msgstr "שגיאת בודק PEP8:‏ %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "נראה שבודק תחביר PEP8 לא פועל כראוי."
+
+#~ msgid "Locals"
+#~ msgstr "משתנים מקומיים"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "התוכנית בניתוח לניפוי שגיאות הרימה חריגה שלא נתפסה."

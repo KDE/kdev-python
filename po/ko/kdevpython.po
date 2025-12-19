@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevelop\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 14:39+0000\n"
+"POT-Creation-Date: 2025-12-19 02:41+0000\n"
 "PO-Revision-Date: 2025-10-09 00:41+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -212,20 +212,15 @@ msgstr "디버깅은 Python 3.x 앱만 지원합니다."
 msgid "Unsupported interpreter"
 msgstr "지원하지 않는 인터프리터"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:34
 #, kde-format
 msgid "Return info"
 msgstr "반환값 정보"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Globals"
 msgstr "전역 변수"
-
-#: debugger/variablecontroller.cpp:290
-#, kde-format
-msgid "Locals"
-msgstr "지역 변수"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -572,6 +567,9 @@ msgstr "PEP8 검사기 오류: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 문법 검사기가 올바르게 작동하지 않는 것 같습니다."
+
+#~ msgid "Locals"
+#~ msgstr "지역 변수"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "디버그하고 있는 프로그램에서 처리되지 않은 예외가 발생했습니다."

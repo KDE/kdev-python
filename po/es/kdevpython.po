@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 14:39+0000\n"
+"POT-Creation-Date: 2025-12-19 02:41+0000\n"
 "PO-Revision-Date: 2025-08-10 13:03+0100\n"
 "Last-Translator: Eloy Cuadra <ecuadra@eloihr.net>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
@@ -220,20 +220,15 @@ msgstr ""
 msgid "Unsupported interpreter"
 msgstr "Intérprete no permitido"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:34
 #, kde-format
 msgid "Return info"
 msgstr "Información de retorno"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Globals"
 msgstr "Globales"
-
-#: debugger/variablecontroller.cpp:290
-#, kde-format
-msgid "Locals"
-msgstr "Locales"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -596,3 +591,6 @@ msgstr "Error del comprobador PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Parece que el comprobador de sintaxis PEP8 no funciona correctamente."
+
+#~ msgid "Locals"
+#~ msgstr "Locales"

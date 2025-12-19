@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 14:39+0000\n"
+"POT-Creation-Date: 2025-12-19 02:41+0000\n"
 "PO-Revision-Date: 2025-09-06 06:09+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: pl\n"
@@ -220,20 +220,15 @@ msgstr ""
 msgid "Unsupported interpreter"
 msgstr "Nieobsługiwany program interpretujący"
 
-#: debugger/variablecontroller.cpp:34 debugger/variablecontroller.cpp:307
+#: debugger/variablecontroller.cpp:34
 #, kde-format
 msgid "Return info"
 msgstr "Informacja zwrotna"
 
-#: debugger/variablecontroller.cpp:36 debugger/variablecontroller.cpp:323
+#: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Globals"
 msgstr "Symbole globalne"
-
-#: debugger/variablecontroller.cpp:290
-#, kde-format
-msgid "Locals"
-msgstr "Lokalne"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -587,6 +582,9 @@ msgstr "Błąd sprawdzania PEP8: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Wybrany program sprawdzający składnię PEP8 nie działa poprawnie."
+
+#~ msgid "Locals"
+#~ msgstr "Lokalne"
 
 #~ msgid "The program being debugged raised an uncaught exception."
 #~ msgstr "Debugowany program zgłosił niezłapany wyjątek."

@@ -565,6 +565,3 @@ msgstr "PEP8 检查器错误：%1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "PEP8 语法检查器似乎无法正常工作。"
-
-#~ msgid "Locals"
-#~ msgstr "本地"

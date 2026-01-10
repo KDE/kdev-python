@@ -563,11 +563,11 @@ class kdevExprValueMapper():
         fglobals.update(frame.f_globals)
         fbuiltins = {}
         fbuiltins.update(fglobals['__builtins__'])
-        del fbuiltins['print']
-        del fbuiltins['__import__']
-        del fbuiltins['eval']
-        del fbuiltins['exec']
-        del fbuiltins['compile']
+        fbuiltins.pop('print', None)
+        fbuiltins.pop('__import__', None)
+        fbuiltins.pop('eval', None)
+        fbuiltins.pop('exec', None)
+        fbuiltins.pop('compile', None)
         fglobals['__builtins__'] = fbuiltins
         try:
             evaluate_result = frame.evaluate(expr, fglobals, frame.f_locals)

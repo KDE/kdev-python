@@ -593,6 +593,3 @@ msgstr "Error del comprovador «PEP8»: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Sembla que el comprovador de sintaxi «PEP8» no funciona correctament."
-
-#~ msgid "Locals"
-#~ msgstr "Locals"

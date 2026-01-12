@@ -237,7 +237,8 @@ msgstr "Globals"
 #, kde-format
 msgid "Failed to find a valid data directory for kdevpythonsupport."
 msgstr ""
-"No s'ha pogut trobar un directori de dades vàlid per a «kdevpythonsupport»."
+"Ha fallat mentre es trobava un directori de dades vàlid per a "
+"«kdevpythonsupport»."
 
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
@@ -594,6 +595,3 @@ msgstr "S'ha produït un error del comprovador «PEP8»: %1"
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
 msgstr "Pareix que el comprovador de sintaxi «PEP8» no funciona correctament."
-
-#~ msgid "Locals"
-#~ msgstr "Locals"

@@ -12,8 +12,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 2.0\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Lokalize 2.0\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -218,12 +218,12 @@ msgstr "Nepodporovaný interpreter"
 #: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "Informácie o návratovej hodnote"
 
 #: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "Globály"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -428,9 +428,7 @@ msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklarácia pre \"%1\" nenájdená v určenom module"
 
 #: duchain/declarationbuilder.cpp:1590
-#, fuzzy, kde-format
-#| msgid ""
-#| "First argument of class method is not called self, this is deprecated"
+#, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr "Prvý argument metódy triedy nie je volaný sám, čo je zastaralé"

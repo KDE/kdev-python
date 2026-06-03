@@ -36,6 +36,7 @@
   <name xml:lang="sl">Podpora Pythonu za KDevelop</name>
   <name xml:lang="sv">KDevelop Python-stöd</name>
   <name xml:lang="tr">K Geliştir Python Desteği</name>
+  <name xml:lang="ug">KDevelop Python قوللاش</name>
   <name xml:lang="uk">Підтримка Python у KDevelop</name>
   <name xml:lang="zh-CN">KDevelop Python 支持</name>
   <name xml:lang="zh-TW">KDevelop Python 支援</name>
@@ -69,6 +70,7 @@
   <summary xml:lang="sl">Podpora jeziku Python za KDevelop</summary>
   <summary xml:lang="sv">Stöd för språket Python i KDevelop</summary>
   <summary xml:lang="tr">K Geliştir için Python dili desteği</summary>
+  <summary xml:lang="ug">KDevelop نىڭ Python تىلىنى قوللاش</summary>
   <summary xml:lang="uk">Підтримка мови Python у KDevelop</summary>
   <summary xml:lang="zh-CN">KDevelop 的 Python 语言支持</summary>
   <summary xml:lang="zh-TW">KDevelop 的 Python 語言支援</summary>

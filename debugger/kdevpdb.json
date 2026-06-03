@@ -35,6 +35,7 @@
                 "Name[sl]": "Sven Brauch",
                 "Name[sv]": "Sven Brauch",
                 "Name[tr]": "Sven Brauch",
+                "Name[ug]": "Sven Brauch",
                 "Name[uk]": "Sven Brauch",
                 "Name[zh_CN]": "Sven Brauch",
                 "Name[zh_TW]": "Sven Brauch"
@@ -60,6 +61,7 @@
                 "Name[sl]": "Jarmo Tiitto",
                 "Name[sv]": "Jarmo Tiitto",
                 "Name[tr]": "Jarmo Tiitto",
+                "Name[ug]": "Jarmo Tiitto",
                 "Name[uk]": "Jarmo Tiitto",
                 "Name[zh_TW]": "Jarmo Tiitto"
             }
@@ -110,6 +112,7 @@
         "Name[sl]": "Podpora razhroščevalniku za Python",
         "Name[sv]": "Python-avlusarstöd",
         "Name[tr]": "Python Hata Ayıklayıcısı Desteği",
+        "Name[ug]": "Python سازلىغۇچ قوللىشى",
         "Name[uk]": "Підтримка засобу діагностики Python",
         "Name[zh_CN]": "Python Debugger 支持",
         "Name[zh_TW]": "Python 偵錯器支援",

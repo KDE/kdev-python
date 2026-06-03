@@ -36,6 +36,7 @@ protected:
     void visitAttribute(AttributeAst* node) override;
     void visitSubscript(SubscriptAst* node) override;
     void visitMatchAs(MatchAsAst* node) override;
+    void visitImportFrom(ImportFromAst* node) override;
 
 private:
     ParseSession* m_session;

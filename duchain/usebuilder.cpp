@@ -177,6 +177,25 @@ void UseBuilder::visitMatchAs(MatchAsAst* node)
     UseBuilderBase::newUse(useRange, DeclarationPointer(declaration));
 }
 
+void UseBuilder::visitImportFrom(ImportFromAst* node)
+{
+    UseBuilderBase::visitImportFrom(node);
+    DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
+    for (const auto* alias: std::as_const(node->names)) {
+        if (alias->name) {
+            Declaration* declaration = Helper::declarationForName(alias->name->value, editorFindPositionSafe(node),
+                                                                  DUChainPointer<const DUContext>(context));
+
+            RangeInRevision useRange = rangeForNode(alias->name, true);
+            if ( declaration && declaration->range() == useRange )
+                return;
+
+            UseBuilderBase::newUse(useRange, DeclarationPointer(declaration));
+        }
+
+    }
+}
+
 ParseSession *UseBuilder::parseSession() const
 {
     return m_session;

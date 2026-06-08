@@ -63,20 +63,10 @@ void UseBuilder::useHiddenMethod(ExpressionAst* value, Declaration* function) {
     }
 }
 
-void UseBuilder::visitLambda(LambdaAst* node)
-{
-    UseBuilderBase::visitNode(node->arguments);
-    m_findBeyondUse = true;
-    UseBuilderBase::visitNode(node->body);
-    m_findBeyondUse = false;
-
-}
-
 void UseBuilder::visitName(NameAst* node)
 {
     DUContext* context = contextAtOrCurrent(editorFindPositionSafe(node));
-    CursorInRevision location = m_findBeyondUse ? context->topContext()->range().end: editorFindPositionSafe(node);
-    Declaration* declaration = Helper::declarationForName(node, location,
+    Declaration* declaration = Helper::declarationForName(node, editorFindPositionSafe(node),
                                                           DUChainPointer<const DUContext>(context));
 
     Q_ASSERT(node->identifier);

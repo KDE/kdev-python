@@ -387,7 +387,7 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
 void ContextBuilder::visitLambda(LambdaAst* node)
 {
-    openContext(node, editorFindRange(node, node->body), DUContext::Other);
+    openContext(node, editorFindRange(node, node->body), DUContext::Function);
     AstDefaultVisitor::visitLambda(node);
     closeContext();
 }

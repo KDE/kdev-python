@@ -825,9 +825,28 @@ void DeclarationBuilder::visitYield(YieldAst* node)
 void DeclarationBuilder::visitLambda(LambdaAst* node)
 {
     DUChainWriteLocker lock;
+
+    FunctionType::Ptr type(new FunctionType());
+
+    // lambda is a keyword so it cannot be used in lookups
+    // make the name of the lambda keyword the range of the function decl
+    static IndexedString lambdaName("lambda");
+    RangeInRevision lambdaRange(startPos(node), startPos(node) + CursorInRevision(0, 6));
+    FunctionDeclaration* dec = DeclarationBuilderBase::openDeclaration<FunctionDeclaration>(
+        KDevelop::Identifier(lambdaName),
+        lambdaRange,
+        NoFlags
+    );
+    openType(type);
+    dec->setInSymbolTable(false);
+    dec->setIsLambda(true);
+    dec->setType(type);
+    lock.unlock();
+
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
-    openContext(node, editorFindRange(node, node->body), DUContext::Other);
+    openContext(node, editorFindRange(node, node->body), DUContext::Function);
+    // visitArguments(node->arguments); // FIXME: This does not work
     for (ArgAst* argument : std::as_const(node->arguments->arguments)) {
         visitVariableDeclaration<Declaration>(argument->argumentName);
     }
@@ -838,8 +857,23 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
     if (node->arguments->kwarg) {
         visitVariableDeclaration<Declaration>(node->arguments->kwarg->argumentName);
     }
+
     visitNode(node->body);
+
+    // Determine the return type
+    ExpressionVisitor v(currentContext());
+    v.visitNode(node->body);
     closeContext();
+
+
+    lock.lock();
+    closeDeclaration();
+    closeType();
+    if (v.lastType()) {
+        type->setReturnType(v.lastType());
+        dec->setType(type);
+    }
+
 }
 
 void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration::Ptr function)

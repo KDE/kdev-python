@@ -91,7 +91,7 @@ public:
      * @brief Calculate the range of the arguments context of the given @p node.
      * @return Range the argument list of this function encompasses.
      */
-    RangeInRevision rangeForArgumentsContext(Python::FunctionDefinitionAst* node);
+    RangeInRevision rangeForArgumentsContext(const KTextEditor::Cursor &start, Python::ArgumentsAst* args);
 
     /**
      * @brief Add @p module to the list of unresolved imports in this builder.

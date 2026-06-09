@@ -821,9 +821,9 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
     if ( ! result ) return nullptr;
     if ( ! ranges_copied ) {
         result->startCol = getattr<int>(node, "col_offset");
-        result->endCol = result->startCol;
+        result->endCol = getattr<int>(node, "end_col_offset") - 1;
         result->startLine = tline(getattr<int>(node, "lineno"));
-        result->endLine = result->startLine;
+        result->endLine = tline(getattr<int>(node, "end_lineno"));
         result->hasUsefulRangeInformation = true;
     }
     else {

@@ -387,16 +387,30 @@ QPair<QUrl, QStringList> ContextBuilder::findModulePath(const QString& name, con
 
 void ContextBuilder::visitLambda(LambdaAst* node)
 {
-    openContext(node, editorFindRange(node, node->body), DUContext::Function);
-    AstDefaultVisitor::visitLambda(node);
+    // A context must be opened, because the lamdba's arguments are local to the lambda:
+    // d = lambda x: x*2; print x # <- gives an error
+    // node->arguments does not have a valid range
+    auto lambdaEnd = startPos(node) + CursorInRevision(0, 6);
+    auto argsRange = rangeForArgumentsContext(lambdaEnd.castToSimpleCursor(), node->arguments);
+
+    DUContext* argsctx = openContext(node->arguments, argsRange, DUContext::Function);
+    AstDefaultVisitor::visitArguments(node->arguments);
+    visitArguments(node->arguments);
+    closeContext();
+
+    DUContext* bodyctx = openContext(node->body, editorFindRange(node->body, node->body), DUContext::Other);
+    if (compilingContexts()) {
+        DUChainWriteLocker lock;
+        Q_ASSERT(bodyctx);
+        bodyctx->addImportedParentContext(argsctx);
+    }
+    visitNode(node->body);
     closeContext();
 }
 
-RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* node)
+RangeInRevision ContextBuilder::rangeForArgumentsContext(const KTextEditor::Cursor &start, ArgumentsAst* args)
 {
-    auto start = node->name->range().end();
     auto end = start;
-    auto args = node->arguments;
     if ( args->kwarg ) {
         end = args->kwarg->range().end();
     }
@@ -421,7 +435,7 @@ RangeInRevision ContextBuilder::rangeForArgumentsContext(FunctionDefinitionAst* 
 
 void ContextBuilder::visitFunctionArguments(FunctionDefinitionAst* node)
 {
-    RangeInRevision range = rangeForArgumentsContext(node);
+    RangeInRevision range = rangeForArgumentsContext(node->name->range().end(), node->arguments);
 
     // The DUChain expects the context containing a function's arguments to be of type Function.
     // The function body will have DUContext::Other as type, as it contains only code.
@@ -455,7 +469,7 @@ void ContextBuilder::visitFunctionBody(FunctionDefinitionAst* node)
         }
     }
     CursorInRevision end = CursorInRevision(endLine, node->startLine == node->endLine ? INT_MAX : 0);
-    CursorInRevision start = rangeForArgumentsContext(node).end;
+    CursorInRevision start = rangeForArgumentsContext(node->name->range().end(), node->arguments).end;
     if ( start.line < node->body.first()->startLine ) {
         start = CursorInRevision(node->startLine + 1, 0);
     }

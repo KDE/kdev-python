@@ -593,6 +593,7 @@ public:
     LambdaAst(Ast* parent);
     ArgumentsAst* arguments;
     ExpressionAst* body;
+    QString dump() const override;
 };
 
 class KDEVPYTHONPARSER_EXPORT IfExpressionAst : public ExpressionAst {

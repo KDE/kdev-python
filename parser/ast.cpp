@@ -16,7 +16,7 @@ namespace Python
 static void dumpNode(QString &r, QString prefix, const Ast* node)
 {
     r.append(prefix);
-    r.append(node ? node->dump(): QStringLiteral("None"));
+    r.append(node ? node->dump(): QStringLiteral("nullptr"));
 }
 
 
@@ -530,6 +530,16 @@ LambdaAst::LambdaAst(Ast* parent): ExpressionAst(parent, Ast::LambdaAstType), ar
 {
     
 }
+
+QString LambdaAst::dump() const
+{
+    QString r = QStringLiteral("Lambda(");
+    dumpNode(r, QStringLiteral("arguments="), arguments);
+    dumpNode(r, QStringLiteral(", body="), body);
+    r.append(QLatin1Char(')'));
+    return r;
+}
+
 
 ListAst::ListAst(Ast* parent): ExpressionAst(parent, Ast::ListAstType)
 {

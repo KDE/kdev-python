@@ -838,33 +838,21 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
         NoFlags
     );
     openType(type);
-    dec->setInSymbolTable(false);
+    dec->setAlwaysForceDirect(true);
+    dec->setStatic(false);
+    dec->setClassMethod(false);
+    dec->setProperty(false);
     dec->setIsLambda(true);
     dec->setType(type);
     lock.unlock();
 
     // A context must be opened, because the lamdba's arguments are local to the lambda:
     // d = lambda x: x*2; print x # <- gives an error
-    openContext(node, editorFindRange(node, node->body), DUContext::Function);
-    // visitArguments(node->arguments); // FIXME: This does not work
-    for (ArgAst* argument : std::as_const(node->arguments->arguments)) {
-        visitVariableDeclaration<Declaration>(argument->argumentName);
-    }
-    visitNodeList(node->arguments->defaultValues);
-    if (node->arguments->vararg) {
-        visitVariableDeclaration<Declaration>(node->arguments->vararg->argumentName);
-    }
-    if (node->arguments->kwarg) {
-        visitVariableDeclaration<Declaration>(node->arguments->kwarg->argumentName);
-    }
-
-    visitNode(node->body);
+    Python::ContextBuilder::visitLambda(node);
 
     // Determine the return type
-    ExpressionVisitor v(currentContext());
+    ExpressionVisitor v(lastContext());
     v.visitNode(node->body);
-    closeContext();
-
 
     lock.lock();
     closeDeclaration();
@@ -873,7 +861,7 @@ void DeclarationBuilder::visitLambda(LambdaAst* node)
         type->setReturnType(v.lastType());
         dec->setType(type);
     }
-
+    dec->setInSymbolTable(false);
 }
 
 void DeclarationBuilder::applyDocstringHints(CallAst* node, FunctionDeclaration::Ptr function)
@@ -1404,7 +1392,6 @@ void DeclarationBuilder::assignToUnknown(ExpressionAst* target, const Declaratio
 void DeclarationBuilder::visitAssignment(AssignmentAst* node)
 {
     AstDefaultVisitor::visitAssignment(node);
-
     ExpressionVisitor v(currentContext());
     v.visitNode(node->value);
     auto sourceType = SourceType{
@@ -1843,7 +1830,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
 
         // Create a variable declaration for the parameter, to be used in the function body.
         Declaration* paramDeclaration = nullptr;
-        if ( currentIndex == 1 && workingOnDeclaration->isClassMethod() ) {
+        if ( currentIndex == 1 && workingOnDeclaration->isClassMethod() && !workingOnDeclaration->isLambda() ) {
             DUChainWriteLocker lock;
             AliasDeclaration* decl = eventuallyReopenDeclaration<AliasDeclaration>(arg->argumentName,
                                                                                    AliasDeclarationType);
@@ -1896,7 +1883,7 @@ void DeclarationBuilder::visitArguments( ArgumentsAst* node )
         }
 
 
-        if ( isFirst && ! workingOnDeclaration->isStatic() && currentContext() && currentContext()->parentContext() ) {
+        if ( isFirst && !workingOnDeclaration->isStatic() && !workingOnDeclaration->isLambda() && currentContext() && currentContext()->parentContext() ) {
             DUChainReadLocker lock;
             if ( currentContext()->parentContext()->type() == DUContext::Class ) {
                 argumentType = m_currentClassTypes.last();

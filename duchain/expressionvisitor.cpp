@@ -389,14 +389,14 @@ void ExpressionVisitor::visitSubscript(SubscriptAst* node)
 
 void ExpressionVisitor::visitLambda(LambdaAst* node)
 {
-    AstDefaultVisitor::visitLambda(node);
-    FunctionType::Ptr type(new FunctionType());
-    AbstractType::Ptr mixed(new IntegralType(IntegralType::TypeMixed));
-    for (int ii = 0; ii < node->arguments->arguments.length(); ++ii) {
-        type->addArgument(mixed);
+    DUChainReadLocker lock;
+    // Find lambda decl
+    auto *decl = context()->findDeclarationAt(CursorInRevision(node->startLine, node->startCol+3));
+    if (decl) {
+        encounter(decl->abstractType());
+    } else {
+        encounterUnknown();
     }
-    type->setReturnType(lastType());
-    encounter(type);
 }
 
 void ExpressionVisitor::visitList(ListAst* node)

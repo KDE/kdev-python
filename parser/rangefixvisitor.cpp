@@ -212,7 +212,7 @@ void RangeFixVisitor::visitSubscript(Python::SubscriptAst* node) {
 }
 void RangeFixVisitor::visitComprehension(Python::ComprehensionAst* node) {
     AstDefaultVisitor::visitComprehension(node);
-    node->endCol++;
+    // node->endCol++;
 }
 void RangeFixVisitor::visitList(Python::ListAst* node) {
     AstDefaultVisitor::visitList(node);

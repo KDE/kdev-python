@@ -34,7 +34,6 @@ public:
     void visitFormattedValue(Python::FormattedValueAst * node) override;
     void visitNumber(Python::NumberAst* node) override;
     void visitSubscript(Python::SubscriptAst* node) override;
-    void visitComprehension(Python::ComprehensionAst* node) override;
     void visitList(Python::ListAst* node) override;
     void visitTuple(Python::TupleAst* node) override;
 

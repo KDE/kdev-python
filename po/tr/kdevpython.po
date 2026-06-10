@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2025-08-10 19:38+0300\n"
 "Last-Translator: Emir SARI <emir_sari@îcloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
@@ -434,21 +434,21 @@ msgstr "“%1” modülü bulunamadı"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Belirtilen modülde “%1” beyanı bulunamadı"
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "Sınıf yönteminin ilk argümanı self veya cls değil, bu artık kullanılmıyor"
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 "Değişkensiz statik olmayan sınıf metodu, en az bir taneye (self) sahip olmalı"
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Dönüş ifadesi işlev beyanı içinde değil"

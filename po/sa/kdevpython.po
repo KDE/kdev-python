@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2024-12-24 20:39+0530\n"
 "Last-Translator: kali <shreekantkalwar@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
@@ -428,20 +428,20 @@ msgstr "\"%1\" मॉड्यूल् न प्राप्तम्"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "निर्दिष्टे मॉड्यूले \"%1\" इत्यस्य घोषणा न प्राप्ता"
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 "class मेथड् इत्यस्य प्रथमः आर्गुमेण्ट् self अथवा cls इति न उच्यते, एतत् अप्रचलितम् अस्ति"
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "तर्करहितः अस्थिरवर्गविधिः, न्यूनातिन्यूनं एकः (स्वयं) भवितुमर्हति ।"
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "फंक्शन् घोषणायाः अन्तः नास्ति इति कथनं प्रत्यागच्छतु"

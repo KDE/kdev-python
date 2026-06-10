@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2026-05-31 18:22-0400\n"
 "Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
@@ -414,19 +414,19 @@ msgstr ""
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr ""
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr ""

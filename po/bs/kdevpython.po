@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: desktop files\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2014-11-27 13:41+0000\n"
 "Last-Translator: Mirza Bulbulusic <mbulbulusic@gmail.com>\n"
 "Language-Team: bs <bs@kde.org>\n"
@@ -458,7 +458,7 @@ msgstr "Modul \"%1\" nije nađen"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "Deklaracija \"%1\" nije pronađena u naznačenom modulu"
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, fuzzy, kde-format
 #| msgid ""
 #| "First argument of class method is not called self, this is deprecated"
@@ -466,13 +466,13 @@ msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr "Prvi argument metode klase se ne naziva self, taj naziv je zastario"
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Nestatična metoda klase bez argumenata, mora imati barem jedan (self)"
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Naredba povratka bez deklaracije funkcije"

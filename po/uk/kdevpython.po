@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2025-08-10 19:37+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -441,7 +441,7 @@ msgstr "Не знайдено модуля «%1»"
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "У вказаному модулі не знайдено оголошення «%1»"
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
@@ -449,7 +449,7 @@ msgstr ""
 "Перший аргумент методу класу не викликається автономно (self) або не "
 "викликає cls, такі синтаксичні конструкції вважаються застарілими"
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -457,7 +457,7 @@ msgstr ""
 "Нестатичний метод класу без аргументів. Має бути принаймні один аргумент "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Інструкція return поза межами оголошення функції"

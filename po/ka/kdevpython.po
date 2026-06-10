@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-12-18 00:42+0000\n"
+"POT-Creation-Date: 2026-06-10 00:44+0000\n"
 "PO-Revision-Date: 2025-08-10 06:11+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -436,13 +436,13 @@ msgstr "მოდული \"%1\" ვერ ვიპოვე\""
 msgid "Declaration for \"%1\" not found in specified module"
 msgstr "აღწერა \"%1\"-სთვის მითითებულ მოდულში ვერ ვიპოვე"
 
-#: duchain/declarationbuilder.cpp:1590
+#: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr "კლასის მეთოდის პირველ არგუმენტს self ან cls არ ჰქვია. ეს მოძველებულია"
 
-#: duchain/declarationbuilder.cpp:1610
+#: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
@@ -450,7 +450,7 @@ msgstr ""
 "არასტატიკური კლასის მეთოდი არგუმენტების გარეშეა. აუცილებელია, ერთი მაინც "
 "(self) ჰქონდეს"
 
-#: duchain/declarationbuilder.cpp:1771
+#: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "დაბრუნების რუტინა ფუნქციის აღწერაში არაა"

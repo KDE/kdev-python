@@ -187,6 +187,12 @@ public:
     PyObject* ast_Bytes;
 #endif
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+    // PEP 750 t-strings
+    PyObject* ast_TemplateStr;
+    PyObject* ast_Interpolation;
+#endif
+
     Grammar() {
         PyObject* mod = PyImport_ImportModule("ast");
 
@@ -338,6 +344,11 @@ public:
         Py_GRAMMAR_GET(mod, TypeAlias);
 #endif
 
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+        Py_GRAMMAR_GET(mod, TemplateStr);
+        Py_GRAMMAR_GET(mod, Interpolation);
+#endif
+
         Py_DECREF(mod);
     }
 
@@ -486,6 +497,10 @@ public:
 #endif
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 12, 0)
         Py_XDECREF(ast_TypeAlias);
+#endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+        Py_XDECREF(ast_TemplateStr);
+        Py_XDECREF(ast_Interpolation);
 #endif
     }
 };

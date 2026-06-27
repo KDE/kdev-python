@@ -67,6 +67,8 @@ public:
     void visitString(StringAst* node) override;
     void visitJoinedString(JoinedStringAst* node) override;
     void visitFormattedValue(FormattedValueAst* node) override;
+    void visitTemplateString(TemplateStringAst* node) override;
+    void visitInterpolation(InterpolationAst* node) override;
     void visitBytes(BytesAst* node) override;
     void visitYield(YieldAst* node) override;
     void visitYieldFrom(YieldFromAst* node) override;
@@ -149,6 +151,8 @@ public:
     void visitString(StringAst* node) override { AstDefaultVisitor::visitString(node); delete node; }
     void visitJoinedString(JoinedStringAst* node) override { AstDefaultVisitor::visitJoinedString(node); delete node; }
     void visitFormattedValue(FormattedValueAst* node) override { AstDefaultVisitor::visitFormattedValue(node); delete node; }
+    void visitTemplateString(TemplateStringAst* node) override { AstDefaultVisitor::visitTemplateString(node); delete node; }
+    void visitInterpolation(InterpolationAst* node) override { AstDefaultVisitor::visitInterpolation(node); delete node; }
     void visitBytes(BytesAst* node) override { AstDefaultVisitor::visitBytes(node); delete node; }
     void visitYield(YieldAst* node) override { AstDefaultVisitor::visitYield(node); delete node; }
     void visitYieldFrom(YieldFromAst* node) override { AstDefaultVisitor::visitYieldFrom(node); delete node; }

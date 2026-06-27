@@ -108,6 +108,8 @@ public:
         StringAstType,
         JoinedStringAstType,
         FormattedValueAstType,
+        TemplateStringAstType,
+        InterpolationAstType,
         BytesAstType,
         SubscriptAstType,
         StarredAstType,
@@ -690,6 +692,21 @@ class KDEVPYTHONPARSER_EXPORT FormattedValueAst : public ExpressionAst {
 public:
     FormattedValueAst(Ast* parent);
     ExpressionAst* value;
+    int conversion;
+    ExpressionAst* formatSpec;
+};
+
+class KDEVPYTHONPARSER_EXPORT TemplateStringAst : public ExpressionAst {
+public:
+    TemplateStringAst(Ast* parent);
+    QList<ExpressionAst*> values;
+};
+
+class KDEVPYTHONPARSER_EXPORT InterpolationAst : public ExpressionAst {
+public:
+    InterpolationAst(Ast* parent);
+    ExpressionAst* value;
+    QString expr; // raw source text of the interpolated expression
     int conversion;
     ExpressionAst* formatSpec;
 };

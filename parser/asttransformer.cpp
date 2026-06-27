@@ -618,6 +618,30 @@ Ast* AstTransformer::visitExprNode(PyObject* node, Ast* parent)
         result = v;
     }
 #endif
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+    else if (PyObject_IsInstance(node, grammar.ast_TemplateStr)) {
+        TemplateStringAst* v = new TemplateStringAst(parent);
+        {
+            PyObjectRef values = getattr<PyObjectRef>(node, "values");
+            v->values = visitNodeList<ExpressionAst>(values, v);
+        }
+        result = v;
+    }
+    else if (PyObject_IsInstance(node, grammar.ast_Interpolation)) {
+        InterpolationAst* v = new InterpolationAst(parent);
+        {
+            PyObjectRef value = getattr<PyObjectRef>(node, "value");
+            v->value = static_cast<ExpressionAst*>(visitExprNode(value, v));
+        }
+        v->expr = getattr<QString>(node, "str");
+        v->conversion = getattr<int>(node, "conversion");
+        {
+            PyObjectRef format_spec = getattr<PyObjectRef>(node, "format_spec");
+            v->formatSpec = static_cast<ExpressionAst*>(visitExprNode(format_spec, v));
+        }
+        result = v;
+    }
+#endif
 #if PYTHON_VERSION < QT_VERSION_CHECK(3, 8, 0)
     else if (PyObject_IsInstance(node, grammar.ast_Bytes)) {
         BytesAst* v = new  BytesAst(parent);

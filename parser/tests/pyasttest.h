@@ -40,6 +40,9 @@ private Q_SLOTS:
     void testExceptionHandlers();
     void testCorrectedFuncRanges();
     void testCorrectedFuncRanges_data();
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+    void testTemplateStrings();
+#endif
 };
 
 }

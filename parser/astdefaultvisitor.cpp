@@ -45,6 +45,17 @@ void AstDefaultVisitor::visitFormattedValue(FormattedValueAst* node) {
     visitNode(node->formatSpec);
 }
 
+void AstDefaultVisitor::visitTemplateString(TemplateStringAst* node) {
+    for (Ast* value : std::as_const(node->values)) {
+        visitNode(value);
+    }
+}
+
+void AstDefaultVisitor::visitInterpolation(InterpolationAst* node) {
+    visitNode(node->value);
+    visitNode(node->formatSpec);
+}
+
 void AstDefaultVisitor::visitStarred(StarredAst* node) {
     visitNode(node->value);
 }

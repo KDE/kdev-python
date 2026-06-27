@@ -243,6 +243,12 @@ void PyAstTest::testExpressions_data()
     QTest::newRow("ExtSlice") << "A[1:3,3:5]";
     QTest::newRow("FString") << "f\"hi {a.b}\"";
     QTest::newRow("Formatted") << "'%s %s' % ('one', 'two')";
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+    QTest::newRow("TString") << "t\"hello {name}\"";
+    QTest::newRow("TString_conversion") << "t\"{value!r}\"";
+    QTest::newRow("TString_format_spec") << "t\"{value:.2f}\"";
+    QTest::newRow("TString_nested_expr") << "t\"{a + b}\"";
+#endif
 
 #if PYTHON_VERSION >= QT_VERSION_CHECK(3, 6, 0)
     QTest::newRow("async_generator") << "async def foo(): result = [i async for i in aiter() if i % 2]";
@@ -320,5 +326,63 @@ void PyAstTest::testClass()
 {
     testCode(QStringLiteral("class c: pass"));
 }
+
+#if PYTHON_VERSION >= QT_VERSION_CHECK(3, 14, 0)
+void PyAstTest::testTemplateStrings()
+{
+    // t"hello {name}" -> TemplateStringAst with [StringAst, InterpolationAst]
+    {
+        CodeAst::Ptr ast = getAst(QStringLiteral("t\"hello {name}\""));
+        QVERIFY(ast);
+        QCOMPARE(ast->body.size(), 1);
+        QCOMPARE(ast->body.first()->astType, Ast::ExpressionAstType);
+        ExpressionAst* expr = static_cast<ExpressionAst*>(ast->body.first());
+        QCOMPARE(expr->value->astType, Ast::TemplateStringAstType);
+        TemplateStringAst* tstr = static_cast<TemplateStringAst*>(expr->value);
+        QCOMPARE(tstr->values.size(), 2);
+        QCOMPARE(tstr->values.at(0)->astType, Ast::StringAstType);
+        QCOMPARE(tstr->values.at(1)->astType, Ast::InterpolationAstType);
+        InterpolationAst* interp = static_cast<InterpolationAst*>(tstr->values.at(1));
+        QCOMPARE(interp->expr, QStringLiteral("name"));
+        QCOMPARE(interp->conversion, -1); // no conversion
+        QVERIFY(!interp->formatSpec);
+        QVERIFY(interp->value);
+        QCOMPARE(interp->value->astType, Ast::NameAstType);
+    }
+
+    // t"{value!r}" -> InterpolationAst with conversion == 'r' (114)
+    {
+        CodeAst::Ptr ast = getAst(QStringLiteral("t\"{value!r}\""));
+        QVERIFY(ast);
+        ExpressionAst* expr = static_cast<ExpressionAst*>(ast->body.first());
+        TemplateStringAst* tstr = static_cast<TemplateStringAst*>(expr->value);
+        QCOMPARE(tstr->values.size(), 1);
+        QCOMPARE(tstr->values.first()->astType, Ast::InterpolationAstType);
+        InterpolationAst* interp = static_cast<InterpolationAst*>(tstr->values.first());
+        QCOMPARE(interp->conversion, 114); // 'r'
+        QVERIFY(!interp->formatSpec);
+    }
+
+    // t"{value:.2f}" -> InterpolationAst with non-null formatSpec
+    {
+        CodeAst::Ptr ast = getAst(QStringLiteral("t\"{value:.2f}\""));
+        QVERIFY(ast);
+        ExpressionAst* expr = static_cast<ExpressionAst*>(ast->body.first());
+        TemplateStringAst* tstr = static_cast<TemplateStringAst*>(expr->value);
+        QCOMPARE(tstr->values.size(), 1);
+        InterpolationAst* interp = static_cast<InterpolationAst*>(tstr->values.first());
+        QCOMPARE(interp->conversion, -1);
+        QVERIFY(interp->formatSpec);
+    }
+
+    // VerifyVisitor walks the entire tree without asserting
+    {
+        CodeAst::Ptr ast = getAst(QStringLiteral("x = t\"sum={a+b:.2f} items={items!s}\""));
+        QVERIFY(ast);
+        VerifyVisitor v;
+        v.visitCode(ast.data());
+    }
+}
+#endif
 
 #include "moc_pyasttest.cpp"

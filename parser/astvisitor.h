@@ -80,6 +80,8 @@ public:
     virtual void visitString(StringAst* node) { Q_UNUSED(node); };
     virtual void visitFormattedValue(FormattedValueAst* node) { Q_UNUSED(node); };
     virtual void visitJoinedString(JoinedStringAst* node) { Q_UNUSED(node); };
+    virtual void visitTemplateString(TemplateStringAst* node) { Q_UNUSED(node); };
+    virtual void visitInterpolation(InterpolationAst* node) { Q_UNUSED(node); };
     virtual void visitBytes(BytesAst* node) { Q_UNUSED(node); };
     virtual void visitYield(YieldAst* node) { Q_UNUSED(node); };
     virtual void visitName(NameAst* node) { Q_UNUSED(node); };

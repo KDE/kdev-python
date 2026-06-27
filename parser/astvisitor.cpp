@@ -65,6 +65,8 @@ void AstVisitor::visitNode(Ast* node)
         case Ast::StringAstType:                                this->visitString(static_cast<StringAst*>(node)); break;
         case Ast::FormattedValueAstType:                        this->visitFormattedValue(static_cast<FormattedValueAst*>(node)); break;
         case Ast::JoinedStringAstType:                          this->visitJoinedString(static_cast<JoinedStringAst*>(node)); break;
+        case Ast::TemplateStringAstType:                        this->visitTemplateString(static_cast<TemplateStringAst*>(node)); break;
+        case Ast::InterpolationAstType:                         this->visitInterpolation(static_cast<InterpolationAst*>(node)); break;
         case Ast::BytesAstType:                                 this->visitBytes(static_cast<BytesAst*>(node)); break;
         case Ast::YieldAstType:                                 this->visitYield(static_cast<YieldAst*>(node)); break;
         case Ast::NameAstType:                                  this->visitName(static_cast<NameAst*>(node)); break;

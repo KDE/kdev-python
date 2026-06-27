@@ -676,6 +676,16 @@ FormattedValueAst::FormattedValueAst(Ast* parent): ExpressionAst(parent, Ast::Fo
 
 }
 
+TemplateStringAst::TemplateStringAst(Ast* parent): ExpressionAst(parent, Ast::TemplateStringAstType), values()
+{
+
+}
+
+InterpolationAst::InterpolationAst(Ast* parent): ExpressionAst(parent, Ast::InterpolationAstType), value(nullptr), expr(), conversion(0), formatSpec(nullptr)
+{
+
+}
+
 SubscriptAst::SubscriptAst(Ast* parent): ExpressionAst(parent, Ast::SubscriptAstType), value(nullptr), slice(nullptr)
 {
     

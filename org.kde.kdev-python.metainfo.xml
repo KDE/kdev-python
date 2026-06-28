@@ -122,7 +122,6 @@
     </screenshot>
   </screenshots>
   <project_group>KDE</project_group>
-  <icon type="stock">kdevelop</icon>
   <categories>
     <category>Development</category>
     <category>IDE</category>

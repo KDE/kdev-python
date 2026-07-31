@@ -187,7 +187,7 @@ msgstr "Richtiger Typ:"
 #: codegen/correctionwidget.ui:63
 #, kde-format
 msgid "Code which evaluates to the type, e.g. int()"
-msgstr "Quelltext, der den Typ bestimmt, z. B. int()"
+msgstr "Quelltext, der den Typ bestimmt, z. B. int()"
 
 #. i18n: ectx: property (text), widget (QLabel, importsLabel)
 #: codegen/correctionwidget.ui:70
@@ -322,7 +322,7 @@ msgstr ""
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr "Zielmodul (z. B. \"math\")"
+msgstr "Zielmodul (z. B. \"math\")"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
@@ -410,7 +410,7 @@ msgstr ""
 "KDevelop analysiert, um Funktionen wie Quelltextvervollständigung\n"
 "und Syntaxhervorhebung bereitzustellen. Finden Sie Fehler in\n"
 "der Unterstützung von KDevelop für dieses Modul, dann können\n"
-"Sie diese Datei bearbeiten und Fehler korrigieren. Z.B. können Sie\n"
+"Sie diese Datei bearbeiten und Fehler korrigieren. z. B. können Sie\n"
 "zusätzliche Rückgabe-Anweisungen hinzufügen, die bei der Analyse\n"
 "des Rückgabetyps dieser Funktion verwendet werden. Erstellen Sie\n"
 "eine Kopie Ihrer Änderungen, da diese unbeabsichtigt durch das\n"
@@ -559,7 +559,7 @@ msgid ""
 "checking."
 msgstr ""
 "Das Python-Modul „pycodestyle“ muss installiert sein, um die Stilüberprüfung "
-"benutzen zu können."
+"verwenden zu können."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19

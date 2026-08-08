@@ -1,12 +1,12 @@
 # Translation of kdevpython to Norwegian Nynorsk
 #
-# Karl Ove Hufthammer <karl@huftis.org>, 2021.
+# Karl Ove Hufthammer <karl@huftis.org>, 2021, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2026-06-10 00:44+0000\n"
-"PO-Revision-Date: 2021-02-09 19:20+0100\n"
+"PO-Revision-Date: 2026-08-07 23:32+0200\n"
 "Last-Translator: Karl Ove Hufthammer <karl@huftis.org>\n"
 "Language-Team: Norwegian Nynorsk <l10n-no@nuug.no>\n"
 "Language: nn\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 20.12.1\n"
+"X-Generator: Lokalize 26.11.70\n"
 "X-Environment: kde\n"
 "X-Accelerator-Marker: &\n"
 "X-Text-Markup: kde4\n"
@@ -220,12 +220,12 @@ msgstr "Ikkje-støtta fortolkar"
 #: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "Informasjon tilbake"
 
 #: debugger/variablecontroller.cpp:38
 #, kde-format
 msgid "Globals"
-msgstr ""
+msgstr "Globale verdiar"
 
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
@@ -272,11 +272,13 @@ msgstr "Søkjemapper …"
 msgctxt "displays a list of search paths below"
 msgid "Paths searched for documentation by kdev-python (in this order):"
 msgstr ""
+"Mapper der det vart søkt etter dokumentasjon av kdev-python (i denne "
+"rekkjefølgja):"
 
 #: docfilekcm/docfilemanagerwidget.cpp:141
 #, kde-format
 msgid "Enter a relative target path to copy %1 to:"
-msgstr ""
+msgstr "Skriv inn ei relativ mappeadresse som %1 skal kopierast til:"
 
 #: docfilekcm/docfilemanagerwidget.cpp:145
 #, kde-format
@@ -284,21 +286,23 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
+"Adressa mi tilsvara det du brukar i Python for å importera modulen. Bruk for "
+"eksempel «numpy/fft.py» for numpy.fft."
 
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
 msgid "After copying, you will be editing the new document."
-msgstr ""
+msgstr "Etter kopiering vil du registera det nye dokumentet."
 
 #: docfilekcm/docfilemanagerwidget.cpp:166
 #, kde-format
 msgid "Please select at least one file from the list for editing."
-msgstr ""
+msgstr "Vel minst éi fil for redigering frå lista."
 
 #: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
-msgstr ""
+msgstr "Set opp kva Python-fortolkar som skal brukast"
 
 #: docfilekcm/docfilewizard.cpp:44
 #, kde-format
@@ -308,33 +312,34 @@ msgstr "Python-programfil"
 #: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
-msgstr ""
+msgstr "Vel Python-modul å generera dokumentasjon for"
 
+# «math» er ein standard Python-modul og skal ikkje omsetjast.
 #: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr ""
+msgstr "Målmodul (eks. «math»)"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
 msgid "Output filename"
-msgstr ""
+msgstr "Filnamn utfil"
 
 #: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
-msgstr ""
+msgstr "Status og utdata"
 
 #: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
-msgstr ""
+msgstr "Prosessen har ikkje blitt køyrd enno."
 
 #: docfilekcm/docfilewizard.cpp:75
 #, kde-format
 msgid "Script output"
-msgstr ""
+msgstr "Skript-utdata"
 
 #: docfilekcm/docfilewizard.cpp:76
 #, kde-format
@@ -360,23 +365,26 @@ msgstr "Generer"
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
 msgstr ""
+"Fann ikkje skriptet «introspect.py». Kontroller at alt er rett installert."
 
 #: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr ""
+"Fann ikkje ei gyldig «kdev-python»-datamappe. Kontroller at alt er rett "
+"installert."
 
 #: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
-msgstr ""
+msgstr "Ugyldig filnamn på utfil"
 
 #: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
-msgstr ""
+msgstr "Utfila <br/>%1<br/> finst frå før. Vil du skriva over ho?"
 
 #: docfilekcm/docfilewizard.cpp:203
 #, kde-format
@@ -391,11 +399,21 @@ msgid ""
 "Make sure to keep a copy of your changes so you don't accidentally\n"
 "overwrite them by re-generating the file.\n"
 msgstr ""
+"Denne fila inneheld automatisk generert dokumentasjon\n"
+"\n"
+"henta ut frå Python-køyretidsdata. Ho vert brukt av KDevelop\n"
+"for å tilby blant anna kodefullføring og syntaksfargelegging.\n"
+"Viss du finn feil i korleis KDevelop støttar modulen, kan du\n"
+"redigera denne fila for å retta feilen. Du kan for eksempel\n"
+"leggja til fleire retursetningar til ein funksjon for å styra kva\n"
+"returtype som skal brukast ved analyse av funksjonen.\n"
+"Hugs å lagra ein kopi av endringane du gjer, slik at dei ikkje\n"
+"går tapt når fila vert generert på nytt.\n"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
 msgid "Manage Documentation Files Used by the Python Plugin"
-msgstr ""
+msgstr "Handsam dokumentfiler brukte av Python-tillegget"
 
 #: docfilekcm/kcm_docfiles.cpp:58
 #, kde-format
@@ -405,7 +423,7 @@ msgstr "Python-dokumentasjon"
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr ""
+msgstr "Generer dokumentasjon for modulen «%1» …"
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
@@ -415,24 +433,26 @@ msgstr "Fann ikkje modulen «%1»"
 #: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
-msgstr ""
+msgstr "Fann ikkje deklarasjon for «%1» i den valde modulen"
 
 #: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
+"Første argument til klassemetoden vert ikkje kalla «self» eller "
+"«cls» (utdatert praksis)"
 
 #: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
-msgstr ""
+msgstr "Ikkje-statisk klassemetode utan argument – må ha minst éin (self)"
 
 #: duchain/declarationbuilder.cpp:1792
 #, kde-format
 msgid "Return statement not within function declaration"
-msgstr ""
+msgstr "Retursetninga er ikkje i funksjon­deklarasjon"
 
 #: duchain/navigation/declarationnavigationcontext.cpp:67
 #, kde-format
@@ -480,36 +500,36 @@ msgstr "Udefinert variabel: %1"
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr ""
+msgstr "Fann ikkje attributtet «%1» på opna objekt"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format
 msgid "Configure Python Style Checking"
-msgstr ""
+msgstr "Set opp kontroll av Python-stil"
 
 #: pep8kcm/kcm_pep8.cpp:73
 #, kde-format
 msgid "Python Style Checking"
-msgstr ""
+msgstr "Kontroll av Python-stil"
 
 #. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
 #: pep8kcm/pep8.ui:29
 #, kde-format
 msgid "Enable Style Checking"
-msgstr ""
+msgstr "Slå på stilkontroll"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
 #: pep8kcm/pep8.ui:44 pep8kcm/pep8.ui:58
 #, kde-format
 msgid "Comma-separated list of error codes"
-msgstr ""
+msgstr "Kommaskild liste med feilkodar"
 
 #. i18n: ectx: property (text), widget (QLabel, label_2)
 #: pep8kcm/pep8.ui:51
 #, kde-format
 msgid "Enable these errors and warnings:"
-msgstr ""
+msgstr "Slå på desse feila og åtvaringane:"
 
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: pep8kcm/pep8.ui:65
@@ -530,6 +550,8 @@ msgid ""
 "The `pycodestyle` Python module must be installed in order to use style "
 "checking."
 msgstr ""
+"Python-modulen «pycodestyle» må vera installert viss du vil bruka "
+"stilkontroll."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19
@@ -541,7 +563,7 @@ msgstr "Python-fortolkar:"
 #: projectconfig/projectconfig.ui:26
 #, kde-format
 msgid "Full path to python interpreter, leave empty for default"
-msgstr ""
+msgstr "Full adresse til Python-tolk (la stå tom for standard)"
 
 #: projectconfig/projectconfigpage.cpp:47
 #, kde-format
@@ -551,14 +573,14 @@ msgstr "Python-innstillingar"
 #: pythonlanguagesupport.cpp:140
 #, kde-format
 msgid "Format source with the autopep8 formatter."
-msgstr ""
+msgstr "Format kjelda med formateringsprogrammet «autopep8»."
 
 #: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
-msgstr ""
+msgstr "PEP8-feilsjekkar: %1"
 
 #: pythonstylechecking.cpp:209
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
-msgstr ""
+msgstr "Syntaksjekkaren PEP8 ser ikkje ut til å fungera som han skal."

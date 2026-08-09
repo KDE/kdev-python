@@ -81,6 +81,7 @@
         "Description[ka]": "ეს დამატება მოგაწვდით გრაფიკულ წინაბოლოს Python-ის პროგრამების გამართვისთვის",
         "Description[ko]": "이 플러그인은 파이썬 프로그램을 디버그하는 그래픽 프론트엔드를 제공합니다",
         "Description[nl]": "Deze plug-in levert een grafische frontend voor het debuggen van python programma's",
+        "Description[nn]": "Dette programtillegget gjev ei grafisk brukarflate for feilsøking i Python-program",
         "Description[pl]": "Wtyczka ta zapewnia nakładkę graficzną do diagnozowania aplikacji Pythona",
         "Description[pt_BR]": "Este plugin fornece um frontend gráfico para depuração de programas Python",
         "Description[ru]": "Этот модуль предоставляет графический интерфейс для отладки программ на Python.",

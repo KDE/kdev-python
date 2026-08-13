@@ -1655,7 +1655,8 @@ void DeclarationBuilder::visitFunctionDefinition( FunctionDefinitionAst* node )
         }
     }
     
-    lock.lock();
+    // DUChainWriteLocker must be held already.
+    Q_ASSERT(lock.locked());
     dec->setInSymbolTable(true);
 }
 

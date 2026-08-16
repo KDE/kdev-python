@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-06-10 00:44+0000\n"
+"POT-Creation-Date: 2026-08-16 00:42+0000\n"
 "PO-Revision-Date: 2025-08-10 19:37+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -457,7 +457,7 @@ msgstr ""
 "Нестатичний метод класу без аргументів. Має бути принаймні один аргумент "
 "(self)"
 
-#: duchain/declarationbuilder.cpp:1792
+#: duchain/declarationbuilder.cpp:1793
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Інструкція return поза межами оголошення функції"

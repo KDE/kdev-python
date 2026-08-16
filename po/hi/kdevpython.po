@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdev-python\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-06-10 00:44+0000\n"
+"POT-Creation-Date: 2026-08-16 00:42+0000\n"
 "PO-Revision-Date: 2024-12-15 19:18+0530\n"
 "Last-Translator: Kali <EMAIL@ADDRESS>\n"
 "Language-Team: Hindi <fedora-trans-hi@redhat.com>\n"
@@ -440,7 +440,7 @@ msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "तर्कों के बिना गैर-स्थिर वर्ग विधि, कम से कम एक (स्वयं) होना चाहिए"
 
-#: duchain/declarationbuilder.cpp:1792
+#: duchain/declarationbuilder.cpp:1793
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "रिटर्न स्टेटमेंट फ़ंक्शन घोषणा के अंतर्गत नहीं है"

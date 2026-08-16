@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-06-10 00:44+0000\n"
+"POT-Creation-Date: 2026-08-16 00:42+0000\n"
 "PO-Revision-Date: 2025-09-06 06:09+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: pl\n"
@@ -448,7 +448,7 @@ msgid ""
 msgstr ""
 "Niestatyczna metoda klasy bez argumentów, musi mieć co najmniej jedno (self)"
 
-#: duchain/declarationbuilder.cpp:1792
+#: duchain/declarationbuilder.cpp:1793
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Instrukcja powrotu nie jest wewnątrz deklaracji funkcji"

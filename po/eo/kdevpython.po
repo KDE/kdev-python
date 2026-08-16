@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2026-06-10 00:44+0000\n"
+"POT-Creation-Date: 2026-08-16 00:42+0000\n"
 "PO-Revision-Date: 2024-12-27 10:42+0100\n"
 "Last-Translator: Oliver Kellogg <olivermkellogg@gmail.com>\n"
 "Language-Team: esperanto <kde-i18n-eo@kde.org>\n"
@@ -444,7 +444,7 @@ msgid ""
 "Non-static class method without arguments, must have at least one (self)"
 msgstr "Ne-senmova klasmetodo sen argumentoj, devas havi almenaŭ unu (mem)"
 
-#: duchain/declarationbuilder.cpp:1792
+#: duchain/declarationbuilder.cpp:1793
 #, kde-format
 msgid "Return statement not within function declaration"
 msgstr "Redona deklaro ne ene de funkciodeklaro"

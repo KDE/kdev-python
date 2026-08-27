@@ -4,16 +4,16 @@
 Dependencies:
 - 'on': ['@all']
   'require':
-    'frameworks/extra-cmake-modules': '@latest-kf6'
-    'frameworks/kconfig': '@latest-kf6'
-    'frameworks/kcoreaddons': '@latest-kf6'
-    'frameworks/ki18n': '@latest-kf6'
-    'frameworks/kparts': '@latest-kf6'
-    'frameworks/kservice': '@latest-kf6'
-    'frameworks/ktexteditor': '@latest-kf6'
-    'frameworks/kwidgetsaddons': '@latest-kf6'
-    'frameworks/kxmlgui': '@latest-kf6'
-    'frameworks/threadweaver': '@latest-kf6'
+    'frameworks/extra-cmake-modules': 'Frameworks/6.24'
+    'frameworks/kconfig': 'Frameworks/6.24'
+    'frameworks/kcoreaddons': 'Frameworks/6.24'
+    'frameworks/ki18n': 'Frameworks/6.24'
+    'frameworks/kparts': 'Frameworks/6.24'
+    'frameworks/kservice': 'Frameworks/6.24'
+    'frameworks/ktexteditor': 'Frameworks/6.24'
+    'frameworks/kwidgetsaddons': 'Frameworks/6.24'
+    'frameworks/kxmlgui': 'Frameworks/6.24'
+    'frameworks/threadweaver': 'Frameworks/6.24'
     'kdevelop/kdevelop': '@same'
 
 Options:

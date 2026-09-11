@@ -217,7 +217,7 @@ QString ExpressionParser::popExpression(ExpressionParser::Status* status)
     auto trimmed = remaining.trimmed();
     auto operatingOn = trimmed.replace(QLatin1Char('\t'), QLatin1Char(' '));
     bool lineIsEmpty = false;
-    for ( auto it = remaining.constEnd()-1; it != remaining.constEnd(); it-- ) {
+    for ( auto it = remaining.crbegin(); it != remaining.crend(); it++ ) {
         if ( ! it->isSpace() ) {
             break;
         }

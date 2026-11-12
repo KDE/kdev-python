@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2026-08-16 00:42+0000\n"
-"PO-Revision-Date: 2026-10-08 19:03+0300\n"
+"PO-Revision-Date: 2026-11-10 21:38+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 26.08.0\n"
+"X-Generator: Lokalize 26.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -92,7 +92,7 @@ msgstr "Duyarlılık belirt"
 #: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
-msgstr "Yüzdelik sayı olarak biçemlendir"
+msgstr "Yüzdelik sayı olarak stillendir"
 
 #: codecompletion/context.cpp:444
 #, kde-format
@@ -504,18 +504,18 @@ msgstr "“%1” özniteliği erişilen nesnede bulunamadı"
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format
 msgid "Configure Python Style Checking"
-msgstr "Python Biçem Kontrolünü Yapılandır"
+msgstr "Python Stil Kontrolünü Yapılandır"
 
 #: pep8kcm/kcm_pep8.cpp:73
 #, kde-format
 msgid "Python Style Checking"
-msgstr "Python Biçem Denetimi"
+msgstr "Python Stil Denetimi"
 
 #. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
 #: pep8kcm/pep8.ui:29
 #, kde-format
 msgid "Enable Style Checking"
-msgstr "Biçem Denetimini Etkinleştir"
+msgstr "Stil Denetimini Etkinleştir"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, disableErrors)
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, enableErrors)
@@ -549,8 +549,7 @@ msgid ""
 "The `pycodestyle` Python module must be installed in order to use style "
 "checking."
 msgstr ""
-"Biçem kontrolünü kullanabilmek için `pycodestyle` Python modülü kurulu "
-"olmalı."
+"Stil kontrolünü kullanabilmek için `pycodestyle` Python modülü kurulu olmalı."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19

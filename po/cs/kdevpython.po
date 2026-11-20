@@ -1,131 +1,132 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # SPDX-FileCopyrightText: 2011, 2012, 2013, 2014, 2016, 2017, 2025 Vít Pelčák <vit@pelcak.org>
+# SPDX-FileCopyrightText: 2026 Libor Filípek <libor.filipek@gmail.com>
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kdevpython\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2026-08-16 00:42+0000\n"
-"PO-Revision-Date: 2017-08-03 13:58+0100\n"
-"Last-Translator: Vít Pelčák <vit@pelcak.org>\n"
+"PO-Revision-Date: 2026-11-19 23:26+0100\n"
+"Last-Translator: Libor Filípek <libor.filipek@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Lokalize 25.08.3\n"
+"X-Generator: Poedit 3.10\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Vít Pelčák"
+msgstr "Vít Pelčák,Libor Filípek"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "vit@pelcak.org"
+msgstr "vit@pelcak.org,libor.filipek@gmail.com"
 
 #: codecompletion/context.cpp:115
 #, kde-format
 msgid "insert Shebang line"
-msgstr ""
+msgstr "vložit řádek Shebang"
 
 #: codecompletion/context.cpp:123
 #, kde-format
 msgid "specify document encoding"
-msgstr ""
+msgstr "určit kódování dokumentu"
 
 #: codecompletion/context.cpp:125
 #, kde-format
 msgid "Add file header"
-msgstr ""
+msgstr "Přidat hlavičku souboru"
 
 #: codecompletion/context.cpp:175
 #, kde-format
 msgid "specify default parameter"
-msgstr ""
+msgstr "určit výchozí parametr"
 
 #: codecompletion/context.cpp:386
 #, kde-format
 msgid "Insert next positional variable"
-msgstr ""
+msgstr "Vložit další poziční proměnnou"
 
 #: codecompletion/context.cpp:391
 #, kde-format
 msgid "Insert named variable"
-msgstr ""
+msgstr "Vložit pojmenovanou proměnnou"
 
 #: codecompletion/context.cpp:427
 #, kde-format
 msgid "Format using str()"
-msgstr ""
+msgstr "Formátovat pomocí str()"
 
 #: codecompletion/context.cpp:428
 #, kde-format
 msgid "Format using repr()"
-msgstr ""
+msgstr "Formátovat pomocí repr()"
 
 #: codecompletion/context.cpp:436
 #, kde-format
 msgid "Format as left-aligned"
-msgstr ""
+msgstr "Formátovat jako zarovnané vlevo"
 
 #: codecompletion/context.cpp:437
 #, kde-format
 msgid "Format as right-aligned"
-msgstr ""
+msgstr "Formátovat jako zarovnané vpravo"
 
 #: codecompletion/context.cpp:438
 #, kde-format
 msgid "Format as centered"
-msgstr ""
+msgstr "Formátovat jako vycentrované"
 
 #: codecompletion/context.cpp:442
 #, kde-format
 msgid "Specify precision"
-msgstr ""
+msgstr "Určete přesnost"
 
 #: codecompletion/context.cpp:443
 #, kde-format
 msgid "Format as percentage"
-msgstr ""
+msgstr "Formátovat jako procento"
 
 #: codecompletion/context.cpp:444
 #, kde-format
 msgid "Format as character"
-msgstr ""
+msgstr "Formátovat jako znak"
 
 #: codecompletion/context.cpp:445
 #, kde-format
 msgid "Format as binary number"
-msgstr ""
+msgstr "Formátovat jako binární číslo"
 
 #: codecompletion/context.cpp:446
 #, kde-format
 msgid "Format as octal number"
-msgstr ""
+msgstr "Formátovat jako osmičkové číslo"
 
 #: codecompletion/context.cpp:447
 #, kde-format
 msgid "Format as hexadecimal number"
-msgstr ""
+msgstr "Formátovat jako hexadecimální číslo"
 
 #: codecompletion/context.cpp:448
 #, kde-format
 msgid "Format in scientific (exponent) notation"
-msgstr ""
+msgstr "Formátovat ve vědeckém (exponenciálním) zápisu"
 
 #: codecompletion/context.cpp:449
 #, kde-format
 msgid "Format as fixed point number"
-msgstr ""
+msgstr "Formátovat jako číslo s pevnou čárou"
 
 #: codecompletion/context.cpp:509
 #, kde-format
 msgid "Initialize property"
-msgstr ""
+msgstr "Inicializovat vlastnost"
 
 #: codecompletion/items/functiondeclaration.cpp:81
 #, kde-format
@@ -141,12 +142,12 @@ msgstr "Přidat \"%1\""
 #: codegen/correctionfilegenerator.cpp:58
 #, kde-format
 msgid "Specify type for \"%1\"..."
-msgstr ""
+msgstr "Zadejte typ pro \"%1\"..."
 
 #: codegen/correctionfilegenerator.cpp:108
 #, kde-format
 msgid "Function return type"
-msgstr ""
+msgstr "Návratový typ funkce"
 
 #: codegen/correctionfilegenerator.cpp:111
 #, kde-format
@@ -157,12 +158,14 @@ msgstr "Lokální proměnné"
 #, kde-format
 msgid "Sorry, cannot create hints for files which are not part of a project."
 msgstr ""
+"Promiňte, ale nelze vytvářet nápovědy pro soubory, které nejsou součástí "
+"projektu."
 
 #. i18n: ectx: property (windowTitle), widget (QWidget, CorrectionWidget)
 #: codegen/correctionwidget.ui:20
 #, kde-format
 msgid "Specify correct type"
-msgstr ""
+msgstr "Zadejte správný typ"
 
 #. i18n: ectx: property (text), widget (QLabel, givenKindLabel)
 #: codegen/correctionwidget.ui:28
@@ -180,45 +183,45 @@ msgstr "Identifikátor:"
 #: codegen/correctionwidget.ui:56
 #, kde-format
 msgid "Correct type:"
-msgstr ""
+msgstr "Správný typ:"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, typeText)
 #: codegen/correctionwidget.ui:63
 #, kde-format
 msgid "Code which evaluates to the type, e.g. int()"
-msgstr ""
+msgstr "Kód, jehož výsledkem je typ, např. int()"
 
 #. i18n: ectx: property (text), widget (QLabel, importsLabel)
 #: codegen/correctionwidget.ui:70
 #, kde-format
 msgid "Required modules:"
-msgstr ""
+msgstr "Povinné moduly:"
 
 #. i18n: ectx: property (placeholderText), widget (QLineEdit, importsText)
 #: codegen/correctionwidget.ui:77
 #, kde-format
 msgid "A comma separated list of modules required for the type"
-msgstr ""
+msgstr "Seznam modulů potřebných pro daný typ, oddělený čárkami"
 
 #: debugger/pdblauncher.cpp:45
 #, kde-format
 msgid "A plugin to debug Python applications with pdb."
-msgstr ""
+msgstr "Modul pro ladění aplikací v jazyce Python pomocí nástroje pdb."
 
 #: debugger/pdblauncher.cpp:86
 #, kde-format
 msgid "Sorry, debugging is only supported for Python 3.x applications."
-msgstr ""
+msgstr "Promiňte, ladění je podporováno pouze u aplikací v jazyce Python 3.x."
 
 #: debugger/pdblauncher.cpp:87
 #, kde-format
 msgid "Unsupported interpreter"
-msgstr ""
+msgstr "Nepodporovaný interpret"
 
 #: debugger/variablecontroller.cpp:36
 #, kde-format
 msgid "Return info"
-msgstr ""
+msgstr "Návratová informace"
 
 #: debugger/variablecontroller.cpp:38
 #, kde-format
@@ -228,7 +231,7 @@ msgstr "Globály"
 #: docfilekcm/docfilemanagerwidget.cpp:37
 #, kde-format
 msgid "Failed to find a valid data directory for kdevpythonsupport."
-msgstr ""
+msgstr "Nepodařilo se najít platný datový adresář pro kdevpythonsupport."
 
 #: docfilekcm/docfilemanagerwidget.cpp:51
 #, kde-format
@@ -246,6 +249,8 @@ msgid ""
 "Copy the contents of the active editor window to a new file in the "
 "documentation directory"
 msgstr ""
+"Zkopírovat obsah aktivního okna editoru do nového souboru v adresáři "
+"dokumentace"
 
 #: docfilekcm/docfilemanagerwidget.cpp:66
 #, kde-format
@@ -268,11 +273,12 @@ msgstr "Prohledávat cesty..."
 msgctxt "displays a list of search paths below"
 msgid "Paths searched for documentation by kdev-python (in this order):"
 msgstr ""
+"Složky, ve kterých kdev-python prohledává dokumentaci (v tomto pořadí):"
 
 #: docfilekcm/docfilemanagerwidget.cpp:141
 #, kde-format
 msgid "Enter a relative target path to copy %1 to:"
-msgstr ""
+msgstr "Zadejte relativní cílovou cestu, kam se má %1 zkopírovat:"
 
 #: docfilekcm/docfilemanagerwidget.cpp:145
 #, kde-format
@@ -280,37 +286,39 @@ msgid ""
 "This path must match what you use in Python to import this module. For "
 "example, enter \"numpy/fft.py\" for numpy.fft"
 msgstr ""
+"Tato cesta se musí shodovat s tím, co používáte v jazyce Python při importu "
+"tohoto modulu. Například pro numpy.fft zadejte \"numpy/fft.py\""
 
 #: docfilekcm/docfilemanagerwidget.cpp:147
 #, kde-format
 msgid "After copying, you will be editing the new document."
-msgstr ""
+msgstr "Po zkopírování budete nový dokument upravovat."
 
 #: docfilekcm/docfilemanagerwidget.cpp:166
 #, kde-format
 msgid "Please select at least one file from the list for editing."
-msgstr ""
+msgstr "Vyberte prosím alespoň jeden soubor ze seznamu k úpravám."
 
 #: docfilekcm/docfilewizard.cpp:41
 #, kde-format
 msgid "Configure the Python interpreter to use"
-msgstr ""
+msgstr "Nastavit interpret jazyka Python tak, aby používal"
 
 #: docfilekcm/docfilewizard.cpp:44
 #, kde-format
 msgid "Python executable"
-msgstr ""
+msgstr "Spustitelný soubor Python"
 
 #: docfilekcm/docfilewizard.cpp:49
 #, kde-format
 msgid "Select a python module to generate documentation for"
-msgstr ""
+msgstr "Vyberte modul jazyka Python, pro který chcete vygenerovat dokumentaci"
 
 #: docfilekcm/docfilewizard.cpp:53
 #, kde-format
 msgctxt "refers to selecting a python module to perform some operation on"
 msgid "Target module (e.g. \"math\")"
-msgstr ""
+msgstr "Cílový modul (např. \"math\")"
 
 #: docfilekcm/docfilewizard.cpp:55
 #, kde-format
@@ -320,12 +328,12 @@ msgstr "Název výstupního souboru"
 #: docfilekcm/docfilewizard.cpp:61
 #, kde-format
 msgid "Status and output"
-msgstr ""
+msgstr "Stav a výstup"
 
 #: docfilekcm/docfilewizard.cpp:63 docfilekcm/docfilewizard.cpp:69
 #, kde-format
 msgid "The process has not been run yet."
-msgstr ""
+msgstr "Proces zatím nebyl spuštěn."
 
 #: docfilekcm/docfilewizard.cpp:75
 #, kde-format
@@ -355,24 +363,25 @@ msgstr "Vygenerovat"
 #: docfilekcm/docfilewizard.cpp:138
 #, kde-format
 msgid "Couldn't find the introspect.py script; check your installation!"
-msgstr ""
+msgstr "Skript introspect.py nebyl nalezen; zkontrolujte si instalaci!"
 
 #: docfilekcm/docfilewizard.cpp:142
 #, kde-format
 msgid ""
 "Couldn't find a valid kdev-python data directory; check your installation!"
 msgstr ""
+"Nenašel se platný datový adresář kdev-python; zkontrolujte svou instalaci!"
 
 #: docfilekcm/docfilewizard.cpp:148
 #, kde-format
 msgid "Invalid output filename"
-msgstr ""
+msgstr "Neplatný název výstupního souboru"
 
 #: docfilekcm/docfilewizard.cpp:188
 #, kde-format
 msgid ""
 "The output file <br/>%1<br/> already exists, do you want to overwrite it?"
-msgstr ""
+msgstr "Výstupní soubor <br/>%1<br/>již existuje, chcete jej přepsat?"
 
 #: docfilekcm/docfilewizard.cpp:203
 #, kde-format
@@ -387,21 +396,31 @@ msgid ""
 "Make sure to keep a copy of your changes so you don't accidentally\n"
 "overwrite them by re-generating the file.\n"
 msgstr ""
+"Tento soubor obsahuje automaticky vygenerovanou\n"
+"dokumentaci extrahovanou z informací o běhu jazyka Python.\n"
+"Je analyzován aplikací KDevelop za účelem poskytování funkcí,\n"
+"jako je automatické doplňování kódu a zvýrazňování syntaxe.\n"
+"Pokud objevíte chyby v podpoře tohoto modulu v programu\n"
+"KDevelop, můžete tento soubor upravit a chyby opravit, např.\n"
+"můžete přidat další příkazy return do funkcí, abyste určili typ\n"
+"návratové hodnoty, který má analyzátor pro danou funkci\n"
+"použít. Nezapomeňte si uložit kopii svých změn, abyste je\n"
+"náhodou nepřepsali při opětovném vygenerování souboru.\n"
 
 #: docfilekcm/kcm_docfiles.cpp:48
 #, kde-format
 msgid "Manage Documentation Files Used by the Python Plugin"
-msgstr ""
+msgstr "Správa dokumentačních souborů používaných modulem pro Python"
 
 #: docfilekcm/kcm_docfiles.cpp:58
 #, kde-format
 msgid "Python Documentation"
-msgstr ""
+msgstr "Dokumentace Python"
 
 #: duchain/assistants/missingincludeassistant.cpp:48
 #, kde-format
 msgid "Generate documentation for module \"%1\"..."
-msgstr ""
+msgstr "Vygenerovat dokumentaci pro modul \"%1\"..."
 
 #: duchain/declarationbuilder.cpp:705
 #, kde-format
@@ -411,24 +430,26 @@ msgstr "Modul \"%1\" nenalezen"
 #: duchain/declarationbuilder.cpp:776
 #, kde-format
 msgid "Declaration for \"%1\" not found in specified module"
-msgstr ""
+msgstr "Deklarace pro \"%1\" nebyla nalezena v zadaném modulu"
 
 #: duchain/declarationbuilder.cpp:1611
 #, kde-format
 msgid ""
 "First argument of class method is not called self or cls, this is deprecated"
 msgstr ""
+"První argument metody třídy se nejmenuje \"self\" ani \"cls\"; toto označení "
+"je zastaralé"
 
 #: duchain/declarationbuilder.cpp:1631
 #, kde-format
 msgid ""
 "Non-static class method without arguments, must have at least one (self)"
-msgstr ""
+msgstr "Nestatická metoda třídy bez argumentů musí mít alespoň jeden (self)"
 
 #: duchain/declarationbuilder.cpp:1793
 #, kde-format
 msgid "Return statement not within function declaration"
-msgstr ""
+msgstr "Příkaz return není uveden v deklaraci funkce"
 
 #: duchain/navigation/declarationnavigationcontext.cpp:67
 #, kde-format
@@ -448,13 +469,13 @@ msgstr "%1 z %2"
 #, kde-format
 msgctxt "some object that can be called, in programming"
 msgid "<callable>"
-msgstr ""
+msgstr "<volatelné>"
 
 #: duchain/types/unsuretype.cpp:106
 #, kde-format
 msgctxt "a set with some elements"
 msgid "<iterable>"
-msgstr ""
+msgstr "<iterovatelné>"
 
 #: duchain/types/unsuretype.cpp:127
 #, kde-format
@@ -466,27 +487,27 @@ msgstr "smíšené"
 #, kde-format
 msgctxt "refers to a type (in program code) which can have multiple values"
 msgid "unsure (%1)"
-msgstr ""
+msgstr "nejisté (%1)"
 
 #: duchain/usebuilder.cpp:83
 #, kde-format
 msgid "Undefined variable: %1"
-msgstr ""
+msgstr "Nedefinovaná proměnná: %1"
 
 #: duchain/usebuilder.cpp:130
 #, kde-format
 msgid "Attribute \"%1\" not found on accessed object"
-msgstr ""
+msgstr "Atribut \"%1\" nebyl nalezen u objektu, ke kterému se přistupuje"
 
 #: pep8kcm/kcm_pep8.cpp:63
 #, kde-format
 msgid "Configure Python Style Checking"
-msgstr ""
+msgstr "Nastavení kontroly stylu v Pythonu"
 
 #: pep8kcm/kcm_pep8.cpp:73
 #, kde-format
 msgid "Python Style Checking"
-msgstr ""
+msgstr "Kontrola stylu vPythonu"
 
 #. i18n: ectx: property (title), widget (QGroupBox, enableChecking)
 #: pep8kcm/pep8.ui:29
@@ -505,7 +526,7 @@ msgstr "Seznam chybových kódů oddělených čárkou"
 #: pep8kcm/pep8.ui:51
 #, kde-format
 msgid "Enable these errors and warnings:"
-msgstr "Povolit tyto chyby a varování."
+msgstr "Povolit tyto chyby a varování:"
 
 #. i18n: ectx: property (text), widget (QLabel, label_3)
 #: pep8kcm/pep8.ui:65
@@ -526,6 +547,8 @@ msgid ""
 "The `pycodestyle` Python module must be installed in order to use style "
 "checking."
 msgstr ""
+"Aby bylo možné využívat kontrolu stylu, musí být nainstalován modul Pythonu "
+"`pycodestyle`."
 
 #. i18n: ectx: property (text), widget (QLabel, label)
 #: projectconfig/projectconfig.ui:19
@@ -538,6 +561,8 @@ msgstr "Překladač Pythonu:"
 #, kde-format
 msgid "Full path to python interpreter, leave empty for default"
 msgstr ""
+"Úplná cesta k interpretu Python; pokud nechcete měnit výchozí nastavení, "
+"ponechte pole prázdné"
 
 #: projectconfig/projectconfigpage.cpp:47
 #, kde-format
@@ -547,14 +572,14 @@ msgstr "Nastavení Pythonu"
 #: pythonlanguagesupport.cpp:140
 #, kde-format
 msgid "Format source with the autopep8 formatter."
-msgstr ""
+msgstr "Naformátovat zdrojový kód pomocí formátovače autopep8."
 
 #: pythonstylechecking.cpp:107
 #, kde-format
 msgid "PEP8 checker error: %1"
-msgstr ""
+msgstr "Chyba kontroly PEP8: %1"
 
 #: pythonstylechecking.cpp:209
 #, kde-format
 msgid "The PEP8 syntax checker does not seem to work correctly."
-msgstr ""
+msgstr "Zdá se, že kontrola syntaxe PEP8 nefunguje správně."

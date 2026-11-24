@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: extragear-kdevelop-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2026-08-16 00:42+0000\n"
-"PO-Revision-Date: 2026-11-10 21:38+0300\n"
+"PO-Revision-Date: 2026-11-23 18:14+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
 "Language: tr\n"
@@ -47,7 +47,7 @@ msgstr "Dosya başlığı ekle"
 #: codecompletion/context.cpp:175
 #, kde-format
 msgid "specify default parameter"
-msgstr "öntanımlı parametreyi belirt"
+msgstr "varsayılan parametreyi belirt"
 
 #: codecompletion/context.cpp:386
 #, kde-format
@@ -561,7 +561,7 @@ msgstr "Python yorumlayıcısı:"
 #: projectconfig/projectconfig.ui:26
 #, kde-format
 msgid "Full path to python interpreter, leave empty for default"
-msgstr "Python yorumlayıcısının tam yolu, öntanımlısı için boş bırakın"
+msgstr "Python yorumlayıcısının tam yolu, varsayılan için boş bırakın"
 
 #: projectconfig/projectconfigpage.cpp:47
 #, kde-format
